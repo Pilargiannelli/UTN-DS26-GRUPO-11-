@@ -19,3 +19,8 @@ Miembros del equipo:
 -  Legajo: 33286
 -  Alias de slack: augustoromanriver2005-afk
 -  Pagina del perfil publico: https://github.com/augustoromanriver2005-afk
+
+-  Nombre: Rodrigo Figueroa
+-  Legajo: 31839
+-  Alias de slack: Rodrigo Figueroa
+-  Pagina del perfil publico: https://github.com/Rodrigo-if
