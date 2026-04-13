@@ -29,3 +29,8 @@ Miembros del equipo:
 -  Legajo: 33368
 -  Alias de slack: TomasTerruli
 -  Pagina del perfil publico: https://github.com/TomasTerruli
+
+- Nombre: Martina Castellani
+- Legajo: 33691
+- Alias de slack: marticaste144
+- Página del perfil público: https://github.com/Marticaste144
