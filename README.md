@@ -15,7 +15,7 @@ Miembros del equipo:
 - Alias de slack: Pilargiannelli
 - Página del perfil público: https://github.com/Pilargiannelli
 
--  Nombre:Romám Augusto
+-  Nombre: Romám Augusto
 -  Legajo: 33286
 -  Alias de slack: augustoromanriver2005-afk
 -  Pagina del perfil publico: https://github.com/augustoromanriver2005-afk
