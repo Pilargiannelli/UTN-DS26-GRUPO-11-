@@ -34,3 +34,8 @@ Miembros del equipo:
 - Legajo: 33691
 - Alias de slack: marticaste144
 - Página del perfil público: https://github.com/Marticaste144
+
+- Nombre: Ezequiel Basoalto
+- Legajo: 33268
+- Alias de slack: chinoBasoalto
+- Pagina del perfil: https://github.com/chinoBasoalto
