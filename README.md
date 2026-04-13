@@ -24,3 +24,8 @@ Miembros del equipo:
 -  Legajo: 31839
 -  Alias de slack: Rodrigo Figueroa
 -  Pagina del perfil publico: https://github.com/Rodrigo-if
+
+-  Nombre: Tomas Terruli
+-  Legajo: 33368
+-  Alias de slack: TomasTerruli
+-  Pagina del perfil publico: https://github.com/TomasTerruli
