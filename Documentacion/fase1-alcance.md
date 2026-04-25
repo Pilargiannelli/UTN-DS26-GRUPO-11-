@@ -84,3 +84,5 @@ Idioma del agente de IA: ¿Las respuestas automáticas son solo en español? ¿D
 ---
 
 ## 4. Diagrama Contextual
+
+![Diagrama AMI](diagrama-contextual.png)
