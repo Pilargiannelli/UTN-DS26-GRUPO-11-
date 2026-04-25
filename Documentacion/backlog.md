@@ -17,7 +17,7 @@
 
 ### 2.2 Requisitos funcionales
 (Responsable: Román Augusto)
-![TablaRF - Clinica IMOS](./Documentacion/tabla_requerimientos.png)   
+![TablaRF - Clinica IMOS](./tabla_requerimientos.png)   
 
 ### 2.3 Reglas de negocio
 (Responsable: Terruli Tomás)
