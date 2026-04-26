@@ -132,6 +132,19 @@ El siguiente glosario reúne los términos clave del dominio del sistema. Su pro
 
 ### 2.1 Modelo de dominio
 (Responsable: Basoalto Ezequiel)
+![Diagrama de Clases - Clínica IMOS](./Imagenes/ModDomIMOSV_1.png)
+
+**Justificación del Modelo:**
+
+Se modelaron las entidades del sistema a partir del documento de visión y 
+alcance de IMOS. La clase 'Turno' actúa como eje central, gestionando el 
+ciclo de vida de cada cita mediante la enumeración 'TurnoEstado'. La jerarquía 
+'Usuario → Medico / Paciente / Secretaria' centraliza los datos de acceso y 
+separa responsabilidades por rol. La 'Agenda' del médico define la 
+disponibilidad horaria, mientras que 'HistoriaClinica' y 'EntradaClinica'
+registran la evolución clínica de cada paciente. Finalmente, 'AsistenteIA' 
+encapsula toda la comunicación automática por WhatsApp, desacoplando esa 
+lógica del personal del consultorio.
 
 ### 2.2 Requisitos funcionales
 (Responsable: Román Augusto)
