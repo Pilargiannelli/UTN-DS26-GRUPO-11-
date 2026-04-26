@@ -131,7 +131,6 @@ El siguiente glosario reúne los términos clave del dominio del sistema. Su pro
 ## Fase 2: Modelado de Dominio
 
 ### 2.1 Modelo de dominio
-(Responsable: Basoalto Ezequiel)
 ![Diagrama de Clases - Clínica IMOS](./ModDomIMOSV_1.png)
 
 **Justificación del Modelo:**
