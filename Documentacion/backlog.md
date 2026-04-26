@@ -135,6 +135,7 @@ El siguiente glosario reúne los términos clave del dominio del sistema. Su pro
 
 ### 2.2 Requisitos funcionales
 (Responsable: Román Augusto)
+![TablaRF - Clinica IMOS](./tablaRF.png)   
 
 ### 2.3 Reglas de negocio
 (Responsable: Terruli Tomás)
