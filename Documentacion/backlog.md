@@ -22,8 +22,6 @@
 (Responsable: Terruli Tomás)
 
 ### 2.4 Modelos Complementarios
-(Responsable: Figueroa Rodrigo)
-
 ![TurnoEstado][def]
 
 [def]: </Documentacion/02 - Modelado de Dominio/TurnoEstado v3.jpg>
