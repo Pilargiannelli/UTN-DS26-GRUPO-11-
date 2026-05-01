@@ -159,3 +159,20 @@ El siguiente glosario reúne los términos clave del dominio del sistema. Su pro
 
 ### 2.4 Modelos Complementarios
 (Responsable: Figueroa Rodrigo)
+
+# Fase 3: Planificación y Backlog
+
+## 3.1 Definir Épicas y Features
+
+| Épica | Feature | Prioridad | Tamaño |
+|-------|---------|-----------|--------|
+| EP01 – Gestión de Pacientes | F01 – Registro y consulta de pacientes | Alta | M |
+| EP01 – Gestión de Pacientes | F02 – Historial clínico | Media | M |
+| EP02 – Gestión de Turnos | F03 – Operaciones sobre turnos | Alta | L |
+| EP02 – Gestión de Turnos | F04 – Ciclo de vida y estados del turno | Alta | M |
+| EP03 – Agenda y Calendario | F05 – Visualización de agenda | Alta | M |
+| EP04 – Configuración del Médico | F06 – Configuración de disponibilidad | Media | M |
+| EP05 – Comunicación Automatizada | F07 – Flujo de confirmación por WhatsApp | Media | XL |
+| EP05 – Comunicación Automatizada | F08 – Recordatorios automáticos | Baja | S |
+| EP05 – Comunicación Automatizada | F09 – Validación de pago por WhatsApp | Media | L |
+| EP06 – Autenticación y Control de Acceso | F10 – Autenticación y roles de usuario | Alta | M |
