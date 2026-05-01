@@ -204,7 +204,7 @@ lógica del personal del consultorio.
 
 #### Criterios de Aceptación
 1. **Dado** que soy personal administrativo autenticado con datos válidos completos, **cuando** guardo el formulario, **entonces** el paciente queda registrado y disponible para búsqueda y asignación de turnos.
-2. ***Dado** que ingreso un DNI que ya existe en el sistema, **cuando** intento guardar, **entonces** se muestra "El DNI ya se encuentra registrado" y no se crea el duplicado.
+2. **Dado** que ingreso un DNI que ya existe en el sistema, **cuando** intento guardar, **entonces** se muestra "El DNI ya se encuentra registrado" y no se crea el duplicado.
 3. **Dado** que dejo campos obligatorios vacíos (nombre, apellido, DNI o teléfono), **cuando** intento guardar, **entonces** el sistema marca los campos faltantes y no procede con el registro.
 
 #### Notas Técnicas
