@@ -203,3 +203,75 @@ lógica del personal del consultorio.
 | EP05 – Comunicación Automatizada | F08 – Recordatorios automáticos | Baja | S |
 | EP05 – Comunicación Automatizada | F09 – Validación de pago por WhatsApp | Media | L |
 | EP06 – Autenticación y Control de Acceso | F10 – Autenticación y roles de usuario | Alta | M |
+
+
+
+## 3.3 Division de Historias
+
+ En esta sección, desglosamos aquellas historias que merecen ser abarcadas con un nivel mayor de detalle. Al inicio de cada una, reescribimos la  historia de usuario original para mayor entendimiento del caso.
+
+ ### **[HU-006a] - Crear turno para un paciente**
+ #### Descripción
+ **Como** personal administrativo,  
+ **quiero** crear un turno para un paciente seleccionando un bloque horario disponible,  
+ **para** agendar su consulta en el sistema.
+
+ Se desglosa al requerir lógica de calendario y persistencia.
+ #### [HU-006.1] - Visualizar bloques disponibles
+Épica: [EP-02] Gestión de Turnos
+
+ Prioridad: Must | Estimación: M
+
+ Descripción: Como administrativo, quiero ver solo los huecos libres del médico, para no ofrecer horarios ocupados.
+
+ Criterios de Aceptación:
+
+ Dado que el médico configuró su agenda, cuando busco una fecha, entonces solo se muestran bloques que coinciden con su horario de atención y no  tienen turnos asignados.
+
+ #### [HU-006.2] - Reservar y persistir turno
+ Épica: [EP-02] Gestión de Turnos
+
+ Prioridad: Must | Estimación: S
+
+ Descripción: Como administrativo, quiero guardar la reserva, para que el bloque quede bloqueado en el sistema.
+ #### Nota
+    Al utilizar una transacción de Base de Datos podemos evitar que dos personas elijan el mismo bloque al mismo tiempo.
+
+ ### **[HU-016] - Validar pago por WhatsApp**
+ #### Descripción
+ **Como** paciente,  
+ **quiero** poder informar mi pago respondiendo el mensaje de WhatsApp,  
+ **para** completar la confirmación de mi turno.
+
+ Se desglosa ya que la IA no puede verificar que el comprobar si la transferencia es o no real. Se separa la notificación de la validación humana.
+ #### [HU-016.1] - Recepción de confirmación de pago
+ Épica: [EP-05] Comunicación Automatizada
+ 
+ Prioridad: Should | Estimación: M
+ 
+ Descripción: Como sistema, quiero registrar cuando el paciente dice que ya pagó por WhatsApp, para avisar al administrativo.
+ #### [HU-016.2] - Validación administrativa de pago
+ Épica: [EP-05] Comunicación Automatizada
+
+ Prioridad: Should | Estimación: S
+ 
+ Descripción: Como administrativo, quiero marcar un turno como "Pagado" tras revisar la cuenta bancaria, para que el turno pase a estado Confirmado.
+
+ ### **[HU-018] - Acceso diferenciado por rol**
+ #### Descripción
+ **Como** médico,  
+ **quiero** que el personal administrativo no pueda acceder al historial clínico ni a la configuración del sistema,  
+ **para** proteger la privacidad de los datos médicos.
+
+ Se desglosa para separar parte visual de parte seguridad (front y back por separado)
+ #### [HU-018.1] - Restricción de Interfaz (Frontend)
+ Épica: [EP-06] Autenticación y Control de Acceso
+
+ Prioridad: Must | Estimación: S
+
+ Descripción: Como administrativo, quiero que el botón de "Historial Clínico" no sea visible en mi panel, para evitar confusiones.
+
+ #### [HU-018.2] - Seguridad de Endpoints (Backend)
+ Épica: [EP-06] Autenticación y Control de Acceso
+
+ Prioridad: Must | Estimación: M
