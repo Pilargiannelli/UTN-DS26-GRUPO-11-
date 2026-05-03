@@ -822,3 +822,72 @@ Criterios de Aceptación:
  Épica: [EP-06] Autenticación y Control de Acceso
 
  Prioridad: Must | Estimación: M
+
+ # 3.4 Calendario de Planificación
+
+## Estructura de bloques
+
+| Bloques | Período | Qué se implementa |
+|---|---|---|
+| **Bloque 2: Frontend** | Mayo a Julio | La interfaz de usuario completa, con datos mock. Formularios, navegación, validaciones front. |
+| **Bloque 3: Backend** | Julio a Septiembre | La API, base de datos, autenticación. Todo el servidor, probado con Postman. |
+| **Bloque 4: Integración** | Septiembre a Noviembre | Conectar front con back real. Autorización, deploy, testing, ajustes finales. |
+
+---
+
+## Bloque FRONTEND
+
+| Sprint (2 semanas) | Épica | Feature |
+|---|---|---|
+| FR-1 | EP06 – Autenticación y Control de Acceso | F10 – Autenticación y roles de usuario |
+| FR-2 | EP01 – Gestión de Pacientes | F01 – Registro y consulta de pacientes |
+| FR-2 | EP01 – Gestión de Pacientes | F02 – Historial clínico |
+| FR-3 | EP02 – Gestión de Turnos | F03 – Operaciones sobre turnos |
+| FR-3 | EP02 – Gestión de Turnos | F04 – Ciclo de vida y estados del turno |
+| FR-4 | EP03 – Agenda y Calendario | F05 – Visualización de agenda |
+| FR-4 | EP04 – Configuración del Médico | F06 – Configuración de disponibilidad |
+| FR-4 | EP05 – Comunicación Automatizada | F07 – Flujo de confirmación por WhatsApp |
+
+---
+
+## Bloque BACKEND
+
+| Sprint (2 semanas) | Épica | Feature |
+|---|---|---|
+| BK-1 | EP06 – Autenticación y Control de Acceso | F10 – Autenticación y roles de usuario |
+| BK-2 | EP01 – Gestión de Pacientes | F01 – Registro y consulta de pacientes |
+| BK-2 | EP01 – Gestión de Pacientes | F02 – Historial clínico |
+| BK-3 | EP02 – Gestión de Turnos | F03 – Operaciones sobre turnos |
+| BK-3 | EP02 – Gestión de Turnos | F04 – Ciclo de vida y estados del turno |
+| BK-4 | EP03 – Agenda y Calendario | F05 – Visualización de agenda |
+| BK-4 | EP04 – Configuración del Médico | F06 – Configuración de disponibilidad |
+| BK-4 | EP05 – Comunicación Automatizada | F07 – Flujo de confirmación por WhatsApp |
+| BK-4 | EP05 – Comunicación Automatizada | F08 – Recordatorios automáticos |
+| BK-4 | EP05 – Comunicación Automatizada | F09 – Validación de pago por WhatsApp |
+
+---
+
+## Bloque de INTEGRACIÓN
+
+La integración conecta las pantallas del frontend con los endpoints reales del backend. Se realiza en el orden en que fueron construidas las funcionalidades.
+
+**INT-1 — Autenticación y pacientes**
+- Se conecta el formulario de login con el endpoint real. El sistema valida credenciales y asigna el rol correspondiente.
+- Se conectan las pantallas de registro, búsqueda y edición de pacientes con los endpoints del backend.
+- Se verifica que la secretaria no pueda acceder al historial clínico ni a la configuración del médico (F10).
+
+**INT-2 — Historial clínico y turnos**
+- Se conecta la vista del historial clínico con el endpoint real. Se valida que solo el médico pueda agregar entradas.
+- Se conecta el formulario de creación de turnos con el backend. Los bloques disponibles se calculan con datos reales según la configuración del médico.
+- Se prueban las reglas de negocio: no superposición de turnos, validación de horario futuro, paciente registrado obligatorio.
+
+**INT-3 — Agenda y configuración**
+- Se conecta el calendario (vista diaria y semanal) con los endpoints reales. Se verifica que solo aparezcan turnos confirmados.
+- Se conecta el formulario de configuración del médico con el backend. Se valida que los cambios de disponibilidad y bloqueos se reflejen en los bloques disponibles al crear un turno.
+
+**INT-4 — Comunicación automatizada y cierre**
+- Se conecta el flujo de confirmación por WhatsApp con el webhook del backend. Se verifica que las respuestas del paciente actualicen el estado del turno en el sistema.
+- Se conecta la validación de pago: el paciente notifica por WhatsApp y el administrativo confirma manualmente desde el panel.
+- Se verifica el envío de recordatorios automáticos con la configuración de tiempo definida por el médico.
+- Deploy en entorno de producción. Testing de los flujos principales. Corrección de bugs de integración.
+
