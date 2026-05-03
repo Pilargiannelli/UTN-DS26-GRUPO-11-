@@ -182,7 +182,6 @@ lógica del personal del consultorio.
 | RN-0011 | Auditoría de cambios              | Toda modificación sobre turnos o datos de pacientes debe registrar fecha, hora y usuario responsable. |
 
 ### 2.4 Modelos Complementarios
-(Responsable: Figueroa Rodrigo)
 ![TurnoEstado][def]
 
 [def]: </Documentacion/02 - Modelado de Dominio/TurnoEstado v3.jpg>
