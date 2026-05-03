@@ -185,7 +185,6 @@ lógica del personal del consultorio.
 ![TurnoEstado][def]
 
 [def]: </Documentacion/02 - Modelado de Dominio/TurnoEstado v3.jpg>
-
 ## Fase 3: Elaboración del Product Backlog
 
 ### 3.2 Historias de Usuario
