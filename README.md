@@ -39,3 +39,4 @@ Miembros del equipo:
 - Legajo: 33268
 - Alias de slack: chinoBasoalto
 - Pagina del perfil: https://github.com/chinoBasoalto
+

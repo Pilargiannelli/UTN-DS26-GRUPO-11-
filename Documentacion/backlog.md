@@ -232,6 +232,20 @@ lógica del personal del consultorio.
 #### Archivos Adjuntos
 - "HU-001 - Wireframe - Formulario Registro de Paciente.pdf"
 
+**Verificación de calidad HU-001:**
+
+| Criterio | Estado |
+|---------|--------|
+| Formato correcto | ✅ |
+| Criterios de aceptación claros | ✅ |
+| Historia pequeña | ✅ |
+| Genera valor | ✅ |
+| Es testeable | ✅ |
+| Tiene ID y título | ✅ |
+| Referencia reglas/requisitos | ✅ |
+| No duplica otra HU | ✅ |
+| Wireframes referenciados si aplica | ✅ |
+
 #### **[HU-002] - Editar datos de un paciente**
 #### Descripción
 **Como** personal administrativo,  
@@ -259,6 +273,20 @@ lógica del personal del consultorio.
 #### Archivos Adjuntos
 - "HU-002 - Wireframe - Formulario Edición de Paciente.pdf"
 
+**Verificación de calidad HU-002:**
+
+| Criterio | Estado |
+|---------|--------|
+| Formato correcto | ✅ |
+| Criterios de aceptación claros | ✅ |
+| Historia pequeña | ✅ |
+| Genera valor | ✅ |
+| Es testeable | ✅ |
+| Tiene ID y título | ✅ |
+| Referencia reglas/requisitos | ✅ |
+| No duplica otra HU | ✅ |
+| Wireframes referenciados si aplica | ✅ |
+
 #### **[HU-003] - Buscar paciente**
 #### Descripción
 **Como** médico o personal administrativo,  
@@ -285,6 +313,20 @@ lógica del personal del consultorio.
 
 #### Archivos Adjuntos
 - "HU-003 - Wireframe - Buscador de Pacientes.pdf"
+
+**Verificación de calidad HU-003:**
+
+| Criterio | Estado |
+|---------|--------|
+| Formato correcto | ✅ |
+| Criterios de aceptación claros | ✅ |
+| Historia pequeña | ✅ |
+| Genera valor | ✅ |
+| Es testeable | ✅ |
+| Tiene ID y título | ✅ |
+| Referencia reglas/requisitos | ✅ |
+| No duplica otra HU | ✅ |
+| Wireframes referenciados si aplica | ✅ |
 
 #### **[HU-004] - Registrar nota clínica en una consulta**
 #### Descripción
@@ -314,6 +356,20 @@ lógica del personal del consultorio.
 #### Archivos Adjuntos
 - "HU-004 - Wireframe - Formulario Nota Clínica.pdf"
 
+**Verificación de calidad HU-004:**
+
+| Criterio | Estado |
+|---------|--------|
+| Formato correcto | ✅ |
+| Criterios de aceptación claros | ✅ |
+| Historia pequeña | ✅ |
+| Genera valor | ✅ |
+| Es testeable | ✅ |
+| Tiene ID y título | ✅ |
+| Referencia reglas/requisitos | ✅ |
+| No duplica otra HU | ✅ |
+| Wireframes referenciados si aplica | ✅ |
+
 #### **[HU-005] - Ver historial clínico de un paciente**
 #### Descripción
 **Como** médico,  
@@ -340,6 +396,20 @@ lógica del personal del consultorio.
 
 #### Archivos Adjuntos
 - "HU-005 - Wireframe - Vista Historial Clínico.pdf"
+
+**Verificación de calidad HU-005:**
+
+| Criterio | Estado |
+|---------|--------|
+| Formato correcto | ✅ |
+| Criterios de aceptación claros | ✅ |
+| Historia pequeña | ✅ |
+| Genera valor | ✅ |
+| Es testeable | ✅ |
+| Tiene ID y título | ✅ |
+| Referencia reglas/requisitos | ✅ |
+| No duplica otra HU | ✅ |
+| Wireframes referenciados si aplica | ✅ |
 
 #### **[HU-006a] - Crear turno para un paciente**
 #### Descripción
@@ -395,6 +465,20 @@ lógica del personal del consultorio.
 #### Archivos Adjuntos
 - "HU-006b - Wireframe - Notificación WhatsApp Creación de Turno.pdf"
 
+**Verificación de calidad HU-006 a y b:**
+
+| Criterio | Estado |
+|---------|--------|
+| Formato correcto | ✅ |
+| Criterios de aceptación claros | ✅ |
+| Historia pequeña | ✅ |
+| Genera valor | ✅ |
+| Es testeable | ✅ |
+| Tiene ID y título | ✅ |
+| Referencia reglas/requisitos | ✅ |
+| No duplica otra HU | ✅ |
+| Wireframes referenciados si aplica | ✅ |
+
 #### **[HU-007] - Cancelar un turno**
 #### Descripción
 **Como** médico o personal administrativo,  
@@ -421,6 +505,20 @@ lógica del personal del consultorio.
 
 #### Archivos Adjuntos
 - "HU-007 - Wireframe - Modal Confirmación Cancelación.pdf"
+
+**Verificación de calidad HU-007:**
+
+| Criterio | Estado |
+|---------|--------|
+| Formato correcto | ✅ |
+| Criterios de aceptación claros | ✅ |
+| Historia pequeña | ✅ |
+| Genera valor | ✅ |
+| Es testeable | ✅ |
+| Tiene ID y título | ✅ |
+| Referencia reglas/requisitos | ✅ |
+| No duplica otra HU | ✅ |
+| Wireframes referenciados si aplica | ✅ |
 
 #### **[HU-008] - Reprogramar un turno**
 #### Descripción
@@ -449,6 +547,20 @@ lógica del personal del consultorio.
 
 #### Archivos Adjuntos
 - "HU-008 - Wireframe - Formulario Reprogramación de Turno.pdf"
+
+**Verificación de calidad HU-008:**
+
+| Criterio | Estado |
+|---------|--------|
+| Formato correcto | ✅ |
+| Criterios de aceptación claros | ✅ |
+| Historia pequeña | ✅ |
+| Genera valor | ✅ |
+| Es testeable | ✅ |
+| Tiene ID y título | ✅ |
+| Referencia reglas/requisitos | ✅ |
+| No duplica otra HU | ✅ |
+| Wireframes referenciados si aplica | ✅ |
 
 #### **[HU-009] - Consultar el estado de un turno**
 #### Descripción
@@ -480,6 +592,20 @@ lógica del personal del consultorio.
 #### Archivos Adjuntos
 - "HU-009 - Wireframe - Lista de Turnos con Estados.pdf"
 
+**Verificación de calidad HU-009:**
+
+| Criterio | Estado |
+|---------|--------|
+| Formato correcto | ✅ |
+| Criterios de aceptación claros | ✅ |
+| Historia pequeña | ✅ |
+| Genera valor | ✅ |
+| Es testeable | ✅ |
+| Tiene ID y título | ✅ |
+| Referencia reglas/requisitos | ✅ |
+| No duplica otra HU | ✅ |
+| Wireframes referenciados si aplica | ✅ |
+
 #### **[HU-010] - Ver agenda diaria**
 #### Descripción
 **Como** médico,  
@@ -508,6 +634,20 @@ lógica del personal del consultorio.
 #### Archivos Adjuntos
 - "HU-010 - Wireframe - Agenda Diaria.pdf"
 
+**Verificación de calidad HU-010:**
+
+| Criterio | Estado |
+|---------|--------|
+| Formato correcto | ✅ |
+| Criterios de aceptación claros | ✅ |
+| Historia pequeña | ✅ |
+| Genera valor | ✅ |
+| Es testeable | ✅ |
+| Tiene ID y título | ✅ |
+| Referencia reglas/requisitos | ✅ |
+| No duplica otra HU | ✅ |
+| Wireframes referenciados si aplica | ✅ |
+
 #### **[HU-011] - Ver agenda semanal**
 #### Descripción
 **Como** médico,  
@@ -535,6 +675,20 @@ lógica del personal del consultorio.
 
 #### Archivos Adjuntos
 - "HU-011 - Wireframe - Agenda Semanal.pdf"
+
+**Verificación de calidad HU-011:**
+
+| Criterio | Estado |
+|---------|--------|
+| Formato correcto | ✅ |
+| Criterios de aceptación claros | ✅ |
+| Historia pequeña | ✅ |
+| Genera valor | ✅ |
+| Es testeable | ✅ |
+| Tiene ID y título | ✅ |
+| Referencia reglas/requisitos | ✅ |
+| No duplica otra HU | ✅ |
+| Wireframes referenciados si aplica | ✅ |
 
 #### **[HU-012a] - Configurar días y horario de atención**
 #### Descripción
@@ -591,6 +745,20 @@ lógica del personal del consultorio.
 #### Archivos Adjuntos
 - "HU-012b - Wireframe - Configuración Duración de Turno.pdf"
 
+**Verificación de calidad HU-012 a y b:**
+
+| Criterio | Estado |
+|---------|--------|
+| Formato correcto | ✅ |
+| Criterios de aceptación claros | ✅ |
+| Historia pequeña | ✅ |
+| Genera valor | ✅ |
+| Es testeable | ✅ |
+| Tiene ID y título | ✅ |
+| Referencia reglas/requisitos | ✅ |
+| No duplica otra HU | ✅ |
+| Wireframes referenciados si aplica | ✅ |
+
 #### **[HU-013] - Bloquear franjas horarias**
 #### Descripción
 **Como** médico,  
@@ -617,6 +785,20 @@ lógica del personal del consultorio.
 
 #### Archivos Adjuntos
 - "HU-013 - Wireframe - Gestión de Bloqueos Horarios.pdf"
+
+**Verificación de calidad HU-013:**
+
+| Criterio | Estado |
+|---------|--------|
+| Formato correcto | ✅ |
+| Criterios de aceptación claros | ✅ |
+| Historia pequeña | ✅ |
+| Genera valor | ✅ |
+| Es testeable | ✅ |
+| Tiene ID y título | ✅ |
+| Referencia reglas/requisitos | ✅ |
+| No duplica otra HU | ✅ |
+| Wireframes referenciados si aplica | ✅ |
 
 #### **[HU-014] - Confirmar asistencia por WhatsApp**
 #### Descripción
@@ -645,6 +827,20 @@ lógica del personal del consultorio.
 #### Archivos Adjuntos
 - "HU-014 - Wireframe - Flujo Conversación WhatsApp Confirmación.pdf"
 
+**Verificación de calidad HU-014:**
+
+| Criterio | Estado |
+|---------|--------|
+| Formato correcto | ✅ |
+| Criterios de aceptación claros | ✅ |
+| Historia pequeña | ✅ |
+| Genera valor | ✅ |
+| Es testeable | ✅ |
+| Tiene ID y título | ✅ |
+| Referencia reglas/requisitos | ✅ |
+| No duplica otra HU | ✅ |
+| Wireframes referenciados si aplica | ✅ |
+
 #### **[HU-015] - Enviar recordatorio de turno por WhatsApp**
 #### Descripción
 **Como** sistema,  
@@ -671,6 +867,20 @@ lógica del personal del consultorio.
 
 #### Archivos Adjuntos
 - "HU-015 - Wireframe - Configuración de Recordatorio.pdf"
+
+**Verificación de calidad HU-015:**
+
+| Criterio | Estado |
+|---------|--------|
+| Formato correcto | ✅ |
+| Criterios de aceptación claros | ✅ |
+| Historia pequeña | ✅ |
+| Genera valor | ✅ |
+| Es testeable | ✅ |
+| Tiene ID y título | ✅ |
+| Referencia reglas/requisitos | ✅ |
+| No duplica otra HU | ✅ |
+| Wireframes referenciados si aplica | ✅ |
 
 #### **[HU-016] - Validar pago por WhatsApp**
 #### Descripción
@@ -699,6 +909,20 @@ lógica del personal del consultorio.
 #### Archivos Adjuntos
 - "HU-016 - Wireframe - Flujo Conversación WhatsApp Pago.pdf"
 
+**Verificación de calidad HU-016:**
+
+| Criterio | Estado |
+|---------|--------|
+| Formato correcto | ✅ |
+| Criterios de aceptación claros | ✅ |
+| Historia pequeña | ✅ |
+| Genera valor | ✅ |
+| Es testeable | ✅ |
+| Tiene ID y título | ✅ |
+| Referencia reglas/requisitos | ✅ |
+| No duplica otra HU | ✅ |
+| Wireframes referenciados si aplica | ✅ |
+
 #### **[HU-017] - Iniciar sesión en el sistema**
 #### Descripción
 **Como** médico o personal administrativo,  
@@ -726,6 +950,20 @@ lógica del personal del consultorio.
 #### Archivos Adjuntos
 - "HU-017 - Wireframe - Pantalla de Login.pdf"
 
+**Verificación de calidad HU-017:**
+
+| Criterio | Estado |
+|---------|--------|
+| Formato correcto | ✅ |
+| Criterios de aceptación claros | ✅ |
+| Historia pequeña | ✅ |
+| Genera valor | ✅ |
+| Es testeable | ✅ |
+| Tiene ID y título | ✅ |
+| Referencia reglas/requisitos | ✅ |
+| No duplica otra HU | ✅ |
+| Wireframes referenciados si aplica | ✅ |
+
 #### **[HU-018] - Acceso diferenciado por rol**
 #### Descripción
 **Como** médico,  
@@ -752,6 +990,20 @@ Criterios de Aceptación:
 
 #### Archivos Adjuntos
 - "HU-018 - Wireframe - Panel Médico vs Panel Administrativo.pdf"
+
+**Verificación de calidad HU-018:**
+
+| Criterio | Estado |
+|---------|--------|
+| Formato correcto | ✅ |
+| Criterios de aceptación claros | ✅ |
+| Historia pequeña | ✅ |
+| Genera valor | ✅ |
+| Es testeable | ✅ |
+| Tiene ID y título | ✅ |
+| Referencia reglas/requisitos | ✅ |
+| No duplica otra HU | ✅ |
+| Wireframes referenciados si aplica | ✅ |
 
 ## 3.3 Division de Historias
 
