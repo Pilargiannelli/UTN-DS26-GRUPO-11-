@@ -6,7 +6,6 @@ En esta carpeta está toda la documentación del sistema, organizada por etapas 
 
 ## 00 - Documento de Visión y Alcance
 - [Documento de Visión y Alcance](./00%20-%20Documento%20de%20Vision%20y%20Alcance/AG-C03.2%20-%20Documento%20de%20Visión%20y%20Alcance%20del%20Producto.pdf)
-- [Tabla de requerimientos](./00%20-%20Documento%20de%20Vision%20y%20Alcance/tabla_requerimientos.md)
 
 ---
 
