@@ -521,8 +521,8 @@
 - Guardar la configuración por día de semana (estructura recurrente, no por fecha específica). El generador de bloques debe recalcular al guardar cambios.
 
 #### Requisitos Funcionales
-[RF04.1] Definir días disponibles
-[RF04.2] Configurar horario de atención
+[RF04.2] Definir días disponibles  
+[RF04.3] Configurar horario de atención
 
 #### Reglas de Negocio
 - (ninguna aplica específicamente)
@@ -549,7 +549,7 @@
 - El cambio de duración solo afecta bloques futuros sin turnos asignados. Los bloques con turnos existentes no se modifican.
 
 #### Requisitos Funcionales
-[RF04.3] Establecer duración de turno
+[RF04.4] Establecer duración de turno
 
 #### Reglas de Negocio
 - (ninguna aplica específicamente)
@@ -590,7 +590,7 @@
 - Verificar colisiones con turnos existentes al crear bloqueos. Guardar bloqueos como rangos de fecha-hora en tabla dedicada.
 
 #### Requisitos Funcionales
-[RF04.4] Bloquear franjas horarias
+[RF04.5] Bloquear franjas horarias
 
 #### Reglas de Negocio
 - (ninguna aplica específicamente)
@@ -804,6 +804,47 @@ Criterios de Aceptación:
 - "HU-018 - Wireframe - Panel Médico vs Panel Administrativo.pdf"
 
 **Verificación de calidad HU-018:**
+
+| Criterio | Estado |
+|---------|--------|
+| Formato correcto | ✅ |
+| Criterios de aceptación claros | ✅ |
+| Historia pequeña | ✅ |
+| Genera valor | ✅ |
+| Es testeable | ✅ |
+| Tiene ID y título | ✅ |
+| Referencia reglas/requisitos | ✅ |
+| No duplica otra HU | ✅ |
+| Wireframes referenciados si aplica | ✅ |
+
+#### **[HU-019] Registrar médico**
+#### Descripción
+**Como** personal administrativo,  
+**quiero** registrar un nuevo médico con sus datos correspondientes,  
+**para** que quede disponible en el sistema y se le puedan asignar turnos.  
+
+**Épica:** [EP-04] Configuración del Médico  
+**Prioridad:** Must  
+**Estimación:** M  
+
+#### Criterios de Aceptación
+1. **Dado** que soy personal administrativo autenticado con datos válidos completos, **cuando** guardo el formulario, **entonces** el médico queda registrado y disponible para búsqueda y asignación de turnos.
+2. **Dado** que ingreso una matrícula que ya existe en el sistema, **cuando** intento guardar, **entonces** se muestra "El DNI ya se encuentra registrado" y no se crea el duplicado.
+3. **Dado** que dejo campos obligatorios vacíos (nombre, apellido, matrícula), **cuando** intento guardar, **entonces** el sistema marca los campos faltantes y no procede con el registro.
+
+#### Notas Técnicas
+- Validar unicidad de la matrícula antes de insertar. Aplicar validación de formato de número de teléfono WhatsApp (código de país incluido).
+
+#### Requisitos Funcionales
+- [RF04.1] Registrar médico
+
+#### Reglas de Negocio
+- (ninguna aplica específicamente)
+
+#### Archivos Adjuntos
+- "HU-019 - Wireframe - Formulario Registro de Médico.pdf"
+
+**Verificación de calidad HU-019:**
 
 | Criterio | Estado |
 |---------|--------|
