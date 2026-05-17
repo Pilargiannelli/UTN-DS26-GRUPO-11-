@@ -9,11 +9,12 @@
 | EP02 – Gestión de Turnos | F03 – Operaciones sobre turnos | Alta | L |
 | EP02 – Gestión de Turnos | F04 – Ciclo de vida y estados del turno | Alta | M |
 | EP03 – Agenda y Calendario | F05 – Visualización de agenda | Alta | M |
-| EP04 – Configuración del Médico | F06 – Configuración de disponibilidad | Media | M |
-| EP05 – Comunicación Automatizada | F07 – Flujo de confirmación por WhatsApp | Media | XL |
-| EP05 – Comunicación Automatizada | F08 – Recordatorios automáticos | Baja | S |
-| EP05 – Comunicación Automatizada | F09 – Validación de pago por WhatsApp | Media | L |
-| EP06 – Autenticación y Control de Acceso | F10 – Autenticación y roles de usuario | Alta | M |
+| EP04 – Configuración del Médico | F06 – Registro de médicos | Media | M |
+| EP04 – Configuración del Médico | F07 – Configuración de disponibilidad | Media | M |
+| EP05 – Comunicación Automatizada | F08 – Flujo de confirmación por WhatsApp | Media | XL |
+| EP05 – Comunicación Automatizada | F09 – Recordatorios automáticos | Baja | S |
+| EP05 – Comunicación Automatizada | F10 – Validación de pago por WhatsApp | Media | L |
+| EP06 – Autenticación y Control de Acceso | F11 – Autenticación y roles de usuario | Alta | M |
 
 ### 3.2 Historias de Usuario
 
@@ -944,14 +945,10 @@ Criterios de Aceptación:
 
 | Sprint (2 semanas) | Épica | Feature |
 |---|---|---|
-| FR-1 | EP06 – Autenticación y Control de Acceso | F10 – Autenticación y roles de usuario |
-| FR-2 | EP01 – Gestión de Pacientes | F01 – Registro y consulta de pacientes |
-| FR-2 | EP01 – Gestión de Pacientes | F02 – Historial clínico |
-| FR-3 | EP02 – Gestión de Turnos | F03 – Operaciones sobre turnos |
-| FR-3 | EP02 – Gestión de Turnos | F04 – Ciclo de vida y estados del turno |
-| FR-4 | EP03 – Agenda y Calendario | F05 – Visualización de agenda |
-| FR-4 | EP04 – Configuración del Médico | F06 – Configuración de disponibilidad |
-| FR-4 | EP05 – Comunicación Automatizada | F07 – Flujo de confirmación por WhatsApp |
+| FR-1 | EP01 – Gestión de Pacientes<br>EP04 Configuración del Médico<br>EP06 – Autenticación y Control de Acceso | F01 – Registro y consulta de pacientes<br>F06 – Registro de médicos<br>F11 – Autenticación y roles de usuario |
+| FR-2 | EP01 – Gestión de Pacientes<br>EP03 – Agenda y Calendario<br>EP04 Configuración del Médico | F02 – Historial clínico<br>F05 – Visualización de agenda<br>F07 – Configuración de disponibilidad |
+| FR-3 | EP02 – Gestión de Turnos | F03 – Operaciones sobre turnos<br>F04 – Ciclo de vida y estados del turno |
+| FR-4 | EP05 – Comunicación Automatizada | F08 – Flujo de confirmación por WhatsApp |
 
 ---
 
@@ -959,16 +956,10 @@ Criterios de Aceptación:
 
 | Sprint (2 semanas) | Épica | Feature |
 |---|---|---|
-| BK-1 | EP06 – Autenticación y Control de Acceso | F10 – Autenticación y roles de usuario |
-| BK-2 | EP01 – Gestión de Pacientes | F01 – Registro y consulta de pacientes |
-| BK-2 | EP01 – Gestión de Pacientes | F02 – Historial clínico |
-| BK-3 | EP02 – Gestión de Turnos | F03 – Operaciones sobre turnos |
-| BK-3 | EP02 – Gestión de Turnos | F04 – Ciclo de vida y estados del turno |
-| BK-4 | EP03 – Agenda y Calendario | F05 – Visualización de agenda |
-| BK-4 | EP04 – Configuración del Médico | F06 – Configuración de disponibilidad |
-| BK-4 | EP05 – Comunicación Automatizada | F07 – Flujo de confirmación por WhatsApp |
-| BK-4 | EP05 – Comunicación Automatizada | F08 – Recordatorios automáticos |
-| BK-4 | EP05 – Comunicación Automatizada | F09 – Validación de pago por WhatsApp |
+| BK-1 | EP06 – Autenticación y Control de Acceso<br>EP01 – Gestión de Pacientes | F11 – Autenticación y roles de usuario<br>F01 – Registro y consulta de pacientes<br>F02 – Historial clínico |
+| BK-2 | EP02 – Gestión de Turnos | F03 – Operaciones sobre turnos<br>F04 – Ciclo de vida y estados del turno |
+| BK-3 | EP03 – Agenda y Calendario<br>EP04 – Configuración del Médico | F05 – Visualización de agenda<br>F07 – Configuración de disponibilidad |
+| BK-4 | EP05 – Comunicación Automatizada | F08 – Flujo de confirmación por WhatsApp<br>F09 – Recordatorios automáticos<br>F10 – Validación de pago por WhatsApp |
 
 ---
 
@@ -979,7 +970,7 @@ La integración conecta las pantallas del frontend con los endpoints reales del 
 **INT-1 — Autenticación y pacientes**
 - Se conecta el formulario de login con el endpoint real. El sistema valida credenciales y asigna el rol correspondiente.
 - Se conectan las pantallas de registro, búsqueda y edición de pacientes con los endpoints del backend.
-- Se verifica que la secretaria no pueda acceder al historial clínico ni a la configuración del médico (F10).
+- Se verifica que la secretaria no pueda acceder al historial clínico ni a la configuración del médico (F11).
 
 **INT-2 — Historial clínico y turnos**
 - Se conecta la vista del historial clínico con el endpoint real. Se valida que solo el médico pueda agregar entradas.
