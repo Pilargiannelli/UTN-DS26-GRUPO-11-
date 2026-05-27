@@ -1,0 +1,46 @@
+body {
+  margin: 0;
+  overflow: hidden;
+}
+
+/* Contenedor principal */
+.chao-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* Contenedor relativo para la imagen y el SVG */
+.chao-wrapper {
+  position: relative;
+  width: min(70vw, 70vh);
+  height: min(70vw, 70vh);
+}
+
+/* Imagen de Chao */
+.chao-img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  z-index: 1;
+}
+
+/* SVG de los ojos */
+.chao-ojos {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 2;
+}
+
+/* Para que el root ocupe todo el ancho y no tenga bordes laterales */
+#root {
+  width: 100% !important;
+  border-inline: none;
+}
