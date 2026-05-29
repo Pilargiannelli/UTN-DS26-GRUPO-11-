@@ -1,0 +1,360 @@
+import { ChangeEvent, FormEvent, useEffect, useMemo, useState } from "react";
+import PatientFormField from "./PatientFormField";
+import { EditablePatientFields, Patient, PatientFormValues, PatientSex } from "../types/patient";
+import "./PatientEditForm.css";
+
+interface PatientEditFormProps {
+  patient: Patient;
+  onPatientSaved?: (updatedPatient: Patient) => void;
+}
+
+type PatientFormErrors = Partial<Record<keyof EditablePatientFields, string>> & {
+  form?: string;
+};
+
+const REQUIRED_FIELDS: Array<keyof EditablePatientFields> = [
+  "nombre",
+  "apellido",
+  "nacionalidad",
+  "sexo",
+  "fechaNacimiento",
+  "telefono",
+  "email",
+  "direccion"
+];
+
+const SEX_OPTIONS: Array<{ label: PatientSex; value: PatientSex }> = [
+  { label: "Hombre", value: "Hombre" },
+  { label: "Mujer", value: "Mujer" },
+  { label: "Prefiero no decilo", value: "Prefiero no decilo" }
+];
+
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+const buildInitialFormValues = (patient: Patient): PatientFormValues => ({
+  dni: patient.dni,
+  nombre: patient.nombre,
+  apellido: patient.apellido,
+  nacionalidad: patient.nacionalidad,
+  sexo: patient.sexo || "Prefiero no decilo",
+  fechaNacimiento: patient.fechaNacimiento,
+  telefono: patient.telefono,
+  email: patient.email,
+  direccion: patient.direccion,
+  ciudad: patient.ciudad,
+  obraSocial: patient.obraSocial,
+  numeroAfiliado: patient.numeroAfiliado,
+  plan: patient.plan
+});
+
+const validateForm = (values: PatientFormValues): PatientFormErrors => {
+  const errors: PatientFormErrors = {};
+
+  REQUIRED_FIELDS.forEach((fieldName) => {
+    if (!values[fieldName].trim()) {
+      errors[fieldName] = "Este campo es obligatorio.";
+    }
+  });
+
+  if (values.email.trim() && !EMAIL_REGEX.test(values.email.trim())) {
+    errors.email = "Ingresa un email valido.";
+  }
+
+  if (values.obraSocial.trim()) {
+    if (!values.numeroAfiliado.trim()) {
+      errors.numeroAfiliado = "Ingresa el numero de afiliado.";
+    }
+    if (!values.plan.trim()) {
+      errors.plan = "Ingresa el plan.";
+    }
+  }
+
+  return errors;
+};
+
+const simulateUpdateRequest = async (
+  previousPatient: Patient,
+  payload: Patient
+): Promise<Patient> => {
+  await new Promise((resolve) => setTimeout(resolve, 400));
+
+  // Defensa en profundidad: aunque el frontend bloquea el campo, se valida igual.
+  if (payload.dni !== previousPatient.dni) {
+    throw new Error("No se puede modificar el DNI.");
+  }
+
+  return payload;
+};
+
+export default function PatientEditForm({ patient, onPatientSaved }: PatientEditFormProps) {
+  const [formValues, setFormValues] = useState<PatientFormValues>(() => buildInitialFormValues(patient));
+  const [errors, setErrors] = useState<PatientFormErrors>({});
+  const [isSaving, setIsSaving] = useState(false);
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+  const [pendingPatient, setPendingPatient] = useState<Patient | null>(null);
+  const [saveMessage, setSaveMessage] = useState("");
+
+  useEffect(() => {
+    setFormValues(buildInitialFormValues(patient));
+    setErrors({});
+  }, [patient]);
+
+  const canSubmit = useMemo(() => !isSaving && !isConfirmOpen, [isSaving, isConfirmOpen]);
+  const isCoverageCompleteRequired = formValues.obraSocial.trim().length > 0;
+
+  const handleInputChange = (event: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value } = event.target;
+
+    setFormValues((previous) => ({
+      ...previous,
+      [name]: value
+    }));
+
+    if (errors[name as keyof EditablePatientFields]) {
+      setErrors((previous) => ({
+        ...previous,
+        [name]: undefined
+      }));
+    }
+
+    if (name === "obraSocial" && !value.trim()) {
+      setErrors((previous) => ({
+        ...previous,
+        numeroAfiliado: undefined,
+        plan: undefined
+      }));
+    }
+  };
+
+  const runSave = async (candidatePatient: Patient) => {
+    setErrors({});
+    setIsSaving(true);
+
+    try {
+      const savedPatient = await simulateUpdateRequest(patient, candidatePatient);
+      onPatientSaved?.(savedPatient);
+      setSaveMessage("Cambios guardados correctamente.");
+    } catch (error) {
+      setErrors({
+        form: error instanceof Error ? error.message : "No se pudo guardar el paciente."
+      });
+    } finally {
+      setIsSaving(false);
+      setPendingPatient(null);
+    }
+  };
+
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setSaveMessage("");
+
+    const validationErrors = validateForm(formValues);
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      return;
+    }
+
+    const candidatePatient: Patient = {
+      ...patient,
+      ...formValues
+    };
+
+    setPendingPatient(candidatePatient);
+    setIsConfirmOpen(true);
+  };
+
+  const handleCancelConfirm = () => {
+    setIsConfirmOpen(false);
+    setPendingPatient(null);
+  };
+
+  const handleAcceptConfirm = async () => {
+    if (!pendingPatient) {
+      setIsConfirmOpen(false);
+      return;
+    }
+
+    setIsConfirmOpen(false);
+    await runSave(pendingPatient);
+  };
+
+  return (
+    <>
+      <form className="patient-edit-form" onSubmit={handleSubmit} noValidate>
+        <h2 className="form-title">Editar paciente existente</h2>
+
+        <section className="form-section">
+          <h3 className="section-title">Datos personales</h3>
+          <div className="section-grid">
+            <PatientFormField
+              id="nombre"
+              name="nombre"
+              label="Nombre"
+              value={formValues.nombre}
+              onChange={handleInputChange}
+              required
+              error={errors.nombre}
+            />
+
+            <PatientFormField
+              id="apellido"
+              name="apellido"
+              label="Apellido"
+              value={formValues.apellido}
+              onChange={handleInputChange}
+              required
+              error={errors.apellido}
+            />
+
+            <PatientFormField
+              id="fechaNacimiento"
+              name="fechaNacimiento"
+              label="Fecha de nacimiento"
+              type="date"
+              value={formValues.fechaNacimiento}
+              onChange={handleInputChange}
+              required
+              error={errors.fechaNacimiento}
+            />
+
+            {/* Campo protegido en frontend para mantener consistencia con la HU. */}
+            <PatientFormField
+              id="dni"
+              name="dni"
+              label="DNI"
+              value={formValues.dni}
+              onChange={handleInputChange}
+              disabled
+            />
+
+            <PatientFormField
+              id="nacionalidad"
+              name="nacionalidad"
+              label="Nacionalidad"
+              value={formValues.nacionalidad}
+              onChange={handleInputChange}
+              required
+              error={errors.nacionalidad}
+            />
+
+            <PatientFormField
+              id="sexo"
+              name="sexo"
+              label="Sexo"
+              value={formValues.sexo}
+              onChange={handleInputChange}
+              options={SEX_OPTIONS}
+              required
+              error={errors.sexo}
+            />
+          </div>
+        </section>
+
+        <section className="form-section">
+          <h3 className="section-title">Contacto</h3>
+          <div className="section-grid">
+            <PatientFormField
+              id="telefono"
+              name="telefono"
+              label="Telefono"
+              value={formValues.telefono}
+              onChange={handleInputChange}
+              required
+              error={errors.telefono}
+            />
+
+            <PatientFormField
+              id="email"
+              name="email"
+              label="Email"
+              type="email"
+              value={formValues.email}
+              onChange={handleInputChange}
+              required
+              error={errors.email}
+            />
+
+            <PatientFormField
+              id="direccion"
+              name="direccion"
+              label="Direccion"
+              value={formValues.direccion}
+              onChange={handleInputChange}
+              required
+              error={errors.direccion}
+            />
+
+            <PatientFormField
+              id="ciudad"
+              name="ciudad"
+              label="Ciudad"
+              value={formValues.ciudad}
+              onChange={handleInputChange}
+            />
+          </div>
+        </section>
+
+        <section className="form-section">
+          <h3 className="section-title">Cobertura medica</h3>
+          <div className="section-grid">
+            <PatientFormField
+              id="obraSocial"
+              name="obraSocial"
+              label="Obra social"
+              value={formValues.obraSocial}
+              onChange={handleInputChange}
+            />
+
+            <PatientFormField
+              id="numeroAfiliado"
+              name="numeroAfiliado"
+              label="Numero de afiliado"
+              value={formValues.numeroAfiliado}
+              onChange={handleInputChange}
+              required={isCoverageCompleteRequired}
+              error={errors.numeroAfiliado}
+            />
+
+            <PatientFormField
+              id="plan"
+              name="plan"
+              label="Plan"
+              value={formValues.plan}
+              onChange={handleInputChange}
+              required={isCoverageCompleteRequired}
+              error={errors.plan}
+            />
+          </div>
+        </section>
+
+        {errors.form ? <p className="form-error-message">{errors.form}</p> : null}
+        {saveMessage ? <p className="form-success-message">{saveMessage}</p> : null}
+
+        <div className="form-actions">
+          <button className="save-button" type="submit" disabled={!canSubmit}>
+            {isSaving ? "Guardando..." : "Guardar cambios"}
+          </button>
+        </div>
+      </form>
+
+      {isConfirmOpen ? (
+        <div className="confirm-overlay" role="dialog" aria-modal="true" aria-labelledby="confirm-title">
+          <div className="confirm-box">
+            <h3 id="confirm-title" className="confirm-title">
+              Confirmar cambios
+            </h3>
+            <p className="confirm-text">Estas seguro de guardar los cambios del paciente?</p>
+            <div className="confirm-actions">
+              <button type="button" className="confirm-cancel-button" onClick={handleCancelConfirm}>
+                Cancelar
+              </button>
+              <button type="button" className="confirm-accept-button" onClick={handleAcceptConfirm}>
+                Aceptar
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
+    </>
+  );
+}

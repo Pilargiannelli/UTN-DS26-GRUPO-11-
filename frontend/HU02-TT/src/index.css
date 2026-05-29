@@ -1,0 +1,95 @@
+:root {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  line-height: 1.4;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: linear-gradient(135deg, #0a3225 0%, #0f4b37 55%, #1b674d 100%);
+  color: #111827;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+.app-container {
+  max-width: 940px;
+  margin: 0 auto;
+  padding: 0 1rem 2.5rem;
+  display: grid;
+  gap: 1rem;
+}
+
+.app-header {
+  width: 100%;
+  border-radius: 0;
+  padding: 1rem 1.2rem;
+  background: linear-gradient(135deg, #0a3225 0%, #0f4b37 55%, #1b674d 100%);
+  box-shadow: 0 10px 24px rgba(7, 36, 27, 0.34);
+}
+
+.app-header-title {
+  margin: 0;
+  color: #f2fff8;
+  font-size: 1.35rem;
+  font-weight: 700;
+}
+
+.app-toolbar {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 0.55rem 0 0.8rem 0.4rem;
+}
+
+.back-button {
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 12px;
+  background: rgba(226, 232, 240, 0.2);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: #ffffff;
+  font-size: 0.93rem;
+  font-weight: 600;
+  padding: 0.52rem 1rem;
+  cursor: pointer;
+  box-shadow: 0 8px 20px rgba(3, 18, 12, 0.22);
+  transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+}
+
+.back-button:hover {
+  background: rgba(226, 232, 240, 0.32);
+  border-color: rgba(255, 255, 255, 0.55);
+  transform: translateY(-1px);
+}
+
+.patient-preview {
+  background-color: #ffffff;
+  border: 1px solid #d7dee8;
+  border-radius: 8px;
+  padding: 1rem 1.2rem;
+}
+
+.patient-preview h3 {
+  margin-top: 0;
+  margin-bottom: 0.8rem;
+  font-size: 1.1rem;
+  color: #16593e;
+}
+
+.patient-preview p {
+  margin: 0.36rem 0;
+}
+
+.patient-preview-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 0.45rem 1rem;
+}

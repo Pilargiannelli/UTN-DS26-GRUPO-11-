@@ -1,0 +1,206 @@
+.patient-edit-form {
+  background-color: #ffffff;
+  border: 1px solid #cfd9e6;
+  border-radius: 12px;
+  padding: 1.4rem;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+}
+
+.form-title {
+  margin: 0 0 1.1rem;
+  font-size: 1.3rem;
+  color: #18212f;
+  border-bottom: 1px solid #e5ebf3;
+  padding-bottom: 0.8rem;
+}
+
+.form-section {
+  padding: 1rem;
+  border: 1px solid #dde5ef;
+  border-radius: 10px;
+  background-color: #f9fbff;
+}
+
+.form-section + .form-section {
+  margin-top: 0.9rem;
+}
+
+.section-title {
+  margin: 0 0 0.75rem;
+  font-size: 1rem;
+  color: #1c355b;
+  font-weight: 700;
+}
+
+.section-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 0.9rem 1rem;
+}
+
+.section-grid-two {
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+}
+
+.patient-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.patient-label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.required-indicator {
+  color: #b91c1c;
+}
+
+.patient-input {
+  border: 1px solid #b8c1cc;
+  border-radius: 7px;
+  padding: 0.58rem 0.65rem;
+  font-size: 0.95rem;
+  color: #111827;
+  background-color: #ffffff;
+}
+
+.patient-input:focus {
+  outline: 2px solid #bfdbfe;
+  border-color: #2563eb;
+}
+
+.patient-input:disabled {
+  background-color: #f1f5f9;
+  color: #4b5563;
+  cursor: not-allowed;
+}
+
+.patient-input-error {
+  border-color: #b91c1c;
+}
+
+.field-error {
+  margin: 0;
+  color: #b91c1c;
+  font-size: 0.8rem;
+}
+
+.form-error-message,
+.form-success-message {
+  margin: 0.95rem 0 0;
+  font-size: 0.92rem;
+  font-weight: 600;
+}
+
+.form-error-message {
+  color: #b91c1c;
+}
+
+.form-success-message {
+  color: #166534;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 1rem;
+}
+
+.save-button {
+  border: none;
+  border-radius: 8px;
+  background-color: #0f4fbf;
+  color: #ffffff;
+  font-size: 0.95rem;
+  font-weight: 600;
+  padding: 0.62rem 1.05rem;
+  cursor: pointer;
+}
+
+.save-button:hover:not(:disabled) {
+  background-color: #0b3d94;
+}
+
+.save-button:disabled {
+  opacity: 0.8;
+  cursor: wait;
+}
+
+.confirm-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(15, 23, 42, 0.52);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  z-index: 20;
+}
+
+.confirm-box {
+  width: min(430px, 100%);
+  background-color: #ffffff;
+  border-radius: 12px;
+  border: 1px solid #d7dee8;
+  box-shadow: 0 22px 52px rgba(15, 23, 42, 0.28);
+  padding: 1.2rem 1.25rem;
+}
+
+.confirm-title {
+  margin: 0;
+  color: #111827;
+  font-size: 1.18rem;
+}
+
+.confirm-text {
+  margin: 0.72rem 0 1.1rem;
+  color: #374151;
+  font-size: 0.95rem;
+}
+
+.confirm-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.7rem;
+}
+
+.confirm-cancel-button,
+.confirm-accept-button {
+  border: none;
+  border-radius: 8px;
+  padding: 0.56rem 1rem;
+  font-weight: 700;
+  color: #ffffff;
+  font-size: 0.9rem;
+  cursor: pointer;
+  min-width: 105px;
+}
+
+.confirm-cancel-button {
+  background-color: #c62828;
+}
+
+.confirm-cancel-button:hover {
+  background-color: #a91e1e;
+}
+
+.confirm-accept-button {
+  background-color: #1e8e3e;
+}
+
+.confirm-accept-button:hover {
+  background-color: #187233;
+}
+
+@media (max-width: 640px) {
+  .patient-edit-form {
+    padding: 1rem;
+  }
+
+  .form-section {
+    padding: 0.8rem;
+  }
+}
