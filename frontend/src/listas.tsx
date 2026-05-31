@@ -56,8 +56,8 @@ function ListaTurnos({ titulo, columnas, turnos, mostrarConfirmar = false,}: Tur
 export function TurnosHoy() {
   const columnas = ["Hora", "Paciente", "Médico", "Obra Social", "Estado"];
   const turnos = [
-    { hora: "09:00", paciente: "Juan Pérez", medico: "Dr. Castellani Mauricio", obraSocial: "OS - Swiss Medical - PAMI", estado: "Pendiente" },
-    { hora: "10:30", paciente: "Ana Ruiz", medico: "Dr. Castellani Mauricio", obraSocial: "OS - Swiss Medical - PAMI", estado: "Pendiente" },
+    { hora: "09:00", paciente: "Juan Pérez", medico: "Dr. Castellani Mauricio", obraSocial: "Swiss Medical", estado: "Pendiente" },
+    { hora: "10:30", paciente: "Ana Ruiz", medico: "Dr. Castellani Mauricio", obraSocial: "PAMI", estado: "Pendiente" },
   ];
 
   return <ListaTurnos titulo="Turnos de hoy" columnas={columnas} turnos={turnos} />;
@@ -66,7 +66,7 @@ export function TurnosHoy() {
 export function TurnosPorConfirmar() {
   const columnas = ["Hora", "Paciente", "Médico", "Obra Social", "Confirmar"];
   const turnos = [
-    { hora: "11:00", paciente: "Carlos Díaz", medico: "Dr. Castellani Mauricio", obraSocial: "OS - Swiss Medical - PAMI", confirmar: true },
+    { hora: "11:00", paciente: "Carlos Díaz", medico: "Dr. Castellani Mauricio", obraSocial: "Swiss Medical", confirmar: true },
   ];
 
   return (
