@@ -1,12 +1,10 @@
 import Header from "./Header";
 import Botones from "./botones";
 import NavbarLateral from "./NavbarLateral";
-<<<<<<< HEAD
+import ListaReservados from "./ListaReservados";
 import ContadorTurnos from "./ContadorTurnos";
-=======
 import { TurnosHoy, TurnosPorConfirmar } from "./listas";
 import { Container } from 'react-bootstrap';
->>>>>>> f1bacec8d26f481f83c6741b00f3f6010dc42399
 
 function App() {
   return (
@@ -16,29 +14,20 @@ function App() {
       <div style={{ display: "flex" }}>
         <NavbarLateral
           opciones={[
-<<<<<<< HEAD
             "Turnos",
             "Pacientes",
             "Agenda"
           ]}
-=======
-          "Turnos",
-          "Pacientes",
-          "Agenda"
-        ]}
->>>>>>> f1bacec8d26f481f83c6741b00f3f6010dc42399
         />
 
         <div style={{ flex: 1 }}>
           <Botones />
-<<<<<<< HEAD
+          <ListaReservados />
           <ContadorTurnos />
-=======
           <Container className="mt-5">
             <TurnosHoy />
             <TurnosPorConfirmar />
           </Container>
->>>>>>> f1bacec8d26f481f83c6741b00f3f6010dc42399
         </div>
       </div>
     </>
