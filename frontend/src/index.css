@@ -109,3 +109,42 @@ code {
   padding: 4px 8px;
   background: var(--code-bg);
 }
+.panel-botones {
+  width: 100%;
+  background-color: #ffffff;
+
+  
+  padding-top: 35px;
+}
+
+.contenedor-botones {
+  width: 74%;
+
+  position: relative;
+  top: 35px;
+
+  margin: 0 auto;
+
+  background-color: #b3b3b3;
+
+  display: flex;
+  align-items: center;
+  gap: 28px;
+
+  padding: 18px;
+}
+.boton-accion {
+  width: 170px;
+  height: 65px;
+  background-color: #d9d9d9 !important;
+  color: #222 !important;
+  border: none !important;
+  border-radius: 0 !important;
+  font-size: 15px;
+  font-weight: 400;
+  display: flex !important;
+  align-items: flex-start !important;
+  justify-content: flex-start !important;
+  padding: 16px !important;
+  box-shadow: none !important;
+}
