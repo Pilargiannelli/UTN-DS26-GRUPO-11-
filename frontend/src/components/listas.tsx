@@ -1,6 +1,6 @@
 import { Container, Row, Col, Button } from 'react-bootstrap'
 import 'bootstrap/dist/css/bootstrap.min.css'
-import './App.css'
+import '../assets/styles/App.css'
 
 interface Turno {
   hora: string;
