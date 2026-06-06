@@ -1,9 +1,0 @@
-.row-nowrap {
-  flex-wrap: nowrap !important;
-}
-
-/*Para que el root ocupe toda la pantalla*/
-#root {
-  width: 100% !important;
-  border-inline: none;
-}
