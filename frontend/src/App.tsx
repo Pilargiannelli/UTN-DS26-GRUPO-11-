@@ -7,6 +7,7 @@ import HomeSecretaria from "./pages/HomeSecretaria";
 import RegistrarMédico from "./pages/RegistroDeMédico";
 import RegistroPaciente from "./pages/RegistroPaciente";
 import AutoregistroPaciente from "./pages/AutoregistroPaciente";
+import Login from "./pages/Login";                           
 import NoAutorizado from "./pages/NoAutorizado";
 import BuscarPaciente from "./pages/BuscarPaciente";
 
@@ -18,6 +19,26 @@ function App() {
   const rol = "secretaria"; 
 
   return (
+    <Routes>
+      <Route path="/login" element={<Login />} />               
+
+      <Route
+        path="/"
+        element={<HomeSecretaria />}
+      />
+      <Route
+        path="/registrar-medico"
+        element={<RegistrarMédico />}
+      />
+      <Route
+        path="/registrar-paciente"
+        element={<RegistroPaciente />}
+      />
+      <Route
+        path="/crear-cuenta"
+        element={<AutoregistroPaciente />}
+      />
+    </Routes>
     <>
       <Header rol={rol} />
 
