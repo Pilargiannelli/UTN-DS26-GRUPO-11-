@@ -8,6 +8,7 @@ import RegistrarMédico from "./pages/RegistroDeMédico";
 import RegistroPaciente from "./pages/RegistroPaciente";
 import AutoregistroPaciente from "./pages/AutoregistroPaciente";
 import NoAutorizado from "./pages/NoAutorizado";
+import BuscarPaciente from "./pages/BuscarPaciente";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./assets/styles/App.css";
@@ -29,6 +30,7 @@ function App() {
 
         <Route path="/crear-cuenta" element={<AutoregistroPaciente />} />
 
+        <Route path="/buscar-paciente" element={<BuscarPaciente />} /> 
 
         <Route
           path="/historial"
