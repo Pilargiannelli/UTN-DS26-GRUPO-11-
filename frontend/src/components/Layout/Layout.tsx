@@ -1,22 +1,23 @@
 import type { ReactNode } from "react";
 import { Container } from "react-bootstrap";
-import Header from "./Header";
 import NavbarLateral from "./NavbarLateral";
 
-interface LayoutProps { children: ReactNode };
+interface LayoutProps {
+  children: ReactNode;
+  rol: string;
+}
 
-function Layout({ children }: LayoutProps) {
+function Layout({ children, rol }: LayoutProps) {
+
+  const opciones =
+    rol === "medico"
+      ? ["Turnos", "Agenda", "Historial"]
+      : ["Turnos", "Pacientes", "Agenda"];
+
   return (
     <>
-      <Header />
       <Container fluid className="m-0 p-0 d-flex">
-        <NavbarLateral
-          opciones={[
-            "Turnos",
-            "Pacientes",
-            "Agenda"
-          ]}
-        />
+        <NavbarLateral opciones={opciones} />
         <Container>{children}</Container>
       </Container>
     </>

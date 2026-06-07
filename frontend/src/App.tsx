@@ -1,41 +1,48 @@
 import { Routes, Route } from "react-router-dom";
-import HomeSecretaria from "./pages/HomeSecretaria.tsx";
-import RegistrarMédico from "./pages/RegistroDeMédico.tsx";
+
+import Header from "./components/Layout/Header";
+import ProtectedRoute from "./components/ProtectedRoute";
+
+import HomeSecretaria from "./pages/HomeSecretaria";
+import RegistrarMédico from "./pages/RegistroDeMédico";
 import RegistroPaciente from "./pages/RegistroPaciente";
 import AutoregistroPaciente from "./pages/AutoregistroPaciente";
-import EditarPaciente from "./pages/EditarPaciente";
+import NoAutorizado from "./pages/NoAutorizado";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./assets/styles/App.css";
 
 function App() {
+
+  const rol = "secretaria"; 
+
   return (
-    <Routes>
-      <Route
-        path="/"
-        element={<HomeSecretaria />}
-      />
+    <>
+      <Header rol={rol} />
 
-      <Route
-        path="/registrar-medico"
-        element={<RegistrarMédico />}
-      />
+      <Routes>
+        <Route path="/" element={<HomeSecretaria />} />
 
-      <Route
-        path="/registrar-paciente"
-        element={<RegistroPaciente />}
-      />
+        <Route path="/registrar-medico" element={<RegistrarMédico />} />
 
-      <Route
-        path="/crear-cuenta"
-        element={<AutoregistroPaciente />}
-      />
+        <Route path="/registrar-paciente" element={<RegistroPaciente />} />
 
-      <Route
-        path="/editar-paciente"
-        element={<EditarPaciente />}
-      />
-    </Routes>
+        <Route path="/crear-cuenta" element={<AutoregistroPaciente />} />
+
+
+        <Route
+          path="/historial"
+          element={
+            <ProtectedRoute rol={rol} permitido="medico">
+              <h1>Historial Clínico</h1>
+            </ProtectedRoute>
+          }
+        />
+
+    
+        <Route path="/no-autorizado" element={<NoAutorizado />} />
+      </Routes>
+    </>
   );
 }
 
