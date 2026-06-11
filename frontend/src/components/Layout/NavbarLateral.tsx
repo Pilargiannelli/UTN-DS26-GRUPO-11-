@@ -10,7 +10,7 @@ function NavbarLateral({ opciones }: NavbarLateralProps) {
             style={{
                 width: "220px",
                 minHeight: "calc(100vh - 56px)",
-                backgroundColor: "#6c757d",
+                backgroundColor: " #0f4d3a",
                 padding: "20px",
                 color: "white",
                 display: "flex",
@@ -20,7 +20,6 @@ function NavbarLateral({ opciones }: NavbarLateralProps) {
         
         <h3>IMOS</h3>
 
-        <p>Menú de opciones</p>
 
         <Nav className="flex-column">
             {opciones.map((opcion, index) => (
