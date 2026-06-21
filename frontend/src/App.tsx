@@ -10,39 +10,22 @@ import AutoregistroPaciente from "./pages/AutoregistroPaciente";
 import Login from "./pages/Login";                           
 import NoAutorizado from "./pages/NoAutorizado";
 import BuscarPaciente from "./pages/BuscarPaciente";
+import EditarPaciente from "./pages/EditarPaciente";
+
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./assets/styles/App.css";
 
 function App() {
-
-  const rol = "secretaria"; 
+  const rol = "secretaria";
 
   return (
-    <Routes>
-      <Route path="/login" element={<Login />} />               
-
-      <Route
-        path="/"
-        element={<HomeSecretaria />}
-      />
-      <Route
-        path="/registrar-medico"
-        element={<RegistrarMédico />}
-      />
-      <Route
-        path="/registrar-paciente"
-        element={<RegistroPaciente />}
-      />
-      <Route
-        path="/crear-cuenta"
-        element={<AutoregistroPaciente />}
-      />
-    </Routes>
     <>
       <Header rol={rol} />
 
       <Routes>
+        <Route path="/login" element={<Login />} />
+
         <Route path="/" element={<HomeSecretaria />} />
 
         <Route path="/registrar-medico" element={<RegistrarMédico />} />
@@ -51,18 +34,19 @@ function App() {
 
         <Route path="/crear-cuenta" element={<AutoregistroPaciente />} />
 
-        <Route path="/buscar-paciente" element={<BuscarPaciente />} /> 
+        <Route path="/buscar-paciente" element={<BuscarPaciente />} />
+
+        <Route path="/editar-paciente" element={<EditarPaciente />} />
 
         <Route
           path="/historial"
           element={
             <ProtectedRoute rol={rol} permitido="medico">
-              <h1>Historial Clínico</h1>
+              <h1>Historial Clinico</h1>
             </ProtectedRoute>
           }
         />
 
-    
         <Route path="/no-autorizado" element={<NoAutorizado />} />
       </Routes>
     </>

@@ -7,7 +7,7 @@ interface Props {
 
 function Header({ rol }: Props) {
   return (
-    <Navbar bg="dark" variant="dark" expand="lg">
+    <Navbar id = "colorNav">
       <Container>
         <Navbar.Brand>IMOS</Navbar.Brand>
 
