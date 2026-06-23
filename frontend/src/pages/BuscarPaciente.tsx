@@ -3,7 +3,7 @@ import BuscarPacienteForm from "../components/BuscarPacienteForm";
 
 function BuscarPaciente() {
     return (
-        <Layout>
+        <Layout rol="secretaria">
             <h1 className="mt-5 text-center fw-bold text-dark">
                 Buscar Paciente
             </h1>

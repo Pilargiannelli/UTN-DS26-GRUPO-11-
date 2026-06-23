@@ -27,18 +27,6 @@
   background: rgba(38, 191, 4, 0.356);
 }
 
-/*Para que el root ocupe toda la pantalla*/
-#root {
-  width: 100% !important;
-  border-inline: none;
-}
-
-/* Para eliminar las flechas de los inputs de tipo number en un formulario */
-.form-type-number::-webkit-inner-spin-button, .form-type-number::-webkit-outer-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
-
 .form-type-number {
   appearance: textfield;
 }
@@ -844,4 +832,17 @@ body:has(.login-page) .navbar {
     width: 100%;
     padding: 2.4rem 1.5rem 3rem;
   }
+}
+
+/*Para que el root ocupe toda la pantalla*/
+#root {
+  width: 100% !important;
+  border-inline: none;
+}
+
+/* Eliminar flechas de todos los inputs tipo number */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }

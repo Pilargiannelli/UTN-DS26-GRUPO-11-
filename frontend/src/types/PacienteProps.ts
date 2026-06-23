@@ -1,9 +1,8 @@
-export interface PacienteProps {
-    nombre: string;
-    apellido: string;
-    dni: string;
+import type { UserProps } from "./UserProps";
+
+interface PacienteProps extends UserProps {
     telefono: string;
     obraSocial: string;
-    email: string;
-    password: string;
 }
+
+export type { PacienteProps };
