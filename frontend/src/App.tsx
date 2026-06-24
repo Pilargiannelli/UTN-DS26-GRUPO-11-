@@ -24,9 +24,9 @@ function App() {
       <Header rol={rol} />
 
       <Routes>
-        <Route path="/login" element={<Login />} />
+        <Route path="/" element={<Login />} />
 
-        <Route path="/" element={<HomeSecretaria />} />
+        <Route path="/admin/home" element={<HomeSecretaria />} />
 
         <Route path="/registrar-medico" element={<RegistrarMédico />} />
 

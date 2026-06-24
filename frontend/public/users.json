@@ -1,0 +1,5 @@
+[
+  { "u": "medico1", "p": "med123", "rol": "medico" },
+  { "u": "admin1", "p": "adm123", "rol": "admin" },
+  { "u": "paciente1", "p": "pac123", "rol": "paciente" }
+]
