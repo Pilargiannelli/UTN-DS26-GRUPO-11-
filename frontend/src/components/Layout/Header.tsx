@@ -1,18 +1,19 @@
 import { Container, Navbar, Nav, NavDropdown } from "react-bootstrap";
 import { PersonCircle } from "react-bootstrap-icons";
-
+import { useLogout } from "../../hooks/useLogout.ts";
 interface Props {
   rol: string;
 }
 
 function Header({ rol }: Props) {
+  const { logout } = useLogout();
   return (
     <Navbar id = "colorNav">
       <Container>
         <Navbar.Brand>IMOS</Navbar.Brand>
 
         <Nav className="ms-auto">
-          <Nav.Link href="/">Inicio</Nav.Link>
+          <Nav.Link href={`/${rol}/home`}>Inicio</Nav.Link>
           <Nav.Link href="/turnos">Turnos</Nav.Link>
 
           {/* SOLO MÉDICO */}
@@ -27,7 +28,7 @@ function Header({ rol }: Props) {
           >
             <NavDropdown.Item href="#">Mi cuenta</NavDropdown.Item>
             <NavDropdown.Divider />
-            <NavDropdown.Item href="#">Cerrar sesión</NavDropdown.Item>
+            <NavDropdown.Item onClick={logout}>Cerrar sesión</NavDropdown.Item>
           </NavDropdown>
         </Nav>
       </Container>

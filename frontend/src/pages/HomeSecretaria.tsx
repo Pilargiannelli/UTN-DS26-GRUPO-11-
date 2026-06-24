@@ -9,7 +9,7 @@ import '../assets/styles/App.css';
 
 function HomeSecretaria() {
   return (
-    <Layout rol="secretaria">
+    <Layout rol="admin">
         <Container>
             <Row className="align-items-center justify-content-center">
                 <Col>
