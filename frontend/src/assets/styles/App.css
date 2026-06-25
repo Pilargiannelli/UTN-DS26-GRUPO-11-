@@ -27,18 +27,6 @@
   background: rgba(38, 191, 4, 0.356);
 }
 
-/*Para que el root ocupe toda la pantalla*/
-#root {
-  width: 100% !important;
-  border-inline: none;
-}
-
-/* Para eliminar las flechas de los inputs de tipo number en un formulario */
-.form-type-number::-webkit-inner-spin-button, .form-type-number::-webkit-outer-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
-
 .form-type-number {
   appearance: textfield;
 }
@@ -767,32 +755,29 @@ body:has(.login-page) .navbar {
 }
 
 .login-button {
-  width: 100%;
-  min-height: 58px;
-  margin-top: 8px;
-  padding: 14px 18px;
-  border: none;
-  border-radius: 10px;
-  background: #0f4d3a;
-  color: #ffffff;
-  font-size: 16px;
-  font-weight: 800;
-  letter-spacing: 1px;
-  cursor: pointer;
-  box-shadow: 0 14px 26px rgba(15, 77, 58, 0.22);
+  width: 100% !important;
+  min-height: 58px !important;
+  margin-top: 8px !important;
+  padding: 14px 18px !important;
+  border: none !important;
+  border-radius: 10px !important;
+  background: #0f4d3a !important;
+  color: #ffffff !important;
+  font-size: 16px !important;
+  font-weight: 800 !important;
+  letter-spacing: 1px !important;
+  cursor: pointer !important;
+  box-shadow: 0 14px 26px rgba(15, 77, 58, 0.22) !important;
 }
 
-.login-button:hover {
-  background: #2e7d5b;
+.login-button:hover, .login-button:active
+.login-button-success, .login-button-success:hover {
+  background: #2e7d5b !important;
 }
 
 .login-button:disabled {
   cursor: default;
   opacity: 0.85;
-}
-
-.login-button-success {
-  background: #2e7d5b;
 }
 
 .login-error-zone {
@@ -844,4 +829,17 @@ body:has(.login-page) .navbar {
     width: 100%;
     padding: 2.4rem 1.5rem 3rem;
   }
+}
+
+/*Para que el root ocupe toda la pantalla*/
+#root {
+  width: 100% !important;
+  border-inline: none;
+}
+
+/* Eliminar flechas de todos los inputs tipo number */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }

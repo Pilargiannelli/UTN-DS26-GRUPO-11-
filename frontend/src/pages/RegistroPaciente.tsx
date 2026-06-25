@@ -3,7 +3,7 @@ import { RegistroPacienteForm } from "../components/RegistroPacienteForm";
 
 function RegistroPaciente() {
 return (
-    <Layout>
+    <Layout rol="admin">
     <h1 className="mt-5">
         Registrar Paciente
     </h1>

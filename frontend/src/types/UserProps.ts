@@ -3,6 +3,7 @@ interface UserProps {
   nombre: string;
   apellido: string;
   email: string;
+  password: string;
 }
 
 export type { UserProps };
