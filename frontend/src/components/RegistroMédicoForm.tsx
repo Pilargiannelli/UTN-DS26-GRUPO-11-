@@ -6,9 +6,11 @@ import { ToastMensaje } from "./NotifyToast.tsx";
 import { SelectEditable } from "./SelectEditable.tsx";
 import { medicoSchema, type MedicoValidado } from "../schemas/medicoSchema.ts";
 import { useFetch } from "../hooks/useFetch.ts";
+import { useMayus } from "../hooks/useMayus.ts";
 
 export function RegistroMedicoForm() {
     const [showToast, setShowToast] = useState(false);
+    const handleMayus = useMayus();
     const { data: especialidades } = useFetch<string[]>("../../public/especialidades.json");
     const schema = especialidades ? medicoSchema(especialidades) : medicoSchema([""]);
     const {register, handleSubmit, formState: { errors }} = useForm<MedicoValidado>({
@@ -25,13 +27,13 @@ export function RegistroMedicoForm() {
             {/* Nombre */}
             <Form.Group className="mb-3">
                 <Form.Label className="d-flex me-auto">Nombre</Form.Label>
-                <Form.Control type="text" {...register("nombre")} isInvalid={!!errors.nombre} />
+                <Form.Control {...register("nombre")} isInvalid={!!errors.nombre} />
                 <Form.Control.Feedback type="invalid"> {errors.nombre?.message} </Form.Control.Feedback>
             </Form.Group>
             {/* Apellido */}
             <Form.Group className="mb-3">
                 <Form.Label className="d-flex me-auto">Apellido</Form.Label>
-                <Form.Control type="text" {...register("apellido")} isInvalid={!!errors.apellido} />
+                <Form.Control {...register("apellido")} isInvalid={!!errors.apellido} />
                 <Form.Control.Feedback type="invalid"> {errors.apellido?.message} </Form.Control.Feedback>
             </Form.Group>
             {/* DNI */}
@@ -51,7 +53,7 @@ export function RegistroMedicoForm() {
             {/* Matrícula */}
             <Form.Group className="mb-3">
                 <Form.Label className="d-flex me-auto">Matrícula</Form.Label>
-                <Form.Control type="number" {...register("matricula")} isInvalid={!!errors.matricula} />
+                <Form.Control {...register("matricula")} onChange={ handleMayus } isInvalid={!!errors.matricula} />
                 <Form.Control.Feedback type="invalid"> {errors.matricula?.message} </Form.Control.Feedback>
             </Form.Group>
             <div className="d-flex justify-content-end">

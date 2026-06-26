@@ -1,5 +1,31 @@
 [
-  { "u": "medico1", "p": "med123", "rol": "medico" },
-  { "u": "admin1", "p": "adm123", "rol": "admin" },
-  { "u": "paciente1", "p": "pac123", "rol": "paciente" }
+  {
+    "u": "medico1",
+    "p": "med123",
+    "rol": "medico",
+    "foto": "", 
+    "docs": {
+      "especialidad": "Traumatología",
+      "matricula": "MP12345"
+    }
+  },
+  {
+    "u": "admin1",
+    "p": "adm123",
+    "rol": "admin",
+    "foto": "",
+    "docs": {
+    }
+  },
+  {
+    "u": "paciente1",
+    "p": "pac123",
+    "rol": "paciente",
+    "foto": "",
+    "docs": {
+      "dni": "40123456",
+      "obraSocial": "OSDE",
+      "historial": []
+    }
+  }
 ]
