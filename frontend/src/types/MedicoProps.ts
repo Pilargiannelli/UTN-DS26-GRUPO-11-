@@ -1,4 +1,4 @@
-import type { UserProps } from "./UserProps";
+import type { UserProps } from "./UserProps.ts";
 
 interface MedicoProps extends UserProps {
   especialidad: string;

@@ -5,6 +5,8 @@
     "rol": "medico",
     "foto": "", 
     "docs": {
+      "nombre": "Lionel",
+      "apellido": "Messi",
       "dni": "40119225",
       "email": "med@gmail.com",
       "especialidad": "Traumatología",
@@ -17,6 +19,10 @@
     "rol": "admin",
     "foto": "",
     "docs": {
+      "nombre":"Enzo",
+      "apellido":"Fernández",
+      "dni":"45118007",
+      "email": "adm@gmail.com"
     }
   },
   {
@@ -25,9 +31,14 @@
     "rol": "paciente",
     "foto": "",
     "docs": {
+      "nombre": "Julián",
+      "apellido": "Álvarez",
       "dni": "40123456",
+      "email": "pac@gmail.com",
       "obraSocial": "OSDE",
       "telefono": "+5492215555555",
+      "sexo": "Masculino",
+      "fechaNacimiento": "1990-05-12",
       "historial": []
     }
   }
