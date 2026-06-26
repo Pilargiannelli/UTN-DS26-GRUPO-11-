@@ -5,6 +5,8 @@
     "rol": "medico",
     "foto": "", 
     "docs": {
+      "dni": "40119225",
+      "email": "med@gmail.com",
       "especialidad": "Traumatología",
       "matricula": "MP12345"
     }
@@ -25,6 +27,7 @@
     "docs": {
       "dni": "40123456",
       "obraSocial": "OSDE",
+      "telefono": "+5492215555555",
       "historial": []
     }
   }
