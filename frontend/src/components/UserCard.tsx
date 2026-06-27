@@ -4,7 +4,6 @@ import { DatosMedico } from "./DatosMedico.tsx";
 import type { Usuario } from "../types/Usuario.ts";
 import { useFotoPerfil } from "../hooks/useFotoPerfil";
 import 'bootstrap/dist/css/bootstrap.min.css';
-import "../assets/styles/App.css"
 import "../assets/styles/UserCard.css";
 
 export function UserCard({ usuario }: { usuario: Usuario }) {

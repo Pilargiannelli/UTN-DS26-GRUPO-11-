@@ -5,8 +5,10 @@ import type { Usuario } from "../types/Usuario.ts";
 import { useFetch } from "../hooks/useFetch.ts";
 import { BotonVolver } from "../components/BotónVolver.tsx";
 import { usePerfilRolView } from "../hooks/usePerfilRolView.ts";
+import { HistorialMedicoCard } from "../components/HistorialMedicoCard.tsx";
+import { Container, Row, Col } from 'react-bootstrap'
 import 'bootstrap/dist/css/bootstrap.min.css';
-import '../assets/styles/App.css'
+import "../assets/styles/Perfil.css"
 
 export function VerUsuario() {
   const { rol } = useAuth();
@@ -14,7 +16,7 @@ export function VerUsuario() {
   const paciente = usuarios?.find((u) => u.rol === "paciente");
   const vistaPorRol = usePerfilRolView(paciente, {
     admin: {
-      paciente: <p>Soy admin viendo paciente</p>,
+      paciente: <HistorialMedicoCard usuario={paciente}/>,
       medico: <p>Soy admin viendo médico</p>,
     },
     medico: {
@@ -28,9 +30,19 @@ export function VerUsuario() {
   if (error) return <p>Error</p>;
   return (
     <Layout rol={rol}>
-        <BotonVolver />
-        {paciente && <UserCard usuario={paciente} />}
-        {vistaPorRol}
+        <Container className="cont-perfil h-75">
+            <Row className="d-flex align-content-start">
+                <BotonVolver />
+            </Row>
+            <Row className="row-perfil">
+                <Col md="6" className="col-perfil">
+                    {paciente && <UserCard usuario={paciente} />}
+                </Col>
+                <Col md="6" className="col-perfil">
+                    {vistaPorRol}
+                </Col>
+            </Row>
+        </Container>
     </Layout>
   );
 }
