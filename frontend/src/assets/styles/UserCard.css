@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Montserrat:wght@400;600;800&family=Poppins:wght@400;600;800&display=swap");
 
 :root {
     --user-card-font: "Inter", sans-serif;
@@ -70,20 +70,20 @@
 
 .dato {
     display: flex;
-    align-items: flex-start;
+    align-items: first baseline;
     gap: 0.5rem;
 }
 
 .dato h5 {
     font-family: var(--user-card-nombre-font) !important;
     color: var(--user-card-nombre-color);
-    font-weight: 700;
-    font-size: 1.1rem;
+    font-weight: 650;
+    font-size: 0.9rem;
 }
 
 .dato p {
     font-family: var(--user-card-font);
-    margin-top: 0;
-    margin-bottom: 0;
     font-size: 0.9rem !important;
+    font-weight: 600;
+    margin: 0 0 0 0;
 }

@@ -1,0 +1,48 @@
+:root {
+    --btn-font: "Monserrat", "Poppins", sans-serif;
+}
+
+.contenedor-volver {
+    width: 100%;
+    margin: 1rem 0 0 0;
+    text-align: left;
+}
+
+.btn-volver {
+    font-family: var(--btn-font);
+    line-height: 1.2;
+    letter-spacing: 1.5px;
+    font-weight: 750 !important;
+    text-transform: uppercase;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    border: 1px solid rgba(20, 184, 122, 0.22);
+    border-radius: 9px;
+    background: linear-gradient(180deg, #075f45 0%, #064733 100%);
+    color: #ffffff;
+    padding: 10px 10px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: none;
+    transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btn-volver:hover {
+    background: linear-gradient(180deg, #087253 0%, #07563f 100%);
+    transform: translateY(-1px);
+    border: 1px solid rgba(20, 184, 122, 0.22);
+}
+
+.btn-volver:active {
+    transform: translateY(0);
+    border: 1px solid rgba(20, 184, 122, 0.22);
+}
+
+.btn-volver-icono {
+    font-size: 26px;
+    line-height: 14px;
+    font-weight: 400;
+}
