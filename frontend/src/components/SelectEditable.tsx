@@ -10,7 +10,7 @@ export function SelectEditable<T extends FieldValues>({label, name, jsonPath, re
   return (
     <Form.Group className="mb-3" controlId={String(name)}>
       <Form.Label className="d-flex me-auto">{label}</Form.Label>
-      <Form.Select {...register(name)} defaultValue="">
+      <Form.Select {...register(name)} defaultValue="" isInvalid={!!error}>
         <option value="">Seleccione una opción</option>
         {options?.map((opt) => (
           <option key={opt} value={opt}>

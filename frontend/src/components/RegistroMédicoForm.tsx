@@ -49,7 +49,7 @@ export function RegistroMedicoForm() {
                 <Form.Control.Feedback type="invalid"> {errors.email?.message} </Form.Control.Feedback>
             </Form.Group>
             {/* Especialidad */}
-            <SelectEditable label="Especialidad" name="especialidad" jsonPath="../../public/especialidades.json" register={register} />
+            <SelectEditable label="Especialidad" name="especialidad" jsonPath="../../public/especialidades.json" register={register} error={errors.especialidad?.message} />
             {/* Matrícula */}
             <Form.Group className="mb-3">
                 <Form.Label className="d-flex me-auto">Matrícula</Form.Label>
