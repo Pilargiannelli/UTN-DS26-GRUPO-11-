@@ -17,7 +17,7 @@ function App() {
     <Routes>
       <Route path="/" element={<Login />} />
       {/* Rutas generales */}
-      <Route path="/admin/home" element={<HomeSecretaria />} />
+      <Route path="/home" element={<HomeSecretaria />} />
       <Route path="/registrar-medico" element={<RegistrarMedico />} />
       <Route path="/registrar-paciente" element={<RegistroPaciente />} />
       <Route path="/crear-cuenta" element={<AutoregistroPaciente />} />

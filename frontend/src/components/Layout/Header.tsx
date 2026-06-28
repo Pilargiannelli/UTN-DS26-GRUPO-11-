@@ -1,11 +1,18 @@
 import { Container, Navbar, Nav, NavDropdown } from "react-bootstrap";
 import { PersonCircle } from "react-bootstrap-icons";
 import { useLogout } from "../../hooks/useLogout.ts";
+import { useNavigate } from "react-router-dom";
+import { useUsuarioSeleccionado } from "../../hooks/useUsuarioSeleccionado.ts";
+import { useAuth } from "../../hooks/useAuth.ts";
+
 interface Props {
   rol: string;
 }
 
 function Header({ rol }: Props) {
+  const { usuario, setUsuario } = useAuth();
+  const { seleccionarUsuario } = useUsuarioSeleccionado();
+  const navigate = useNavigate();
   const { logout } = useLogout();
   return (
     <Navbar id = "colorNav">
@@ -26,9 +33,14 @@ function Header({ rol }: Props) {
             id="perfil-dropdown"
             align="end"
           >
-            <NavDropdown.Item href="#">Mi cuenta</NavDropdown.Item>
+            <NavDropdown.Item onClick={() => {
+                if (usuario) {
+                  seleccionarUsuario(usuario);
+                  navigate("/ver-perfil");
+                }
+              }}>Mi cuenta</NavDropdown.Item>
             <NavDropdown.Divider />
-            <NavDropdown.Item onClick={logout}>Cerrar sesión</NavDropdown.Item>
+            <NavDropdown.Item onClick={() => { logout(); setUsuario(null); }} >Cerrar sesión</NavDropdown.Item>
           </NavDropdown>
         </Nav>
       </Container>

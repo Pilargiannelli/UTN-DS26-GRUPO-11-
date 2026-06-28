@@ -1,8 +1,6 @@
 import { useAuth } from "../hooks/useAuth.ts";
 import Layout from "../components/Layout/Layout.tsx";
 import { UserCard } from "../components/UserCard.tsx";
-import type { Usuario } from "../types/Usuario.ts";
-import { useFetch } from "../hooks/useFetch.ts";
 import { BotonVolver } from "../components/BotonVolver.tsx";
 import { usePerfilRolView } from "../hooks/usePerfilRolView.ts";
 import { useUsuarioSeleccionado } from "../hooks/useUsuarioSeleccionado.ts";
@@ -14,7 +12,6 @@ import "../assets/styles/Perfil.css"
 
 export function VerUsuario() {
     const { rol } = useAuth();
-    const { data: loading, error } = useFetch<Usuario[]>("/users.json");
     const { usuarioSeleccionado } = useUsuarioSeleccionado();
     const vistaPorRol = usePerfilRolView(usuarioSeleccionado, {
         admin: {
@@ -28,8 +25,6 @@ export function VerUsuario() {
         },
     });
     if (!usuarioSeleccionado) return <p>No hay usuario seleccionado.</p>;
-    if (loading) return <p>Cargando...</p>;
-    if (error) return <p>Error</p>;
     return (
         <Layout rol={rol}>
             <Container className="cont-perfil h-75">
