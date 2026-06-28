@@ -3,11 +3,12 @@ import Layout from "../components/Layout/Layout.tsx";
 import { UserCard } from "../components/UserCard.tsx";
 import type { Usuario } from "../types/Usuario.ts";
 import { useFetch } from "../hooks/useFetch.ts";
-import { BotonVolver } from "../components/BotónVolver.tsx";
+import { BotonVolver } from "../components/BotonVolver.tsx";
 import { usePerfilRolView } from "../hooks/usePerfilRolView.ts";
 import { HistorialMedicoCard } from "../components/HistorialMedicoCard.tsx";
 import { Container, Row, Col } from 'react-bootstrap'
 import 'bootstrap/dist/css/bootstrap.min.css';
+import "../assets/styles/Boton.css"
 import "../assets/styles/Perfil.css"
 
 export function VerUsuario() {
@@ -20,10 +21,11 @@ export function VerUsuario() {
       medico: <p>Soy admin viendo médico</p>,
     },
     medico: {
-      paciente: <p>Soy médico viendo paciente</p>,
+      paciente: <HistorialMedicoCard usuario={paciente}/>,
+      medico: <p>Soy médico viendo médico</p>,
     },
     paciente: {
-      paciente: <p>Soy paciente viendo paciente</p>,
+      paciente: <HistorialMedicoCard usuario={paciente}/>,
     },
   });
   if (loading) return <p>Cargando...</p>;

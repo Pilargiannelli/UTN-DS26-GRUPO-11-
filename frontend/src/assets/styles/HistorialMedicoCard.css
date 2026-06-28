@@ -11,13 +11,13 @@
     position: relative;
     font-family: var(--hist-card-font);
     width: var(--hist-card-width);
-    height: 80%;
+    height: 90%;
     background: #ffffff;
     border: 1px solid #d6e4de;
     border-radius: 14px;
     overflow: hidden;
     padding: 1rem 1rem 0 1rem;
-    margin-top: 1.5rem;
+    margin-top: 1rem;
 }
 
 .historial-card::before {
@@ -33,6 +33,7 @@
     font-family: var(--hist-card-title-font);
     color: var(--hist-card-title-color);
     font-weight: 650;
+    font-size: larger;
     line-height: 0.8;
     text-transform: uppercase;
     letter-spacing: 1.5px;
