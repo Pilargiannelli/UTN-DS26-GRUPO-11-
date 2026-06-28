@@ -20,7 +20,7 @@ function Header({ rol }: Props) {
     <Navbar id = "colorNav">
       <Container className="header-container">
         <Navbar.Brand className="nav-logo m-0">
-          <img src="/IMOS_LOGO.png" width="200" height="200" alt="IMOS"/>
+          <img src="/IMOS_LOGO.png" width="180" height="180" alt="IMOS"/>
         </Navbar.Brand>
         <Nav className="ms-auto">
           <Nav.Link className="link" href={`/home`}>Inicio</Nav.Link>
