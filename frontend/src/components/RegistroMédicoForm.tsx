@@ -45,7 +45,7 @@ export function RegistroMedicoForm() {
             {/* Correo */}
             <Form.Group className="mb-3">
                 <Form.Label className="d-flex me-auto">Email</Form.Label>
-                <Form.Control type="email" {...register("email")} isInvalid={!!errors.email} />
+                <Form.Control type="text" {...register("email")} isInvalid={!!errors.email} />
                 <Form.Control.Feedback type="invalid"> {errors.email?.message} </Form.Control.Feedback>
             </Form.Group>
             {/* Especialidad */}

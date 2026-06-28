@@ -35,7 +35,7 @@
 }
 
 .header-container .nav-logo img {
-    margin: 0 0 0 -5rem !important;
+    margin: 0 0 0 -1.5rem !important;
     max-height: fit-content;
 }
 
@@ -44,7 +44,7 @@
     flex-direction: row-reverse;
     align-items: center;
     gap: 0.5rem;
-    margin: 0 -4rem 0 0 !important;
+    margin: 0 0 0 0 !important;
 }
 
 #perfil-dropdown .dropdown-toggle {
@@ -68,7 +68,7 @@ a#perfil-dropdown.dropdown-toggle::after {
 }
 
 .dropdown-menu-end {
-  right: -5rem !important;
+  right: -1rem !important;
 }
 
 .dropdown-item {
