@@ -1,9 +1,10 @@
 import { Container, Navbar, Nav, NavDropdown } from "react-bootstrap";
-import { PersonCircle } from "react-bootstrap-icons";
 import { useLogout } from "../../hooks/useLogout.ts";
 import { useNavigate } from "react-router-dom";
 import { useUsuarioSeleccionado } from "../../hooks/useUsuarioSeleccionado.ts";
 import { useAuth } from "../../hooks/useAuth.ts";
+import { useFotoPerfil } from "../../hooks/useFotoPerfil.ts";
+import '../../assets/styles/Header.css'
 
 interface Props {
   rol: string;
@@ -12,6 +13,7 @@ interface Props {
 function Header({ rol }: Props) {
   const { usuario, setUsuario } = useAuth();
   const { seleccionarUsuario } = useUsuarioSeleccionado();
+  const fotoPerfil = useFotoPerfil(usuario?.foto);
   const navigate = useNavigate();
   const { logout } = useLogout();
   return (
@@ -20,7 +22,7 @@ function Header({ rol }: Props) {
         <Navbar.Brand>IMOS</Navbar.Brand>
 
         <Nav className="ms-auto">
-          <Nav.Link href={`/${rol}/home`}>Inicio</Nav.Link>
+          <Nav.Link href={`/home`}>Inicio</Nav.Link>
           <Nav.Link href="/turnos">Turnos</Nav.Link>
 
           {/* SOLO MÉDICO */}
@@ -29,7 +31,7 @@ function Header({ rol }: Props) {
           )}
 
           <NavDropdown
-            title={<PersonCircle size={24} />}
+            title= {<div {...fotoPerfil} />}
             id="perfil-dropdown"
             align="end"
           >

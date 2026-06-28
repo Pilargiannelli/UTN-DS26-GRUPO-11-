@@ -1,0 +1,37 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Montserrat:wght@400;600;800&family=Poppins:wght@400;600;800&display=swap");
+
+:root {
+    --header-font: "Inter", sans-serif;
+    --header-title-font: "Monserrat", "Poppins", sans-serif;
+    --header-title-color: #0f4d3a;
+    --header-user-foto-size: 50px;
+    --header-user-foto-margin-bottom: 1rem;
+}
+
+#ColorNav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 100%;
+}
+
+#perfil-dropdown {
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+#perfil-dropdown .dropdown-toggle {
+  display: flex;
+  align-items: center;
+}
+
+#perfil-dropdown .user-card__foto {
+    width: var(--header-user-foto-size);
+    height: var(--header-user-foto-size);
+    border-radius: 50%;
+    margin: 0 auto 1rem;
+    background-size: cover;
+    background-position: center;
+}
