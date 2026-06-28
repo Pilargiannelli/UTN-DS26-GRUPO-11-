@@ -18,31 +18,28 @@ function Header({ rol }: Props) {
   const { logout } = useLogout();
   return (
     <Navbar id = "colorNav">
-      <Container>
-        <Navbar.Brand>IMOS</Navbar.Brand>
-
+      <Container className="header-container">
+        <Navbar.Brand className="nav-logo m-0">
+          <img src="/IMOS_LOGO.png" width="200" height="200" alt="IMOS"/>
+        </Navbar.Brand>
         <Nav className="ms-auto">
-          <Nav.Link href={`/home`}>Inicio</Nav.Link>
-          <Nav.Link href="/turnos">Turnos</Nav.Link>
+          <Nav.Link className="link" href={`/home`}>Inicio</Nav.Link>
+          <Nav.Link className="link" href="/turnos">Turnos</Nav.Link>
 
           {/* SOLO MÉDICO */}
           {rol === "medico" && (
             <Nav.Link href="/historial">Historial Clínico</Nav.Link>
           )}
 
-          <NavDropdown
-            title= {<div {...fotoPerfil} />}
-            id="perfil-dropdown"
-            align="end"
-          >
-            <NavDropdown.Item onClick={() => {
+          <NavDropdown title= {<div {...fotoPerfil} />} id="perfil-dropdown" align="end">
+            <NavDropdown.Item className="item" onClick={() => {
                 if (usuario) {
                   seleccionarUsuario(usuario);
                   navigate("/ver-perfil");
                 }
               }}>Mi cuenta</NavDropdown.Item>
             <NavDropdown.Divider />
-            <NavDropdown.Item onClick={() => { logout(); setUsuario(null); }} >Cerrar sesión</NavDropdown.Item>
+            <NavDropdown.Item className="item" onClick={() => { logout(); setUsuario(null); }} >Cerrar sesión</NavDropdown.Item>
           </NavDropdown>
         </Nav>
       </Container>
