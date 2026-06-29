@@ -12,6 +12,8 @@
 }
 
 .tarjeta {
+    position: relative;
+    overflow: hidden;
     background-color: #fff;
     border-radius: 12px;
     padding: 24px 20px;
@@ -19,6 +21,14 @@
     box-shadow: 0 2px 8px rgba(0,0,0,0.08);
     transition: transform 0.15s, box-shadow 0.15s;
     cursor: default;
+}
+
+.tarjeta::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto;
+    height: 6px;
+    background: linear-gradient(90deg, #0f4d3a, #2e7d5b);
 }
 
 .tarjeta-icono {

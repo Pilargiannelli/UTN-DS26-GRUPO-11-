@@ -22,7 +22,6 @@ export default function ContadorTurnos({
       <div className="tarjeta-container">
         {tarjetas.map((t) => (
           <div key={t.id} className="tarjeta"
-            style={{borderTop: `4px solid ${t.color}`,}} //Falta ver cómo hacer el color variable desde css
             onMouseEnter={(e) => {
               e.currentTarget.style.transform = "translateY(-3px)";
               e.currentTarget.style.boxShadow = "0 6px 16px rgba(0,0,0,0.12)";
