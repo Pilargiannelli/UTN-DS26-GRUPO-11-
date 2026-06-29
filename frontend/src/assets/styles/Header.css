@@ -36,7 +36,7 @@
 
 .header-container .nav-logo img {
     margin: 0 0 0 -1.5rem !important;
-    max-height: fit-content;
+    max-height: fit-content !important;
 }
 
 #perfil-dropdown {
