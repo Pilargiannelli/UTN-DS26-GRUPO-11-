@@ -14,6 +14,10 @@
     padding: 0 !important;
 }
 
+#ColorNav {
+  background-color: linear-gradient(90deg, #0f4d3a, #2e7d5b);
+}
+
 .header-container {
     display: flex;
     align-items: center;
@@ -35,8 +39,9 @@
 }
 
 .header-container .nav-logo img {
-    margin: 0 0 0 -1.5rem !important;
+    margin: 0 0 0 0 !important;
     max-height: fit-content !important;
+    align-self: start !important;
 }
 
 #perfil-dropdown {
@@ -86,7 +91,6 @@ a#perfil-dropdown.dropdown-toggle::after {
 .dropdown-item:active {
   background-color: #145c4a82 !important;
 }
-
 
 #perfil-dropdown .user-card__foto {
     width: var(--header-user-foto-size);
