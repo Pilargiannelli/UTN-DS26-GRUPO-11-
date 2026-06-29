@@ -1,21 +1,12 @@
 import Table from 'react-bootstrap/Table';
 import Badge from 'react-bootstrap/Badge';
 import Button from 'react-bootstrap/Button';
-
-// Definimos la estructura que va a tener cada turno
-interface TurnoReservado {
-    id: number;
-    paciente: string;
-    especialidad: string;
-    medico: string;
-    fecha: string;
-    hora: string;
-    estado: 'Confirmado' | 'Pendiente' | 'Cancelado';
-}
+import type { TurnoReservadoProps } from '../types/TurnoReservadoProps';
+import '../assets/styles/Tabla.css'
 
 function ListaReservados() {
     // Datos de prueba (Mock data) para que la tabla no aparezca vacía
-    const turnos: TurnoReservado[] = [
+    const turnos: TurnoReservadoProps[] = [
         { id: 1, paciente: "Juan Pérez", especialidad: "Cardiología", medico: "Dr. Rossi", fecha: "02/06/2026", hora: "09:00", estado: "Confirmado" },
         { id: 2, paciente: "María Lopez", especialidad: "Pediatría", medico: "Dra. Gomez", fecha: "02/06/2026", hora: "10:30", estado: "Pendiente" },
         { id: 3, paciente: "Carlos Estévez", especialidad: "Traumatología", medico: "Dr. Fernandez", fecha: "03/06/2026", hora: "11:15", estado: "Cancelado" },
@@ -40,7 +31,7 @@ function ListaReservados() {
             <Table responsive striped bordered hover className="shadow-sm bg-white rounded">
                 <thead className="table-dark">
                     <tr>
-                        <th># ID</th>
+                        <th>ID</th>
                         <th>Paciente</th>
                         <th>Especialidad</th>
                         <th>Médico</th>
