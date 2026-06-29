@@ -2,12 +2,7 @@
 // Muestra 3 tarjetas con contadores de turnos del día.
 // Los valores están en 0 por ahora, listos para conectar a una API o prop en el futuro.
 import "../assets/styles/Contador.css"
-
-interface ContadorTurnosProps {
-  turnosHoy?: number;
-  turnosAtendidos?: number;
-  turnosMañana?: number;
-}
+import type { ContadorTurnosProps } from "../types/ContadorTurnosProps";
 
 export default function ContadorTurnos({
   turnosHoy = 0,

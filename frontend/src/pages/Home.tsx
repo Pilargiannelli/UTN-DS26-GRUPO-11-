@@ -1,7 +1,6 @@
 import Layout from "../components/Layout/Layout.tsx";
-import ListaReservados from "../components/ListaReservados";
-import ContadorTurnos from "../components/ContadorTurnos";
-import { TurnosHoy, TurnosPorConfirmar } from "../components/listas";
+import ListaReservados from "../components/ListaReservados.tsx";
+import ContadorTurnos from "../components/ContadorTurnos.tsx";
 import { Container, Row, Col } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../assets/styles/App.css';
@@ -18,8 +17,6 @@ function Home() {
             <Row>
                 <Col>
                     <ListaReservados />
-                    <TurnosHoy />
-                    <TurnosPorConfirmar />
                 </Col>
             </Row>
         </Container>
