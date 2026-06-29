@@ -1,7 +1,7 @@
 import { Routes, Route } from "react-router-dom";
 import { useAuth } from "./hooks/useAuth";
 import Login from "./pages/Login";
-import HomeSecretaria from "./pages/HomeSecretaria.tsx";
+import Home from "./pages/Home.tsx";
 import RegistrarMedico from "./pages/RegistroDeMédico.tsx";
 import RegistroPaciente from "./pages/RegistroPaciente.tsx";
 import AutoregistroPaciente from "./pages/AutoregistroPaciente";
@@ -17,7 +17,7 @@ function App() {
     <Routes>
       <Route path="/" element={<Login />} />
       {/* Rutas generales */}
-      <Route path="/home" element={<HomeSecretaria />} />
+      <Route path="/home" element={<Home />} />
       <Route path="/registrar-medico" element={<RegistrarMedico />} />
       <Route path="/registrar-paciente" element={<RegistroPaciente />} />
       <Route path="/crear-cuenta" element={<AutoregistroPaciente />} />
