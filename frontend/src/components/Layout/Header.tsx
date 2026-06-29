@@ -18,7 +18,7 @@ function Header({ rol }: Props) {
   const { logout } = useLogout();
   return (
     <Navbar id = "colorNav">
-      <Container className="header-container">
+      <Container className="header-container container-fluid">
         <Navbar.Brand className="nav-logo m-0">
           <img src="/IMOS_LOGO.png" width="180" height="180" alt="IMOS"/>
         </Navbar.Brand>
