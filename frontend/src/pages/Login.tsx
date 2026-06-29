@@ -8,7 +8,7 @@ import { Form, Button, Spinner } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth.ts";
 import type { Usuario } from "../types/Usuario.ts";
-import "../assets/styles/App.css";
+import "../assets/styles/Login.css";
 
 export default function Login() {
   const { data: users, loading: loadingUsers, error } = useFetch<Usuario[]>("/users.json");
