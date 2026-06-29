@@ -56,17 +56,26 @@ button.btn-close:hover {
   transform: scale(1.1);
 }
 
+button.btn-close:active, button.btn-close:focus {
+  --bs-btn-close-focus-shadow: 0 0 0 0.2rem rgba(13, 253, 61, 0.041);
+}
+
 .offcanvas-body .nav-link {
   color: #262626 !important;
   font-size: 1.1rem;
   font-family: 'Montserrat', sans-serif;
   font-weight: 600;
-  margin: 0.5rem 0;
   transition: color 0.3s ease, transform 0.2s ease;
+  padding: 1rem 0 1rem 0.5rem;
+  border-top: 1px solid rgb(239, 239, 239);
+}
+
+.offcanvas-body .nav-link:last-child {
+  border-bottom: 1px solid rgb(239, 239, 239);
 }
 
 .offcanvas-body .nav-link:hover {
-  color: #0f4d3a !important;
+  color: #010e0a !important;
 }
 
 .offcanvas-body .nav-link:hover {
