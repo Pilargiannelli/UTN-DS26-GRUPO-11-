@@ -1,9 +1,10 @@
 interface UserProps {
-  dni: number | string;
   nombre: string;
   apellido: string;
+  dni: string;
   email: string;
-  password: string;
+  foto?: string;
+  rol: "medico"|"paciente"|"admin";
 }
 
 export type { UserProps };

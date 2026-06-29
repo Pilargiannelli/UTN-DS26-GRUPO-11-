@@ -6,6 +6,7 @@ import { Button, Form } from "react-bootstrap";
 import { useFetch } from "../hooks/useFetch.ts";
 import { ToastMensaje } from "./NotifyToast.tsx";
 import { SelectEditable } from "./SelectEditable.tsx";
+import { DateInput } from "./DateInput.tsx";
 
 interface RegistroPacienteFormProps {
   esAutoregistro: boolean;
@@ -13,8 +14,9 @@ interface RegistroPacienteFormProps {
 
 export function RegistroPacienteForm({ esAutoregistro }: RegistroPacienteFormProps) {
     const [showToast, setShowToast] = useState(false);
+    const sexo = ["Masculino", "Femenino", "Otro"];
     const { data: obrasSociales } = useFetch<string[]>("../../public/obras-sociales.json");
-    const schema = obrasSociales ? pacienteSchema(obrasSociales) : pacienteSchema([""]);
+    const schema = obrasSociales ? pacienteSchema(obrasSociales, sexo) : pacienteSchema([""], sexo);
     const {register, handleSubmit, formState: { errors }} = useForm<PacienteValidado>({
         resolver: zodResolver(schema) as Resolver<PacienteValidado>,
     });
@@ -44,14 +46,24 @@ export function RegistroPacienteForm({ esAutoregistro }: RegistroPacienteFormPro
                     <Form.Control type="number" {...register("dni")} isInvalid={!!errors.dni} />
                     <Form.Control.Feedback type="invalid"> {errors.dni?.message} </Form.Control.Feedback>
                 </Form.Group>
+                {/* Fecha de nacimiento */}
+                <DateInput label="Fecha de nacimiento" register={register} errors={errors} fieldName="fechaNacimiento" />
+                {/* Sexo */}
+                <SelectEditable label="Sexo" name="sexo" jsonPath="/public/generos.json" register={register} error={errors.sexo?.message} />
                 {/* Teléfono */}
                 <Form.Group className="mb-3">
                     <Form.Label className="d-flex me-auto">Teléfono</Form.Label>
                     <Form.Control type="number" placeholder="+5492215555555" {...register("telefono")} isInvalid={!!errors.telefono} />
                     <Form.Control.Feedback type="invalid"> {errors.telefono?.message} </Form.Control.Feedback>
                 </Form.Group>
+                {/* Correo */}
+                <Form.Group className="mb-3">
+                    <Form.Label className="d-flex me-auto">Email</Form.Label>
+                    <Form.Control type="text" {...register("email")} isInvalid={!!errors.email} />
+                    <Form.Control.Feedback type="invalid"> {errors.email?.message} </Form.Control.Feedback>
+                </Form.Group>
                 {/* Obra Social */}
-                <SelectEditable label="Obra social" name="obraSocial" jsonPath="../../public/obras-sociales.json" register={register} />
+                <SelectEditable label="Obra social" name="obraSocial" jsonPath="/public/obras-sociales.json" register={register} error={errors.obraSocial?.message} />
                 {/* Campos condicionales para Autoregistro */}
                 {esAutoregistro && (
                     <>

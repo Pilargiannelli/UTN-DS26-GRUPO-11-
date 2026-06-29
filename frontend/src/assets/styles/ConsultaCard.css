@@ -1,0 +1,50 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Montserrat:wght@400;600;800&family=Poppins:wght@400;600;800&display=swap");
+
+:root {
+    --consul-card-font: "Inter", sans-serif;
+    --consul-card-title-font: "Monserrat", "Poppins", sans-serif;
+    --consul-card-title-color: #0f4d3a;
+    --consul-card-width: 30rem;
+}
+
+.consulta-item {
+    background: #ffffff;
+    border: 1px solid #d6e4de;
+    box-shadow: none;
+    overflow: hidden;
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+
+.consulta-item:last-child {
+    position: relative;
+    border-bottom: linear-gradient(90deg, #0f4d3a, #2e7d5b);
+}
+
+.consulta-item p {
+    font-family: var(--consul-card-font) !important;
+    width: var(--consul-card-width) !important;
+    margin: 0 0 0 0 !important;
+    display: flex;
+    align-content: start;
+}
+
+.dato {
+    display: flex;
+    align-items: first baseline;
+    gap: 0.5rem;
+}
+
+.dato h5 {
+    font-family: var(--user-card-nombre-font) !important;
+    color: var(--user-card-nombre-color);
+    font-weight: 650;
+    font-size: 0.9rem;
+}
+
+.dato p {
+    font-family: var(--user-card-font);
+    font-size: 0.9rem !important;
+    font-weight: 600;
+    margin: 0 0 0 0;
+}

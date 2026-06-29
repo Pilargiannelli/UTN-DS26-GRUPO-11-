@@ -1,0 +1,48 @@
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&family=Poppins:wght@400;600;800&display=swap");
+
+:root {
+    --btn-font: "Monserrat", "Poppins", sans-serif;
+    --btn-font-color: #ffffff;
+}
+
+.left-btn {
+    width: 100%;
+    margin: 1rem 0 0 0;
+    text-align: left;
+}
+
+.custom-btn {
+    font-family: var(--btn-font);
+    color: var(--btn-font-color);
+    line-height: 0.5 !important;
+    font-size: 0.8rem;
+    letter-spacing: 1.5px;
+    font-weight: 650 !important;
+    text-transform: uppercase;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(20, 184, 122, 0.22);
+    background: linear-gradient(180deg, #075f45 0%, #064733 100%);
+    padding: 0.5rem;
+    cursor: pointer;
+    box-shadow: none;
+    transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.custom-btn:hover {
+    background: linear-gradient(180deg, #087253 0%, #07563f 100%);
+    transform: translateY(-1px);
+    border: 1px solid rgba(20, 184, 122, 0.22);
+}
+
+.custom-btn:active {
+    transform: translateY(0);
+    border: 1px solid rgba(20, 184, 122, 0.22);
+}
+
+.custom-btn-icono {
+    font-size: 26px;
+    line-height: 14px;
+    font-weight: 400;
+}

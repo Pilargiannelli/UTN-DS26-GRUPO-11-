@@ -7,13 +7,14 @@ import imosLogo from "../assets/img/IMOS_LOGO.png";
 import { Form, Button, Spinner } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth.ts";
+import type { Usuario } from "../types/Usuario.ts";
 import "../assets/styles/App.css";
 
 export default function Login() {
-  const { data: users, loading: loadingUsers, error } = useFetch<{ u: string; p: string; rol: string }[]>("/users.json");
+  const { data: users, loading: loadingUsers, error } = useFetch<Usuario[]>("/users.json");
   const [authError, setAuthError] = useState(false);
   const [success, setSuccess] = useState(false);
-  const { setRol } = useAuth();
+  const { setRol, setUsuario } = useAuth();
   const navigate = useNavigate();
   const { register, handleSubmit, formState: { errors }, } = useForm<LoginData>({
     resolver: zodResolver(loginSchema),
@@ -26,8 +27,10 @@ export default function Login() {
       setTimeout(() => {
         setSuccess(false);
         setRol(found.rol);
+        setUsuario(found);
         localStorage.setItem("rol", found.rol);
-        navigate(`/${found.rol}/home`);
+        localStorage.setItem("usuario", JSON.stringify(found));
+        navigate(`/home`);
       }, 1500);
     } else {
       setAuthError(true);

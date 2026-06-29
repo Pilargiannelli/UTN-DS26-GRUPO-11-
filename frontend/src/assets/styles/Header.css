@@ -1,0 +1,98 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Montserrat:wght@400;600;800&family=Poppins:wght@400;600;800&display=swap");
+
+:root {
+    --header-font: "Inter", sans-serif;
+    --header-title-font: "Monserrat", "Poppins", sans-serif;
+    --header-font-color: #ffffff;
+    --header-user-foto-size: 50px;
+    --header-user-foto-margin-bottom: 1rem;
+    --header-font-weight: 600;
+    --desp-menu-font-color: #000000;
+}
+
+#ColorNav, .navbar, .header-container .nav-logo {
+    padding: 0 !important;
+}
+
+.header-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    padding: 0 !important;
+}
+
+.header-container .ms-auto .link{
+    font-family: var(--header-title-font);
+    color: var(--header-font-color);
+    line-height: 1.5px;
+    font-weight: var(--header-font-weight);
+    margin-top: 1.6rem;
+}
+
+.header-container .nav-logo {
+    max-height: 100px;
+}
+
+.header-container .nav-logo img {
+    margin: 0 0 0 -1.5rem !important;
+    max-height: fit-content;
+}
+
+#perfil-dropdown {
+    display: flex;
+    flex-direction: row-reverse;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0 0 0 0 !important;
+}
+
+#perfil-dropdown .dropdown-toggle {
+    display: flex;
+    align-items: center;
+}
+
+a#perfil-dropdown.dropdown-toggle::after {
+  display: none !important;
+}
+
+.dropdown-menu {
+  background-color: #ffffff !important;
+  border-radius: 8px;
+  padding: 0.5rem 0;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.dropdown-menu.show {
+  display: block;
+}
+
+.dropdown-menu-end {
+  right: -1rem !important;
+}
+
+.dropdown-item {
+  color: var(--desp-menu-font-color) !important;
+  font-family: var(--header-font) !important;
+  font-weight: var(--header-font-weight) !important;
+  padding: 0.6rem 1rem;
+  transition: background-color 0.2s ease;
+}
+
+.dropdown-item:hover {
+  background-color: #145c4a2a !important;
+}
+
+.dropdown-item:active {
+  background-color: #145c4a82 !important;
+}
+
+
+#perfil-dropdown .user-card__foto {
+    width: var(--header-user-foto-size);
+    height: var(--header-user-foto-size);
+    border-radius: 50%;
+    margin: 0 auto 1rem;
+    background-size: cover;
+    background-position: center;
+}

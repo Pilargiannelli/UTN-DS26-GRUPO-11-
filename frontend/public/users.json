@@ -1,5 +1,78 @@
 [
-  { "u": "medico1", "p": "med123", "rol": "medico" },
-  { "u": "admin1", "p": "adm123", "rol": "admin" },
-  { "u": "paciente1", "p": "pac123", "rol": "paciente" }
+  {
+    "u": "medico1",
+    "p": "med123",
+    "rol": "medico",
+    "foto": "", 
+    "docs": {
+      "nombre": "Lionel",
+      "apellido": "Messi",
+      "dni": "40119225",
+      "email": "med@gmail.com",
+      "especialidad": "Traumatología",
+      "matricula": "MP12345"
+    }
+  },
+  {
+    "u": "admin1",
+    "p": "adm123",
+    "rol": "admin",
+    "foto": "",
+    "docs": {
+      "nombre":"Enzo",
+      "apellido":"Fernández",
+      "dni":"45118007",
+      "email": "adm@gmail.com"
+    }
+  },
+  {
+    "u": "paciente1",
+    "p": "pac123",
+    "rol": "paciente",
+    "foto": "",
+    "docs": {
+      "nombre": "Julián",
+      "apellido": "Álvarez",
+      "dni": "40123456",
+      "email": "pac@gmail.com",
+      "obraSocial": "OSDE",
+      "telefono": "+5492215555555",
+      "sexo": "Masculino",
+      "fechaNacimiento": "1990-05-12",
+      "historial": {
+        "consultas": [
+          {
+            "fecha": "2026-06-20",
+            "medico": "Dr. Messi",
+            "motivo": "Control general",
+            "diagnostico": "Todo en orden",
+            "tratamiento": "Continuar rutina habitual"
+          },
+          {
+            "fecha": "2026-05-10",
+            "medico": "Dr. Messi",
+            "motivo": "Dolor de cabeza",
+            "diagnostico": "Migraña leve",
+            "tratamiento": "Ibuprofeno 400mg cada 8h"
+          },
+          {
+            "fecha": "2026-02-15",
+            "medico": "Dr. Messi",
+            "motivo": "Control general",
+            "diagnostico": "Todo en orden",
+            "tratamiento": "Continuar rutina habitual"
+          },
+          {
+            "fecha": "2026-05-22",
+            "medico": "Dr. Messi",
+            "motivo": "Control general",
+            "diagnostico": "Todo en orden",
+            "tratamiento": "Continuar rutina habitual"
+          }
+        ],
+        "alergias": ["Penicilina"],
+        "antecedentes": ["Hipertensión leve"]
+      }
+    }
+  }
 ]

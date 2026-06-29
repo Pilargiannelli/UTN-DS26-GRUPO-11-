@@ -1,0 +1,62 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Montserrat:wght@400;600;800&family=Poppins:wght@400;600;800&display=swap");
+
+:root {
+    --hist-card-font: "Inter", sans-serif;
+    --hist-card-title-font: "Monserrat", "Poppins", sans-serif;
+    --hist-card-title-color: #0f4d3a;
+    --hist-card-width: 30rem;
+}
+
+.historial-card {
+    position: relative;
+    font-family: var(--hist-card-font);
+    width: var(--hist-card-width);
+    height: 90%;
+    background: #ffffff;
+    border: 1px solid #d6e4de;
+    border-radius: 14px;
+    overflow: hidden;
+    padding: 1rem 1rem 0 1rem;
+    margin-top: 1rem;
+}
+
+.historial-card::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto;
+    height: 6px;
+    background: linear-gradient(90deg, #0f4d3a, #2e7d5b);
+}
+
+.historial-card h4 {
+    position: relative;
+    font-family: var(--hist-card-title-font);
+    color: var(--hist-card-title-color);
+    font-weight: 650;
+    font-size: larger;
+    line-height: 0.8;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-top: 1rem;
+}
+
+.historial-card h4::after {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto;
+    top: 2rem;
+    height: 2px;
+    background: linear-gradient(90deg, #0f4d3a, #2e7d5b);
+}
+
+.consultas-scroll {
+    max-height: 80%;
+    overflow-y: auto !important;
+    padding-right: 0.5rem;
+    margin-top: 2rem;
+}
+
+.consultas-scroll p {
+    font-family: var(--hist-card-font);
+    margin-top: 2rem;
+}

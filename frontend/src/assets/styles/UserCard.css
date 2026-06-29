@@ -1,0 +1,87 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Montserrat:wght@400;600;800&family=Poppins:wght@400;600;800&display=swap");
+
+:root {
+    --user-card-font: "Inter", sans-serif;
+    --user-card-nombre-font: "Monserrat", "Poppins", sans-serif;
+    --user-card-nombre-color: #0f4d3a;
+    --user-card-width: 22rem;
+    --user-card-foto-size: 150px;
+    --user-card-foto-margin-bottom: 1rem;
+    --user-card-datos-margin-bottom: 1rem;
+}
+
+.user-card {
+    position: relative;
+    font-family: var(--user-card-font);
+    width: var(--user-card-width);
+    background: #ffffff;
+    border: 1px solid #d6e4de;
+    border-radius: 14px;
+    overflow: hidden;
+}
+
+.user-card::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto;
+    height: 6px;
+    background: linear-gradient(90deg, #0f4d3a, #2e7d5b);
+}
+
+.user-card__foto {
+    width: var(--user-card-foto-size);
+    height: var(--user-card-foto-size);
+    border-radius: 50%;
+    margin: 0 auto 1rem;
+    background-size: cover;
+    background-position: center;
+}
+
+.user-card__foto--sin-imagen {
+    background-image: url("../../../public/SinFoto.png");
+}
+
+.user-card-nombre {
+    font-family: var(--user-card-nombre-font) !important;
+    color: var(--user-card-nombre-color);
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+}
+
+.user-card-datos {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 0;
+    margin-top: 2rem;
+}
+
+.user-card-datos::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto;
+    top: -1rem;
+    height: 2px;
+    background: linear-gradient(90deg, #0f4d3a, #2e7d5b);
+}
+
+.dato {
+    display: flex;
+    align-items: first baseline;
+    gap: 0.5rem;
+}
+
+.dato h5 {
+    font-family: var(--user-card-nombre-font) !important;
+    color: var(--user-card-nombre-color);
+    font-weight: 650;
+    font-size: 0.9rem;
+}
+
+.dato p {
+    font-family: var(--user-card-font);
+    font-size: 0.9rem !important;
+    font-weight: 600;
+    margin: 0 0 0 0;
+}
