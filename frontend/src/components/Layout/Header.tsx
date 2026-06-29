@@ -3,6 +3,7 @@ import { useLogout } from "../../hooks/useLogout.ts";
 import { useNavigate } from "react-router-dom";
 import { useUsuarioSeleccionado } from "../../hooks/useUsuarioSeleccionado.ts";
 import { useAuth } from "../../hooks/useAuth.ts";
+import { Sidebar } from "./Sidebar.tsx";
 import { useFotoPerfil } from "../../hooks/useFotoPerfil.ts";
 import '../../assets/styles/Header.css'
 
@@ -11,6 +12,11 @@ interface Props {
 }
 
 function Header({ rol }: Props) {
+  const menuItems = [
+    { label: 'Turnos', href: '#turnos' },
+    { label: 'Pacientes', href: '#pacientes' },
+    { label: 'Agenda', href: '#agenda' },
+  ];
   const { usuario, setUsuario } = useAuth();
   const { seleccionarUsuario } = useUsuarioSeleccionado();
   const fotoPerfil = useFotoPerfil(usuario?.foto);
@@ -20,6 +26,7 @@ function Header({ rol }: Props) {
     <Navbar id = "colorNav">
       <Container className="header-container container-fluid">
         <Navbar.Brand className="nav-logo m-0">
+          <Sidebar items={menuItems} />
           <img src="/IMOS_LOGO.png" width="180" height="180" alt="IMOS"/>
         </Navbar.Brand>
         <Nav className="ms-auto">

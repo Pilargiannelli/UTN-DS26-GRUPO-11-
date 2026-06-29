@@ -45,6 +45,12 @@ div.header-container.container {
     max-height: 100px;
 }
 
+span.nav-logo.m-0.navbar-brand {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
 .container {
   max-width: none !important;
 }

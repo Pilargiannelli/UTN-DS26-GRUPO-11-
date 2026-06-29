@@ -1,0 +1,46 @@
+.offcanvas {
+  background-color: #0d4d3a !important;
+  color: #fff;
+  position: fixed !important; /* evita que empuje el contenido */
+  top: 0;
+  left: 0;
+  height: 100vh;
+  z-index: 1050;
+}
+
+.offcanvas-title {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+}
+
+.nav-link {
+  color: #fff !important;
+  font-size: 1.1rem;
+}
+
+.nav-link:hover {
+  color: #e7d65b !important;
+}
+
+.offcanvas-title img {
+  height: 40px;
+  width: auto;
+}
+
+.menu-button {
+  top: 1rem;
+  left: 1rem;
+  z-index: 10;
+  background-color: transparent;
+  border: none;
+  color: #fff;
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: opacity 0.3s ease;
+}
+
+.menu-button.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
