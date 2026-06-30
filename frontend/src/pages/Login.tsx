@@ -21,7 +21,7 @@ export default function Login() {
   });
   const onSubmit = (data: LoginData) => {
     if (!users) return;
-    const found = users.find( (x) => x.u === data.username.trim() && x.p === data.password );
+    const found = users.find( (x) => (x.u === data.username.trim() || x.docs.email === data.username.trim())&& x.p === data.password );
     if (found) { 
       setSuccess(true);
       setTimeout(() => {
