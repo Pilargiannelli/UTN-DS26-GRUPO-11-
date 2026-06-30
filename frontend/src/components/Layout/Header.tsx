@@ -5,6 +5,7 @@ import { useUsuarioSeleccionado } from "../../hooks/useUsuarioSeleccionado.ts";
 import { useAuth } from "../../hooks/useAuth.ts";
 import { Sidebar } from "./Sidebar.tsx";
 import { useFotoPerfil } from "../../hooks/useFotoPerfil.ts";
+import { useRolView } from "../../hooks/useRolView.ts";
 import '../../assets/styles/Header.css'
 
 interface Props {
@@ -17,16 +18,24 @@ function Header({ rol }: Props) {
     { label: 'Pacientes', href: '#pacientes' },
     { label: 'Agenda', href: '#agenda' },
   ];
+  const itemsPaciente = [
+    { label: 'Mis turnos', href: '#turnos' },
+  ];
   const { usuario, setUsuario } = useAuth();
   const { seleccionarUsuario } = useUsuarioSeleccionado();
   const fotoPerfil = useFotoPerfil(usuario?.foto);
   const navigate = useNavigate();
   const { logout } = useLogout();
+  const vistaPorRol = useRolView({
+    admin: <Sidebar items={menuItems} />,
+    medico: <Sidebar items={menuItems} />,
+    paciente: <Sidebar items={itemsPaciente} />,
+  });
   return (
     <Navbar id = "colorNav">
       <Container className="header-container container-fluid">
         <Navbar.Brand className="nav-logo m-0">
-          <Sidebar items={menuItems} />
+          {vistaPorRol}
           <img src="/IMOS_LOGO.png" width="180" height="180" alt="IMOS"/>
         </Navbar.Brand>
         <Nav className="ms-auto">
