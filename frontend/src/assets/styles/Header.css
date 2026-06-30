@@ -38,7 +38,7 @@ div.header-container.container {
     color: var(--header-font-color);
     line-height: 1.5px;
     font-weight: var(--header-font-weight);
-    margin-top: 1.6rem;
+    margin-top: 2rem;
 }
 
 .header-container .nav-logo {
@@ -117,5 +117,5 @@ a#perfil-dropdown.dropdown-toggle::after {
     border-radius: 50%;
     background-size: cover;
     background-position: center;
+    margin-top: 0.5rem;
 }
-
