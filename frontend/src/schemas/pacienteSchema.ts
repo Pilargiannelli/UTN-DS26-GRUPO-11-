@@ -9,9 +9,10 @@ export const pacienteSchema = (obrasSociales: string[], sexo: string[]) => {
         apellido: z.string().min(1, "Por favor, ingrese el apellido del paciente"),
         dni: z.coerce.number().int().positive("Por favor, ingrese un número de DNI válido"),
         email: z.string().min(1, "Por favor, ingrese el correo electrónico del paciente").email("El correo ingresado no corresponde a una dirección de correo válida"),
-        password: z.string().min(8, "Por favor, ingrese una contraseña de al menos 8 caracteres"),
-        telefono: z.string().min(1, "Por favor, ingrese el número de teléfono del paciente").regex(/^\+\d{10,15}$/, "El número ingresado no corresponde a un teléfono válido"),
+        telefono: z.string().min(1, "Por favor, ingrese el número de teléfono del paciente"),
         obraSocial: z.enum(OSValidas, { message: "Por favor, seleccione una obra social válida" }),
+        nroAfiliado: z.string().min(1, "Por favor, ingrese el número de afiliado"),
+        plan: z.string().min(1, "Por favor, ingrese el plan"),
         sexo: z.enum(sexosValidos, { message: "Por favor, seleccione un sexo válido" }),
         fechaNacimiento: dateInputSchema,
     });

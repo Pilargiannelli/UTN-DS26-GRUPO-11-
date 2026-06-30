@@ -9,9 +9,6 @@ interface LayoutProps {
 }
 
 function Layout({ children, rol }: LayoutProps) {
-
-  
-
   return (
     <>
       <Header rol={rol} />

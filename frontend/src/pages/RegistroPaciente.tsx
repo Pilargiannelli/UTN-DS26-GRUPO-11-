@@ -1,16 +1,15 @@
-import Layout from "../components/Layout/Layout";
-import { RegistroPacienteForm } from "../components/RegistroPacienteForm";
+import Layout from "../components/Layout/Layout.tsx";
+import { RegistroPacienteForm } from "../components/RegistroPacienteForm.tsx";
+import { useAuth } from "../hooks/useAuth";
 
 function RegistroPaciente() {
-return (
-    <Layout rol="admin">
-    <h1 className="mt-5">
-        Registrar Paciente
-    </h1>
-    <RegistroPacienteForm
-        esAutoregistro={false}
-    />
-    </Layout>
-);
+    const { rol } = useAuth();
+    return (
+        <Layout rol={rol}>
+            <h1 className="mt-5"> Registrar Paciente </h1>
+            <RegistroPacienteForm />
+        </Layout>
+    );
 }
+
 export default RegistroPaciente;

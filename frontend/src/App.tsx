@@ -10,6 +10,7 @@ import EditarPaciente from "./pages/EditarPaciente";
 import ProtectedRoute from "./components/ProtectedRoute";
 import NoAutorizado from "./pages/NoAutorizado";
 import { VerUsuario } from "./pages/VerUsuario.tsx";
+import RegistroUsuario from "./pages/RegistroUsuario.tsx";
 
 function App() {
   const { rol } = useAuth();
@@ -24,6 +25,7 @@ function App() {
       <Route path="/buscar-paciente" element={<BuscarPaciente />} />
       <Route path="/editar-paciente" element={<EditarPaciente />} />
       <Route path="/ver-perfil" element={<VerUsuario />} />
+      <Route path="/registrar-usuario" element={<RegistroUsuario/>} />
       {/* Rutas protegidas */}
       <Route
         path="/historial"
