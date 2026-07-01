@@ -26,7 +26,8 @@ export function RegistroPacienteForm() {
         defaultValues: { obraSocial: "", nroAfiliado: "", plan: "" }
     });
     const onSubmit = (data: PacienteValidado) => {
-        procesarPasoUno(data, "paciente", "/registrar-usuario");
+        const pacienteFormateado = {...data, nroAfiliado: data.nroAfiliado === "-" ? "" : data.nroAfiliado, plan: data.plan === "-" ? "" : data.plan,};
+        procesarPasoUno(pacienteFormateado, "paciente", "/registrar-usuario");
     };
     const obraSocialSeleccionada = useWatch({ control, name: "obraSocial" });
     const sinObraSocial = (obraSocialSeleccionada === "Sin obra social");
@@ -96,7 +97,7 @@ export function RegistroPacienteForm() {
                     <Col md={6}>
                         <Form.Group className="mb-3">
                             <Form.Label className="d-flex me-auto">Email</Form.Label>
-                            <Form.Control type="text" placeholder="Ej: paciente@gmail.com" {...register("email")} isInvalid={!!errors.email} />
+                            <Form.Control type="text" placeholder="Ej: paciente1@gmail.com" {...register("email")} isInvalid={!!errors.email} />
                             <Form.Control.Feedback type="invalid"> {errors.email?.message} </Form.Control.Feedback>
                         </Form.Group>
                     </Col>
@@ -120,7 +121,7 @@ export function RegistroPacienteForm() {
                     <Col md={4}>
                         <Form.Group className="mb-3">
                             <Form.Label className="d-flex me-auto">Plan</Form.Label>
-                             <Form.Control type="text" placeholder="Ej: 210" {...register("plan")} isInvalid={!!errors.plan?.message} disabled={sinObraSocial} />
+                             <Form.Control type="text" placeholder="Ej: 210" {...register("plan")} onChange={handleMayus} isInvalid={!!errors.plan?.message} disabled={sinObraSocial} />
                             <Form.Control.Feedback type="invalid"> {errors.plan?.message} </Form.Control.Feedback>
                         </Form.Group>
                     </Col>
