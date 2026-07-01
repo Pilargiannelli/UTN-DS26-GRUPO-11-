@@ -1,0 +1,69 @@
+.contenedor-datos-card {
+  background: #ffffff;
+  border: 1px solid #d6e4de;
+  padding: 1.25rem;
+  margin-bottom: 1.25rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.contenedor-datos-titulo {
+  color: #0f4d3a;
+  font-size: 0.875rem;
+  font-family: 'Monserrat', sans-serif !important;
+  font-weight: 800;
+  margin: 0 0 1rem 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.contenedor-datos-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.contenedor-datos-item {
+  display: flex;
+  align-items: flex-start;
+  font-size: 1rem;
+  line-height: 1.4;
+}
+
+.contenedor-datos-label {
+  color: #0f4d3a;
+  font-weight: 700;
+  margin-right: 0.5rem;
+  white-space: nowrap;
+}
+
+.contenedor-datos-valor {
+  color: #1e293b;
+  font-weight: 500;
+  font-family: 'Monserrat', sans-serif;
+}
+
+.contenedor-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: flex-start;
+  margin-top: 0.5rem;
+  width: 100%;
+}
+
+.badge-tag {
+  display: inline-block;
+  background-color: #f4f9f6;
+  color: #0f4d3a;
+  border: 1px solid #d6e4de;
+  border-radius: 6px;
+  padding: 0.4rem 0.75rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-align: left;
+}
+
+.contenedor-datos-titulo {
+  text-align: center;
+}
