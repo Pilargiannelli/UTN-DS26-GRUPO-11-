@@ -1,24 +1,28 @@
-import { useState } from "react";
-import { ToastMensaje } from "./NotifyToast";
 import { singinSchema, type SinginData } from "../schemas/newUserSchema";
-import { useForm, type Resolver } from "react-hook-form";
-import { Form, Button } from 'react-bootstrap'
+import { useForm } from "react-hook-form";
+import { Form, Button, Spinner } from 'react-bootstrap'
 import { zodResolver } from "@hookform/resolvers/zod";
 import '../assets/styles/Form.css'
+import { useRegistroFinal } from "../hooks/useRegistro2";
+import { useFetch } from "../hooks/useFetch";
+import type { Usuario } from "../types/Usuario";
 
 export function UserForm(){
-    const [showToast, setShowToast] = useState(false);
-    const schema = singinSchema;
-    const {register, handleSubmit, formState: { errors }} = useForm<SinginData>({
-        resolver: zodResolver(schema) as Resolver<SinginData>,
+    const { registrarUsuario } = useRegistroFinal();
+    const { data: usuariosDB, loading } = useFetch<Usuario[]>("/public/users.json");
+    const usuariosExistentes = usuariosDB || [];
+    const { register, handleSubmit, formState: { errors } } = useForm<SinginData>({
+        resolver: zodResolver(singinSchema(usuariosExistentes)),
+        mode: "onBlur" 
     });
     const onSubmit = (data: SinginData) => {
-        console.log("Datos validados:", data);
-        setShowToast(true);
+        try {
+            registrarUsuario(data);
+        } catch (error) { console.error("Error al procesar el registro:", error); }
     };
+    if (loading) return <Spinner/>;
     return (
         <div className="container my-0 form-container">
-            <ToastMensaje mensaje="Cuenta creada correctamente" tipo="toast-good" mostrar={showToast} onClose={() => setShowToast(false)} />
             <Form className="container my-5 w-75" noValidate onSubmit={handleSubmit(onSubmit)}>
                 {/* Usuario */}
                 <Form.Group className="mb-3">

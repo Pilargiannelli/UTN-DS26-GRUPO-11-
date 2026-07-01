@@ -6,7 +6,7 @@ import "../assets/styles/Select.css"
 
 export function SelectEditable<T extends FieldValues>({label, name, jsonPath, register, error,}: SelectEditableProps<T>) {
   const { data: options, loading, error: fetchError } = useFetch<string[]>(jsonPath);
-  if (loading) return <p><Spinner/></p>;
+  if (loading) return <Spinner/>;
   if (fetchError) return <p>Error al cargar opciones: {fetchError.message}</p>;
   return (
     <Form.Group className="mb-3" controlId={String(name)}>

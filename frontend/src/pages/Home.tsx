@@ -5,8 +5,11 @@ import { Container, Row, Col } from 'react-bootstrap';
 import { useRolView } from "../hooks/useRolView.ts";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../assets/styles/App.css';
+import { ToastMensaje } from "../components/NotifyToast.tsx";
+import { useToast } from "../hooks/useToast.ts";
 
 function Home() {
+    const { showToast, setShowToast } = useToast("registroExitoso");
     const vistaPorRol = useRolView({
         admin:
         <Container>
@@ -37,6 +40,7 @@ function Home() {
       });
     return (
         <Layout rol="admin">
+            <ToastMensaje mensaje="Cuenta creada correctamente" tipo="toast-good" mostrar={showToast} onClose={() => setShowToast(false)} />
             {vistaPorRol}
         </Layout>
     );

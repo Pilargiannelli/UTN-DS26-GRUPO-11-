@@ -1,23 +1,32 @@
 import { useForm, type Resolver, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { pacienteSchema, type PacienteValidado } from '../schemas/pacienteSchema.ts';
-import { Button, Form, Row, Col } from "react-bootstrap";
+import { Button, Form, Row, Col, Spinner } from "react-bootstrap";
 import { useFetch } from "../hooks/useFetch.ts";
 import { SelectEditable } from "./SelectEditable.tsx";
 import { DateInput } from "./DateInput.tsx";
 import '../assets/styles/Form.css'
 import { useEffect } from "react";
+import { useMayus } from "../hooks/useMayus.ts";
+import { useRegistroPasoUno } from "../hooks/useRegistro1.ts";
+import type { Usuario } from "../types/Usuario.ts";
 
 export function RegistroPacienteForm() {
+    const handleMayus = useMayus();
+    const { procesarPasoUno } = useRegistroPasoUno();
     const sexo = ["Masculino", "Femenino", "Otro"];
     const { data: obrasSociales } = useFetch<string[]>("../../public/obras-sociales.json");
-    const schema = obrasSociales ? pacienteSchema(obrasSociales, sexo) : pacienteSchema([""], sexo);
+    const osValidas = obrasSociales || [""];
+    const { data: usuariosDB, loading } = useFetch<Usuario[]>("../../public/users.json");
+    const emailsOcupados = usuariosDB ? usuariosDB.map(u => u?.docs?.email?.trim().toLowerCase()).filter((email): email is string => !!email) : [];
+    const schema = pacienteSchema(osValidas, sexo, emailsOcupados);
     const {register, handleSubmit, formState: { errors }, control, clearErrors, setValue} = useForm<PacienteValidado>({
         resolver: zodResolver(schema) as Resolver<PacienteValidado>,
+        mode: "onBlur",
         defaultValues: { obraSocial: "", nroAfiliado: "", plan: "" }
     });
     const onSubmit = (data: PacienteValidado) => {
-        console.log("Datos validados:", data);
+        procesarPasoUno(data, "paciente", "/registrar-usuario");
     };
     const obraSocialSeleccionada = useWatch({ control, name: "obraSocial" });
     const sinObraSocial = (obraSocialSeleccionada === "Sin obra social");
@@ -30,11 +39,12 @@ export function RegistroPacienteForm() {
             setValue("plan", "");
         }
     }, [sinObraSocial, clearErrors, setValue]);
+    if (loading) return <Spinner/>;
     return (
         <div className="container my-0 form-container">
             <Form className="container my-5 w-75" noValidate onSubmit={handleSubmit(onSubmit)}>
                 {/* Datos personales */}
-                <Form.Label className="my-4">Datos personales</Form.Label>
+                <Form.Label className="mb-5">Datos personales</Form.Label>
                 <Row className="g-3">
                     {/* Nombre */}
                     <Col md={6}>
@@ -72,7 +82,7 @@ export function RegistroPacienteForm() {
                     </Col>
                 </Row>
                 {/* Contacto */}
-                <Form.Label className="my-4">Datos de contacto</Form.Label>
+                <Form.Label className="my-5">Datos de contacto</Form.Label>
                 <Row className="g-3">
                     {/* Teléfono */}
                     <Col md={6}>
@@ -92,7 +102,7 @@ export function RegistroPacienteForm() {
                     </Col>
                 </Row>
                 {/* Cobertura médica */}
-                <Form.Label className="my-4">Cobertura médica</Form.Label>
+                <Form.Label className="my-5">Cobertura médica</Form.Label>
                 <Row className="g-3">
                     {/* Obra Social */}
                     <Col md={4}>
@@ -102,7 +112,7 @@ export function RegistroPacienteForm() {
                     <Col md={4}>
                         <Form.Group className="mb-3">
                             <Form.Label className="d-flex me-auto">Número de afiliado</Form.Label>
-                            <Form.Control type="text" placeholder="Ej: A-123456" {...register("nroAfiliado")} isInvalid={!!errors.nroAfiliado?.message} disabled={sinObraSocial} />
+                            <Form.Control type="text" placeholder="Ej: A-123456" {...register("nroAfiliado")} onChange={handleMayus} isInvalid={!!errors.nroAfiliado?.message} disabled={sinObraSocial} />
                             <Form.Control.Feedback type="invalid"> {errors.nroAfiliado?.message} </Form.Control.Feedback>
                         </Form.Group>
                     </Col>

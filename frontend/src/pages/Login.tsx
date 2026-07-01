@@ -9,8 +9,11 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth.ts";
 import type { Usuario } from "../types/Usuario.ts";
 import "../assets/styles/Login.css";
+import { useToast } from "../hooks/useToast.ts";
+import { ToastMensaje } from "../components/NotifyToast.tsx";
 
 export default function Login() {
+  const { showToast, setShowToast } = useToast("registroExitoso");
   const { data: users, loading: loadingUsers, error } = useFetch<Usuario[]>("/users.json");
   const [authError, setAuthError] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -36,8 +39,10 @@ export default function Login() {
       setAuthError(true);
     }
   };
+  if (loadingUsers) return <Spinner />;
   return (
     <div className="login-page">
+      <ToastMensaje mensaje="Cuenta creada correctamente" tipo="toast-good" mostrar={showToast} onClose={() => setShowToast(false)} />
       <div className="login-card">
         <section className="login-brand">
           <img className="login-logo-img" src={imosLogo} alt="IMOS" />
