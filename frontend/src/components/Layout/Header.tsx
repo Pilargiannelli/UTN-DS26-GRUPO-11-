@@ -15,7 +15,7 @@ interface Props {
 function Header({ rol }: Props) {
   const menuItems = [
     { label: 'Turnos', href: '#turnos' },
-    { label: 'Pacientes', href: '#pacientes' },
+    { label: 'Pacientes', href: '/buscar-paciente' },
     { label: 'Agenda', href: '#agenda' },
   ];
   const itemsPaciente = [

@@ -1,13 +1,12 @@
 import Layout from "../components/Layout/Layout";
-import BuscarPacienteForm from "../components/BuscarPacienteForm";
+import { ListarUsuarios } from "../components/ListarUsuarios";
+import { useAuth } from "../hooks/useAuth";
 
 function BuscarPaciente() {
+    const { rol } = useAuth();
     return (
-        <Layout rol="admin">
-            <h1 className="mt-5 text-center fw-bold text-dark">
-                Buscar Paciente
-            </h1>
-            <BuscarPacienteForm />
+        <Layout rol={rol}>
+            <ListarUsuarios rol="paciente" />
         </Layout>
     );
 }
