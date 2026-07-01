@@ -5,13 +5,12 @@ import { Footer } from "./Footer.tsx";
 
 interface LayoutProps {
   children: ReactNode;
-  rol: string;
 }
 
-function Layout({ children, rol }: LayoutProps) {
+function Layout({ children }: LayoutProps) {
   return (
     <>
-      <Header rol={rol} />
+      <Header />
       <Container fluid className="m-0 p-0 d-flex">
         <Container>{children}</Container>
       </Container>

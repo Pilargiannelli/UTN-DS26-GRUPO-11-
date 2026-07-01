@@ -1,4 +1,3 @@
-import { useAuth } from "../hooks/useAuth.ts";
 import Layout from "../components/Layout/Layout.tsx";
 import { UserCard } from "../components/UserCard.tsx";
 import { BotonVolver } from "../components/BotonVolver.tsx";
@@ -11,7 +10,6 @@ import "../assets/styles/Boton.css"
 import "../assets/styles/Perfil.css"
 
 export function VerUsuario() {
-    const { rol } = useAuth();
     const { usuarioSeleccionado } = useUsuarioSeleccionado();
     const vistaPorRol = usePerfilRolView(usuarioSeleccionado, {
         admin: {
@@ -26,7 +24,7 @@ export function VerUsuario() {
     });
     if (!usuarioSeleccionado) return <p>No hay usuario seleccionado.</p>;
     return (
-        <Layout rol={rol}>
+        <Layout>
             <Container className="cont-perfil h-75">
                 <Row className="d-flex align-content-start">
                     <BotonVolver />

@@ -8,15 +8,16 @@ import { useFotoPerfil } from "../../hooks/useFotoPerfil.ts";
 import { useRolView } from "../../hooks/useRolView.ts";
 import '../../assets/styles/Header.css'
 
-interface Props {
-  rol: string;
-}
-
-function Header({ rol }: Props) {
-  const menuItems = [
+function Header() {
+  const menuItemsAdmin = [
+    { label: 'Turnos', href: '#turnos' },
+    { label: 'Pacientes', href: '/buscar-paciente' },
+  ];
+  const menuItemsMed = [
     { label: 'Turnos', href: '#turnos' },
     { label: 'Pacientes', href: '/buscar-paciente' },
     { label: 'Agenda', href: '#agenda' },
+    { label: 'Historial Clínico', href: '/historial' },
   ];
   const itemsPaciente = [
     { label: 'Mis turnos', href: '#turnos' },
@@ -27,8 +28,8 @@ function Header({ rol }: Props) {
   const navigate = useNavigate();
   const { logout } = useLogout();
   const vistaPorRol = useRolView({
-    admin: <Sidebar items={menuItems} />,
-    medico: <Sidebar items={menuItems} />,
+    admin: <Sidebar items={menuItemsAdmin} />,
+    medico: <Sidebar items={menuItemsMed} />,
     paciente: <Sidebar items={itemsPaciente} />,
   });
   return (
@@ -41,12 +42,6 @@ function Header({ rol }: Props) {
         <Nav className="ms-auto">
           <Nav.Link className="link" href={`/home`}>Inicio</Nav.Link>
           <Nav.Link className="link" href="/turnos">Turnos</Nav.Link>
-
-          {/* SOLO MÉDICO */}
-          {rol === "medico" && (
-            <Nav.Link href="/historial">Historial Clínico</Nav.Link>
-          )}
-
           <NavDropdown title= {<div {...fotoPerfil} />} id="perfil-dropdown" align="end">
             <NavDropdown.Item className="item" onClick={() => {
                 if (usuario) {

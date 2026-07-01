@@ -7,9 +7,7 @@ function AutoregistroPaciente() {
         Crear Cuenta
     </h1>
 
-    <RegistroPacienteForm
-        esAutoregistro={true}
-    />
+    <RegistroPacienteForm />
     </>
 );
 }

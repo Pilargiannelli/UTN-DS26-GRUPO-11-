@@ -39,7 +39,7 @@ function Home() {
         paciente: <></>,
       });
     return (
-        <Layout rol="admin">
+        <Layout>
             <ToastMensaje mensaje="Cuenta creada correctamente" tipo="toast-good" mostrar={showToast} onClose={() => setShowToast(false)} />
             {vistaPorRol}
         </Layout>

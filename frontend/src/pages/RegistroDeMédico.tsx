@@ -5,7 +5,7 @@ import '../assets/styles/App.css';
 
 function RegistrarMédico() {
   return (
-    <Layout rol="admin">
+    <Layout>
       <h1 className="mt-5">Registrar Médico</h1>
       <RegistroMedicoForm />
     </Layout>
