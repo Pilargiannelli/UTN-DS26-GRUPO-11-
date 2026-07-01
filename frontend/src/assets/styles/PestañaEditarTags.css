@@ -108,3 +108,13 @@
   border-radius: 6px;
   cursor: pointer;
 }
+
+.input-agregar-tag-group input {
+    min-height: var(--buscador-min-height);
+    border: 1.5px solid #2e7d5b;
+    border-radius: 8px;
+    color: #1f2933;
+    font-size: 16px;
+    background-color: #ffffff;
+    box-shadow: none;
+}
