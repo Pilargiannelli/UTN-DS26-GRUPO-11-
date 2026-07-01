@@ -42,38 +42,38 @@
       "sexo": "Masculino",
       "fechaNacimiento": "1990-05-12",
       "historial": {
+        "alergias": ["Penicilina"],
+        "antecedentes": ["Hipertensión leve"],
         "consultas": [
           {
             "fecha": "2026-06-20",
-            "medico": "Dr. Messi",
+            "medico": "Lionel Messi",
             "motivo": "Control general",
             "diagnostico": "Todo en orden",
             "tratamiento": "Continuar rutina habitual"
           },
           {
             "fecha": "2026-05-10",
-            "medico": "Dr. Messi",
+            "medico": "Lionel Messi",
             "motivo": "Dolor de cabeza",
             "diagnostico": "Migraña leve",
             "tratamiento": "Ibuprofeno 400mg cada 8h"
           },
           {
             "fecha": "2026-02-15",
-            "medico": "Dr. Messi",
+            "medico": "Lionel Messi",
             "motivo": "Control general",
             "diagnostico": "Todo en orden",
             "tratamiento": "Continuar rutina habitual"
           },
           {
             "fecha": "2026-05-22",
-            "medico": "Dr. Messi",
+            "medico": "Lionel Messi",
             "motivo": "Control general",
             "diagnostico": "Todo en orden",
             "tratamiento": "Continuar rutina habitual"
           }
-        ],
-        "alergias": ["Penicilina"],
-        "antecedentes": ["Hipertensión leve"]
+        ]
       }
     }
   }

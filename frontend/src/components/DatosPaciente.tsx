@@ -28,7 +28,7 @@ export function DatosPaciente({ docs }: { docs: PacienteProps }) {
         </div>
         <div className="dato">
             <h5>Consultas registradas:</h5>
-            <p>{docs.historial.length}</p>
+            <p>{docs.historial.consultas.length}</p>
         </div>
     </div>
   );
