@@ -15,13 +15,13 @@ export function MedicoFormFields({onSave, onCancel}: MedicoFormProps<MedicoValid
     const { data: usuariosDB } = useFetch<Usuario[]>("/public/users.json");
     const emailsOcupados = usuariosDB ? usuariosDB.map(u => u?.docs?.email?.trim().toLowerCase()).filter((email): email is string => !!email) : [];
     const schema = medicoSchema(espValidas, emailsOcupados);
-    const { register, formState: {errors} } = useForm<MedicoValidado>({
+    const { register, handleSubmit, formState: {errors} } = useForm<MedicoValidado>({
         resolver: zodResolver(schema) as Resolver<MedicoValidado>,
         mode: "onBlur",
     });
     return (
         <div className="form-container animate-fadeIn text-start p-2">
-            <Form noValidate onSubmit={onSave}>
+            <Form noValidate onSubmit={handleSubmit(onSave)}>
                 <Row className="g-2 mb-2">
                     <Col md={6}>
                         <Form.Group>
@@ -42,7 +42,7 @@ export function MedicoFormFields({onSave, onCancel}: MedicoFormProps<MedicoValid
                     <Col md={6}>
                         <Form.Group>
                             <Form.Label className="text-xs mb-1">DNI</Form.Label>
-                            <Form.Control type="text" {...register("dni")} isInvalid={!!errors.dni} />
+                            <Form.Control type="number" {...register("dni")} isInvalid={!!errors.dni} />
                             <Form.Control.Feedback type="invalid"> {errors.dni?.message as string} </Form.Control.Feedback>
                         </Form.Group>
                     </Col>

@@ -18,7 +18,7 @@ export function PacienteFormFields({onSave, onCancel}: PacienteFormProps<Pacient
     const { data: usuariosDB } = useFetch<Usuario[]>("../../public/users.json");
     const emailsOcupados = usuariosDB ? usuariosDB.map(u => u?.docs?.email?.trim().toLowerCase()).filter((email): email is string => !!email) : [];
     const schema = pacienteSchema(osValidas, sexo, emailsOcupados);
-    const { register, clearErrors, setValue, control, formState: {errors} } = useForm<PacienteValidado>({
+    const { register, handleSubmit, clearErrors, setValue, control, formState: {errors} } = useForm<PacienteValidado>({
         resolver: zodResolver(schema) as Resolver<PacienteValidado>,
         mode: "onBlur",
         defaultValues: { obraSocial: "", nroAfiliado: "", plan: "" }
@@ -36,7 +36,7 @@ export function PacienteFormFields({onSave, onCancel}: PacienteFormProps<Pacient
     }, [sinObraSocial, clearErrors, setValue]);
     return (
         <div className="form-container animate-fadeIn text-start p-2">
-            <Form noValidate onSubmit={onSave}>
+            <Form noValidate onSubmit={handleSubmit(onSave)}>
                 <Row className="g-2 mb-2">
                     <Col md={6}>
                         <Form.Group>
@@ -57,7 +57,7 @@ export function PacienteFormFields({onSave, onCancel}: PacienteFormProps<Pacient
                     <Col md={6}>
                         <Form.Group>
                             <Form.Label className="text-xs mb-1">DNI</Form.Label>
-                            <Form.Control type="text" {...register("dni")} isInvalid={!!errors.dni} />
+                            <Form.Control type="number" {...register("dni")} isInvalid={!!errors.dni} />
                             <Form.Control.Feedback type="invalid"> {errors.dni?.message as string} </Form.Control.Feedback>
                         </Form.Group>
                     </Col>
