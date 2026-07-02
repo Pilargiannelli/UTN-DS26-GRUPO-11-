@@ -36,7 +36,7 @@ export function VerUsuario() {
     };
     return (
         <Layout>
-            <Container className="cont-perfil h-75">
+            <Container className="cont-perfil">
                 <Row>
                     <Col md="6" className="d-flex align-content-start">
                         <BotonVolver />
