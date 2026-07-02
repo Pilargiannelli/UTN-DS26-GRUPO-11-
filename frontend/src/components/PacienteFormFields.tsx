@@ -8,7 +8,6 @@ import { pacienteSchema, type PacienteValidado } from "../schemas/pacienteSchema
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useFetch } from "../hooks/useFetch";
 import type { Usuario } from "../types/Usuario";
-import { CommonFormFields } from "./CommonFormFields";
 import type { PacienteFormProps } from "../types/UserEditFormProps";
 
 export function PacienteFormFields({onSave, onCancel}: PacienteFormProps<PacienteValidado>) {
@@ -38,7 +37,38 @@ export function PacienteFormFields({onSave, onCancel}: PacienteFormProps<Pacient
     return (
         <div className="form-container animate-fadeIn text-start p-2">
             <Form noValidate onSubmit={onSave}>
-                <CommonFormFields register={register} errors={errors} />
+                <Row className="g-2 mb-2">
+                    <Col md={6}>
+                        <Form.Group>
+                            <Form.Label className="text-xs mb-1">Nombre</Form.Label>
+                            <Form.Control type="text" {...register("nombre")} isInvalid={!!errors.nombre} />
+                            <Form.Control.Feedback type="invalid"> {errors.nombre?.message as string} </Form.Control.Feedback>
+                        </Form.Group>
+                    </Col>
+                    <Col md={6}>
+                        <Form.Group>
+                            <Form.Label className="text-xs mb-1">Apellido</Form.Label>
+                            <Form.Control type="text" {...register("apellido")} isInvalid={!!errors.apellido} />
+                            <Form.Control.Feedback type="invalid"> {errors.apellido?.message as string} </Form.Control.Feedback>
+                        </Form.Group>
+                    </Col>
+                </Row>
+                <Row className="g-2 mb-3">
+                    <Col md={6}>
+                        <Form.Group>
+                            <Form.Label className="text-xs mb-1">DNI</Form.Label>
+                            <Form.Control type="text" {...register("dni")} isInvalid={!!errors.dni} />
+                            <Form.Control.Feedback type="invalid"> {errors.dni?.message as string} </Form.Control.Feedback>
+                        </Form.Group>
+                    </Col>
+                    <Col md={6}>
+                        <Form.Group>
+                            <Form.Label className="text-xs mb-1">Email</Form.Label>
+                            <Form.Control type="email" {...register("email")} isInvalid={!!errors.email} />
+                            <Form.Control.Feedback type="invalid"> {errors.email?.message as string} </Form.Control.Feedback>
+                        </Form.Group>
+                    </Col>
+                </Row>
                 <Row className="g-2">
                     <Col md={12}>
                         <DateInput label="Fecha de nacimiento" register={register} errors={errors} fieldName="fechaNacimiento" />
