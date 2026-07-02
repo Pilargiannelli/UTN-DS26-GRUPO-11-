@@ -10,7 +10,7 @@ import type { AdminEditFormProps } from "../types/UserEditFormProps";
 
 export function AdminFormFields({onSave, onCancel, admin}: AdminEditFormProps<AdminValidado>) {
     const { data: usuariosDB } = useFetch<Usuario[]>("/public/users.json");
-    const emailsOcupados = usuariosDB ? usuariosDB.map(u => u?.docs?.email?.trim().toLowerCase()).filter((email): email is string => !!email) : [];
+    const emailsOcupados = usuariosDB ?.map(u => u.docs.email.trim().toLowerCase()).filter(email => email !== admin.email.trim().toLowerCase()) ?? [];
     const schema = adminSchema(emailsOcupados);
     const initialValues: AdminValidado = {
             nombre: admin.nombre,

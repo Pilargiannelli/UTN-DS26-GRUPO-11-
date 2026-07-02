@@ -17,7 +17,7 @@ export function PacienteFormFields({onSave, onCancel, paciente}: PacienteFormPro
     const { data: obrasSociales } = useFetch<string[]>("../../public/obras-sociales.json");
     const osValidas = obrasSociales || [""];
     const { data: usuariosDB } = useFetch<Usuario[]>("../../public/users.json");
-    const emailsOcupados = usuariosDB ? usuariosDB.map(u => u?.docs?.email?.trim().toLowerCase()).filter((email): email is string => !!email) : [];
+    const emailsOcupados = usuariosDB ?.map(u => u.docs.email.trim().toLowerCase()).filter(email => email !== paciente.email.trim().toLowerCase()) ?? [];
     const schema = pacienteSchema(osValidas, sexo, emailsOcupados);
     const initialValues: PacienteValidado = {
         nombre: paciente.nombre,

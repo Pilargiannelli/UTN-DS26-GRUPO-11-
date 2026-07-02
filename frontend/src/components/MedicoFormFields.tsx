@@ -13,7 +13,7 @@ export function MedicoFormFields({onSave, onCancel, medico}: MedicoFormProps<Med
     const { data: especialidades } = useFetch<string[]>("/public/especialidades.json");
     const espValidas = especialidades || [""];
     const { data: usuariosDB } = useFetch<Usuario[]>("/public/users.json");
-    const emailsOcupados = usuariosDB ? usuariosDB.map(u => u?.docs?.email?.trim().toLowerCase()).filter((email): email is string => !!email) : [];
+    const emailsOcupados = usuariosDB ?.map(u => u.docs.email.trim().toLowerCase()).filter(email => email !== medico.email.trim().toLowerCase()) ?? [];
     const schema = medicoSchema(espValidas, emailsOcupados);
     const initialValues: MedicoValidado = {
             nombre: medico.nombre,
