@@ -1,14 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
 import { Settings } from 'lucide-react';
-import { useAuth } from '../hooks/useAuth';
+import type { ConfigMenuProps } from '../types/ConfigMenuProps';
 import "../assets/styles/ConfigMenu.css";
 
-type ConfigMenuProps = {
-    onEditClick: () => void;
-};
-
-export const ConfigMenu = ({ onEditClick }: ConfigMenuProps) => {
-    const { usuario } = useAuth();
+export const ConfigMenu = ({ onEditClick, onPasswordClick, canChangePassword, canEdit }: ConfigMenuProps) => {
     const [isOpen, setIsOpen] = useState(false);
     const menuRef = useRef<HTMLDivElement>(null);
     useEffect(() => {
@@ -16,7 +11,6 @@ export const ConfigMenu = ({ onEditClick }: ConfigMenuProps) => {
         document.addEventListener('mousedown', handleClickOutside);
         return () => { document.removeEventListener('mousedown', handleClickOutside); };
     }, []);
-    if (usuario?.rol !== 'admin') return null;
     const handleIconClick = () => { setIsOpen(prev => !prev); };
     return (
         <div className="config-menu">
@@ -24,9 +18,16 @@ export const ConfigMenu = ({ onEditClick }: ConfigMenuProps) => {
                 <Settings className={`config-icon ${isOpen ? 'open' : ''}`} />
             </button>
             {isOpen && ( <div className="config-menu-dropdown">
-                    <button onClick={() => { onEditClick(); setIsOpen(false); }} className="config-menu-dropdown-item">
-                        Cambiar datos
-                    </button>
+                    {canEdit && (
+                        <button onClick={() => { onEditClick?.(); setIsOpen(false); }} className="config-menu-dropdown-item">
+                            Cambiar datos
+                        </button>
+                    )}
+                    {canChangePassword && (
+                        <button onClick={() => { onPasswordClick?.(); setIsOpen(false); }} className="config-menu-dropdown-item">
+                            Cambiar contraseña
+                        </button>
+                    )}
                 </div>
             )}
         </div>

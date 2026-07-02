@@ -13,9 +13,16 @@ import { ConfigMenu } from "../components/ConfigMenu.tsx";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import "../assets/styles/Boton.css"
 import "../assets/styles/Perfil.css"
+import { useAuth } from "../hooks/useAuth.ts";
+import { useNavigate } from "react-router-dom";
 
 export function VerUsuario() {
+    const { usuario } = useAuth();
     const { usuarioSeleccionado } = useUsuarioSeleccionado();
+    const esMiPerfil = !!usuario && !!usuarioSeleccionado && usuario && usuario.u === usuarioSeleccionado.u;
+    const puedeEditar = usuario?.rol === "admin";
+    const puedeCambiarPassword = esMiPerfil;
+    const navigate = useNavigate();
     const [isEditing, setIsEditing] = useState<boolean>(false);
     const vistaPorRol = usePerfilRolView(usuarioSeleccionado, {
         admin: {
@@ -43,7 +50,7 @@ export function VerUsuario() {
                     </Col>
                     <Col md="6" className="d-flex justify-content-end align-items-end">
                         {!isEditing && (
-                            <ConfigMenu onEditClick={() => setIsEditing(true)} />
+                            <ConfigMenu canEdit={puedeEditar} canChangePassword={puedeCambiarPassword as boolean} onEditClick={() => setIsEditing(true)} onPasswordClick={() => navigate("/cambiar-password")} />
                         )}
                     </Col>
                 </Row>
