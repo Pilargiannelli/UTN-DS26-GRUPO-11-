@@ -14,6 +14,8 @@ interface HistorialProps {
 interface PacienteProps extends UserProps {
     telefono: string;
     obraSocial: string;
+    nroAfiliado: string;
+    plan: string;
     fechaNacimiento: string;
     sexo: "Masculino"|"Femenino"|"Otro"
     historial: HistorialProps;

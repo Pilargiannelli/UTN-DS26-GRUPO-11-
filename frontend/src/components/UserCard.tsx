@@ -25,13 +25,13 @@ export function UserCard({usuario, isEditing, onUpdate}: UserCardProps) {
   const FormularioEdicionAlternativo = usePerfilRolView(usuario, {
     admin: {
       paciente: (
-        <PacienteFormFields onSave={handleFormSave} onCancel={handleCancel}/>
+        <PacienteFormFields onSave={handleFormSave} onCancel={handleCancel} paciente={docs as PacienteProps} />
       ),
       medico: (
-        <MedicoFormFields onSave={handleFormSave} onCancel={handleCancel}/>
+        <MedicoFormFields onSave={handleFormSave} onCancel={handleCancel} medico={docs as MedicoProps}/>
       ),
       admin: (
-        <AdminFormFields onSave={handleFormSave} onCancel={handleCancel}/>
+        <AdminFormFields onSave={handleFormSave} onCancel={handleCancel} admin={docs as UserProps}/>
       ),
     },
   });

@@ -8,13 +8,20 @@ import type { AdminEditFormProps } from "../types/UserEditFormProps";
 
 
 
-export function AdminFormFields({onSave, onCancel}: AdminEditFormProps<AdminValidado>) {
+export function AdminFormFields({onSave, onCancel, admin}: AdminEditFormProps<AdminValidado>) {
     const { data: usuariosDB } = useFetch<Usuario[]>("/public/users.json");
     const emailsOcupados = usuariosDB ? usuariosDB.map(u => u?.docs?.email?.trim().toLowerCase()).filter((email): email is string => !!email) : [];
     const schema = adminSchema(emailsOcupados);
+    const initialValues: AdminValidado = {
+            nombre: admin.nombre,
+            apellido: admin.apellido,
+            dni: parseInt(admin.dni),
+            email: admin.email,
+        };
     const { register, handleSubmit, formState: {errors} } = useForm<AdminValidado>({
         resolver: zodResolver(schema) as Resolver<AdminValidado>,
         mode: "onBlur",
+        defaultValues: initialValues,
     });
     return (
         <div className="form-container animate-fadeIn text-start p-2">

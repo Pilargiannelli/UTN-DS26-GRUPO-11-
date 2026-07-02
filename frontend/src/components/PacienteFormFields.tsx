@@ -2,15 +2,16 @@ import { Form, Row, Col, Button } from "react-bootstrap";
 import { SelectEditable } from "./SelectEditable";
 import { DateInput } from "./DateInput";
 import { useMayus } from "../hooks/useMayus";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useForm, useWatch, type Resolver } from "react-hook-form";
 import { pacienteSchema, type PacienteValidado } from "../schemas/pacienteSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useFetch } from "../hooks/useFetch";
 import type { Usuario } from "../types/Usuario";
 import type { PacienteFormProps } from "../types/UserEditFormProps";
+import { stringToDateInput } from "../hooks/useDateTransform";
 
-export function PacienteFormFields({onSave, onCancel}: PacienteFormProps<PacienteValidado>) {
+export function PacienteFormFields({onSave, onCancel, paciente}: PacienteFormProps<PacienteValidado>) {
     const handleMayus = useMayus();
     const sexo = ["Masculino", "Femenino", "Otro"];
     const { data: obrasSociales } = useFetch<string[]>("../../public/obras-sociales.json");
@@ -18,22 +19,40 @@ export function PacienteFormFields({onSave, onCancel}: PacienteFormProps<Pacient
     const { data: usuariosDB } = useFetch<Usuario[]>("../../public/users.json");
     const emailsOcupados = usuariosDB ? usuariosDB.map(u => u?.docs?.email?.trim().toLowerCase()).filter((email): email is string => !!email) : [];
     const schema = pacienteSchema(osValidas, sexo, emailsOcupados);
-    const { register, handleSubmit, clearErrors, setValue, control, formState: {errors} } = useForm<PacienteValidado>({
+    const initialValues: PacienteValidado = {
+        nombre: paciente.nombre,
+        apellido: paciente.apellido,
+        dni: parseInt(paciente.dni),
+        email: paciente.email,
+        telefono: paciente.telefono,
+        obraSocial: paciente.obraSocial,
+        nroAfiliado: paciente.nroAfiliado,
+        plan: paciente.plan,
+        sexo: paciente.sexo,
+        fechaNacimiento: stringToDateInput(paciente.fechaNacimiento),
+    };
+    const { register, handleSubmit, setValue, control, formState: {errors} } = useForm<PacienteValidado>({
         resolver: zodResolver(schema) as Resolver<PacienteValidado>,
         mode: "onBlur",
-        defaultValues: { obraSocial: "", nroAfiliado: "", plan: "" }
+        defaultValues: initialValues,
     });
     const obraSocialSeleccionada = useWatch({ control, name: "obraSocial" });
     const sinObraSocial = (obraSocialSeleccionada === "Sin obra social");
+    const primeraCarga = useRef(true);
     useEffect(() => {
+        if (primeraCarga.current) {
+            primeraCarga.current = false;
+            return;
+        }
         if (sinObraSocial) {
             setValue("nroAfiliado", "-");
             setValue("plan", "-");
         } else {
-            setValue("nroAfiliado", "");
-            setValue("plan", "");
+            setValue("nroAfiliado", `${paciente.nroAfiliado}`);
+            setValue("plan", `${paciente.plan}`);
         }
-    }, [sinObraSocial, clearErrors, setValue]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [sinObraSocial, setValue]);
     return (
         <div className="form-container animate-fadeIn text-start p-2">
             <Form noValidate onSubmit={handleSubmit(onSave)}>

@@ -8,16 +8,25 @@ import { useForm, type Resolver } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { MedicoFormProps } from "../types/UserEditFormProps";
 
-export function MedicoFormFields({onSave, onCancel}: MedicoFormProps<MedicoValidado>) {
+export function MedicoFormFields({onSave, onCancel, medico}: MedicoFormProps<MedicoValidado>) {
     const handleMayus = useMayus();
     const { data: especialidades } = useFetch<string[]>("/public/especialidades.json");
     const espValidas = especialidades || [""];
     const { data: usuariosDB } = useFetch<Usuario[]>("/public/users.json");
     const emailsOcupados = usuariosDB ? usuariosDB.map(u => u?.docs?.email?.trim().toLowerCase()).filter((email): email is string => !!email) : [];
     const schema = medicoSchema(espValidas, emailsOcupados);
+    const initialValues: MedicoValidado = {
+            nombre: medico.nombre,
+            apellido: medico.apellido,
+            dni: parseInt(medico.dni),
+            email: medico.email,
+            matricula: medico.matricula,
+            especialidad: medico.especialidad,
+        };
     const { register, handleSubmit, formState: {errors} } = useForm<MedicoValidado>({
         resolver: zodResolver(schema) as Resolver<MedicoValidado>,
         mode: "onBlur",
+        defaultValues: initialValues,
     });
     return (
         <div className="form-container animate-fadeIn text-start p-2">
