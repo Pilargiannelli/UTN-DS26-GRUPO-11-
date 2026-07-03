@@ -8,7 +8,7 @@ import { useFetch } from "../hooks/useFetch";
 import type { Usuario } from "../types/Usuario";
 
 export function UserForm(){
-    const { registrarUsuario } = useRegistroFinal("admin");
+    const { registrarUsuario } = useRegistroFinal();
     const { data: usuariosDB, loading } = useFetch<Usuario[]>("/public/users.json");
     const usuariosExistentes = usuariosDB || [];
     const { register, handleSubmit, formState: { errors } } = useForm<SinginData>({

@@ -18,7 +18,7 @@ import { useNavigate } from "react-router-dom";
 import { useToast } from "../hooks/useToast.ts";
 import { ToastMensaje } from "../components/NotifyToast.tsx";
 
-export function VerUsuario() {
+function VerUsuario() {
     const { showToast, setShowToast } = useToast("registroExitoso");
     const { usuario } = useAuth();
     const { usuarioSeleccionado } = useUsuarioSeleccionado();
@@ -70,3 +70,5 @@ export function VerUsuario() {
         </Layout>
     );
 }
+
+export default VerUsuario;

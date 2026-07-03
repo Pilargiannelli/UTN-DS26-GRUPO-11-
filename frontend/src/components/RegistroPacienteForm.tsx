@@ -64,7 +64,7 @@ export function RegistroPacienteForm() {
                     <Col md={6}>
                         <Form.Group className="mb-3">
                             <Form.Label className="d-flex me-auto">Apellido</Form.Label>
-                            <Form.Control type="text" placeholder="Ej: Martinez" {...register("apellido")} isInvalid={!!errors.apellido} />
+                            <Form.Control type="text" placeholder="Ej: Martínez" {...register("apellido")} isInvalid={!!errors.apellido} />
                             <Form.Control.Feedback type="invalid"> {errors.apellido?.message} </Form.Control.Feedback>
                         </Form.Group>
                     </Col>
@@ -94,7 +94,7 @@ export function RegistroPacienteForm() {
                     <Col md={6}>
                         <Form.Group className="mb-3">
                             <Form.Label className="d-flex me-auto">Teléfono</Form.Label>
-                            <Form.Control type="number" placeholder="Ej: +5492215555555" {...register("telefono")} isInvalid={!!errors.telefono} />
+                            <Form.Control type="number" placeholder="Ej: 5492215555555" {...register("telefono")} isInvalid={!!errors.telefono} />
                             <Form.Control.Feedback type="invalid"> {errors.telefono?.message} </Form.Control.Feedback>
                         </Form.Group>
                     </Col>
