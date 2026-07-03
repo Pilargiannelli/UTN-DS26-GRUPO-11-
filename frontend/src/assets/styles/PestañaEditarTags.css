@@ -1,0 +1,120 @@
+.card-header-tags {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.btn-editar-tag {
+  background: none;
+  border: 1px solid #0f4d3a;
+  color: #0f4d3a;
+  padding: 0.25rem 0.75rem;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-editar-tag:hover {
+  background-color: #0f4d3a;
+  color: #ffffff;
+}
+
+.tags-container-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.tag-item {
+  background-color: #f1f5f9;
+  border: 1px solid #cbd5e1;
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  color: #0f4d3a;
+  font-weight: 600;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.btn-remove-tag {
+  background: none;
+  border: none;
+  color: #0f4d3a;
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+}
+
+.editor-tags-actions {
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px dashed #e2e8f0;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.input-agregar-tag-group {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.input-agregar-tag-group input {
+  flex-grow: 1;
+  padding: 0.4rem 0.75rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  outline: none;
+}
+
+.btn-add-tag {
+  background-color: #0f4d3a;
+  color: white;
+  border: none;
+  padding: 0.4rem 0.9rem;
+  font-weight: 700;
+  font-size: 1.1rem;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.grupo-guardado {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+}
+
+.btn-cancelar-cambios {
+  background: none;
+  border: none;
+  color: #64748b;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-guardar-cambios {
+  background-color: #0f4d3a;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  font-weight: 600;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.input-agregar-tag-group input {
+    min-height: var(--buscador-min-height);
+    border: 1.5px solid #2e7d5b;
+    border-radius: 8px;
+    color: #1f2933;
+    font-size: 16px;
+    background-color: #ffffff;
+    box-shadow: none;
+}

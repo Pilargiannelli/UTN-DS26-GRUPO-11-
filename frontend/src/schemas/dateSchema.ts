@@ -1,7 +1,25 @@
 import { z } from "zod";
 
 export const dateInputSchema = z.object({
-  day: z.string().min(1, "Por favor, ingrese el día").regex(/^(0[1-9]|[12][0-9]|3[01])$/, "El día ingresado no es válido"),
-  month: z.string().min(1, "Por favor, ingrese el mes").regex(/^(0[1-9]|1[012])$/, "El mes ingresado no es válido"),
-  year: z.string().min(1, "Por favor, ingrese el año").regex(/^(19|20)\d{2}$/, "El año ingresado no es válido"), // Valida años entre 1900 y 2099
-});
+    day: z.string().min(1, "El día es requerido"),
+    month: z.string().min(1, "El mes es requerido"),
+    year: z.string().min(1, "El año es requerido").length(4, "El año debe tener 4 dígitos"),
+  }).refine((values) => {
+    if (!values.day || !values.month || !values.year) return true;
+    const day = Number(values.day);
+    const month = Number(values.month);
+    const year = Number(values.year);
+    const fecha = new Date(year, month - 1, day);
+    const hoy = new Date();
+    return (
+      !isNaN(fecha.getTime()) &&
+      fecha.getDate() === day &&
+      fecha.getMonth() === month - 1 &&
+      fecha.getFullYear() === year &&
+      fecha <= hoy
+    );
+  },{
+      message: "La fecha ingresada no es válida o es futura",
+      path: ["year"], 
+    }
+  );

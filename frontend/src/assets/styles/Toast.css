@@ -1,0 +1,36 @@
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&family=Poppins:wght@400;600;800&display=swap");
+
+:root {
+    --toast-font: "Monserrat", "Poppins", sans-serif;
+    --toast-font-weight: 600;
+    --toast-font-color: #fff;
+    --toast-bg: transparent;
+    --toast-good-color: #2e7d5b;
+}
+
+.toast-container {
+    position: fixed !important;
+    top: 1rem;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 9999;
+    pointer-events: auto;
+}
+
+.toast-container .toast {
+    border-radius: 10px;
+    background: var(--toast-bg);
+    pointer-events: auto;
+    width: auto;
+    box-shadow: none;
+}
+
+.toast-container .toast .mensaje {
+    font-family: var(--toast-font);
+    font-weight: var(--toast-font-weight);
+    color: var(--toast-font-color);
+}
+
+.toast-container .toast-good {
+    background: var(--toast-good-color);
+}

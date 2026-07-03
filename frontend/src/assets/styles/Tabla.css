@@ -1,0 +1,4 @@
+.table-dark th, .table-dark td {
+    background-image: linear-gradient(90deg, #0f4d3a, #2e7d5b) !important;
+    --bs-table-accent-bg: transparent;
+}

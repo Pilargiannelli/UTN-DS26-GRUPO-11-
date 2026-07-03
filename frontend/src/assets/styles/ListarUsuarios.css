@@ -1,0 +1,91 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Montserrat:wght@400;600;800&family=Poppins:wght@400;600;800&display=swap");
+
+:root {
+    --user-card-font: "Inter", sans-serif;
+    --user-card-nombre-font: "Monserrat", "Poppins", sans-serif;
+    --user-card-nombre-color: #0f4d3a;
+    --btn-color: #0f4d3a;
+    --user-card-width: 22rem;
+    --user-card-foto-size: 150px;
+    --buscador-min-height: 42px;
+}
+
+.user-card_foto--con-imagen,
+.user-card_foto--sin-imagen {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background-size: cover;
+    background-position: center;
+}
+
+.nombre {
+    font-family: var(--user-card-nombre-font) !important;
+    color: var(--user-card-nombre-color);
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+}
+
+.btn-primary {
+    min-width: 138px;
+    min-height: 42px;
+    background: var(--btn-color);
+    border-color: var(--btn-color);
+    border-radius: 8px;
+    color: #ffffff;
+    font-weight: 800;
+    box-shadow: 0 10px 20px rgba(15, 77, 58, 0.18);
+}
+
+.btn-primary:hover,
+.btn-primary:focus {
+    background: #2e7d5b;
+    border-color: #2e7d5b;
+    box-shadow: #2e7d5b !important;
+}
+
+.btn-primary:active {
+    background: #0b3d2e !important;
+    border-color: #0b3d2e !important;
+}
+
+.buscador-container {
+    display: flex;
+    align-items: center;
+    min-width: 300px;
+}
+
+.buscador-container .form-control {
+    min-height: var(--buscador-min-height);
+    border: 1.5px solid #2e7d5b;
+    border-radius: 8px;
+    color: #1f2933;
+    font-size: 16px;
+    background-color: #ffffff;
+    box-shadow: none;
+}
+
+.btn-limpiar {
+    position: absolute;
+    align-self: center;
+    right: 12px;
+    background: none;
+    border: none;
+    font-size: 22px;
+    line-height: 1;
+    color: var(--btn-color);
+    cursor: pointer;
+    padding: 0;
+    transition: color 0.2s ease, transform 0.2s ease;
+    z-index: 5;
+}
+
+.btn-limpiar:hover {
+    color: #2e7d5b;;
+    transform: scale(1.1);
+}
+
+.btn-limpiar:focus {
+    outline: none;
+}

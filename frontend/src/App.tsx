@@ -1,7 +1,7 @@
 import { Routes, Route } from "react-router-dom";
 import { useAuth } from "./hooks/useAuth";
 import Login from "./pages/Login";
-import HomeSecretaria from "./pages/HomeSecretaria.tsx";
+import Home from "./pages/Home.tsx";
 import RegistrarMedico from "./pages/RegistroDeMédico.tsx";
 import RegistroPaciente from "./pages/RegistroPaciente.tsx";
 import AutoregistroPaciente from "./pages/AutoregistroPaciente";
@@ -10,6 +10,7 @@ import EditarPaciente from "./pages/EditarPaciente";
 import ProtectedRoute from "./components/ProtectedRoute";
 import NoAutorizado from "./pages/NoAutorizado";
 import { VerUsuario } from "./pages/VerUsuario.tsx";
+import RegistroUsuario from "./pages/RegistroUsuario.tsx";
 
 function App() {
   const { rol } = useAuth();
@@ -17,13 +18,14 @@ function App() {
     <Routes>
       <Route path="/" element={<Login />} />
       {/* Rutas generales */}
-      <Route path="/home" element={<HomeSecretaria />} />
+      <Route path="/home" element={<Home />} />
       <Route path="/registrar-medico" element={<RegistrarMedico />} />
       <Route path="/registrar-paciente" element={<RegistroPaciente />} />
       <Route path="/crear-cuenta" element={<AutoregistroPaciente />} />
       <Route path="/buscar-paciente" element={<BuscarPaciente />} />
       <Route path="/editar-paciente" element={<EditarPaciente />} />
       <Route path="/ver-perfil" element={<VerUsuario />} />
+      <Route path="/registrar-usuario" element={<RegistroUsuario/>} />
       {/* Rutas protegidas */}
       <Route
         path="/historial"
