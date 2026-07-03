@@ -21,7 +21,10 @@ export function RegistroMedicoForm() {
         mode: "onBlur",
     });
     const onSubmit = (data: MedicoValidado) => {
-        procesarPasoUno(data, "medico", "/registrar-usuario");
+        const matriculaString = String(data.matricula);
+        const dniString = String(data.dni);
+        const medicoFormateado = {...data, rol: "medico", dni: dniString , matricula: matriculaString};
+        procesarPasoUno(medicoFormateado, "/registrar-usuario");
     };
     if (loading) return <Spinner/>;
   return (

@@ -4,18 +4,18 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import '../assets/styles/Form.css'
 import { useAuth } from "../hooks/useAuth";
 import { newPasswordSchema, type NewPasswordValidada } from "../schemas/newPasswordSchema";
-import { useNavigate } from "react-router-dom";
+import { useCambioPassword } from "../hooks/useRegistroPassword";
 
-export function UserForm(){
+export function NewPasswordForm(){
+    const { cambiarPassword } = useCambioPassword();
     const { usuario } = useAuth();
-    const navigate = useNavigate();
     const { register, handleSubmit, formState: { errors } } = useForm<NewPasswordValidada>({
         resolver: zodResolver(newPasswordSchema(usuario?.p as string)),
         mode: "onBlur" 
     });
-    const onSubmit = () => {
+    const onSubmit = (data: NewPasswordValidada) => {
         try {
-            navigate('/ver-perfil');
+            cambiarPassword(data);
         } catch (error) { console.error("Error al procesar el registro:", error); }
     };
     return (
