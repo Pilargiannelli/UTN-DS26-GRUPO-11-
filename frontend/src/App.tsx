@@ -15,6 +15,7 @@ import DetalleTurno from "./pages/DetalleTurno.tsx";
 import CancelarTurno from "./pages/CancelarTurno.tsx";
 import PedirTurno from "./pages/PedirTurno.tsx";
 import CambiarPassword from "./pages/CambiarPassword.tsx";
+import BuscarMedico from "./pages/BuscarMédico.tsx";
 
 function App() {
   const { rol } = useAuth();
