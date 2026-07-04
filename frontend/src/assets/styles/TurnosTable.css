@@ -1,0 +1,226 @@
+/* ==========================================================
+   CARD AGENDA
+========================================================== */
+
+.agenda-card{
+    border: none;
+    border-radius: 24px;
+    padding: 18px;
+    background: #ffffff;
+    box-shadow: 0 12px 35px rgba(0,0,0,.06);
+}
+
+/* ==========================================================
+   HEADER
+========================================================== */
+
+.agenda-header{
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 18px;
+}
+
+.agenda-header h2{
+    margin: 0;
+    font-size: 34px;
+    font-weight: 800;
+    color: #1F2937;
+}
+
+.agenda-header p{
+    margin-top: 8px;
+    color: #64748B;
+    font-size: 16px;
+}
+
+/* ==========================================================
+   TABLA
+========================================================== */
+
+.agenda-table{
+    border-collapse: separate;
+    border-spacing: 0 14px;
+    margin-bottom: 0;
+}
+
+/* ==========================================================
+   BARRA DE ENCABEZADOS
+========================================================== */
+
+.agenda-table thead{
+    position: relative;
+}
+
+.agenda-table thead tr{
+
+    background: linear-gradient(
+        90deg,
+        #a5b3ab,
+        #0d482b
+    );
+
+    box-shadow: 0 6px 18px rgba(46,125,91,.08);
+
+}
+
+.agenda-table thead th{
+
+    background: transparent;
+
+    color: #143627;
+
+    padding: 14px 18px;
+
+    font-size: 13px;
+
+    font-weight: 700;
+
+    letter-spacing: 1px;
+
+    text-transform: uppercase;
+
+    border: none;
+
+    vertical-align: middle;
+}
+
+.agenda-table thead th:first-child{
+    border-radius: 16px 0 0 16px;
+}
+
+.agenda-table thead th:last-child{
+    border-radius: 0 16px 16px 0;
+}
+
+/* ==========================================================
+   FILAS
+========================================================== */
+
+.agenda-table tbody tr{
+
+    background: #ffffff;
+
+    transition: .25s;
+
+    box-shadow: 0 3px 12px rgba(0,0,0,.03);
+
+}
+
+.agenda-table tbody tr:hover{
+
+    background: #F8FBFA;
+
+    transform: translateY(-2px);
+
+    box-shadow: 0 10px 20px rgba(0,0,0,.08);
+
+}
+
+.agenda-table td{
+
+    padding: 14px 18px;
+
+    vertical-align: middle;
+
+    border: none;
+}
+
+/* ==========================================================
+   HORA
+========================================================== */
+
+.hora{
+
+    font-size: 22px;
+
+    font-weight: 800;
+
+    color: #245B43;
+}
+
+/* ==========================================================
+   PACIENTE
+========================================================== */
+
+.paciente{
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 16px;
+}
+
+.avatar{
+
+    width: 40px;
+
+    height: 40px;
+
+    border-radius: 50%;
+
+    background: linear-gradient(
+        135deg,
+        #2E7D5B,
+        #274635
+    );
+
+    color: white;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 15px;
+
+    font-weight: 700;
+
+    box-shadow: 0 8px 18px rgba(46,125,91,.18);
+}
+
+.texto-gris{
+
+    color: #64748B;
+}
+
+/* ==========================================================
+   ACCIONES
+========================================================== */
+
+.acciones{
+
+    display: flex;
+
+    justify-content: center;
+
+    gap: 10px;
+}
+
+.acciones button{
+
+    width: 34px;
+
+    height: 34px;
+
+    border-radius: 50%;
+
+    border: none;
+
+    background: #F4F6F9;
+
+    color: #5F6B7A;
+
+    transition: .25s;
+}
+
+.acciones button:hover{
+
+    background: #2E7D5B;
+
+    color: white;
+
+    transform: scale(1.08);
+}

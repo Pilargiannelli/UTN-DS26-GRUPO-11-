@@ -10,18 +10,20 @@ import '../../assets/styles/Header.css'
 
 function Header() {
   const menuItemsAdmin = [
-    { label: 'Turnos', href: '#turnos' },
+    { label: "Inicio", href: "/home" },
+    { label: "Gestión de Turnos", href: "/gestion-turnos" },
     { label: 'Pacientes', href: '/buscar-paciente' },
     { label: 'Médicos', href: '/buscar-medico' },
   ];
   const menuItemsMed = [
-    { label: 'Turnos', href: '#turnos' },
+    { label: "Inicio", href: "/home" },
+  { label: "Gestión de Turnos", href: "/gestion-turnos" },
     { label: 'Pacientes', href: '/buscar-paciente' },
-    { label: 'Agenda', href: '#agenda' },
     { label: 'Historial Clínico', href: '/historial' },
   ];
   const itemsPaciente = [
-    { label: 'Mis turnos', href: '/mis-turnos' },
+    { label: "Inicio", href: "/home" },
+    { label: "Turnos", href: "/gestion-turnos" },
   ];
   const { usuario, setUsuario } = useAuth();
   const { seleccionarUsuario } = useUsuarioSeleccionado();
@@ -42,7 +44,7 @@ function Header() {
         </Navbar.Brand>
         <Nav className="ms-auto">
           <Nav.Link className="link" href={`/home`}>Inicio</Nav.Link>
-          <Nav.Link className="link" href="/mis-turnos">Turnos</Nav.Link>
+          <Nav.Link className="link" href="/gestion-turnos"> Turnos </Nav.Link>
           <NavDropdown title= {<div {...fotoPerfil} />} id="perfil-dropdown" align="end">
             <NavDropdown.Item className="item" onClick={() => {
                 if (usuario) {

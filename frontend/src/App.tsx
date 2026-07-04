@@ -11,6 +11,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import NoAutorizado from "./pages/NoAutorizado";
 import VerUsuario from "./pages/VerUsuario.tsx";
 import RegistroUsuario from "./pages/RegistroUsuario.tsx";
+import GestionTurnos from "./pages/GestionTurnos";
 import DetalleTurno from "./pages/DetalleTurno.tsx";
 import CancelarTurno from "./pages/CancelarTurno.tsx";
 import PedirTurno from "./pages/PedirTurno.tsx";
@@ -32,6 +33,7 @@ function App() {
       <Route path="/buscar-medico" element={<BuscarMedico/>} />
       <Route path="/ver-perfil" element={<VerUsuario />} />
       <Route path="/registrar-usuario" element={<RegistroUsuario/>} />
+      <Route path="/gestion-turnos" element={<GestionTurnos />} />
       <Route path="/turnos/:id" element={<DetalleTurno />} />
       <Route path="/turnos/:id/cancelar" element={<CancelarTurno />} />
       <Route path="/pedir-turno" element={<PedirTurno />} />
