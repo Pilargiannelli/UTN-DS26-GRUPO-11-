@@ -13,6 +13,7 @@ function Header() {
     { label: "Inicio", href: "/home" },
     { label: "Gestión de Turnos", href: "/gestion-turnos" },
     { label: 'Pacientes', href: '/buscar-paciente' },
+    { label: 'Médicos', href: '/buscar-medico' },
   ];
   const menuItemsMed = [
     { label: "Inicio", href: "/home" },
@@ -22,7 +23,7 @@ function Header() {
   ];
   const itemsPaciente = [
     { label: "Inicio", href: "/home" },
-    { label: "Mis Turnos", href: "/gestion-turnos" },
+    { label: "Turnos", href: "/gestion-turnos" },
   ];
   const { usuario, setUsuario } = useAuth();
   const { seleccionarUsuario } = useUsuarioSeleccionado();

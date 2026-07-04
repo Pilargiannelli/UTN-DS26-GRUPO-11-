@@ -21,66 +21,69 @@ export function RegistroMedicoForm() {
         mode: "onBlur",
     });
     const onSubmit = (data: MedicoValidado) => {
-        procesarPasoUno(data, "medico", "/registrar-usuario");
+        const matriculaString = String(data.matricula);
+        const dniString = String(data.dni);
+        const medicoFormateado = {...data, rol: "medico", dni: dniString , matricula: matriculaString};
+        procesarPasoUno(medicoFormateado, "/registrar-usuario");
     };
     if (loading) return <Spinner/>;
-  return (
-    <div className="container my-0 form-container">
-        <Form className="container my-5" onSubmit={handleSubmit(onSubmit)}>
-            <Row className="g-3">
-                {/* Nombre */}
-                <Col md={6}>
-                    <Form.Group className="mb-3">
-                        <Form.Label className="d-flex me-auto">Nombre</Form.Label>
-                        <Form.Control type="text" placeholder="Ej: Sara" {...register("nombre")} isInvalid={!!errors.nombre} />
-                        <Form.Control.Feedback type="invalid"> {errors.nombre?.message} </Form.Control.Feedback>
-                    </Form.Group>
-                </Col>
-                {/* Apellido */}
-                <Col md={6}>
-                    <Form.Group className="mb-3">
-                        <Form.Label className="d-flex me-auto">Apellido</Form.Label>
-                        <Form.Control type="text" placeholder="Ej: Henández" {...register("apellido")} isInvalid={!!errors.apellido} />
-                        <Form.Control.Feedback type="invalid"> {errors.apellido?.message} </Form.Control.Feedback>
-                    </Form.Group>
-                </Col>
-            </Row>
-            <Row className="g-3">
-                {/* DNI */}
-                <Col md={6}>
-                    <Form.Group className="mb-3">
-                        <Form.Label className="d-flex me-auto">DNI</Form.Label>
-                        <Form.Control type="number" placeholder="Ej: 38122078" {...register("dni")} isInvalid={!!errors.dni} />
-                        <Form.Control.Feedback type="invalid"> {errors.dni?.message} </Form.Control.Feedback>
-                    </Form.Group>
-                </Col>
-                {/* Correo */}
-                <Col md={6}>
-                    <Form.Group className="mb-3">
-                        <Form.Label className="d-flex me-auto">Email</Form.Label>
-                        <Form.Control type="text" placeholder="Ej: medico1@gmail.com" {...register("email")} isInvalid={!!errors.email} />
-                        <Form.Control.Feedback type="invalid"> {errors.email?.message} </Form.Control.Feedback>
-                    </Form.Group>
-                </Col>
-            </Row>
-            <Row className="g-3">
-                {/* Especialidad */}
-                <Col md={6}>
-                    <SelectEditable label="Especialidad" name="especialidad" jsonPath="../../public/especialidades.json" register={register} error={errors.especialidad?.message} />
-                </Col>
-                {/* Matrícula */}
-                <Col md={6}>
-                    <Form.Group className="mb-3">
-                        <Form.Label className="d-flex me-auto">Matrícula</Form.Label>
-                        <Form.Control type="text" placeholder="Ej: 12345" {...register("matricula")} onChange={ handleMayus } isInvalid={!!errors.matricula} />
-                        <Form.Control.Feedback type="invalid"> {errors.matricula?.message} </Form.Control.Feedback>
-                    </Form.Group>
-                </Col>
-            </Row>
-            <div className="d-flex justify-content-end">
-                <Button type="submit" variant="primary">Registrar</Button>
-            </div>
-        </Form>
-    </div>
+    return (
+        <div className="container my-0 form-container">
+            <Form className="container my-5 w-75" noValidate onSubmit={handleSubmit(onSubmit)}>
+                <Row className="g-3">
+                    {/* Nombre */}
+                    <Col md={6}>
+                        <Form.Group className="mb-3">
+                            <Form.Label className="d-flex me-auto">Nombre</Form.Label>
+                            <Form.Control type="text" placeholder="Ej: Sara" {...register("nombre")} isInvalid={!!errors.nombre} />
+                            <Form.Control.Feedback type="invalid"> {errors.nombre?.message} </Form.Control.Feedback>
+                        </Form.Group>
+                    </Col>
+                    {/* Apellido */}
+                    <Col md={6}>
+                        <Form.Group className="mb-3">
+                            <Form.Label className="d-flex me-auto">Apellido</Form.Label>
+                            <Form.Control type="text" placeholder="Ej: Henández" {...register("apellido")} isInvalid={!!errors.apellido} />
+                            <Form.Control.Feedback type="invalid"> {errors.apellido?.message} </Form.Control.Feedback>
+                        </Form.Group>
+                    </Col>
+                </Row>
+                <Row className="g-3">
+                    {/* DNI */}
+                    <Col md={6}>
+                        <Form.Group className="mb-3">
+                            <Form.Label className="d-flex me-auto">DNI</Form.Label>
+                            <Form.Control type="number" placeholder="Ej: 38122078" {...register("dni")} isInvalid={!!errors.dni} />
+                            <Form.Control.Feedback type="invalid"> {errors.dni?.message} </Form.Control.Feedback>
+                        </Form.Group>
+                    </Col>
+                    {/* Correo */}
+                    <Col md={6}>
+                        <Form.Group className="mb-3">
+                            <Form.Label className="d-flex me-auto">Email</Form.Label>
+                            <Form.Control type="text" placeholder="Ej: medico1@gmail.com" {...register("email")} isInvalid={!!errors.email} />
+                            <Form.Control.Feedback type="invalid"> {errors.email?.message} </Form.Control.Feedback>
+                        </Form.Group>
+                    </Col>
+                </Row>
+                <Row className="g-3">
+                    {/* Especialidad */}
+                    <Col md={6}>
+                        <SelectEditable label="Especialidad" name="especialidad" jsonPath="../../public/especialidades.json" register={register} error={errors.especialidad?.message} />
+                    </Col>
+                    {/* Matrícula */}
+                    <Col md={6}>
+                        <Form.Group className="mb-3">
+                            <Form.Label className="d-flex me-auto">Matrícula</Form.Label>
+                            <Form.Control type="text" placeholder="Ej: 12345" {...register("matricula")} onChange={ handleMayus } isInvalid={!!errors.matricula} />
+                            <Form.Control.Feedback type="invalid"> {errors.matricula?.message} </Form.Control.Feedback>
+                        </Form.Group>
+                    </Col>
+                </Row>
+                <div className="d-flex justify-content-end">
+                    <Button type="submit" variant="primary">Registrar</Button>
+                </div>
+            </Form>
+        </div>
     );
 }

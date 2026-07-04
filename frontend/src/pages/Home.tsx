@@ -1,6 +1,7 @@
 import Layout from "../components/Layout/Layout.tsx";
 import ListaReservados from "../components/ListaReservados.tsx";
 import ContadorTurnos from "../components/ContadorTurnos.tsx";
+import { HomePaciente } from "../components/HomePaciente.tsx";
 import { Container, Row, Col } from 'react-bootstrap';
 import { useRolView } from "../hooks/useRolView.ts";
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -36,7 +37,7 @@ function Home() {
                     </Col>
                 </Row>
             </Container>,
-        paciente: <></>,
+        paciente: <HomePaciente />,
       });
     return (
         <Layout>
