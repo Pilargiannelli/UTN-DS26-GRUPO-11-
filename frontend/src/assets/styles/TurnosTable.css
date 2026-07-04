@@ -5,7 +5,7 @@
 .agenda-card{
     border: none;
     border-radius: 24px;
-    padding: 24px;
+    padding: 18px;
     background: #ffffff;
     box-shadow: 0 12px 35px rgba(0,0,0,.06);
 }
@@ -18,12 +18,12 @@
     display: flex;
     justify-content: space-between;
     align-items: flex-end;
-    margin-bottom: 30px;
+    margin-bottom: 18px;
 }
 
 .agenda-header h2{
     margin: 0;
-    font-size: 42px;
+    font-size: 34px;
     font-weight: 800;
     color: #1F2937;
 }
@@ -31,7 +31,7 @@
 .agenda-header p{
     margin-top: 8px;
     color: #64748B;
-    font-size: 18px;
+    font-size: 16px;
 }
 
 /* ==========================================================
@@ -57,7 +57,7 @@
     background: linear-gradient(
         90deg,
         #a5b3ab,
-        #73b594
+        #0d482b
     );
 
     box-shadow: 0 6px 18px rgba(46,125,91,.08);
@@ -70,9 +70,9 @@
 
     color: #143627;
 
-    padding: 18px 22px;
+    padding: 14px 18px;
 
-    font-size: 14px;
+    font-size: 13px;
 
     font-weight: 700;
 
@@ -119,7 +119,7 @@
 
 .agenda-table td{
 
-    padding: 20px 22px;
+    padding: 14px 18px;
 
     vertical-align: middle;
 
@@ -132,7 +132,7 @@
 
 .hora{
 
-    font-size: 28px;
+    font-size: 22px;
 
     font-weight: 800;
 
@@ -154,9 +154,9 @@
 
 .avatar{
 
-    width: 48px;
+    width: 40px;
 
-    height: 48px;
+    height: 40px;
 
     border-radius: 50%;
 
@@ -174,7 +174,7 @@
 
     justify-content: center;
 
-    font-size: 18px;
+    font-size: 15px;
 
     font-weight: 700;
 
@@ -201,9 +201,9 @@
 
 .acciones button{
 
-    width: 40px;
+    width: 34px;
 
-    height: 40px;
+    height: 34px;
 
     border-radius: 50%;
 

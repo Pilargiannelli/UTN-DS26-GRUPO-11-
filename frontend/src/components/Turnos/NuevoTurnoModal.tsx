@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+
 import {
   Modal,
   Button,
@@ -40,9 +41,7 @@ function NuevoTurnoModal({
       | "Cancelado",
   });
 
-  const [errores, setErrores] = useState<
-    Record<string, string>
-  >({});
+  const [errores, setErrores] = useState<Record<string, string>>({});
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -52,10 +51,21 @@ function NuevoTurnoModal({
     >
   ) => {
 
-    setForm({
-      ...form,
-      [e.target.name]: e.target.value,
-    });
+    const { name, value } = e.target;
+
+    setForm((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+
+    if (errores[name]) {
+
+      setErrores((prev) => ({
+        ...prev,
+        [name]: "",
+      }));
+
+    }
 
   };
 
@@ -77,15 +87,17 @@ function NuevoTurnoModal({
 
   const guardarTurno = () => {
 
-    const resultado =
-      turnoSchema.safeParse(form);
+    // ==========================
+    // Validación con Zod
+    // ==========================
+
+    const resultado = turnoSchema.safeParse(form);
 
     if (!resultado.success) {
 
-      const nuevosErrores:
-        Record<string, string> = {};
+      const nuevosErrores: Record<string, string> = {};
 
-      resultado.error.issues.forEach(issue => {
+      resultado.error.issues.forEach((issue) => {
 
         nuevosErrores[
           issue.path[0].toString()
@@ -99,7 +111,73 @@ function NuevoTurnoModal({
 
     }
 
-    setErrores({});
+    // ==========================
+    // Fecha no anterior a hoy
+    // ==========================
+
+    // ==========================
+// Validación de fecha
+// ==========================
+
+const hoy = new Date()
+  .toISOString()
+  .split("T")[0];
+
+if (form.fecha < hoy) {
+
+  setErrores({
+    fecha:
+      "No es posible registrar turnos en fechas anteriores a hoy.",
+  });
+
+  return;
+
+}
+
+    // ==========================
+    // Horario laboral
+    // ==========================
+
+    const [hora, minutos] =
+      form.hora.split(":").map(Number);
+
+    const horario = hora * 60 + minutos;
+
+    if (
+      horario < 8 * 60 ||
+      horario > 20 * 60
+    ) {
+
+      setErrores({
+        hora:
+          "El horario debe estar entre las 08:00 y las 20:00.",
+      });
+
+      return;
+
+    }
+
+    // ==========================
+    // Cada 30 minutos
+    // ==========================
+
+    if (
+      minutos !== 0 &&
+      minutos !== 30
+    ) {
+
+      setErrores({
+        hora:
+          "Los turnos sólo pueden registrarse cada 30 minutos.",
+      });
+
+      return;
+
+    }
+
+    // ==========================
+    // Crear turno
+    // ==========================
 
     const nuevoTurno: Turno = {
 
@@ -115,13 +193,14 @@ function NuevoTurnoModal({
 
     onClose();
 
-    navigate("/gestion-turnos");
+    navigate("/gestion-turnos", {
+      replace: true,
+    });
 
   };
 
   return (
-
-    <Modal
+        <Modal
       show={show}
       onHide={onClose}
       centered
@@ -159,6 +238,7 @@ function NuevoTurnoModal({
               name="paciente"
               value={form.paciente}
               onChange={handleChange}
+              placeholder="Ingrese el paciente"
               isInvalid={!!errores.paciente}
             />
 
@@ -183,11 +263,17 @@ function NuevoTurnoModal({
                 Seleccione un médico
               </option>
 
-              <option>Dr. Font</option>
+              <option value="Dr. Font">
+                Dr. Font
+              </option>
 
-              <option>Dr. Castelli</option>
+              <option value="Dr. Castelli">
+                Dr. Castelli
+              </option>
 
-              <option>Dr. Messi</option>
+              <option value="Dr. Messi">
+                Dr. Messi
+              </option>
 
             </Form.Select>
 
@@ -205,6 +291,7 @@ function NuevoTurnoModal({
               name="especialidad"
               value={form.especialidad}
               onChange={handleChange}
+              placeholder="Ej. Traumatología"
               isInvalid={!!errores.especialidad}
             />
 
@@ -214,11 +301,11 @@ function NuevoTurnoModal({
 
           </Form.Group>
 
-          <Row className="mb-3">
+          <Row>
 
             <Col md={6}>
 
-              <Form.Group>
+              <Form.Group className="mb-3">
 
                 <Form.Label>Fecha</Form.Label>
 
@@ -240,13 +327,14 @@ function NuevoTurnoModal({
 
             <Col md={6}>
 
-              <Form.Group>
+              <Form.Group className="mb-3">
 
                 <Form.Label>Hora</Form.Label>
 
                 <Form.Control
                   type="time"
                   name="hora"
+                  step="1800"
                   value={form.hora}
                   onChange={handleChange}
                   isInvalid={!!errores.hora}
@@ -270,11 +358,43 @@ function NuevoTurnoModal({
               name="obraSocial"
               value={form.obraSocial}
               onChange={handleChange}
+              placeholder="Ej. OSDE"
               isInvalid={!!errores.obraSocial}
             />
 
             <Form.Control.Feedback type="invalid">
               {errores.obraSocial}
+            </Form.Control.Feedback>
+
+          </Form.Group>
+
+          <Form.Group className="mb-4">
+
+            <Form.Label>Estado</Form.Label>
+
+            <Form.Select
+              name="estado"
+              value={form.estado}
+              onChange={handleChange}
+              isInvalid={!!errores.estado}
+            >
+
+              <option value="Pendiente">
+                Pendiente
+              </option>
+
+              <option value="Confirmado">
+                Confirmado
+              </option>
+
+              <option value="Cancelado">
+                Cancelado
+              </option>
+
+            </Form.Select>
+
+            <Form.Control.Feedback type="invalid">
+              {errores.estado}
             </Form.Control.Feedback>
 
           </Form.Group>
@@ -286,7 +406,7 @@ function NuevoTurnoModal({
       <Modal.Footer>
 
         <Button
-          variant="secondary"
+          variant="outline-secondary"
           onClick={onClose}
         >
           Cancelar

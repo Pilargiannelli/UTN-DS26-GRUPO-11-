@@ -1,14 +1,13 @@
 import {
   Badge,
+  Button,
   Card,
   Table,
-  Button,
 } from "react-bootstrap";
 
 import {
-  Eye,
-  Pencil,
-  ArrowRepeat,
+  PencilSquare,
+  CalendarEvent,
   Trash,
 } from "react-bootstrap-icons";
 
@@ -20,17 +19,33 @@ function obtenerColorEstado(estado: string) {
   switch (estado) {
     case "Pendiente":
       return "warning";
+
     case "Confirmado":
       return "success";
+
     case "Cancelado":
       return "danger";
+
     default:
       return "secondary";
   }
 }
 
-function TurnosTable({ turnos }: TurnosTableProps) {
+function obtenerIniciales(nombre: string) {
+  return nombre
+    .split(" ")
+    .map((p) => p[0])
+    .join("")
+    .substring(0, 2)
+    .toUpperCase();
+}
+
+function TurnosTable({
+  turnos,
+}: TurnosTableProps) {
+
   return (
+
     <Card className="agenda-card">
 
       <Card.Body>
@@ -39,15 +54,21 @@ function TurnosTable({ turnos }: TurnosTableProps) {
 
           <div>
 
-            <h2>Agenda médica</h2>
+            <h2>Agenda Médica</h2>
 
-            <p>Viernes 3 de Julio · {turnos.length} turnos</p>
+            <p>
+              Turnos programados para hoy
+            </p>
 
           </div>
 
         </div>
 
-        <Table responsive borderless className="agenda-table">
+        <Table
+          responsive
+          hover
+          className="agenda-table align-middle"
+        >
 
           <thead>
 
@@ -58,6 +79,10 @@ function TurnosTable({ turnos }: TurnosTableProps) {
               <th>Paciente</th>
 
               <th>Médico</th>
+
+              <th>Especialidad</th>
+
+              <th>Fecha</th>
 
               <th>Obra Social</th>
 
@@ -77,8 +102,12 @@ function TurnosTable({ turnos }: TurnosTableProps) {
 
               <tr key={turno.id}>
 
-                <td className="hora">
-                  {turno.hora}
+                <td>
+
+                  <span className="hora">
+                    {turno.hora}
+                  </span>
+
                 </td>
 
                 <td>
@@ -87,7 +116,7 @@ function TurnosTable({ turnos }: TurnosTableProps) {
 
                     <div className="avatar">
 
-                      {turno.paciente.charAt(0)}
+                      {obtenerIniciales(turno.paciente)}
 
                     </div>
 
@@ -103,18 +132,37 @@ function TurnosTable({ turnos }: TurnosTableProps) {
 
                 </td>
 
-                <td className="texto-gris">
+                <td>
 
                   {turno.medico}
 
                 </td>
 
-                <td>{turno.obraSocial}</td>
+                <td>
+
+                  <span className="texto-gris">
+
+                    {turno.especialidad}
+
+                  </span>
+
+                </td>
+
+                <td>
+
+                  {turno.fecha}
+
+                </td>
+
+                <td>
+
+                  {turno.obraSocial}
+
+                </td>
 
                 <td>
 
                   <Badge
-                    pill
                     bg={obtenerColorEstado(turno.estado)}
                   >
                     {turno.estado}
@@ -127,31 +175,30 @@ function TurnosTable({ turnos }: TurnosTableProps) {
                   <div className="acciones">
 
                     <Button
-                      size="sm"
                       variant="light"
+                      title="Editar"
                     >
-                      <Eye />
+
+                      <PencilSquare />
+
                     </Button>
 
                     <Button
-                      size="sm"
                       variant="light"
+                      title="Reprogramar"
                     >
-                      <Pencil />
+
+                      <CalendarEvent />
+
                     </Button>
 
                     <Button
-                      size="sm"
                       variant="light"
+                      title="Cancelar"
                     >
-                      <ArrowRepeat />
-                    </Button>
 
-                    <Button
-                      size="sm"
-                      variant="light"
-                    >
                       <Trash />
+
                     </Button>
 
                   </div>
@@ -169,7 +216,9 @@ function TurnosTable({ turnos }: TurnosTableProps) {
       </Card.Body>
 
     </Card>
+
   );
+
 }
 
 export default TurnosTable;

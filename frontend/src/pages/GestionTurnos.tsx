@@ -1,5 +1,9 @@
-import { Container } from "react-bootstrap";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import {
+  Container,
+  Spinner,
+  Alert,
+} from "react-bootstrap";
 
 import Layout from "../components/Layout/Layout";
 import HeroTurnos from "../components/Turnos/HeroTurnos";
@@ -8,82 +12,296 @@ import TurnosFilters from "../components/Turnos/TurnosFilters";
 import TurnosTable from "../components/Turnos/TurnosTable";
 import NuevoTurnoModal from "../components/Turnos/NuevoTurnoModal";
 
+import { useAuth } from "../hooks/useAuth";
+import { useFetch } from "../hooks/useFetch";
+
 import type { Turno } from "../types/Turno";
 
 function GestionTurnos() {
 
   const [showModal, setShowModal] = useState(false);
 
-  const [turnos, setTurnos] = useState<Turno[]>([
-    {
-      id: 1,
-      paciente: "Juan Pérez",
-      medico: "Dr. Font",
-      especialidad: "Traumatología",
-      fecha: "2026-07-03",
-      hora: "09:00",
-      obraSocial: "OSDE",
-      estado: "Pendiente",
-    },
-    {
-      id: 2,
-      paciente: "Ana López",
-      medico: "Dr. Castelli",
-      especialidad: "Cardiología",
-      fecha: "2026-07-03",
-      hora: "09:30",
-      obraSocial: "IOMA",
-      estado: "Confirmado",
-    },
-    {
-      id: 3,
-      paciente: "Carlos Ruiz",
-      medico: "Dr. Messi",
-      especialidad: "Clínica Médica",
-      fecha: "2026-07-03",
-      hora: "10:00",
-      obraSocial: "PAMI",
-      estado: "Cancelado",
-    },
-  ]);
+  const { usuario } = useAuth();
 
-  const agregarTurno = (nuevoTurno: Turno) => {
-    setTurnos((prev) => [...prev, nuevoTurno]);
+  const nombreUsuario =
+    usuario?.rol === "medico"
+      ? `Dr. ${usuario.docs.apellido}`
+      : usuario?.docs.nombre ?? "Secretaría";
+
+  const {
+    data,
+    loading,
+    error,
+  } = useFetch<Turno[]>("/turnos.json");
+
+  const [turnos, setTurnos] = useState<Turno[]>([]);
+
+  useEffect(() => {
+
+    if (data) {
+
+      const ordenados = [...data].sort((a, b) => {
+
+        if (a.fecha !== b.fecha) {
+
+          return a.fecha.localeCompare(b.fecha);
+
+        }
+
+        return a.hora.localeCompare(b.hora);
+
+      });
+
+      setTurnos(ordenados);
+
+    }
+
+  }, [data]);
+
+  // ==========================================
+  // Fecha y hora actual
+  // ==========================================
+
+  const ahora = new Date();
+
+  const fechaActual = ahora.toLocaleDateString(
+    "es-AR",
+    {
+      weekday: "long",
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    }
+  );
+
+  const horaActual = ahora.toLocaleTimeString(
+    "es-AR",
+    {
+      hour: "2-digit",
+      minute: "2-digit",
+    }
+  );
+
+  // ==========================================
+  // Próximo turno
+  // ==========================================
+
+  const proximoTurno = turnos.find(
+    turno => turno.estado !== "Cancelado"
+  );
+
+  // ==========================================
+  // Dashboard
+  // ==========================================
+
+  const totalTurnos = turnos.length;
+
+  const pendientes =
+    turnos.filter(
+      t => t.estado === "Pendiente"
+    ).length;
+
+  const confirmados =
+    turnos.filter(
+      t => t.estado === "Confirmado"
+    ).length;
+
+  const cancelados =
+    turnos.filter(
+      t => t.estado === "Cancelado"
+    ).length;
+
+  // ==========================================
+  // Alta de turno
+  // ==========================================
+
+  const agregarTurno = (
+    nuevoTurno: Turno
+  ) => {
+
+    const medicoOcupado = turnos.some(
+      turno =>
+        turno.medico === nuevoTurno.medico &&
+        turno.fecha === nuevoTurno.fecha &&
+        turno.hora === nuevoTurno.hora
+    );
+
+    if (medicoOcupado) {
+
+      alert(
+        "Ese médico ya posee un turno asignado en esa fecha y horario."
+      );
+
+      return;
+
+    }
+
+    const pacienteOcupado = turnos.some(
+      turno =>
+        turno.paciente === nuevoTurno.paciente &&
+        turno.fecha === nuevoTurno.fecha &&
+        turno.hora === nuevoTurno.hora
+    );
+
+    if (pacienteOcupado) {
+
+      alert(
+        "El paciente ya posee un turno asignado en esa fecha y horario."
+      );
+
+      return;
+
+    }
+
+    const nuevosTurnos = [
+
+      ...turnos,
+
+      nuevoTurno,
+
+    ].sort((a, b) => {
+
+      if (a.fecha !== b.fecha) {
+
+        return a.fecha.localeCompare(b.fecha);
+
+      }
+
+      return a.hora.localeCompare(b.hora);
+
+    });
+
+    setTurnos(nuevosTurnos);
+
   };
 
+    // ==========================================
+  // Loading
+  // ==========================================
+
+  if (loading) {
+
+    return (
+
+      <Layout>
+
+        <Container className="mt-5 text-center">
+
+          <Spinner
+            animation="border"
+            variant="success"
+          />
+
+        </Container>
+
+      </Layout>
+
+    );
+
+  }
+
+  // ==========================================
+  // Error
+  // ==========================================
+
+  if (error) {
+
+    return (
+
+      <Layout>
+
+        <Container className="mt-5">
+
+          <Alert variant="danger">
+
+            {error.message}
+
+          </Alert>
+
+        </Container>
+
+      </Layout>
+
+    );
+
+  }
+
+  // ==========================================
+  // Render
+  // ==========================================
+
   return (
+
     <Layout>
 
       <Container className="mt-4">
 
         <HeroTurnos
-          secretaria="Pilar"
-          proximoPaciente="Juan Pérez"
-          especialidad="Traumatología"
-          fecha="Viernes 3 Julio"
-          hora="09:00"
+
+          secretaria={nombreUsuario}
+
+          proximoPaciente={
+            proximoTurno
+              ? proximoTurno.paciente
+              : "Sin turnos"
+          }
+
+          especialidad={
+            proximoTurno
+              ? proximoTurno.especialidad
+              : "-"
+          }
+
+          fecha={fechaActual}
+
+          hora={horaActual}
+
         />
 
-        <DashboardCards />
+        <DashboardCards
+
+          total={totalTurnos}
+
+          pendientes={pendientes}
+
+          confirmados={confirmados}
+
+          cancelados={cancelados}
+
+        />
 
         <TurnosFilters
-          onNuevoTurno={() => setShowModal(true)}
+
+          onNuevoTurno={() =>
+            setShowModal(true)
+          }
+
         />
 
         <TurnosTable
+
           turnos={turnos}
+
         />
 
-                <NuevoTurnoModal
+        <NuevoTurnoModal
+
           show={showModal}
-          onClose={() => setShowModal(false)}
+
+          onClose={() =>
+            setShowModal(false)
+          }
+
           onAgregar={agregarTurno}
+
         />
 
       </Container>
 
     </Layout>
+
   );
+
 }
 
 export default GestionTurnos;

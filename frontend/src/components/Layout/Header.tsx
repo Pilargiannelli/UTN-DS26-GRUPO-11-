@@ -10,18 +10,18 @@ import '../../assets/styles/Header.css'
 
 function Header() {
   const menuItemsAdmin = [
-    { label: 'Turnos', href: '#turnos' },
+    { label: "Inicio", href: "/home" },
     { label: "Gestión de Turnos", href: "/gestion-turnos" },
     { label: 'Pacientes', href: '/buscar-paciente' },
   ];
   const menuItemsMed = [
-    { label: 'Turnos', href: '#turnos' },
+    { label: "Inicio", href: "/home" },
+  { label: "Gestión de Turnos", href: "/gestion-turnos" },
     { label: 'Pacientes', href: '/buscar-paciente' },
-    { label: 'Agenda', href: '#agenda' },
     { label: 'Historial Clínico', href: '/historial' },
   ];
   const itemsPaciente = [
-    { label: 'Mis turnos', href: '#turnos' },
+    { label: "Inicio", href: "/home" },
     { label: "Mis Turnos", href: "/gestion-turnos" },
   ];
   const { usuario, setUsuario } = useAuth();

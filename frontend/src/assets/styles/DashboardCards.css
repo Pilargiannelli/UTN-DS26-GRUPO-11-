@@ -3,9 +3,9 @@
     overflow:hidden;
 
     border:none;
-    border-radius:24px;
+    border-radius:20px;
 
-    height:195px;
+    height:165px;
 
     transition:.35s;
 
@@ -28,7 +28,7 @@
 
     height:100%;
 
-    padding:24px;
+    padding:18px;
 
     display:flex;
 
@@ -80,17 +80,17 @@
 
     align-items:center;
 
-    gap:18px;
+    gap:14px;
 
 }
 
 .dashboard-icon{
 
-    width:68px;
+    width:56px;
 
-    height:68px;
+    height:56px;
 
-    border-radius:20px;
+    border-radius:16 px;
 
     display:flex;
 
@@ -98,7 +98,7 @@
 
     align-items:center;
 
-    font-size:34px;
+    font-size:28px;
 }
 
 .dashboard-card small{
@@ -109,14 +109,14 @@
 
     font-weight:600;
 
-    font-size:15px;
+    font-size:14px;
 }
 
 .dashboard-card h2{
 
     margin:0;
 
-    font-size:62px;
+    font-size:50px;
 
     font-weight:800;
 
