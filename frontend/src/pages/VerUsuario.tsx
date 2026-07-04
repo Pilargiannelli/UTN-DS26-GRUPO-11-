@@ -15,8 +15,11 @@ import "../assets/styles/Boton.css"
 import "../assets/styles/Perfil.css"
 import { useAuth } from "../hooks/useAuth.ts";
 import { useNavigate } from "react-router-dom";
+import { useToast } from "../hooks/useToast.ts";
+import { ToastMensaje } from "../components/NotifyToast.tsx";
 
-export function VerUsuario() {
+function VerUsuario() {
+    const { showToast, setShowToast } = useToast("registroExitoso");
     const { usuario } = useAuth();
     const { usuarioSeleccionado } = useUsuarioSeleccionado();
     const esMiPerfil = !!usuario && !!usuarioSeleccionado && usuario && usuario.u === usuarioSeleccionado.u;
@@ -43,6 +46,7 @@ export function VerUsuario() {
     };
     return (
         <Layout>
+            <ToastMensaje mensaje="Datos actualizados correctamente" tipo="toast-good" mostrar={showToast} onClose={() => setShowToast(false)} />
             <Container className="cont-perfil">
                 <Row>
                     <Col md="6" className="d-flex align-content-start">
@@ -66,3 +70,5 @@ export function VerUsuario() {
         </Layout>
     );
 }
+
+export default VerUsuario;

@@ -12,6 +12,7 @@ function Header() {
   const menuItemsAdmin = [
     { label: 'Turnos', href: '#turnos' },
     { label: 'Pacientes', href: '/buscar-paciente' },
+    { label: 'Médicos', href: '/buscar-medico' },
   ];
   const menuItemsMed = [
     { label: 'Turnos', href: '#turnos' },

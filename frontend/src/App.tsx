@@ -7,10 +7,9 @@ import MisTurnos from "./pages/MisTurnos.tsx";
 import RegistroPaciente from "./pages/RegistroPaciente.tsx";
 import AutoregistroPaciente from "./pages/AutoregistroPaciente";
 import BuscarPaciente from "./pages/BuscarPaciente";
-import EditarPaciente from "./pages/EditarPaciente";
 import ProtectedRoute from "./components/ProtectedRoute";
 import NoAutorizado from "./pages/NoAutorizado";
-import { VerUsuario } from "./pages/VerUsuario.tsx";
+import VerUsuario from "./pages/VerUsuario.tsx";
 import RegistroUsuario from "./pages/RegistroUsuario.tsx";
 import DetalleTurno from "./pages/DetalleTurno.tsx";
 import CancelarTurno from "./pages/CancelarTurno.tsx";
@@ -29,7 +28,7 @@ function App() {
       <Route path="/registrar-paciente" element={<RegistroPaciente />} />
       <Route path="/crear-cuenta" element={<AutoregistroPaciente />} />
       <Route path="/buscar-paciente" element={<BuscarPaciente />} />
-      <Route path="/editar-paciente" element={<EditarPaciente />} />
+      <Route path="/buscar-medico" element={<BuscarMedico/>} />
       <Route path="/ver-perfil" element={<VerUsuario />} />
       <Route path="/registrar-usuario" element={<RegistroUsuario/>} />
       <Route path="/turnos/:id" element={<DetalleTurno />} />
