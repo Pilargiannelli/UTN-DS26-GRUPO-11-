@@ -1,0 +1,47 @@
+.mi-perfil-titulo {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0 0 20px;
+}
+
+.mi-perfil-card {
+  background: #f8f7f5;
+  border-radius: 12px;
+  padding: 24px;
+  max-width: 480px;
+}
+
+.mi-perfil-encabezado {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 18px;
+  border-bottom: 1px solid #e0dfdb;
+  padding-bottom: 18px;
+}
+
+.mi-perfil-avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: #e1f5ee;
+  color: #085041;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.mi-perfil-nombre {
+  font-size: 15px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.mi-perfil-rol {
+  font-size: 13px;
+  color: #6c757d;
+  margin: 2px 0 0;
+}

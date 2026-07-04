@@ -1,0 +1,120 @@
+.mis-turnos-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+}
+
+.mis-turnos-titulo {
+  font-family: Georgia, serif;
+  font-size: 22px;
+  color: #0d3b2e;
+  margin: 0;
+}
+
+.mis-turnos-btn-agendar {
+  font-size: 13px;
+  padding: 0 14px;
+  height: 34px;
+  background: #0f6e56;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.mis-turnos-seccion {
+  font-size: 12px;
+  color: #8a8578;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 0 0 10px;
+}
+
+.turno-fila {
+  display: flex;
+  gap: 14px;
+  align-items: stretch;
+  margin-bottom: 12px;
+  text-decoration: none;
+  color: inherit;
+}
+
+.turno-fila-apagada {
+  opacity: 0.6;
+}
+
+.turno-fila-barra {
+  width: 4px;
+  border-radius: 2px;
+  flex-shrink: 0;
+  background: #b4b2a9;
+}
+
+.turno-fila-barra.estado-confirmado { background: #0f6e56; }
+.turno-fila-barra.estado-pendiente { background: #e0a733; }
+.turno-fila-barra.estado-cancelado { background: #d85a30; }
+
+.turno-fila-card {
+  background: #fff;
+  border: 1px solid #e5e2d8;
+  border-radius: 12px;
+  padding: 14px 18px;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.turno-fila-info {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.turno-fila-fecha {
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.turno-fila-mes {
+  font-size: 10px;
+  color: #8a8578;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+.turno-fila-dia {
+  font-size: 20px;
+  color: #0d3b2e;
+  font-weight: 500;
+  margin: 0;
+  line-height: 1.1;
+}
+
+.turno-fila-titulo {
+  font-size: 14px;
+  font-weight: 500;
+  margin: 0;
+  color: #2a2a28;
+}
+
+.turno-fila-medico {
+  font-size: 12px;
+  color: #8a8578;
+  margin: 2px 0 0;
+}
+
+.turno-fila-badge {
+  font-size: 11px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-weight: 500;
+  flex-shrink: 0;
+  background: #f1efe8;
+  color: #5f5e5a;
+}
+
+.turno-fila-badge.estado-confirmado { background: #e1f5ee; color: #085041; }
+.turno-fila-badge.estado-pendiente { background: #faeeda; color: #854f0b; }
+.turno-fila-badge.estado-cancelado { background: #fcebeb; color: #a32d2d; }
