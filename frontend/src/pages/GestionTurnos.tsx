@@ -182,9 +182,6 @@ function GestionTurnos() {
   if (loading) {
 
     return (
-
-      <Layout>
-
         <Container className="mt-5 text-center">
 
           <Spinner
@@ -193,9 +190,6 @@ function GestionTurnos() {
           />
 
         </Container>
-
-      </Layout>
-
     );
 
   }
@@ -207,9 +201,6 @@ function GestionTurnos() {
   if (error) {
 
     return (
-
-      <Layout>
-
         <Container className="mt-5">
 
           <Alert variant="danger">
@@ -219,9 +210,6 @@ function GestionTurnos() {
           </Alert>
 
         </Container>
-
-      </Layout>
-
     );
 
   }
@@ -231,9 +219,6 @@ function GestionTurnos() {
   // ==========================================
 
   return (
-
-    <Layout>
-
       <Container className="mt-4">
 
         <HeroTurnos
@@ -297,9 +282,6 @@ function GestionTurnos() {
         />
 
       </Container>
-
-    </Layout>
-
   );
 
 }

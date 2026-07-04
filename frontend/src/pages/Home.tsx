@@ -8,23 +8,12 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import '../assets/styles/App.css';
 import { ToastMensaje } from "../components/NotifyToast.tsx";
 import { useToast } from "../hooks/useToast.ts";
+import GestionTurnos from "./GestionTurnos.tsx";
 
 function Home() {
     const { showToast, setShowToast } = useToast("registroExitoso");
     const vistaPorRol = useRolView({
-        admin:
-        <Container>
-                <Row className="align-items-center justify-content-center">
-                    <Col>
-                        <ContadorTurnos />
-                    </Col>
-                </Row>
-                <Row>
-                    <Col>
-                        <ListaReservados />
-                    </Col>
-                </Row>
-            </Container>,
+        admin: <GestionTurnos />,
         medico: <Container>
                 <Row className="align-items-center justify-content-center">
                     <Col>
