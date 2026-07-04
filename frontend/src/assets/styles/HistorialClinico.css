@@ -1,0 +1,125 @@
+.histcli-titulo {
+  font-family: Georgia, serif;
+  font-size: 22px;
+  color: #0d3b2e;
+  margin: 0;
+}
+
+/* ── Buscador ── */
+.histcli-search-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  max-width: 420px;
+}
+
+.histcli-search-icon {
+  position: absolute;
+  left: 12px;
+  font-size: 14px;
+  color: #8a8578;
+  pointer-events: none;
+}
+
+.histcli-search {
+  width: 100%;
+  padding: 9px 36px 9px 36px;
+  border: 1px solid #e5e2d8;
+  border-radius: 10px;
+  font-size: 14px;
+  color: #2a2a28;
+  outline: none;
+  background: #fff;
+  transition: border-color 0.15s;
+}
+
+.histcli-search:focus {
+  border-color: #0f6e56;
+}
+
+.histcli-search-clear {
+  position: absolute;
+  right: 10px;
+  background: none;
+  border: none;
+  color: #8a8578;
+  font-size: 13px;
+  cursor: pointer;
+  padding: 0 2px;
+  line-height: 1;
+}
+
+.histcli-search-clear:hover {
+  color: #2a2a28;
+}
+
+/* ── Sección por paciente ── */
+.histcli-paciente {
+  border: 1px solid #e5e2d8;
+  border-radius: 12px;
+  margin-bottom: 12px;
+  overflow: hidden;
+  background: #fff;
+}
+
+.histcli-paciente-header {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px;
+  background: #fff;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.15s;
+}
+
+.histcli-paciente-header:hover {
+  background: #f8faf8;
+}
+
+.histcli-paciente-nombre {
+  font-size: 15px;
+  font-weight: 600;
+  color: #0d3b2e;
+  margin: 0;
+}
+
+.histcli-paciente-user {
+  font-size: 12px;
+  color: #8a8578;
+  margin: 2px 0 0;
+}
+
+.histcli-badge {
+  font-size: 11px;
+  padding: 3px 10px;
+  border-radius: 20px;
+  background: #e1f5ee;
+  color: #085041;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.histcli-chevron {
+  font-size: 16px;
+  color: #8a8578;
+  margin-left: 8px;
+  transition: transform 0.2s;
+}
+
+/* ── Lista de consultas ── */
+.histcli-consultas {
+  padding: 12px 16px;
+  border-top: 1px solid #e5e2d8;
+  background: #fafaf8;
+}
+
+/* ── Estado vacío / cargando ── */
+.histcli-estado {
+  font-size: 14px;
+  color: #8a8578;
+  text-align: center;
+  padding: 40px 0;
+}

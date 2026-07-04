@@ -17,8 +17,9 @@ function Header() {
   ];
   const menuItemsMed = [
     { label: "Inicio", href: "/home" },
-  { label: "Gestión de Turnos", href: "/gestion-turnos" },
+    { label: "Gestión de Turnos", href: "/gestion-turnos" },
     { label: 'Pacientes', href: '/buscar-paciente' },
+    { label: 'Agenda', href: '/orden-del-dia' },
     { label: 'Historial Clínico', href: '/historial' },
   ];
   const itemsPaciente = [

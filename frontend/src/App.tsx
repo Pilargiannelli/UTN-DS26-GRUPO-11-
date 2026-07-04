@@ -17,6 +17,8 @@ import CancelarTurno from "./pages/CancelarTurno.tsx";
 import PedirTurno from "./pages/PedirTurno.tsx";
 import CambiarPassword from "./pages/CambiarPassword.tsx";
 import BuscarMedico from "./pages/BuscarMédico.tsx";
+import OrdenDelDia from "./pages/OrdenDelDia.tsx";
+import HistorialClinico from "./pages/HistorialClinico.tsx";
 
 function App() {
   const { rol } = useAuth();
@@ -42,10 +44,18 @@ function App() {
 
       {/* Rutas protegidas */}
       <Route
+        path="/orden-del-dia"
+        element={
+          <ProtectedRoute rol={rol} permitido="medico">
+            <OrdenDelDia />
+          </ProtectedRoute>
+        }
+      />
+      <Route
         path="/historial"
         element={
           <ProtectedRoute rol={rol} permitido="medico">
-            <h1>Historial Clínico</h1>
+            <HistorialClinico />
           </ProtectedRoute>
         }
       />
