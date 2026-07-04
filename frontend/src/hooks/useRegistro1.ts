@@ -1,14 +1,17 @@
 import { useNavigate } from "react-router-dom";
+import { useRegistro } from "./useRegistro";
+import type { RegistroPasoUno } from "../context/RegistroContext";
 
 export function useRegistroPasoUno() {
     const navigate = useNavigate();
-    const procesarPasoUno = <T>(
-        data: T,
-        rol: "paciente" | "medico",
+    const { setDatosPasoUno } = useRegistro();
+    const procesarPasoUno = (
+        data: RegistroPasoUno,
         urlSiguiente: string
     ) => {
-        const datosLimpios = {...data, rol,};
-        navigate(urlSiguiente, { state: { datosPasoUno: datosLimpios } });
+        const datosLimpios = {...data};
+        setDatosPasoUno(datosLimpios);
+        navigate(urlSiguiente);
     };
     return { procesarPasoUno };
 }

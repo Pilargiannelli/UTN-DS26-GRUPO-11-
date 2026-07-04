@@ -6,11 +6,12 @@ import RegistrarMedico from "./pages/RegistroDeMédico.tsx";
 import RegistroPaciente from "./pages/RegistroPaciente.tsx";
 import AutoregistroPaciente from "./pages/AutoregistroPaciente";
 import BuscarPaciente from "./pages/BuscarPaciente";
-import EditarPaciente from "./pages/EditarPaciente";
 import ProtectedRoute from "./components/ProtectedRoute";
 import NoAutorizado from "./pages/NoAutorizado";
-import { VerUsuario } from "./pages/VerUsuario.tsx";
+import VerUsuario from "./pages/VerUsuario.tsx";
 import RegistroUsuario from "./pages/RegistroUsuario.tsx";
+import CambioPassword from "./pages/CambioPassword.tsx";
+import BuscarMedico from "./pages/BuscarMédico.tsx";
 
 function App() {
   const { rol } = useAuth();
@@ -23,9 +24,10 @@ function App() {
       <Route path="/registrar-paciente" element={<RegistroPaciente />} />
       <Route path="/crear-cuenta" element={<AutoregistroPaciente />} />
       <Route path="/buscar-paciente" element={<BuscarPaciente />} />
-      <Route path="/editar-paciente" element={<EditarPaciente />} />
+      <Route path="/buscar-medico" element={<BuscarMedico/>} />
       <Route path="/ver-perfil" element={<VerUsuario />} />
       <Route path="/registrar-usuario" element={<RegistroUsuario/>} />
+      <Route path="/cambiar-password" element={<CambioPassword />} />
       {/* Rutas protegidas */}
       <Route
         path="/historial"
