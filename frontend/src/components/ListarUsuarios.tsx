@@ -7,6 +7,7 @@ import '../assets/styles/ListarUsuarios.css';
 import { useState } from "react";
 import { useUsuarioSeleccionado } from "../hooks/useUsuarioSeleccionado";
 import { useNavigate } from "react-router-dom";
+import { BotonAgregar } from "./BotonAgregar";
 
 interface ListarUsuariosProps {
     rol: "paciente" | "medico";
@@ -38,7 +39,7 @@ export function ListarUsuarios({ rol }: ListarUsuariosProps) {
     });
     const handleVerPerfil = (usuario: Usuario) => {
         seleccionarUsuario(usuario);
-        navigate("/ver-perfil");
+        navigate("/ver-perfil", { state: {from: `/buscar-${rol}`} });
     };
     return (
         <Container className="my-4">
@@ -49,17 +50,7 @@ export function ListarUsuarios({ rol }: ListarUsuariosProps) {
                     <Form.Control type="text" placeholder={`Buscar ${rol === "paciente" ? "paciente" : "médico"} por nombre o DNI`} value={busqueda} onChange={(e) => setBusqueda(e.target.value)} className="ps-5 pe-5" />
                     {busqueda && ( <button type="button" className="btn-limpiar" onClick={() => setBusqueda("")} aria-label="Limpiar búsqueda" > &times; </button> )}
                 </div>
-                {rol === "paciente" ? (
-                    <button
-                        type="button"
-                        className="btn-nuevo-paciente"
-                        onClick={() => navigate("/registrar-paciente")}
-                    >
-                        + Crear nuevo paciente
-                    </button>
-                ) : (
-                    <div />
-                )}
+                <BotonAgregar rol={rol} />
             </div>
             {usuariosFiltrados.length === 0 ? (
                 <div className="text-center my-5 text-muted bg-light p-5 rounded shadow-sm">

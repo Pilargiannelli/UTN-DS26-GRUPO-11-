@@ -4,7 +4,7 @@ interface UserProps {
   dni: string;
   email: string;
   foto?: string;
-  rol: "medico"|"paciente"|"admin";
+  rol: string;
 }
 
 export type { UserProps };

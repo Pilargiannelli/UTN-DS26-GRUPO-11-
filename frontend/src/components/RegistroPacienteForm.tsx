@@ -10,6 +10,7 @@ import { useEffect } from "react";
 import { useMayus } from "../hooks/useMayus.ts";
 import { useRegistroPasoUno } from "../hooks/useRegistro1.ts";
 import type { Usuario } from "../types/Usuario.ts";
+import { dateInputToString } from "../hooks/useDateTransform.ts";
 
 export function RegistroPacienteForm() {
     const handleMayus = useMayus();
@@ -26,8 +27,12 @@ export function RegistroPacienteForm() {
         defaultValues: { obraSocial: "", nroAfiliado: "", plan: "" }
     });
     const onSubmit = (data: PacienteValidado) => {
-        const pacienteFormateado = {...data, nroAfiliado: data.nroAfiliado === "-" ? "" : data.nroAfiliado, plan: data.plan === "-" ? "" : data.plan,};
-        procesarPasoUno(pacienteFormateado, "paciente", "/registrar-usuario");
+        const fechaString = dateInputToString(data.fechaNacimiento);
+        const sexo = data.sexo as "Masculino"|"Femenino"|"Otro";
+        const historial = { consultas: [], alergias: [], antecedentes: []};
+        const dniString = String(data.dni);
+        const pacienteFormateado = {...data, rol: "paciente", dni: dniString, fechaNacimiento: fechaString, sexo: sexo, historial: historial, nroAfiliado: data.nroAfiliado === "-" ? "" : data.nroAfiliado, plan: data.plan === "-" ? "" : data.plan,};
+        procesarPasoUno(pacienteFormateado, "/registrar-usuario");
     };
     const obraSocialSeleccionada = useWatch({ control, name: "obraSocial" });
     const sinObraSocial = (obraSocialSeleccionada === "Sin obra social");
@@ -59,7 +64,7 @@ export function RegistroPacienteForm() {
                     <Col md={6}>
                         <Form.Group className="mb-3">
                             <Form.Label className="d-flex me-auto">Apellido</Form.Label>
-                            <Form.Control type="text" placeholder="Ej: Martinez" {...register("apellido")} isInvalid={!!errors.apellido} />
+                            <Form.Control type="text" placeholder="Ej: Martínez" {...register("apellido")} isInvalid={!!errors.apellido} />
                             <Form.Control.Feedback type="invalid"> {errors.apellido?.message} </Form.Control.Feedback>
                         </Form.Group>
                     </Col>
@@ -89,7 +94,7 @@ export function RegistroPacienteForm() {
                     <Col md={6}>
                         <Form.Group className="mb-3">
                             <Form.Label className="d-flex me-auto">Teléfono</Form.Label>
-                            <Form.Control type="number" placeholder="Ej: +5492215555555" {...register("telefono")} isInvalid={!!errors.telefono} />
+                            <Form.Control type="number" placeholder="Ej: 5492215555555" {...register("telefono")} isInvalid={!!errors.telefono} />
                             <Form.Control.Feedback type="invalid"> {errors.telefono?.message} </Form.Control.Feedback>
                         </Form.Group>
                     </Col>
