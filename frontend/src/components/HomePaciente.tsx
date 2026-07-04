@@ -16,11 +16,15 @@ export function HomePaciente() {
 
   return (
     <div className="home-paciente pagina-paciente">
-      <div className="home-paciente-saludo">
-        <p className="home-paciente-nombre">Hola, {usuario?.docs?.nombre}</p>
-        <p className="home-paciente-fecha">{formatearFechaHoy()}</p>
+      <div className="hero">
+        <div className="home-paciente-saludo hero-left">
+          <h1>👋 Buenos días, {usuario?.docs?.nombre}</h1>
+          <p>{formatearFechaHoy()}</p>
+        </div>
+        <div className="hero-right">
+          <ProximoTurnoCard turno={proximoTurno} />
+        </div>
       </div>
-      <ProximoTurnoCard turno={proximoTurno} />
       <AccesosRapidosPaciente />
     </div>
   );

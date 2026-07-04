@@ -10,14 +10,12 @@ import '../../assets/styles/Header.css'
 
 function Header() {
   const menuItemsAdmin = [
-    { label: "Inicio", href: "/home" },
-    { label: "Gestión de Turnos", href: "/gestion-turnos" },
+    { label: "Gestión de Turnos", href: "/home" },
     { label: 'Pacientes', href: '/buscar-paciente' },
     { label: 'Médicos', href: '/buscar-medico' },
   ];
   const menuItemsMed = [
-    { label: "Inicio", href: "/home" },
-    { label: "Gestión de Turnos", href: "/gestion-turnos" },
+    { label: "Gestión de Turnos", href: "/home" },
     { label: 'Pacientes', href: '/buscar-paciente' },
     { label: 'Agenda', href: '/orden-del-dia' },
     { label: 'Historial Clínico', href: '/historial' },
