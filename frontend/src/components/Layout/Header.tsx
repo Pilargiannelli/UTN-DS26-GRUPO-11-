@@ -21,7 +21,7 @@ function Header() {
     { label: 'Historial Clínico', href: '/historial' },
   ];
   const itemsPaciente = [
-    { label: 'Mis turnos', href: '#turnos' },
+    { label: 'Mis turnos', href: '/mis-turnos' },
   ];
   const { usuario, setUsuario } = useAuth();
   const { seleccionarUsuario } = useUsuarioSeleccionado();
@@ -42,7 +42,7 @@ function Header() {
         </Navbar.Brand>
         <Nav className="ms-auto">
           <Nav.Link className="link" href={`/home`}>Inicio</Nav.Link>
-          <Nav.Link className="link" href="/turnos">Turnos</Nav.Link>
+          <Nav.Link className="link" href="/mis-turnos">Turnos</Nav.Link>
           <NavDropdown title= {<div {...fotoPerfil} />} id="perfil-dropdown" align="end">
             <NavDropdown.Item className="item" onClick={() => {
                 if (usuario) {

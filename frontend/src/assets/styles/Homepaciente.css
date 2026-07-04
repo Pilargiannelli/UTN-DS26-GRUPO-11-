@@ -1,0 +1,21 @@
+.home-paciente {
+  padding: 0.5rem 0 1rem;
+}
+
+.home-paciente-saludo {
+  margin-bottom: 1.75rem;
+}
+
+.home-paciente-nombre {
+  font-family: Georgia, serif;
+  font-size: 24px;
+  color: #0d3b2e;
+  margin: 0;
+}
+
+.home-paciente-fecha {
+  font-size: 13px;
+  color: #8a8578;
+  margin: 4px 0 0;
+  text-transform: capitalize;
+}
