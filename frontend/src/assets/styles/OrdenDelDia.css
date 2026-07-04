@@ -1,0 +1,268 @@
+.agenda-titulo {
+  font-family: Georgia, serif;
+  font-size: 22px;
+  color: #0d3b2e;
+  margin: 0;
+}
+
+.agenda-fecha-sub {
+  font-size: 12px;
+  color: #8a8578;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 0;
+}
+
+.agenda-fecha-header {
+  font-size: 18px;
+  font-weight: 500;
+  color: #0d3b2e;
+  text-transform: capitalize;
+  margin: 2px 0 0;
+}
+
+/* Botones de navegación */
+.agenda-nav-btn {
+  background: transparent;
+  border: 1px solid #e5e2d8;
+  border-radius: 8px;
+  color: #0d3b2e;
+  padding: 4px 14px;
+  cursor: pointer;
+  font-size: 18px;
+  line-height: 1;
+  transition: background 0.15s;
+}
+
+.agenda-nav-btn:hover {
+  background: #f4f3ec;
+}
+
+.agenda-hoy-btn {
+  background: #0f6e56;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 4px 14px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: background 0.15s;
+}
+
+.agenda-hoy-btn:hover {
+  background: #0a5040;
+}
+
+/* Contenedor con scroll */
+.agenda-scroll {
+  overflow-y: auto;
+  max-height: calc(100vh - 230px);
+  border: 1px solid #e5e2d8;
+  border-radius: 12px;
+  background: #fff;
+}
+
+/* Grid principal */
+.agenda-grid {
+  display: flex;
+  position: relative;
+  min-width: 0;
+}
+
+/* Columna de horas */
+.agenda-col-horas {
+  width: 60px;
+  flex-shrink: 0;
+  border-right: 1px solid #e5e2d8;
+  background: #fafaf8;
+}
+
+.agenda-hora-label {
+  height: 64px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-end;
+  padding: 6px 10px 0 0;
+  font-size: 11px;
+  color: #8a8578;
+  box-sizing: border-box;
+}
+
+/* Columna de eventos */
+.agenda-col-eventos {
+  flex: 1;
+  position: relative;
+}
+
+.agenda-hora-fila {
+  height: 64px;
+  border-top: 1px solid #e5e2d8;
+  box-sizing: border-box;
+}
+
+.agenda-hora-fila:first-child {
+  border-top: none;
+}
+
+/* Bloques de turno */
+.agenda-evento {
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-size: 13px;
+  overflow: hidden;
+  cursor: default;
+  box-sizing: border-box;
+  border-left: 4px solid transparent;
+}
+
+.agenda-evento.estado-confirmado {
+  background: #e1f5ee;
+  border-left-color: #0f6e56;
+  color: #085041;
+}
+
+.agenda-evento.estado-pendiente {
+  background: #faeeda;
+  border-left-color: #e0a733;
+  color: #854f0b;
+}
+
+.agenda-evento.estado-cancelado {
+  background: #fcebeb;
+  border-left-color: #d85a30;
+  color: #a32d2d;
+  opacity: 0.7;
+}
+
+.agenda-evento-hora {
+  font-size: 11px;
+  font-weight: 600;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.agenda-evento-paciente {
+  font-weight: 500;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.3;
+}
+
+.agenda-evento-especialidad {
+  font-size: 11px;
+  margin: 0;
+  opacity: 0.75;
+  line-height: 1.2;
+}
+
+/* Estado vacío */
+.agenda-sin-turnos {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #8a8578;
+  font-size: 14px;
+  text-align: center;
+  pointer-events: none;
+}
+
+/* ── Toggle Día / Semana ── */
+.agenda-toggle {
+  display: flex;
+  border: 1px solid #e5e2d8;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.agenda-toggle-btn {
+  background: transparent;
+  border: none;
+  padding: 5px 16px;
+  font-size: 13px;
+  color: #5f5e5a;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.agenda-toggle-btn.activo {
+  background: #0f6e56;
+  color: #fff;
+}
+
+.agenda-toggle-btn:not(.activo):hover {
+  background: #f4f3ec;
+}
+
+/* ── Vista semanal ── */
+.agenda-semana-header {
+  display: flex;
+  border-bottom: 1px solid #e5e2d8;
+  position: sticky;
+  top: 0;
+  background: #fff;
+  z-index: 2;
+}
+
+.agenda-dia-header {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 8px 0 6px;
+  border-left: 1px solid #e5e2d8;
+}
+
+.agenda-dia-nombre {
+  font-size: 11px;
+  color: #8a8578;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.agenda-dia-numero {
+  font-size: 20px;
+  font-weight: 400;
+  color: #0d3b2e;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  margin-top: 4px;
+}
+
+.agenda-dia-hoy {
+  background: #0f6e56;
+  color: #fff !important;
+  font-weight: 600;
+}
+
+.agenda-dia-col {
+  flex: 1;
+  position: relative;
+  border-left: 1px solid #e5e2d8;
+  overflow: hidden;
+  min-width: 0;
+}
+
+/* Evento compacto para vista semanal */
+.agenda-evento-compact {
+  left: 3px;
+  right: 3px;
+  padding: 4px 6px;
+}
+
+.agenda-evento-compact .agenda-evento-hora {
+  font-size: 10px;
+}
+
+.agenda-evento-compact .agenda-evento-paciente {
+  font-size: 11px;
+}
