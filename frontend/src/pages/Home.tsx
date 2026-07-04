@@ -1,8 +1,5 @@
 import Layout from "../components/Layout/Layout.tsx";
-import ListaReservados from "../components/ListaReservados.tsx";
-import ContadorTurnos from "../components/ContadorTurnos.tsx";
 import { HomePaciente } from "../components/HomePaciente.tsx";
-import { Container, Row, Col } from 'react-bootstrap';
 import { useRolView } from "../hooks/useRolView.ts";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../assets/styles/App.css';
@@ -14,18 +11,7 @@ function Home() {
     const { showToast, setShowToast } = useToast("registroExitoso");
     const vistaPorRol = useRolView({
         admin: <GestionTurnos />,
-        medico: <Container>
-                <Row className="align-items-center justify-content-center">
-                    <Col>
-                        <ContadorTurnos />
-                    </Col>
-                </Row>
-                <Row>
-                    <Col>
-                        <ListaReservados />
-                    </Col>
-                </Row>
-            </Container>,
+        medico: <GestionTurnos />,
         paciente: <HomePaciente />,
       });
     return (

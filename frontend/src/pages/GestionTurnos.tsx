@@ -5,7 +5,6 @@ import {
   Alert,
 } from "react-bootstrap";
 
-import Layout from "../components/Layout/Layout";
 import HeroTurnos from "../components/Turnos/HeroTurnos";
 import DashboardCards from "../components/Turnos/DashboardCards";
 import TurnosFilters from "../components/Turnos/TurnosFilters";
@@ -52,6 +51,7 @@ function GestionTurnos() {
 
       });
 
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setTurnos(ordenados);
 
     }
@@ -94,20 +94,22 @@ function GestionTurnos() {
   // Dashboard
   // ==========================================
 
-  const totalTurnos = turnos.length;
+  const turnosFiltrados = usuario?.rol === "medico" ? turnos.filter( turno => turno.medico === `Dr. ${usuario.docs.apellido}` ) : turnos;
+
+  const totalTurnos = turnosFiltrados.length;
 
   const pendientes =
-    turnos.filter(
+    turnosFiltrados.filter(
       t => t.estado === "Pendiente"
     ).length;
 
   const confirmados =
-    turnos.filter(
+    turnosFiltrados.filter(
       t => t.estado === "Confirmado"
     ).length;
 
   const cancelados =
-    turnos.filter(
+    turnosFiltrados.filter(
       t => t.estado === "Cancelado"
     ).length;
 
@@ -265,7 +267,7 @@ function GestionTurnos() {
 
         <TurnosTable
 
-          turnos={turnos}
+          turnos={turnosFiltrados}
 
         />
 
