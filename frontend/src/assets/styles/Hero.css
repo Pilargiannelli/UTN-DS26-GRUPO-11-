@@ -1,0 +1,115 @@
+.hero {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 50px;
+
+    background: #ffffff;
+    border-radius: 22px;
+    padding: 30px 40px;
+
+    margin-bottom: 30px;
+
+    box-shadow: 0 8px 24px rgba(0, 0, 0, .06);
+}
+
+.hero-left {
+    flex: 1;
+}
+
+.hero-role {
+    color: #4f8a63;
+    font-size: .9rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+}
+
+.hero-left h1 {
+    margin: 10px 0;
+
+    font-size: 58px;
+    font-weight: 800;
+
+    color: #1f2937;
+    letter-spacing:-2px;
+}
+
+.hero-left p {
+
+    margin-top: 8px;
+
+    font-size: 1.15rem;
+
+    color: #6b7280;
+
+    max-width: 600px;
+
+    line-height: 1.6;
+
+}
+
+.hero p{
+
+    font-size:22px;
+
+    color:#64748B;
+
+    line-height:1.6;
+
+}
+
+.hero-right {
+
+    display: flex;
+
+    gap: 35px;
+
+}
+
+.hero-item {
+
+    min-width: 180px;
+
+    border-left: 1px solid #ececec;
+
+    padding-left: 25px;
+
+}
+
+.hero-item span {
+
+    display: block;
+
+    color: #6b7280;
+
+    font-size: .95rem;
+
+    margin-bottom: 6px;
+
+}
+
+.hero-item strong {
+
+    display: block;
+
+    font-size: 1.8rem;
+
+    color: #1f2937;
+
+}
+
+.hero-item small {
+
+    color: #6b7280;
+
+    font-size: .95rem;
+
+}
+
+.status {
+
+    color: #2d6a4f;
+
+    font-weight: 600;
+
+}

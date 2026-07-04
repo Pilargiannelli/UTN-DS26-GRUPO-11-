@@ -11,6 +11,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import NoAutorizado from "./pages/NoAutorizado";
 import { VerUsuario } from "./pages/VerUsuario.tsx";
 import RegistroUsuario from "./pages/RegistroUsuario.tsx";
+import GestionTurnos from "./pages/GestionTurnos";
 
 function App() {
   const { rol } = useAuth();
@@ -26,6 +27,7 @@ function App() {
       <Route path="/editar-paciente" element={<EditarPaciente />} />
       <Route path="/ver-perfil" element={<VerUsuario />} />
       <Route path="/registrar-usuario" element={<RegistroUsuario/>} />
+      <Route path="/gestion-turnos" element={<GestionTurnos />} />
       {/* Rutas protegidas */}
       <Route
         path="/historial"
