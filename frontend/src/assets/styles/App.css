@@ -3,8 +3,7 @@
 }
 
 .editar-paciente-page {
-  min-height: 100vh;
-  background: linear-gradient(135deg, #053b2f 0%, #07543d 45%, #0b6b4d 100%);
+  background: #ffffff;
   font-family: Arial, Helvetica, sans-serif;
   color: #12352b;
 }
@@ -23,72 +22,51 @@
 
 .editar-paciente-main {
   width: 100%;
-  margin: 18px 0 48px;
+  margin: 0 0 24px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 0 16px;
+  box-sizing: border-box;
 }
 
 .contenedor-volver {
   width: 100%;
-  margin: 0 0 14px 0;
-  padding-left: 8px;
+  flex-basis: 100%;
+  margin: 12px 0 10px 0;
+  padding-left: 16px;
   text-align: left;
-}
-
-.btn-volver {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 7px;
-  border: 1px solid rgba(20, 184, 122, 0.22);
-  border-radius: 9px;
-  background: linear-gradient(180deg, #075f45 0%, #064733 100%);
-  color: #ffffff;
-  padding: 10px 18px;
-  font-size: 15px;
-  font-weight: 700;
-  cursor: pointer;
-  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.26);
-  transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.btn-volver:hover {
-  background: linear-gradient(180deg, #087253 0%, #07563f 100%);
-  transform: translateY(-1px);
-  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.3);
-}
-
-.btn-volver:active {
-  transform: translateY(0);
-  box-shadow: 0 7px 16px rgba(0, 0, 0, 0.24);
-}
-
-.btn-volver-icono {
-  font-size: 26px;
-  line-height: 14px;
-  font-weight: 400;
 }
 
 .editar-paciente-card,
 .datos-actuales-card {
-  width: min(920px, calc(100% - 32px));
-  margin-left: auto;
-  margin-right: auto;
   background-color: #ffffff;
   border-radius: 10px;
-  padding: 24px;
+  padding: 16px;
   box-shadow: 0 8px 22px rgba(0, 0, 0, 0.18);
+  border: 2px solid #0b6b4d;
+}
+
+.editar-paciente-card {
+  flex: 1 1 520px;
+}
+
+.datos-actuales-card {
+  flex: 1 1 360px;
 }
 
 .editar-paciente-card h2,
 .datos-actuales-card h2 {
-  margin: 0 0 20px;
-  font-size: 20px;
+  margin: 0 0 12px;
+  font-size: 18px;
   color: #0b4d38;
 }
 
 .btn-guardar {
   border: none;
   border-radius: 6px;
-  background-color: #0d5db8;
+  background-color: #0b6b4d;
   color: white;
   padding: 8px 14px;
   font-size: 13px;
@@ -97,16 +75,12 @@
 }
 
 .btn-guardar:hover {
-  background-color: #094b96;
-}
-
-.datos-actuales-card {
-  margin-top: 22px;
+  background-color: #094a37;
 }
 
 .datos-actuales-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   gap: 14px 28px;
 }
 

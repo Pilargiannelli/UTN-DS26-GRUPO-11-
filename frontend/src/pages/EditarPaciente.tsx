@@ -1,6 +1,9 @@
     import { useState } from "react";
-    import { useLocation, useNavigate } from "react-router-dom";
+    import { useLocation } from "react-router-dom";
     import type { Paciente } from "../types/Paciente";
+    import Header from "../components/Layout/Header.tsx";
+    import { Footer } from "../components/Layout/Footer.tsx";
+    import { BotonVolver } from "../components/BotonVolver.tsx";
     import "../assets/styles/App.css";
 
     const pacienteVacio: Paciente = {
@@ -20,7 +23,6 @@
     };
 
     export default function EditarPaciente() {
-    const navigate = useNavigate();
     const location = useLocation();
 
     const pacienteRecibido = location.state?.paciente as Paciente | undefined;
@@ -56,10 +58,17 @@
         const soloLetras = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/;
         const emailValido = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         const telefonoValido = /^[0-9\s\-+()]{6,20}$/;
+        const dniValido = /^\d{7,8}$/;
         const hoy = new Date();
         const fechaNacimiento = paciente.fechaNacimiento
         ? new Date(paciente.fechaNacimiento)
         : null;
+
+        if (!paciente.dni.trim()) {
+        nuevosErrores.dni = "El DNI es obligatorio";
+        } else if (!dniValido.test(paciente.dni)) {
+        nuevosErrores.dni = "Ingrese un DNI valido (7 u 8 digitos)";
+        }
 
         if (!paciente.nombre.trim()) {
         nuevosErrores.nombre = "El nombre es obligatorio";
@@ -144,20 +153,12 @@
     };
 
     return (
+        <>
+        <Header />
         <div className="editar-paciente-page">
-        <header className="editar-paciente-topbar">
-            <h1>IMOS</h1>
-        </header>
-
         <main className="editar-paciente-main">
             <div className="contenedor-volver">
-            <button
-                className="btn-volver"
-                type="button"
-                onClick={() => navigate(-1)}
-            >
-                &lt; Volver
-            </button>
+            <BotonVolver />
             </div>
 
             <section className="editar-paciente-card">
@@ -209,15 +210,16 @@
                     </div>
 
                     <div className="form-group">
-                    <label htmlFor="dni">DNI</label>
+                    <label htmlFor="dni">DNI *</label>
                     <input
                         id="dni"
                         name="dni"
                         type="text"
                         value={paciente.dni}
+                        onChange={handleChange}
                         placeholder="Ej: 32123456"
-                        disabled
                     />
+                    {errores.dni && <span>{errores.dni}</span>}
                     </div>
 
                     <div className="form-group">
@@ -432,5 +434,7 @@
             </div>
         )}
         </div>
+        <Footer />
+        </>
     );
     }

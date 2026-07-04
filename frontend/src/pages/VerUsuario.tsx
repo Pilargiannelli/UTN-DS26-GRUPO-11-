@@ -9,19 +9,13 @@ import { useState } from "react";
 import type { UserProps } from "../types/UserProps.ts";
 import type { MedicoProps } from "../types/MedicoProps.ts";
 import type { PacienteProps } from "../types/PacienteProps.ts";
-import { ConfigMenu } from "../components/ConfigMenu.tsx";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import "../assets/styles/Boton.css"
 import "../assets/styles/Perfil.css"
-import { useAuth } from "../hooks/useAuth.ts";
 import { useNavigate } from "react-router-dom";
 
 export function VerUsuario() {
-    const { usuario } = useAuth();
     const { usuarioSeleccionado } = useUsuarioSeleccionado();
-    const esMiPerfil = !!usuario && !!usuarioSeleccionado && usuario && usuario.u === usuarioSeleccionado.u;
-    const puedeEditar = usuario?.rol === "admin";
-    const puedeCambiarPassword = esMiPerfil;
     const navigate = useNavigate();
     const [isEditing, setIsEditing] = useState<boolean>(false);
     const vistaPorRol = usePerfilRolView(usuarioSeleccionado, {
@@ -48,17 +42,23 @@ export function VerUsuario() {
                     <Col md="6" className="d-flex align-content-start">
                         <BotonVolver />
                     </Col>
-                    <Col md="6" className="d-flex justify-content-end align-items-end">
-                        {!isEditing && (
-                            <ConfigMenu canEdit={puedeEditar} canChangePassword={puedeCambiarPassword as boolean} onEditClick={() => setIsEditing(true)} onPasswordClick={() => navigate("/cambiar-password")} />
-                        )}
-                    </Col>
                 </Row>
                 <Row className="row-perfil">
-                    <Col md="6" className="col-perfil">
+                    <Col md="auto" className="col-perfil">
                         {usuarioSeleccionado && <UserCard usuario={usuarioSeleccionado} isEditing={isEditing} onEditingChange={setIsEditing} onUpdate={handleUpdate} />}
+                        {!isEditing && (
+                            <div className="text-center">
+                                <button
+                                    type="button"
+                                    className="btn-modificar-datos"
+                                    onClick={() => navigate("/editar-paciente")}
+                                >
+                                    Modificar datos
+                                </button>
+                            </div>
+                        )}
                     </Col>
-                    <Col md="6" className="col-perfil">
+                    <Col md="auto" className="col-perfil">
                         {vistaPorRol}
                     </Col>
                 </Row>

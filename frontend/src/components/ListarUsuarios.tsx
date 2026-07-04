@@ -2,6 +2,7 @@ import { useFetch } from "../hooks/useFetch";
 import { useFotoPerfil } from "../hooks/useFotoPerfil";
 import { type Usuario } from "../types/Usuario";
 import { Container, Row, Col, Card, Button, Spinner, Form} from "react-bootstrap";
+import { Search } from "lucide-react";
 import '../assets/styles/ListarUsuarios.css';
 import { useState } from "react";
 import { useUsuarioSeleccionado } from "../hooks/useUsuarioSeleccionado";
@@ -27,7 +28,13 @@ export function ListarUsuarios({ rol }: ListarUsuariosProps) {
     const usuariosPorRol = usuarios ? usuarios.filter((u) => u.rol === rol) : [];
     const usuariosFiltrados = usuariosPorRol.filter((usuario) => {
         const nombreCompleto = `${usuario.docs.nombre} ${usuario.docs.apellido}`.toLowerCase();
-        return nombreCompleto.includes(busqueda.toLowerCase().trim());
+        const dni = usuario.docs.dni.toLowerCase();
+        const termino = busqueda.toLowerCase().trim();
+        const esNumerico = /^\d+$/.test(termino);
+        if (esNumerico) {
+            return dni.startsWith(termino);
+        }
+        return nombreCompleto.includes(termino);
     });
     const handleVerPerfil = (usuario: Usuario) => {
         seleccionarUsuario(usuario);
@@ -35,11 +42,24 @@ export function ListarUsuarios({ rol }: ListarUsuariosProps) {
     };
     return (
         <Container className="my-4">
-            <div className="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
+            <div className="buscador-fila mb-4">
+                <div className="buscador-spacer" aria-hidden="true" />
                 <div className="position-relative buscador-container">
-                    <Form.Control type="text" placeholder={`Buscar ${rol === "paciente" ? "paciente" : "médico"} por nombre...`} value={busqueda} onChange={(e) => setBusqueda(e.target.value)} className="pe-5" />
+                    <Search className="buscador-icono" size={18} aria-hidden="true" />
+                    <Form.Control type="text" placeholder={`Buscar ${rol === "paciente" ? "paciente" : "médico"} por nombre o DNI`} value={busqueda} onChange={(e) => setBusqueda(e.target.value)} className="ps-5 pe-5" />
                     {busqueda && ( <button type="button" className="btn-limpiar" onClick={() => setBusqueda("")} aria-label="Limpiar búsqueda" > &times; </button> )}
                 </div>
+                {rol === "paciente" ? (
+                    <button
+                        type="button"
+                        className="btn-nuevo-paciente"
+                        onClick={() => navigate("/registrar-paciente")}
+                    >
+                        + Crear nuevo paciente
+                    </button>
+                ) : (
+                    <div />
+                )}
             </div>
             {usuariosFiltrados.length === 0 ? (
                 <div className="text-center my-5 text-muted bg-light p-5 rounded shadow-sm">
