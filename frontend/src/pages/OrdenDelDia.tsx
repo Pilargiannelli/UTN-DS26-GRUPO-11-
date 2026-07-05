@@ -101,7 +101,7 @@ export default function OrdenDelDia() {
 
   return (
     <Layout>
-    <Container className="py-4">
+    <Container className="pt-4">
       {/* Encabezado: título + toggle + navegación */}
       <div className="d-flex align-items-center justify-content-between mb-3">
         <h2 className="agenda-titulo">Orden del día</h2>

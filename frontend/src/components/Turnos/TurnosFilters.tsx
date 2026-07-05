@@ -1,8 +1,5 @@
 import { Row, Col, Button } from "react-bootstrap";
-
-interface TurnosFiltersProps {
-  onNuevoTurno: () => void;
-}
+import type { TurnosFiltersProps } from "../../types/TurnosFilterProps";
 
 function TurnosFilters({
   onNuevoTurno,

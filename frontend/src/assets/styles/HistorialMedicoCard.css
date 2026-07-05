@@ -4,14 +4,14 @@
     --hist-card-font: "Inter", sans-serif;
     --hist-card-title-font: "Monserrat", "Poppins", sans-serif;
     --hist-card-title-color: #0f4d3a;
-    --hist-card-width: 30rem;
+    --hist-card-width: 40rem;
 }
 
 .historial-card {
     display: flex;
     flex-direction: column;
     position: relative;
-    height: 100vh;
+    height: calc(100dvh - 280px);
     font-family: var(--hist-card-font);
     width: var(--hist-card-width);
     background: #ffffff;
@@ -19,7 +19,8 @@
     border-radius: 14px;
     overflow: hidden;
     padding: 1rem 1rem 0 1rem;
-    margin-top: 1rem;
+    margin-top: 0;
+    margin-bottom: 0;
 }
 
 .historial-card::before {
