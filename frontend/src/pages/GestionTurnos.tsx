@@ -7,7 +7,7 @@ import {
 
 import HeroTurnos from "../components/Turnos/HeroTurnos";
 import DashboardCards from "../components/Turnos/DashboardCards";
-import TurnosFilters from "../components/Turnos/TurnosFilters";
+
 import TurnosTable from "../components/Turnos/TurnosTable";
 import NuevoTurnoModal from "../components/Turnos/NuevoTurnoModal";
 
@@ -221,7 +221,7 @@ function GestionTurnos() {
   // ==========================================
 
   return (
-      <Container className="mt-4">
+      <Container className="mt-3">
 
         <HeroTurnos
 
@@ -257,17 +257,14 @@ function GestionTurnos() {
 
         />
 
-        <TurnosFilters
-
-          onNuevoTurno={() =>
-            setShowModal(true)
-          }
-
-        />
 
         <TurnosTable
 
           turnos={turnosFiltrados}
+          
+          onNuevoTurno={() =>
+            setShowModal(true)
+          }
 
         />
 

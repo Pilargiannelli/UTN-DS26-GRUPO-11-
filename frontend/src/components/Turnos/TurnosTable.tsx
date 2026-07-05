@@ -12,9 +12,10 @@ import {
 } from "react-bootstrap-icons";
 
 import type { TurnosTableProps } from "../../types/TurnosTableProps";
+import { useRolView } from '../../hooks/useRolView';
 
 import "../../assets/styles/TurnosTable.css";
-
+import TurnosFilters from "./TurnosFilters";
 function obtenerColorEstado(estado: string) {
   switch (estado) {
     case "Pendiente":
@@ -41,9 +42,11 @@ function obtenerIniciales(nombre: string) {
 }
 
 function TurnosTable({
-  turnos,
+  turnos,onNuevoTurno
 }: TurnosTableProps) {
-
+  const filtroPorRol = useRolView({
+    admin: <TurnosFilters onNuevoTurno={onNuevoTurno} />,
+  });
   return (
 
     <Card className="agenda-card">
@@ -61,7 +64,7 @@ function TurnosTable({
             </p>
 
           </div>
-
+            {filtroPorRol}
         </div>
 
         <Table

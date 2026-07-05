@@ -56,7 +56,7 @@
 /* Contenedor con scroll */
 .agenda-scroll {
   overflow-y: auto;
-  max-height: calc(100vh - 230px);
+  max-height: calc(100vh - 341px);
   border: 1px solid #e5e2d8;
   border-radius: 12px;
   background: #fff;

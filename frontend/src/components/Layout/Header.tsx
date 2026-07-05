@@ -22,7 +22,6 @@ function Header() {
   ];
   const itemsPaciente = [
     { label: "Inicio", href: "/home" },
-    { label: "Turnos", href: "/gestion-turnos" },
   ];
   const { usuario, setUsuario } = useAuth();
   const { seleccionarUsuario } = useUsuarioSeleccionado();
@@ -42,8 +41,6 @@ function Header() {
           <img src="/IMOS_LOGO.png" width="180" height="180" alt="IMOS"/>
         </Navbar.Brand>
         <Nav className="ms-auto">
-          <Nav.Link className="link" href={`/home`}>Inicio</Nav.Link>
-          <Nav.Link className="link" href="/gestion-turnos"> Turnos </Nav.Link>
           <NavDropdown title= {<div {...fotoPerfil} />} id="perfil-dropdown" align="end">
             <NavDropdown.Item className="item" onClick={() => {
                 if (usuario) {

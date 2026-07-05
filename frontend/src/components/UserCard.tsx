@@ -36,7 +36,7 @@ export function UserCard({usuario, isEditing, onUpdate}: UserCardProps) {
     },
   });
   return (
-    <Card className="user-card shadow-sm m-5">
+    <Card className="user-card shadow-sm m-0">
       <Card.Body className="text-center">
         {isEditing ? ( FormularioEdicionAlternativo ) : (
           <>

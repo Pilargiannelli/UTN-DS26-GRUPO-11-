@@ -11,7 +11,7 @@ function Layout({ children }: LayoutProps) {
   return (
     <>
       <Header />
-      <Container fluid className="m-0 p-0 d-flex">
+      <Container fluid className="m-0 p-0 d-flex flex-grow-1">
         <Container>{children}</Container>
       </Container>
       <Footer />

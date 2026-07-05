@@ -17,7 +17,7 @@
 .agenda-header{
     display: flex;
     justify-content: space-between;
-    align-items: flex-end;
+    align-items: center !important;
     margin-bottom: 18px;
 }
 
