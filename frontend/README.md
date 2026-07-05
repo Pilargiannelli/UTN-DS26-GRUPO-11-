@@ -1,3 +1,17 @@
+**ACLARACIONES RESPECTO AL CIERRE DEL BLOQUE DE FRONTEND:**
+
+- Las funcionalidades principales y necesarias para la página ya se encuentran implementadas. Sin embargo, no se descarta la posibilidad de incorporar funcionalidades adicionales en el futuro que contribuyan a mejorar la página y, en consecuencia, el proyecto en general.
+
+- El estilo visual de la página podría modificarse en futuras versiones, con el objetivo de unificar de manera más consistente la tipografía, la paleta de colores y la experiencia visual de los usuarios, contemplando también los requerimientos del cliente.
+
+- Actualmente, la página no es completamente responsive. No obstante, este aspecto será trabajado en una etapa futura, junto con las mejoras mencionadas anteriormente, para consolidar el paquete visual que se busca ofrecer.
+
+- Durante el último tiempo se realizaron algunos cambios, principalmente orientados a la simplificación de funciones. Por este motivo, es posible que existan archivos o componentes dentro del proyecto que ya no tengan utilidad y que deban ser eliminados en la versión final.
+
+- Actualmente no existe persistencia de los elementos, ya que todavía no se ha avanzado sobre ese bloque funcional. Por lo tanto, varios botones relacionados con acciones de alta o modificación aún no cuentan con una funcionalidad implementada.
+
+
+
 # React + TypeScript + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
