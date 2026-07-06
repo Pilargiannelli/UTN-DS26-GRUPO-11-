@@ -1,7 +1,7 @@
 ## Fase 2: Modelado de Dominio
 
 ### 2.1 Modelo de dominio
-![Diagrama de Clases - Clínica IMOS](ModDomIMOSV_1.png)
+![Diagrama de Clases - Clínica IMOS](ModDomIMOSV_2.jpg)
 
 **Justificación del Modelo:**
 
