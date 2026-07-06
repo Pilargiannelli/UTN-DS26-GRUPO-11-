@@ -1,20 +1,6 @@
-## Fase 3: Diseño de API
+## Diseño de API
 
-### 3.1 Verificación del modelo de dominio
-
-Se recorrió el frontend pantalla por pantalla contrastando los datos que efectivamente se usan contra las entidades y atributos definidos en **"02 - Modelado de Dominio"**. La mayoría de las entidades coinciden (`Usuario`, `Paciente`, `Medico`, `Secretaria`, `Turno`, `Agenda`, `HistoriaClinica`, `EntradaClinica`), pero aparecieron atributos que el front ya usa y que todavía no estaban modelados:
-
-| Entidad | Atributos usados en el front y faltantes en el modelo |
-|---------|----------------------------------------------------|
-| `Paciente` | `sexo`, `direccion`, `ciudad`, `obraSocial`, `plan` (el modelo solo tenía `fechaDeNacimiento`, `nroAfiliado`, `telefono`) |
-| `Usuario` | `username` (usado como login/handle, además de `email`), `foto` (avatar de perfil) |
-| `Turno` | `especialidad` y `obraSocial` como datos de conveniencia mostrados en las tablas de turnos (se derivan de `Medico`/`Paciente`, pero el front los maneja como campos planos del turno) |
-
-**Ajuste propuesto:** sumar esos atributos a `Paciente` y `Usuario` en el diagrama de clases, y dejar aclarado en `Turno` que `especialidad`/`obraSocial` son datos desnormalizados para listado, no atributos propios del dominio.
-
-### 3.2 Operaciones por pantalla
-
-Se recorrió la app pantalla por pantalla anotando qué operación necesita hacer con los datos y sobre qué entidad del modelo actúa.
+### Operaciones por pantalla
 
 #### Autenticación y cuenta
 
