@@ -1,3 +1,4 @@
+import { Search } from "react-bootstrap-icons";
 import { useFetch } from "../hooks/useFetch";
 import { useFotoPerfil } from "../hooks/useFotoPerfil";
 import { type Usuario } from "../types/Usuario";
@@ -11,6 +12,9 @@ import { BotonAgregar } from "./BotonAgregar";
 interface ListarUsuariosProps {
     rol: "paciente" | "medico";
 }
+
+const sinAcentos = (texto: string) =>
+    texto.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 
 export function ListarUsuarios({ rol }: ListarUsuariosProps) {
     const { data: usuarios, loading, error } = useFetch<Usuario[]>("/users.json");
@@ -26,9 +30,21 @@ export function ListarUsuarios({ rol }: ListarUsuariosProps) {
         );
     }
     const usuariosPorRol = usuarios ? usuarios.filter((u) => u.rol === rol) : [];
+
     const usuariosFiltrados = usuariosPorRol.filter((usuario) => {
-        const nombreCompleto = `${usuario.docs.nombre} ${usuario.docs.apellido}`.toLowerCase();
-        return nombreCompleto.includes(busqueda.toLowerCase().trim());
+
+        const texto = sinAcentos(busqueda.toLowerCase().trim());
+
+        if (texto === "") return true;
+
+        
+        const nombreCompleto = sinAcentos(`${usuario.docs.nombre} ${usuario.docs.apellido}`.toLowerCase());
+        const coincideNombre = nombreCompleto.includes(texto);
+        const numerosBuscados = texto.replace(/\D/g, "");
+        const coincideDni = numerosBuscados !== "" && usuario.docs.dni.startsWith(numerosBuscados);
+
+        return coincideNombre || coincideDni;
+
     });
     const handleVerPerfil = (usuario: Usuario) => {
         seleccionarUsuario(usuario);
@@ -36,12 +52,35 @@ export function ListarUsuarios({ rol }: ListarUsuariosProps) {
     };
     return (
         <Container className="my-4">
-            <div className="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
+            <div className="barra-busqueda mb-4">
+                
                 <div className="position-relative buscador-container">
-                    <Form.Control type="text" placeholder={`Buscar ${rol === "paciente" ? "paciente" : "médico"} por nombre...`} value={busqueda} onChange={(e) => setBusqueda(e.target.value)} className="pe-5" />
-                    {busqueda && ( <button type="button" className="btn-limpiar" onClick={() => setBusqueda("")} aria-label="Limpiar búsqueda" > &times; </button> )}
+                    <Search className="icono-buscador" />
+                    <Form.Control
+                        type="text"
+                        placeholder={`Buscar ${rol === "paciente" ? "paciente" : "médico"} DNI o por nombre...`}
+                        value={busqueda}
+                        onChange={(e) => setBusqueda(e.target.value)}
+                        className="pe-5"
+                    />
+
+                    {busqueda && (
+                        <button
+                            type="button"
+                            className="btn-limpiar"
+                            onClick={() => setBusqueda("")}
+                            aria-label="Limpiar búsqueda"
+                        >
+                            &times;
+                        </button>
+                    )}
+
                 </div>
-                <BotonAgregar rol={rol} />
+
+                <div className="barra-busqueda-accion">
+                    <BotonAgregar rol={rol} />
+                </div>
+
             </div>
             {usuariosFiltrados.length === 0 ? (
                 <div className="text-center my-5 text-muted bg-light p-5 rounded shadow-sm">

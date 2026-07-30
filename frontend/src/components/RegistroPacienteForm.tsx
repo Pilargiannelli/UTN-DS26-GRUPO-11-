@@ -50,7 +50,7 @@ export function RegistroPacienteForm() {
         <div className="container my-0 form-container">
             <Form className="container my-5 w-75" noValidate onSubmit={handleSubmit(onSubmit)}>
                 {/* Datos personales */}
-                <Form.Label className="mb-5">Datos personales</Form.Label>
+                <Form.Label className="mb-1">Datos personales</Form.Label>
                 <Row className="g-3">
                     {/* Nombre */}
                     <Col md={6}>
@@ -88,7 +88,7 @@ export function RegistroPacienteForm() {
                     </Col>
                 </Row>
                 {/* Contacto */}
-                <Form.Label className="my-5">Datos de contacto</Form.Label>
+                <Form.Label className="mt-2 mb-1">Datos de contacto</Form.Label>
                 <Row className="g-3">
                     {/* Teléfono */}
                     <Col md={6}>
@@ -108,7 +108,7 @@ export function RegistroPacienteForm() {
                     </Col>
                 </Row>
                 {/* Cobertura médica */}
-                <Form.Label className="my-5">Cobertura médica</Form.Label>
+                <Form.Label className="mt-2 mb-1">Cobertura médica</Form.Label>
                 <Row className="g-3">
                     {/* Obra Social */}
                     <Col md={4}>

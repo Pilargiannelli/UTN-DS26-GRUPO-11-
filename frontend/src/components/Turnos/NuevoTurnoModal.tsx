@@ -204,6 +204,7 @@ if (form.fecha < hoy) {
       show={show}
       onHide={onClose}
       centered
+      scrollable
       size="lg"
     >
 

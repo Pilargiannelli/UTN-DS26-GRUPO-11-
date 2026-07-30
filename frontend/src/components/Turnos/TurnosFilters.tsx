@@ -12,6 +12,7 @@ function TurnosFilters({
       <Col xs="auto">
 
         <Button
+          className="btn-nuevo-turno"
           variant="success"
           size="lg"
           onClick={onNuevoTurno}
