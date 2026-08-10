@@ -1,5 +1,58 @@
-### Hello
-GET http://localhost:3000/
+@baseUrl = http://localhost:3000
 
 ### Listar turnos
-GET http://localhost:3000/turnos
+GET {{baseUrl}}/api/turnos
+
+### Ver un turno
+GET {{baseUrl}}/api/turnos/1
+
+### Ver un turno que no existe -> 404
+GET {{baseUrl}}/api/turnos/999
+
+### Crear un turno
+POST {{baseUrl}}/api/turnos
+Content-Type: application/json
+
+{
+  "paciente": "María Gómez",
+  "medico": "Dr. Font",
+  "especialidad": "Traumatología",
+  "fecha": "2026-08-15",
+  "hora": "11:00",
+  "obraSocial": "OSDE",
+  "estado": "Pendiente"
+}
+
+### Editar un turno
+PUT {{baseUrl}}/api/turnos/1
+Content-Type: application/json
+
+{
+  "paciente": "Juan Pérez",
+  "medico": "Dr. Font",
+  "especialidad": "Traumatología",
+  "fecha": "2026-08-16",
+  "hora": "10:00",
+  "obraSocial": "OSDE",
+  "estado": "Confirmado"
+}
+
+### Editar un turno que no existe -> 404
+PUT {{baseUrl}}/api/turnos/999
+Content-Type: application/json
+
+{
+  "paciente": "Nadie",
+  "medico": "Nadie",
+  "especialidad": "Nadie",
+  "fecha": "2026-08-16",
+  "hora": "10:00",
+  "obraSocial": "Nadie",
+  "estado": "Confirmado"
+}
+
+### Cancelar (borrar) un turno
+DELETE {{baseUrl}}/api/turnos/2
+
+### Cancelar el mismo turno de nuevo -> 404
+DELETE {{baseUrl}}/api/turnos/2
