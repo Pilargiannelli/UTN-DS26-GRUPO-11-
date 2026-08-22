@@ -1,0 +1,12 @@
+// Configuracion base de Prisma para el proyecto.
+// Los modelos del dominio se agregan debajo del bloque `datasource`.
+// Referencia del dominio: "Documentacion/02 - Modelado de Dominio/modelados.md"
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
