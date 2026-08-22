@@ -1,23 +1,49 @@
-services:
-  api:
-    build: ./backend
-    ports:
-      - "3000:3000"
-    env_file:
-      - backend/.env
-    depends_on:
-      - db
-    volumes:
-      - ./backend/src:/app/src
+name: imos-turnos
 
+services:
   db:
     image: postgres:16-alpine
-    ports:
-      - "5432:5432"
+    container_name: imos-db
+    restart: unless-stopped
     env_file:
       - backend/.env
+    ports:
+      - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      # El doble $$ escapa la interpolacion de Compose: las variables se resuelven
+      # DENTRO del contenedor, donde POSTGRES_USER y POSTGRES_DB existen (env_file).
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+
+  api:
+    build: ./backend
+    container_name: imos-api
+    restart: unless-stopped
+    env_file:
+      - backend/.env
+    environment:
+      # Prisma sin telemetria ni chequeo de versiones
+      CHECKPOINT_DISABLE: "1"
+      PRISMA_HIDE_UPDATE_MESSAGE: "1"
+    ports:
+      - "3000:3000" # API Express
+      - "5555:5555" # Prisma Studio
+    depends_on:
+      db:
+        # La API no arranca hasta que pg_isready confirme que la base acepta conexiones
+        condition: service_healthy
+    volumes:
+      - ./backend/src:/app/src
+      - ./backend/prisma:/app/prisma
+      - ./backend/prisma.config.ts:/app/prisma.config.ts
+    # Regenera el cliente al arrancar, ya con el schema montado desde el host:
+    # asi el contenedor nunca queda con un cliente desactualizado.
+    command: sh -c "npx prisma generate && npm run dev"
 
 volumes:
   pgdata:

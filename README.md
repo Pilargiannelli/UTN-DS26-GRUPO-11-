@@ -40,3 +40,64 @@ Miembros del equipo:
 - Alias de slack: chinoBasoalto
 - Pagina del perfil: https://github.com/chinoBasoalto
 
+
+---
+
+## Cómo levantar el proyecto (Docker)
+
+Requisitos: Docker Desktop.
+
+### 1. Variables de entorno
+
+```bash
+cp backend/.env.example backend/.env
+```
+
+Editar `backend/.env` y poner una `POSTGRES_PASSWORD` propia. **Importante:** también hay que
+repetirla dentro de `DATABASE_URL`, porque Docker Compose no expande variables dentro de un
+`env_file`. El archivo `backend/.env` está en `.gitignore` y nunca se commitea.
+
+### 2. Levantar los contenedores
+
+```bash
+docker compose up -d --build
+```
+
+Esto arranca dos servicios:
+
+| Servicio | Contenedor | Puerto | Descripción |
+|---|---|---|---|
+| `db` | `imos-db` | 5432 | PostgreSQL 16 con volumen persistente `pgdata` |
+| `api` | `imos-api` | 3000 / 5555 | API Express + Prisma Studio |
+
+La API espera automáticamente a que Postgres esté listo (`healthcheck` con `pg_isready` +
+`depends_on: condition: service_healthy`), así que no hace falta reintentar.
+
+Verificar que la base quedó sana:
+
+```bash
+docker compose ps          # db debe figurar como "Up (healthy)"
+```
+
+### 3. Comandos de Prisma
+
+Se ejecutan **dentro** del contenedor, porque ahí `DATABASE_URL` apunta al host `db`:
+
+```bash
+docker compose exec api npx prisma migrate dev --name init   # crear/aplicar migración
+docker compose exec api npm run db:seed                      # cargar datos de prueba
+docker compose exec api npm run db:studio                    # Prisma Studio en http://localhost:5555
+docker compose exec api npx prisma generate                  # regenerar el cliente
+```
+
+Las carpetas `backend/prisma/` y el archivo `backend/prisma.config.ts` están montados como
+volúmenes, así que las migraciones generadas dentro del contenedor aparecen en tu máquina y se
+pueden commitear.
+
+### 4. Otros comandos útiles
+
+```bash
+docker compose logs -f api    # ver logs de la API
+docker compose down           # bajar todo (conserva los datos)
+docker compose down -v        # bajar todo y BORRAR la base
+```

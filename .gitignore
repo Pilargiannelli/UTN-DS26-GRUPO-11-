@@ -1,3 +1,15 @@
+# Dependencias
 node_modules
-.env
+
+# Builds
 dist
+build
+
+# Variables de entorno - NUNCA commitear credenciales
+.env
+.env.*
+!.env.example
+
+# Sistema / editores
+.DS_Store
+Thumbs.db
