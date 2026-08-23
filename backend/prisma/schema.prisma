@@ -39,7 +39,7 @@ model Usuario {
   contrasena String
   nombre     String
   apellido   String
-  dni        Int      @unique
+  dni        String      @unique
   email      String   @unique
   fotoPerfil String?
 
@@ -73,7 +73,7 @@ model Paciente {
   obraSocial      String
   plan            String
   sexo            String
-  telefono        Int
+  telefono        String
 
   // Relaciones
   historiaClinica HistoriaClinica?
@@ -144,7 +144,7 @@ model Turno {
 
 model AsistenteIA {
   id           Int    @id @default(autoincrement())
-  nroWhatsApp  Int
+  nroWhatsApp  String
   turnoId      Int    @unique
   turno        Turno  @relation(fields: [turnoId], references: [id])
 }

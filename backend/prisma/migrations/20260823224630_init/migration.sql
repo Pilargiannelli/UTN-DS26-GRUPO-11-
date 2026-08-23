@@ -11,7 +11,7 @@ CREATE TABLE "Usuario" (
     "contrasena" TEXT NOT NULL,
     "nombre" TEXT NOT NULL,
     "apellido" TEXT NOT NULL,
-    "dni" INTEGER NOT NULL,
+    "dni" TEXT NOT NULL,
     "email" TEXT NOT NULL,
     "fotoPerfil" TEXT,
 
@@ -37,7 +37,7 @@ CREATE TABLE "Paciente" (
     "obraSocial" TEXT NOT NULL,
     "plan" TEXT NOT NULL,
     "sexo" TEXT NOT NULL,
-    "telefono" INTEGER NOT NULL,
+    "telefono" TEXT NOT NULL,
 
     CONSTRAINT "Paciente_pkey" PRIMARY KEY ("id")
 );
@@ -100,7 +100,7 @@ CREATE TABLE "Turno" (
 -- CreateTable
 CREATE TABLE "AsistenteIA" (
     "id" SERIAL NOT NULL,
-    "nroWhatsApp" INTEGER NOT NULL,
+    "nroWhatsApp" TEXT NOT NULL,
     "turnoId" INTEGER NOT NULL,
 
     CONSTRAINT "AsistenteIA_pkey" PRIMARY KEY ("id")
