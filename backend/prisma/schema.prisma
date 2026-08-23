@@ -1,7 +1,3 @@
-// Configuracion base de Prisma para el proyecto.
-// Los modelos del dominio se agregan debajo del bloque `datasource`.
-// Referencia del dominio: "Documentacion/02 - Modelado de Dominio/modelados.md"
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -9,4 +5,145 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+}
+
+// ==========================================
+// ENUMS (Tomados del diagrama)
+// ==========================================
+
+enum TurnoEstado {
+  Pendiente
+  Confirmado
+  Cancelado
+  Reprogramado
+}
+
+enum DiaSemana {
+  Lunes
+  Martes
+  Miercoles
+  Jueves
+  Viernes
+  Sabado
+  Domingo
+}
+
+// ==========================================
+// MODELOS / TABLAS
+// ==========================================
+
+model Usuario {
+  id         Int      @id @default(autoincrement())
+  username   String   @unique
+  contrasena String
+  nombre     String
+  apellido   String
+  dni        Int      @unique
+  email      String   @unique
+  fotoPerfil String?
+
+  // Herencia/Relaciones de Roles
+  medico     Medico?
+  paciente   Paciente?
+  secretaria Secretaria?
+}
+
+model Medico {
+  id           Int      @id @default(autoincrement())
+  usuarioId    Int      @unique
+  usuario      Usuario  @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  
+  especialidad String
+  matricula    String   @unique
+
+  // Relaciones
+  historiasClinicas HistoriaClinica[]
+  agenda            Agenda?
+  turnos            Turno[]
+}
+
+model Paciente {
+  id              Int      @id @default(autoincrement())
+  usuarioId       Int      @unique
+  usuario         Usuario  @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+
+  fechaNacimiento DateTime
+  nroAfiliado     String
+  obraSocial      String
+  plan            String
+  sexo            String
+  telefono        Int
+
+  // Relaciones
+  historiaClinica HistoriaClinica?
+  turnos          Turno[]
+}
+
+model Secretaria {
+  id        Int     @id @default(autoincrement())
+  usuarioId Int     @unique
+  usuario   Usuario @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+
+  turnos    Turno[]
+}
+
+model HistoriaClinica {
+  id          Int      @id @default(autoincrement())
+  pacienteId  Int      @unique
+  paciente    Paciente @relation(fields: [pacienteId], references: [id])
+  
+  medicoId    Int
+  medico      Medico   @relation(fields: [medicoId], references: [id])
+
+  alergias    String[] // Cuestión multi-valor char[0..*]
+  antecedentes String[]
+
+  entradas    EntradaClinica[]
+}
+
+model EntradaClinica {
+  id                Int             @id @default(autoincrement())
+  historiaClinicaId Int
+  historiaClinica   HistoriaClinica @relation(fields: [historiaClinicaId], references: [id])
+
+  diagnostico       String
+  evolucion         String
+  fecha             DateTime        @default(now())
+  observaciones     String
+}
+
+model Agenda {
+  id              Int         @id @default(autoincrement())
+  medicoId        Int         @unique
+  medico          Medico      @relation(fields: [medicoId], references: [id])
+
+  horariosAtencion DiaSemana[]
+  intervaloTurno  Int
+}
+
+model Turno {
+  id            Int         @id @default(autoincrement())
+  estado        TurnoEstado @default(Pendiente)
+  fechaHora     DateTime
+  idWhatsapp    String?
+  pagoValidado  Boolean     @default(false)
+
+  // Relaciones
+  medicoId      Int
+  medico        Medico      @relation(fields: [medicoId], references: [id])
+
+  pacienteId    Int
+  paciente      Paciente    @relation(fields: [pacienteId], references: [id])
+
+  secretariaId  Int?
+  secretaria    Secretaria? @relation(fields: [secretariaId], references: [id])
+
+  asistenteIA   AsistenteIA?
+}
+
+model AsistenteIA {
+  id           Int    @id @default(autoincrement())
+  nroWhatsApp  Int
+  turnoId      Int    @unique
+  turno        Turno  @relation(fields: [turnoId], references: [id])
 }
