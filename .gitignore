@@ -13,3 +13,6 @@ build
 # Sistema / editores
 .DS_Store
 Thumbs.db
+
+# Cliente de Prisma generado
+backend/src/generated
