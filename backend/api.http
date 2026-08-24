@@ -3,8 +3,8 @@
 ### Listar turnos
 GET {{baseUrl}}/api/turnos
 
-### Ver un turno
-GET {{baseUrl}}/api/turnos/1
+### Ver un turno creado
+GET {{baseUrl}}/api/turnos/3
 
 ### Ver un turno que no existe -> 404
 GET {{baseUrl}}/api/turnos/999
@@ -14,27 +14,27 @@ POST {{baseUrl}}/api/turnos
 Content-Type: application/json
 
 {
-  "paciente": "María Gómez",
-  "medico": "Dr. Font",
-  "especialidad": "Traumatología",
-  "fecha": "2026-08-15",
-  "hora": "11:00",
-  "obraSocial": "OSDE",
-  "estado": "Pendiente"
+  "estado": "Pendiente",
+  "fechaHora": "2026-08-27T11:00:00.000Z",
+  "idWhatsapp": "WA-TEST-001",
+  "pagoValidado": false,
+  "medicoId": 1,
+  "pacienteId": 1,
+  "secretariaId": 1
 }
 
 ### Editar un turno
-PUT {{baseUrl}}/api/turnos/1
+PUT {{baseUrl}}/api/turnos/3
 Content-Type: application/json
 
 {
-  "paciente": "Juan Pérez",
-  "medico": "Dr. Font",
-  "especialidad": "Traumatología",
-  "fecha": "2026-08-16",
-  "hora": "10:00",
-  "obraSocial": "OSDE",
-  "estado": "Confirmado"
+  "estado": "Confirmado",
+  "fechaHora": "2026-08-27T12:00:00.000Z",
+  "idWhatsapp": "WA-TEST-001",
+  "pagoValidado": true,
+  "medicoId": 1,
+  "pacienteId": 1,
+  "secretariaId": 1
 }
 
 ### Editar un turno que no existe -> 404
@@ -42,17 +42,17 @@ PUT {{baseUrl}}/api/turnos/999
 Content-Type: application/json
 
 {
-  "paciente": "Nadie",
-  "medico": "Nadie",
-  "especialidad": "Nadie",
-  "fecha": "2026-08-16",
-  "hora": "10:00",
-  "obraSocial": "Nadie",
-  "estado": "Confirmado"
+  "estado": "Confirmado",
+  "fechaHora": "2026-08-27T12:00:00.000Z",
+  "idWhatsapp": "WA-TEST-404",
+  "pagoValidado": true,
+  "medicoId": 1,
+  "pacienteId": 1,
+  "secretariaId": 1
 }
 
 ### Cancelar (borrar) un turno
-DELETE {{baseUrl}}/api/turnos/2
+DELETE {{baseUrl}}/api/turnos/3
 
 ### Cancelar el mismo turno de nuevo -> 404
-DELETE {{baseUrl}}/api/turnos/2
+DELETE {{baseUrl}}/api/turnos/3
