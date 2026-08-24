@@ -15,4 +15,4 @@ build
 Thumbs.db
 
 # Cliente de Prisma generado
-backend/src/generated
+backend/src/generated/prisma/
