@@ -1,37 +1,29 @@
+import { prisma } from "../config/prisma";
 import { Turno } from "../types/turno.types";
 
-const turnos: Turno[] = [
-  { id: 1, paciente: "Juan Pérez", medico: "Dr. Font", especialidad: "Traumatología", fecha: "2026-07-03", hora: "09:00", obraSocial: "OSDE", estado: "Pendiente" },
-  { id: 2, paciente: "Ana López", medico: "Dr. Castelli", especialidad: "Cardiología", fecha: "2026-07-03", hora: "09:30", obraSocial: "IOMA", estado: "Confirmado" },
-  { id: 3, paciente: "Carlos Ruiz", medico: "Dr. Messi", especialidad: "Clínica Médica", fecha: "2026-07-03", hora: "10:00", obraSocial: "PAMI", estado: "Cancelado" },
-];
+// El array en memoria y el proximoId se van: ahora los datos viven en PostgreSQL.
 
-let proximoId = turnos.length + 1;
-
-export function findAll(): Turno[] {
-  return turnos;
+export async function findAll(): Promise<Turno[]> {
+  return prisma.turno.findMany();
 }
 
-export function findById(id: number): Turno | undefined {
-  return turnos.find((t) => t.id === id);
+export async function findById(id: number): Promise<Turno | null> {
+  return prisma.turno.findUnique({ where: { id } });
 }
 
-export function create(datos: Omit<Turno, "id">): Turno {
-  const nuevo: Turno = { id: proximoId++, ...datos };
-  turnos.push(nuevo);
-  return nuevo;
+export async function create(datos: Omit<Turno, "id">): Promise<Turno> {
+  return prisma.turno.create({ data: datos });
 }
 
-export function update(id: number, datos: Omit<Turno, "id">): Turno | undefined {
-  const index = turnos.findIndex((t) => t.id === id);
-  if (index === -1) return undefined;
-  turnos[index] = { id, ...datos };
-  return turnos[index];
+export async function update(id: number, datos: Omit<Turno, "id">): Promise<Turno | null> {
+  const existe = await prisma.turno.findUnique({ where: { id } });
+  if (!existe) return null;
+  return prisma.turno.update({ where: { id }, data: datos });
 }
 
-export function remove(id: number): boolean {
-  const index = turnos.findIndex((t) => t.id === id);
-  if (index === -1) return false;
-  turnos.splice(index, 1);
+export async function remove(id: number): Promise<boolean> {
+  const existe = await prisma.turno.findUnique({ where: { id } });
+  if (!existe) return false;
+  await prisma.turno.delete({ where: { id } });
   return true;
 }
