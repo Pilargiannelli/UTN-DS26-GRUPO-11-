@@ -34,117 +34,187 @@ enum DiaSemana {
 // ==========================================
 
 model Usuario {
-  id         Int      @id @default(autoincrement())
-  username   String   @unique
+  id         Int     @id @default(autoincrement())
+  username   String  @unique
   contrasena String
   nombre     String
   apellido   String
-  dni        String      @unique
-  email      String   @unique
+  dni        String  @unique
+  email      String  @unique
   fotoPerfil String?
 
-  // Herencia/Relaciones de Roles
+  // Herencia/Relaciones de Roles (1:1)
   medico     Medico?
   paciente   Paciente?
   secretaria Secretaria?
 }
 
 model Medico {
-  id           Int      @id @default(autoincrement())
-  usuarioId    Int      @unique
-  usuario      Usuario  @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
-  
+  id        Int     @id @default(autoincrement())
+  usuarioId Int     @unique
+  // onDelete: Cascade -> el rol es una extension del usuario: no existe sin el
+  usuario   Usuario @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+
   especialidad String
-  matricula    String   @unique
+  matricula    String @unique
 
   // Relaciones
   historiasClinicas HistoriaClinica[]
   agenda            Agenda?
   turnos            Turno[]
+  bloqueos          BloqueoHorario[]
 }
 
 model Paciente {
-  id              Int      @id @default(autoincrement())
-  usuarioId       Int      @unique
-  usuario         Usuario  @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  id        Int     @id @default(autoincrement())
+  usuarioId Int     @unique
+  // onDelete: Cascade -> el rol es una extension del usuario: no existe sin el
+  usuario   Usuario @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
 
   fechaNacimiento DateTime
-  nroAfiliado     String
-  obraSocial      String
-  plan            String
   sexo            String
   telefono        String
 
   // Relaciones
   historiaClinica HistoriaClinica?
   turnos          Turno[]
+  coberturas      Cobertura[] // N:M EXPLICITA con ObraSocial
 }
 
 model Secretaria {
   id        Int     @id @default(autoincrement())
   usuarioId Int     @unique
+  // onDelete: Cascade -> el rol es una extension del usuario: no existe sin el
   usuario   Usuario @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
 
-  turnos    Turno[]
+  turnos Turno[]
 }
 
 model HistoriaClinica {
-  id          Int      @id @default(autoincrement())
-  pacienteId  Int      @unique
-  paciente    Paciente @relation(fields: [pacienteId], references: [id])
-  
-  medicoId    Int
-  medico      Medico   @relation(fields: [medicoId], references: [id])
+  id         Int      @id @default(autoincrement())
+  pacienteId Int      @unique // @unique -> 1:1 con Paciente
+  // onDelete: Cascade -> la historia clinica es del paciente y se va con el
+  paciente   Paciente @relation(fields: [pacienteId], references: [id], onDelete: Cascade)
 
-  alergias    String[] // Cuestión multi-valor char[0..*]
-  antecedentes String[]
+  medicoId Int
+  // onDelete: Restrict -> no se borra al medico responsable de historias clinicas
+  medico   Medico @relation(fields: [medicoId], references: [id], onDelete: Restrict)
 
-  entradas    EntradaClinica[]
+  // N:M IMPLICITAS: el vinculo no guarda ningun dato propio,
+  // Prisma crea y maneja _AlergiaToHistoriaClinica y _AntecedenteToHistoriaClinica
+  alergias     Alergia[]
+  antecedentes Antecedente[]
+
+  entradas EntradaClinica[]
 }
 
 model EntradaClinica {
   id                Int             @id @default(autoincrement())
   historiaClinicaId Int
-  historiaClinica   HistoriaClinica @relation(fields: [historiaClinicaId], references: [id])
+  // onDelete: Cascade -> una entrada no existe fuera de su historia
+  historiaClinica   HistoriaClinica @relation(fields: [historiaClinicaId], references: [id], onDelete: Cascade)
 
-  diagnostico       String
-  evolucion         String
-  fecha             DateTime        @default(now())
-  observaciones     String
+  diagnostico   String
+  evolucion     String
+  fecha         DateTime @default(now())
+  observaciones String
+}
+
+// Catalogo de alergias. Antes era HistoriaClinica.alergias String[]:
+// "Penicilina" escrito a mano en cada historia se repite y se tipea mal.
+model Alergia {
+  id     Int    @id @default(autoincrement())
+  nombre String @unique
+
+  historias HistoriaClinica[]
+}
+
+// Catalogo de antecedentes. Antes era HistoriaClinica.antecedentes String[].
+model Antecedente {
+  id     Int    @id @default(autoincrement())
+  nombre String @unique
+
+  historias HistoriaClinica[]
+}
+
+model ObraSocial {
+  id     Int    @id @default(autoincrement())
+  nombre String @unique
+
+  coberturas Cobertura[]
+}
+
+// N:M EXPLICITA Paciente <-> ObraSocial.
+// La tabla intermedia es nuestra porque nroAfiliado y plan no son datos del
+// paciente ni de la obra social: son datos DEL VINCULO entre los dos.
+model Cobertura {
+  pacienteId   Int
+  obraSocialId Int
+
+  nroAfiliado String
+  plan        String
+  vigente     Boolean @default(true)
+
+  // onDelete: Cascade -> la cobertura es del paciente
+  paciente   Paciente   @relation(fields: [pacienteId], references: [id], onDelete: Cascade)
+  // onDelete: Restrict -> no se borra una obra social que todavia tiene afiliados
+  obraSocial ObraSocial @relation(fields: [obraSocialId], references: [id], onDelete: Restrict)
+
+  @@id([pacienteId, obraSocialId]) // clave primaria compuesta
+  @@unique([obraSocialId, nroAfiliado]) // un nro de afiliado no se repite dentro de la misma obra social
 }
 
 model Agenda {
-  id              Int         @id @default(autoincrement())
-  medicoId        Int         @unique
-  medico          Medico      @relation(fields: [medicoId], references: [id])
+  id       Int    @id @default(autoincrement())
+  medicoId Int    @unique
+  // onDelete: Cascade -> la configuracion de disponibilidad es del medico
+  medico   Medico @relation(fields: [medicoId], references: [id], onDelete: Cascade)
 
   horariosAtencion DiaSemana[]
-  intervaloTurno  Int
+  intervaloTurno   Int
+}
+
+// 1:N Medico -> BloqueoHorario (RF04.5 / RN-0010: bloquear franjas y periodos de ausencia).
+// La FK va del lado N: siempre.
+model BloqueoHorario {
+  id       Int    @id @default(autoincrement())
+  medicoId Int // <- la FK: esto SI es una columna
+  // onDelete: Cascade -> un bloqueo pertenece al medico que lo definio
+  medico   Medico @relation(fields: [medicoId], references: [id], onDelete: Cascade)
+
+  desde  DateTime
+  hasta  DateTime
+  motivo String?
 }
 
 model Turno {
-  id            Int         @id @default(autoincrement())
-  estado        TurnoEstado @default(Pendiente)
-  fechaHora     DateTime
-  idWhatsapp    String?
-  pagoValidado  Boolean     @default(false)
+  id           Int         @id @default(autoincrement())
+  estado       TurnoEstado @default(Pendiente)
+  fechaHora    DateTime
+  idWhatsapp   String?
+  pagoValidado Boolean     @default(false)
 
   // Relaciones
-  medicoId      Int
-  medico        Medico      @relation(fields: [medicoId], references: [id])
+  medicoId Int
+  // onDelete: Restrict -> no se borra un medico con turnos: se perderia la agenda historica
+  medico   Medico @relation(fields: [medicoId], references: [id], onDelete: Restrict)
 
-  pacienteId    Int
-  paciente      Paciente    @relation(fields: [pacienteId], references: [id])
+  pacienteId Int
+  // onDelete: Restrict -> el turno es el registro de que se atendio a ese paciente
+  paciente   Paciente @relation(fields: [pacienteId], references: [id], onDelete: Restrict)
 
-  secretariaId  Int?
-  secretaria    Secretaria? @relation(fields: [secretariaId], references: [id])
+  secretariaId Int?
+  // onDelete: SetNull -> la FK es opcional: si se va la secretaria el turno sigue,
+  // solo pierde quien lo cargo
+  secretaria   Secretaria? @relation(fields: [secretariaId], references: [id], onDelete: SetNull)
 
-  asistenteIA   AsistenteIA?
+  asistenteIA AsistenteIA?
 }
 
 model AsistenteIA {
-  id           Int    @id @default(autoincrement())
-  nroWhatsApp  String
-  turnoId      Int    @unique
-  turno        Turno  @relation(fields: [turnoId], references: [id])
+  id          Int    @id @default(autoincrement())
+  nroWhatsApp String
+  turnoId     Int    @unique
+  // onDelete: Cascade -> la conversacion de WhatsApp no tiene sentido sin su turno
+  turno       Turno  @relation(fields: [turnoId], references: [id], onDelete: Cascade)
 }
