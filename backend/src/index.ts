@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import turnoRoutes from "./routes/turno.routes";
+import { errorHandler } from "./middlewares/error.middleware";
 
 dotenv.config();
 
@@ -20,3 +21,5 @@ app.use("/api/turnos", turnoRoutes);
 app.listen(PORT, () => {
   console.log(`Servidor en http://localhost:${PORT}`);
 });
+
+app.use(errorHandler);

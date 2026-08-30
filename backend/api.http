@@ -56,3 +56,27 @@ DELETE {{baseUrl}}/api/turnos/3
 
 ### Cancelar el mismo turno de nuevo -> 404
 DELETE {{baseUrl}}/api/turnos/3
+
+### Crear turno con body inválido -> 400 (Zod)
+POST {{baseUrl}}/api/turnos
+Content-Type: application/json
+{
+  "estado": "EstadoInvalidoQueFalleZod",
+  "pagoValidado": "no-es-boolean"
+}
+
+### Ver turno con ID no numérico -> 400 (Zod o validación de params)
+GET {{baseUrl}}/api/turnos/abc
+
+### Crear turno con violacion de FK (medicoId no existe) -> 409 (Prisma P2003)
+POST {{baseUrl}}/api/turnos
+Content-Type: application/json
+{
+  "estado": "Pendiente",
+  "fechaHora": "2026-08-27T11:00:00.000Z",
+  "idWhatsapp": "WA-TEST-002",
+  "pagoValidado": false,
+  "medicoId": 99999,
+  "pacienteId": 1,
+  "secretariaId": 1
+}
