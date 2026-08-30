@@ -4,20 +4,64 @@ import { TurnoEstado, DiaSemana } from "../src/generated/prisma/enums";
 async function main() {
   console.log("🌱 Limpiando base de datos antes de sembrar...");
 
-  //Limpieza para evitar conflictos de Foreign Keys
+  // Limpieza en orden inverso a las relaciones para evitar conflictos de FK
   await prisma.asistenteIA.deleteMany();
   await prisma.turno.deleteMany();
   await prisma.entradaClinica.deleteMany();
   await prisma.historiaClinica.deleteMany();
+  await prisma.bloqueoHorario.deleteMany();
   await prisma.agenda.deleteMany();
+  await prisma.cobertura.deleteMany();
   await prisma.secretaria.deleteMany();
   await prisma.paciente.deleteMany();
   await prisma.medico.deleteMany();
+  await prisma.obraSocial.deleteMany();
+  await prisma.alergia.deleteMany();
+  await prisma.antecedente.deleteMany();
   await prisma.usuario.deleteMany();
+
+  // ==========================================
+  // CATÁLOGOS
+  // ==========================================
+
+  console.log("🌱 Insertando catálogos...");
+
+  const alergiaPenicilina = await prisma.alergia.create({
+    data: {
+      nombre: "Penicilina",
+    },
+  });
+
+  const alergiaIbuprofeno = await prisma.alergia.create({
+    data: {
+      nombre: "Ibuprofeno",
+    },
+  });
+
+  const antecedenteHipertension = await prisma.antecedente.create({
+    data: {
+      nombre: "Hipertensión arterial familiar",
+    },
+  });
+
+  const obraSocialOSDE = await prisma.obraSocial.create({
+    data: {
+      nombre: "OSDE",
+    },
+  });
+
+  const obraSocialSwissMedical = await prisma.obraSocial.create({
+    data: {
+      nombre: "Swiss Medical",
+    },
+  });
+
+  // ==========================================
+  // USUARIOS
+  // ==========================================
 
   console.log("🌱 Insertando usuarios base...");
 
-  //Usuarios
   const usrMedico = await prisma.usuario.create({
     data: {
       username: "dr_gomez",
@@ -63,12 +107,19 @@ async function main() {
     },
   });
 
-  console.log("🌱 Insertando roles (Médico, Paciente, Secretaria)...");
+  // ==========================================
+  // ROLES
+  // ==========================================
 
-  //Roles vinculados a los usuarios creados
+  console.log("🌱 Insertando roles...");
+
   const medico = await prisma.medico.create({
     data: {
-      usuarioId: usrMedico.id,
+      usuario: {
+        connect: {
+          id: usrMedico.id,
+        },
+      },
       especialidad: "Cardiología",
       matricula: "MP-45892",
     },
@@ -76,11 +127,12 @@ async function main() {
 
   const paciente1 = await prisma.paciente.create({
     data: {
-      usuarioId: usrPaciente1.id,
+      usuario: {
+        connect: {
+          id: usrPaciente1.id,
+        },
+      },
       fechaNacimiento: new Date("1990-05-14"),
-      nroAfiliado: "OS-998822-1",
-      obraSocial: "OSDE",
-      plan: "210",
       sexo: "Femenino",
       telefono: "2214567890",
     },
@@ -88,11 +140,12 @@ async function main() {
 
   const paciente2 = await prisma.paciente.create({
     data: {
-      usuarioId: usrPaciente2.id,
+      usuario: {
+        connect: {
+          id: usrPaciente2.id,
+        },
+      },
       fechaNacimiento: new Date("1998-11-20"),
-      nroAfiliado: "SW-332211-0",
-      obraSocial: "Swiss Medical",
-      plan: "Nubial",
       sexo: "Masculino",
       telefono: "2219876543",
     },
@@ -100,58 +153,178 @@ async function main() {
 
   const secretaria = await prisma.secretaria.create({
     data: {
-      usuarioId: usrSecretaria.id,
+      usuario: {
+        connect: {
+          id: usrSecretaria.id,
+        },
+      },
     },
   });
 
-  console.log("🌱 Insertando Agenda e Historias Clínicas...");
+  // ==========================================
+  // COBERTURAS
+  // N:M explícita Paciente <-> ObraSocial
+  // ==========================================
 
-  //Agenda médico
+  console.log("🌱 Insertando coberturas...");
+
+  await prisma.cobertura.create({
+    data: {
+      paciente: {
+        connect: {
+          id: paciente1.id,
+        },
+      },
+      obraSocial: {
+        connect: {
+          id: obraSocialOSDE.id,
+        },
+      },
+      nroAfiliado: "OS-998822-1",
+      plan: "210",
+      vigente: true,
+    },
+  });
+
+  await prisma.cobertura.create({
+    data: {
+      paciente: {
+        connect: {
+          id: paciente2.id,
+        },
+      },
+      obraSocial: {
+        connect: {
+          id: obraSocialSwissMedical.id,
+        },
+      },
+      nroAfiliado: "SW-332211-0",
+      plan: "Nubial",
+      vigente: true,
+    },
+  });
+
+  // ==========================================
+  // AGENDA Y BLOQUEOS
+  // ==========================================
+
+  console.log("🌱 Insertando agenda y bloqueos horarios...");
+
   await prisma.agenda.create({
     data: {
-      medicoId: medico.id,
-      horariosAtencion: [DiaSemana.Lunes, DiaSemana.Miercoles, DiaSemana.Viernes],
-      intervaloTurno: 30, // 30 minutos por turno
+      medico: {
+        connect: {
+          id: medico.id,
+        },
+      },
+      horariosAtencion: [
+        DiaSemana.Lunes,
+        DiaSemana.Miercoles,
+        DiaSemana.Viernes,
+      ],
+      intervaloTurno: 30,
     },
   });
 
-  //Historia clínica de paciente 1 con entradas
-  const historiaClinica1 = await prisma.historiaClinica.create({
+  await prisma.bloqueoHorario.create({
     data: {
-      pacienteId: paciente1.id,
-      medicoId: medico.id,
-      alergias: ["Penicilina", "Ibuprofeno"],
-      antecedentes: ["Hipertensión arterial familiar"],
+      medico: {
+        connect: {
+          id: medico.id,
+        },
+      },
+      desde: new Date("2026-09-02T12:00:00Z"),
+      hasta: new Date("2026-09-02T14:00:00Z"),
+      motivo: "Ausencia por capacitación",
     },
   });
+
+  // ==========================================
+  // HISTORIA CLÍNICA
+  // ==========================================
+
+  console.log("🌱 Insertando historias clínicas...");
+
+  const historiaClinica1 = await prisma.historiaClinica.create({
+    data: {
+      paciente: {
+        connect: {
+          id: paciente1.id,
+        },
+      },
+      medico: {
+        connect: {
+          id: medico.id,
+        },
+      },
+
+      // N:M implícita HistoriaClinica <-> Alergia
+      alergias: {
+        connect: [
+          { id: alergiaPenicilina.id },
+          { id: alergiaIbuprofeno.id },
+        ],
+      },
+
+      // N:M implícita HistoriaClinica <-> Antecedente
+      antecedentes: {
+        connect: [
+          { id: antecedenteHipertension.id },
+        ],
+      },
+    },
+  });
+
+  // ==========================================
+  // ENTRADAS CLÍNICAS
+  // ==========================================
+
+  console.log("🌱 Insertando entradas clínicas...");
 
   await prisma.entradaClinica.createMany({
     data: [
       {
         historiaClinicaId: historiaClinica1.id,
         diagnostico: "Chequeo de rutina cardiovascular",
-        evolucion: "Paciente se presenta asintomática. ECG dentro de parámetros normales.",
+        evolucion:
+          "Paciente se presenta asintomática. ECG dentro de parámetros normales.",
         observaciones: "Solicitar análisis de laboratorio completo.",
         fecha: new Date("2026-06-10T10:00:00Z"),
       },
       {
         historiaClinicaId: historiaClinica1.id,
         diagnostico: "Seguimiento de rutina",
-        evolucion: "Resultados de laboratorio normales. Mantener hábitos saludables.",
+        evolucion:
+          "Resultados de laboratorio normales. Mantener hábitos saludables.",
         observaciones: "Próximo control en 6 meses.",
         fecha: new Date("2026-07-15T11:30:00Z"),
       },
     ],
   });
 
-  console.log("🌱 Insertando Turnos y Asistente IA...");
+  // ==========================================
+  // TURNOS
+  // ==========================================
 
-  //Turnos
+  console.log("🌱 Insertando turnos...");
+
   const turno1 = await prisma.turno.create({
     data: {
-      medicoId: medico.id,
-      pacienteId: paciente1.id,
-      secretariaId: secretaria.id,
+      medico: {
+        connect: {
+          id: medico.id,
+        },
+      },
+      paciente: {
+        connect: {
+          id: paciente1.id,
+        },
+      },
+      secretaria: {
+        connect: {
+          id: secretaria.id,
+        },
+      },
       estado: TurnoEstado.Confirmado,
       fechaHora: new Date("2026-08-25T09:00:00Z"),
       pagoValidado: true,
@@ -159,25 +332,44 @@ async function main() {
     },
   });
 
-  const turno2 = await prisma.turno.create({
+  await prisma.turno.create({
     data: {
-      medicoId: medico.id,
-      pacienteId: paciente2.id,
+      medico: {
+        connect: {
+          id: medico.id,
+        },
+      },
+      paciente: {
+        connect: {
+          id: paciente2.id,
+        },
+      },
       estado: TurnoEstado.Pendiente,
       fechaHora: new Date("2026-08-26T10:30:00Z"),
       pagoValidado: false,
     },
   });
 
-  //Registro de interacción del Asistente IA con el turno
+  // ==========================================
+  // ASISTENTE IA
+  // ==========================================
+
+  console.log("🌱 Insertando Asistente IA...");
+
   await prisma.asistenteIA.create({
     data: {
       nroWhatsApp: "2214567890",
-      turnoId: turno1.id,
+      turno: {
+        connect: {
+          id: turno1.id,
+        },
+      },
     },
   });
 
-  console.log("✅ Seed finalizado exitosamente con datos del dominio médico.");
+  console.log(
+    "✅ Seed finalizado exitosamente con datos y relaciones del dominio médico."
+  );
 }
 
 main()
