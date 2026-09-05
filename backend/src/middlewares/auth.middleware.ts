@@ -1,10 +1,23 @@
-import { Request, Response, NextFunction } from "express";
+import type { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 import { JWT_SECRET } from "../config/env";
 
 export interface TokenPayload {
   sub: number;
   rol: string;
+}
+
+declare module "express" {
+  interface Request {
+    usuario?: TokenPayload;
+  }
+
+  interface Response {
+    json(body: unknown): this;
+    status(code: number): this;
+  }
+
+  type NextFunction = (err?: unknown) => void;
 }
 
 declare global {
@@ -32,4 +45,22 @@ export function authenticate(req: Request, res: Response, next: NextFunction) {
   } catch {
     return res.status(401).json({ error: "Token inválido o vencido" });
   }
+}
+
+// Verifica que el rol guardado en req.usuario (por authenticate) coincida
+// con alguno de los roles permitidos para el endpoint.
+export function authorize(...rolesPermitidos: string[]) {
+  return (req: Request, res: Response, next: NextFunction) => {
+    const usuario = req.usuario;
+
+    if (!usuario) {
+      return res.status(401).json({ error: "No autenticado" });
+    }
+
+    if (!rolesPermitidos.includes(usuario.rol)) {
+      return res.status(403).json({ error: "Acceso prohibido: no tenés los permisos requeridos" });
+    }
+
+    next();
+  };
 }
