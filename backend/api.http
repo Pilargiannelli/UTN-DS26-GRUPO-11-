@@ -1,7 +1,53 @@
 @baseUrl = http://localhost:3000
 
 ### ==========================================
-### AUTH
+### 1. AUTENTICACIÓN Y LOGINS POR ROL (SEED)
+### ==========================================
+
+### Login Médico -> 200 (Captura token de Médico)
+# @name loginMedico
+POST {{baseUrl}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "carlos.gomez@clinica.com",
+  "password": "Medico1234"
+}
+
+### Variable para el token de Médico
+@tokenMedico = {{loginMedico.response.body.token}}
+
+
+### Login Secretaria -> 200 (Captura token de Secretaria)
+# @name loginSecretaria
+POST {{baseUrl}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "ana.martinez@clinica.com",
+  "password": "Secretaria1234"
+}
+
+### Variable para el token de Secretaria
+@tokenSecretaria = {{loginSecretaria.response.body.token}}
+
+
+### Login Paciente -> 200 (Captura token de Paciente)
+# @name loginPaciente
+POST {{baseUrl}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "maria.flores@gmail.com",
+  "password": "Paciente1234"
+}
+
+### Variable para el token de Paciente
+@tokenPaciente = {{loginPaciente.response.body.token}}
+
+
+### ==========================================
+### 2. PRUEBAS DE REGISTRO Y LOGIN (AUTH)
 ### ==========================================
 
 ### Registro exitoso -> 201 (sin passwordHash en la respuesta)
@@ -43,15 +89,6 @@ Content-Type: application/json
   "email": "otra.julia@gmail.com"
 }
 
-### Login correcto -> 200 con token (usuario sembrado por el seed)
-POST {{baseUrl}}/api/auth/login
-Content-Type: application/json
-
-{
-  "email": "maria.flores@gmail.com",
-  "password": "Paciente1234"
-}
-
 ### Login con contraseña incorrecta -> 401 (mensaje genérico)
 POST {{baseUrl}}/api/auth/login
 Content-Type: application/json
@@ -61,7 +98,7 @@ Content-Type: application/json
   "password": "ContraseñaIncorrecta1"
 }
 
-### Login con email inexistente -> 401 (mismo mensaje genérico)
+### Login con email inexistente -> 401 (mensaje genérico)
 POST {{baseUrl}}/api/auth/login
 Content-Type: application/json
 
@@ -70,32 +107,47 @@ Content-Type: application/json
   "password": "Paciente1234"
 }
 
-### Yo sin token -> 401
+
+### ==========================================
+### 3. PRUEBAS DE AUTENTICACIÓN (/yo)
+### ==========================================
+
+### Yo sin token -> 401 Unauthorized
 GET {{baseUrl}}/api/auth/yo
 
-### Yo con token inválido -> 401
+### Yo con token inválido -> 401 Unauthorized
 GET {{baseUrl}}/api/auth/yo
 Authorization: Bearer token-invalido
 
-### Yo con token válido -> 200 (pegar el token devuelto por el login correcto)
+### Yo con token válido (Médico) -> 200 OK
 GET {{baseUrl}}/api/auth/yo
-Authorization: Bearer PEGAR_TOKEN_AQUI
+Authorization: Bearer {{tokenMedico}}
+
 
 ### ==========================================
-### TURNOS
+### 4. TURNOS: CONTROL DE ACCESO (401 y 403)
 ### ==========================================
 
-### Listar turnos
+### Listar turnos sin token -> 401 Unauthorized
 GET {{baseUrl}}/api/turnos
 
-### Ver un turno creado
-GET {{baseUrl}}/api/turnos/3
+### Listar turnos con rol Paciente -> 403 Forbidden (Rol sin acceso en authorize)
+GET {{baseUrl}}/api/turnos
+Authorization: Bearer {{tokenPaciente}}
 
-### Ver un turno que no existe -> 404
-GET {{baseUrl}}/api/turnos/999
+### Listar turnos con rol Médico -> 200 OK
+GET {{baseUrl}}/api/turnos
+Authorization: Bearer {{tokenMedico}}
 
-### Crear un turno
+
+### ==========================================
+### 5. TURNOS: OPERACIONES CRUD Y VALIDACIONES
+### ==========================================
+
+### Crear turno exitoso (Médico/Administrativo) -> 201 Created
+# @name crearTurno
 POST {{baseUrl}}/api/turnos
+Authorization: Bearer {{tokenMedico}}
 Content-Type: application/json
 
 {
@@ -108,8 +160,24 @@ Content-Type: application/json
   "secretariaId": 1
 }
 
-### Editar un turno
-PUT {{baseUrl}}/api/turnos/3
+### Guardar ID del turno recién creado
+@turnoId = {{crearTurno.response.body.id}}
+
+### Ver el turno recién creado -> 200 OK
+GET {{baseUrl}}/api/turnos/{{turnoId}}
+Authorization: Bearer {{tokenMedico}}
+
+### Ver un turno que no existe -> 404 Not Found
+GET {{baseUrl}}/api/turnos/99999
+Authorization: Bearer {{tokenMedico}}
+
+### Ver turno con ID no numérico -> 400 Bad Request (Zod params)
+GET {{baseUrl}}/api/turnos/abc
+Authorization: Bearer {{tokenMedico}}
+
+### Editar un turno existente -> 200 OK
+PUT {{baseUrl}}/api/turnos/{{turnoId}}
+Authorization: Bearer {{tokenMedico}}
 Content-Type: application/json
 
 {
@@ -122,46 +190,44 @@ Content-Type: application/json
   "secretariaId": 1
 }
 
-### Editar un turno que no existe -> 404
-PUT {{baseUrl}}/api/turnos/999
+### Editar un turno que no existe -> 404 Not Found
+PUT {{baseUrl}}/api/turnos/99999
+Authorization: Bearer {{tokenMedico}}
 Content-Type: application/json
 
 {
   "estado": "Confirmado",
-  "fechaHora": "2026-08-27T12:00:00.000Z",
-  "idWhatsapp": "WA-TEST-404",
-  "pagoValidado": true,
-  "medicoId": 1,
-  "pacienteId": 1,
-  "secretariaId": 1
+  "fechaHora": "2026-08-27T12:00:00.000Z"
 }
 
-### Cancelar (borrar) un turno
-DELETE {{baseUrl}}/api/turnos/3
-
-### Cancelar el mismo turno de nuevo -> 404
-DELETE {{baseUrl}}/api/turnos/3
-
-### Crear turno con body inválido -> 400 (Zod)
+### Crear turno con body inválido -> 400 Bad Request (Zod validation)
 POST {{baseUrl}}/api/turnos
+Authorization: Bearer {{tokenMedico}}
 Content-Type: application/json
+
 {
   "estado": "EstadoInvalidoQueFalleZod",
   "pagoValidado": "no-es-boolean"
 }
 
-### Ver turno con ID no numérico -> 400 (Zod o validación de params)
-GET {{baseUrl}}/api/turnos/abc
-
-### Crear turno con violacion de FK (medicoId no existe) -> 409 (Prisma P2003)
+### Crear turno con violación de FK (medicoId no existe) -> 409 Conflict (Prisma P2003)
 POST {{baseUrl}}/api/turnos
+Authorization: Bearer {{tokenMedico}}
 Content-Type: application/json
+
 {
   "estado": "Pendiente",
   "fechaHora": "2026-08-27T11:00:00.000Z",
   "idWhatsapp": "WA-TEST-002",
   "pagoValidado": false,
   "medicoId": 99999,
-  "pacienteId": 1,
-  "secretariaId": 1
+  "pacienteId": 1
 }
+
+### Eliminar el turno creado -> 200 OK
+DELETE {{baseUrl}}/api/turnos/{{turnoId}}
+Authorization: Bearer {{tokenMedico}}
+
+### Eliminar el mismo turno de nuevo -> 404 Not Found
+DELETE {{baseUrl}}/api/turnos/{{turnoId}}
+Authorization: Bearer {{tokenMedico}}
