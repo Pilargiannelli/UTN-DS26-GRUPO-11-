@@ -1,5 +1,90 @@
 @baseUrl = http://localhost:3000
 
+### ==========================================
+### AUTH
+### ==========================================
+
+### Registro exitoso -> 201 (sin passwordHash en la respuesta)
+POST {{baseUrl}}/api/auth/registro
+Content-Type: application/json
+
+{
+  "username": "jperez",
+  "password": "Paciente1234",
+  "nombre": "Julia",
+  "apellido": "Pérez",
+  "dni": "41222333",
+  "email": "julia.perez@gmail.com"
+}
+
+### Registro con email repetido -> 409 (Prisma P2002)
+POST {{baseUrl}}/api/auth/registro
+Content-Type: application/json
+
+{
+  "username": "jperez2",
+  "password": "Paciente1234",
+  "nombre": "Julia",
+  "apellido": "Pérez",
+  "dni": "41222334",
+  "email": "julia.perez@gmail.com"
+}
+
+### Registro con contraseña débil -> 400 (Zod)
+POST {{baseUrl}}/api/auth/registro
+Content-Type: application/json
+
+{
+  "username": "jperez3",
+  "password": "1234",
+  "nombre": "Julia",
+  "apellido": "Pérez",
+  "dni": "41222335",
+  "email": "otra.julia@gmail.com"
+}
+
+### Login correcto -> 200 con token (usuario sembrado por el seed)
+POST {{baseUrl}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "maria.flores@gmail.com",
+  "password": "Paciente1234"
+}
+
+### Login con contraseña incorrecta -> 401 (mensaje genérico)
+POST {{baseUrl}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "maria.flores@gmail.com",
+  "password": "ContraseñaIncorrecta1"
+}
+
+### Login con email inexistente -> 401 (mismo mensaje genérico)
+POST {{baseUrl}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "no.existe@gmail.com",
+  "password": "Paciente1234"
+}
+
+### Yo sin token -> 401
+GET {{baseUrl}}/api/auth/yo
+
+### Yo con token inválido -> 401
+GET {{baseUrl}}/api/auth/yo
+Authorization: Bearer token-invalido
+
+### Yo con token válido -> 200 (pegar el token devuelto por el login correcto)
+GET {{baseUrl}}/api/auth/yo
+Authorization: Bearer PEGAR_TOKEN_AQUI
+
+### ==========================================
+### TURNOS
+### ==========================================
+
 ### Listar turnos
 GET {{baseUrl}}/api/turnos
 
