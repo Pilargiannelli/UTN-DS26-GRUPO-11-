@@ -10,7 +10,13 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.use(cors());
+
+const corsOptions = {
+  origin: [process.env.FRONTEND_URL ?? "http://localhost:5173"],
+};
+
+
+app.use(cors(corsOptions));
 app.use(express.json());
 
 app.get("/", (_req, res) => {
@@ -19,9 +25,12 @@ app.get("/", (_req, res) => {
 
 app.use("/api/auth", authRoutes);
 app.use("/api/turnos", turnoRoutes);
+app.use((_req, res) => {
+  res.status(404).json({ error: "Ruta no encontrada" });
+});
+
+app.use(errorHandler);
 
 app.listen(PORT, () => {
   console.log(`Servidor en http://localhost:${PORT}`);
 });
-
-app.use(errorHandler);
