@@ -46,7 +46,7 @@ function App() {
       <Route
         path="/orden-del-dia"
         element={
-          <ProtectedRoute rol={rol} permitido="medico">
+          <ProtectedRoute rol={rol} permitido="MEDICO">
             <OrdenDelDia />
           </ProtectedRoute>
         }
@@ -54,7 +54,7 @@ function App() {
       <Route
         path="/historial"
         element={
-          <ProtectedRoute rol={rol} permitido="medico">
+          <ProtectedRoute rol={rol} permitido="MEDICO">
             <HistorialClinico />
           </ProtectedRoute>
         }

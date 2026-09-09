@@ -21,7 +21,7 @@ export function useRegistroFinal() {
         };
         seleccionarUsuario(objetoCompletoFinal as Usuario);
         console.log("¡Objeto definitivo listo para el POST simulado!", objetoCompletoFinal);
-        const pathDestino = rol === "unlogged" ? "/" : "/ver-perfil";
+        const pathDestino = rol === null ? "/" : "/ver-perfil";
         navigate(pathDestino, { state: { registroExitoso: true } });
     };
     return { registrarUsuario, tieneDatosPrevios: !!datosPasoUno, };
