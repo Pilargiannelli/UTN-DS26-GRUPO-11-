@@ -1,0 +1,66 @@
+import type { Request, Response, NextFunction } from "express";
+import jwt from "jsonwebtoken";
+import { JWT_SECRET } from "../config/env";
+
+export interface TokenPayload {
+  sub: number;
+  rol: string;
+}
+
+declare module "express" {
+  interface Request {
+    usuario?: TokenPayload;
+  }
+
+  interface Response {
+    json(body: unknown): this;
+    status(code: number): this;
+  }
+
+  type NextFunction = (err?: unknown) => void;
+}
+
+declare global {
+  namespace Express {
+    interface Request {
+      usuario?: TokenPayload;
+    }
+  }
+}
+
+// Exige un JWT válido en el header Authorization: Bearer <token>.
+// Deja el payload en req.usuario para que el resto de la request lo use
+// (p. ej. GET /api/auth/yo, o el futuro middleware `authorize` por rol).
+export function authenticate(req: Request, res: Response, next: NextFunction) {
+  const header = req.headers.authorization;
+  const token = header?.startsWith("Bearer ") ? header.slice("Bearer ".length) : undefined;
+
+  if (!token) {
+    return res.status(401).json({ error: "No autenticado" });
+  }
+
+  try {
+    req.usuario = jwt.verify(token, JWT_SECRET) as unknown as TokenPayload;
+    next();
+  } catch {
+    return res.status(401).json({ error: "Token inválido o vencido" });
+  }
+}
+
+// Verifica que el rol guardado en req.usuario (por authenticate) coincida
+// con alguno de los roles permitidos para el endpoint.
+export function authorize(...rolesPermitidos: string[]) {
+  return (req: Request, res: Response, next: NextFunction) => {
+    const usuario = req.usuario;
+
+    if (!usuario) {
+      return res.status(401).json({ error: "No autenticado" });
+    }
+
+    if (!rolesPermitidos.includes(usuario.rol)) {
+      return res.status(403).json({ error: "Acceso prohibido: no tenés los permisos requeridos" });
+    }
+
+    next();
+  };
+}

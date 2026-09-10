@@ -85,3 +85,11 @@ export default defineConfig([
   },
 ])
 ```
+## Acceso a la API
+
+El frontend centraliza las solicitudes al backend mediante `apiFetch`, ubicado en `src/services/api.ts`.
+
+La URL base de la API se obtiene desde la variable de entorno:
+
+```env
+VITE_API_URL=http://localhost:3000/api
