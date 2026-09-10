@@ -1,9 +1,10 @@
 import { Navigate } from "react-router-dom";
+import type { RolUsuario } from "../types/UsuarioSesion";
 
 interface Props {
   children: React.ReactNode;
-  rol: string;
-  permitido: string;
+  rol: RolUsuario | null;
+  permitido: RolUsuario;
 }
 
 function ProtectedRoute({ children, rol, permitido }: Props) {
