@@ -1,16 +1,14 @@
 import { createContext } from "react";
-import type { Usuario } from "../types/Usuario";
+import type { UsuarioSesion, RolUsuario } from "../types/UsuarioSesion";
 
 export interface AuthContextType {
-  rol: string;
-  setRol: (rol: string) => void;
-  usuario: Usuario|null;
-  setUsuario: (usuario: Usuario|null) => void;
+  usuario: UsuarioSesion | null;
+  rol: RolUsuario | null;
+  setUsuario: (usuario: UsuarioSesion | null) => void;
 }
 
 export const AuthContext = createContext<AuthContextType>({
-  rol: "unlogged",
-  setRol: () => {},
   usuario: null,
+  rol: null,
   setUsuario: () => {},
 });
