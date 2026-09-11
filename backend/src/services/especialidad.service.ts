@@ -1,6 +1,7 @@
 import { prisma } from "../config/prisma";
+import type { Especialidad } from "../types/especialidad.types";
 
-export async function listarEspecialidades() {
+export async function listarEspecialidades(): Promise<Especialidad[]> {
   const medicos = await prisma.medico.findMany({
     select: { especialidad: true },
     distinct: ["especialidad"],
