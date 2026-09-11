@@ -3,6 +3,9 @@ import cors from "cors";
 import dotenv from "dotenv";
 import turnoRoutes from "./routes/turno.routes";
 import authRoutes from "./routes/auth.routes";
+import obraSocialRoutes from "./routes/obraSocial.routes";
+import especialidadRoutes from "./routes/especialidad.routes";
+import usuarioRoutes from "./routes/usuario.routes";
 import { errorHandler } from "./middlewares/error.middleware";
 
 dotenv.config();
@@ -25,6 +28,9 @@ app.get("/", (_req, res) => {
 
 app.use("/api/auth", authRoutes);
 app.use("/api/turnos", turnoRoutes);
+app.use("/api/obras-sociales", obraSocialRoutes);
+app.use("/api/especialidades", especialidadRoutes);
+app.use("/api/usuarios", usuarioRoutes);
 app.use((_req, res) => {
   res.status(404).json({ error: "Ruta no encontrada" });
 });
