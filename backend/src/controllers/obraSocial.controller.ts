@@ -1,11 +1,9 @@
 import { Request, Response, NextFunction } from "express";
-import { prisma } from "../config/prisma";
+import * as obraSocialService from "../services/obraSocial.service";
 
 export async function getAll(_req: Request, res: Response, next: NextFunction) {
   try {
-    const obrasSociales = await prisma.obraSocial.findMany({
-      orderBy: { nombre: "asc" },
-    });
+    const obrasSociales = await obraSocialService.listarObrasSociales();
     return res.json(obrasSociales);
   } catch (error) {
     return next(error);
