@@ -12,7 +12,6 @@ export async function getUsuarios(_req: Request, res: Response, next: NextFuncti
         nombre: true,
         apellido: true,
         dni: true,
-        telefono: true,
       },
     });
     return res.json(usuarios);
@@ -31,7 +30,6 @@ export async function getMedicos(_req: Request, res: Response, next: NextFunctio
             nombre: true,
             apellido: true,
             email: true,
-            telefono: true,
           },
         },
       },
@@ -53,10 +51,8 @@ export async function getPacientes(_req: Request, res: Response, next: NextFunct
             apellido: true,
             email: true,
             dni: true,
-            telefono: true,
           },
         },
-        obraSocial: true,
       },
     });
     return res.json(pacientes);
