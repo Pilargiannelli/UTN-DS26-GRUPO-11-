@@ -125,7 +125,56 @@ Authorization: Bearer {{tokenMedico}}
 
 
 ### ==========================================
-### 4. TURNOS: CONTROL DE ACCESO (401 y 403)
+### 4. CATÁLOGOS Y CARTILLA PÚBLICA
+### ==========================================
+
+### Obtener Obras Sociales (Público/General) -> 200 OK
+GET {{baseUrl}}/api/obras-sociales
+
+### Obtener Especialidades (Público/General) -> 200 OK
+GET {{baseUrl}}/api/especialidades
+
+### Obtener Cartilla de Médicos sin token (Público según Matriz Secc. 7) -> 200 OK
+GET {{baseUrl}}/api/medicos
+
+### Obtener Cartilla de Médicos con token -> 200 OK
+GET {{baseUrl}}/api/medicos
+Authorization: Bearer {{tokenPaciente}}
+
+
+### ==========================================
+### 5. LECTURAS DE PACIENTES Y USUARIOS (RBAC)
+### ==========================================
+
+### Listar Pacientes sin token -> 401 Unauthorized
+GET {{baseUrl}}/api/pacientes
+
+### Listar Pacientes como Paciente -> 403 Forbidden
+GET {{baseUrl}}/api/pacientes
+Authorization: Bearer {{tokenPaciente}}
+
+### Listar Pacientes como Secretaria -> 200 OK
+GET {{baseUrl}}/api/pacientes
+Authorization: Bearer {{tokenSecretaria}}
+
+### Listar Pacientes como Médico -> 200 OK
+GET {{baseUrl}}/api/pacientes
+Authorization: Bearer {{tokenMedico}}
+
+### Listar Usuarios sin token -> 401 Unauthorized
+GET {{baseUrl}}/api/usuarios
+
+### Listar Usuarios como Paciente -> 403 Forbidden
+GET {{baseUrl}}/api/usuarios
+Authorization: Bearer {{tokenPaciente}}
+
+### Listar Usuarios como Secretaria -> 200 OK
+GET {{baseUrl}}/api/usuarios
+Authorization: Bearer {{tokenSecretaria}}
+
+
+### ==========================================
+### 6. TURNOS: CONTROL DE ACCESO (401 y 403)
 ### ==========================================
 
 ### Listar turnos sin token -> 401 Unauthorized
@@ -141,7 +190,7 @@ Authorization: Bearer {{tokenMedico}}
 
 
 ### ==========================================
-### 5. TURNOS: OPERACIONES CRUD Y VALIDACIONES
+### 7. TURNOS: OPERACIONES CRUD Y VALIDACIONES
 ### ==========================================
 
 ### Crear turno exitoso (Médico/Administrativo) -> 201 Created
