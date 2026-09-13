@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import {
   Container,
   Spinner,
@@ -23,40 +23,23 @@ function GestionTurnos() {
   const { usuario } = useAuth();
 
   const nombreUsuario =
-    usuario?.rol === "medico"
-      ? `Dr. ${usuario.docs.apellido}`
-      : usuario?.docs.nombre ?? "Secretaría";
+    usuario?.rol === "MEDICO"
+      ? `Dr. ${usuario.apellido}`
+      : usuario?.nombre ?? "Secretaría";
 
+  // GET /api/turnos ya filtra por identidad en el back (matriz de permisos,
+  // sección 8): la Secretaria ve todos, el Médico sólo su agenda.
   const {
     data,
     loading,
     error,
-  } = useFetch<Turno[]>("/turnos.json");
+  } = useFetch<Turno[]>("/turnos");
 
-  const [turnos, setTurnos] = useState<Turno[]>([]);
+  const turnos = data ?? [];
 
-  useEffect(() => {
-
-    if (data) {
-
-      const ordenados = [...data].sort((a, b) => {
-
-        if (a.fecha !== b.fecha) {
-
-          return a.fecha.localeCompare(b.fecha);
-
-        }
-
-        return a.hora.localeCompare(b.hora);
-
-      });
-
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setTurnos(ordenados);
-
-    }
-
-  }, [data]);
+  const turnosOrdenados = [...turnos].sort(
+    (a, b) => a.fechaHora.localeCompare(b.fechaHora)
+  );
 
   // ==========================================
   // Fecha y hora actual
@@ -86,7 +69,7 @@ function GestionTurnos() {
   // Próximo turno
   // ==========================================
 
-  const proximoTurno = turnos.find(
+  const proximoTurno = turnosOrdenados.find(
     turno => turno.estado !== "Cancelado"
   );
 
@@ -94,88 +77,39 @@ function GestionTurnos() {
   // Dashboard
   // ==========================================
 
-  const turnosFiltrados = usuario?.rol === "medico" ? turnos.filter( turno => turno.medico === `Dr. ${usuario.docs.apellido}` ) : turnos;
-
-  const totalTurnos = turnosFiltrados.length;
+  // El Médico ya recibe sólo su propia agenda desde el back; no hace falta
+  // volver a filtrar acá.
+  const totalTurnos = turnosOrdenados.length;
 
   const pendientes =
-    turnosFiltrados.filter(
+    turnosOrdenados.filter(
       t => t.estado === "Pendiente"
     ).length;
 
   const confirmados =
-    turnosFiltrados.filter(
+    turnosOrdenados.filter(
       t => t.estado === "Confirmado"
     ).length;
 
   const cancelados =
-    turnosFiltrados.filter(
+    turnosOrdenados.filter(
       t => t.estado === "Cancelado"
     ).length;
 
   // ==========================================
-  // Alta de turno
+  // Alta de turno: la crea NuevoTurnoModal contra POST /api/turnos.
+  // Acá sólo refrescamos la tabla con el turno que devolvió el back (201).
   // ==========================================
 
-  const agregarTurno = (
-    nuevoTurno: Turno
-  ) => {
+  const [turnosNuevos, setTurnosNuevos] = useState<Turno[]>([]);
 
-    const medicoOcupado = turnos.some(
-      turno =>
-        turno.medico === nuevoTurno.medico &&
-        turno.fecha === nuevoTurno.fecha &&
-        turno.hora === nuevoTurno.hora
-    );
-
-    if (medicoOcupado) {
-
-      alert(
-        "Ese médico ya posee un turno asignado en esa fecha y horario."
-      );
-
-      return;
-
-    }
-
-    const pacienteOcupado = turnos.some(
-      turno =>
-        turno.paciente === nuevoTurno.paciente &&
-        turno.fecha === nuevoTurno.fecha &&
-        turno.hora === nuevoTurno.hora
-    );
-
-    if (pacienteOcupado) {
-
-      alert(
-        "El paciente ya posee un turno asignado en esa fecha y horario."
-      );
-
-      return;
-
-    }
-
-    const nuevosTurnos = [
-
-      ...turnos,
-
-      nuevoTurno,
-
-    ].sort((a, b) => {
-
-      if (a.fecha !== b.fecha) {
-
-        return a.fecha.localeCompare(b.fecha);
-
-      }
-
-      return a.hora.localeCompare(b.hora);
-
-    });
-
-    setTurnos(nuevosTurnos);
-
+  const agregarTurno = (nuevoTurno: Turno) => {
+    setTurnosNuevos((prev) => [...prev, nuevoTurno]);
   };
+
+  const turnosFiltrados = [...turnosOrdenados, ...turnosNuevos].sort(
+    (a, b) => a.fechaHora.localeCompare(b.fechaHora)
+  );
 
     // ==========================================
   // Loading
@@ -229,13 +163,13 @@ function GestionTurnos() {
 
           proximoPaciente={
             proximoTurno
-              ? proximoTurno.paciente
+              ? `${proximoTurno.paciente.usuario.nombre} ${proximoTurno.paciente.usuario.apellido}`
               : "Sin turnos"
           }
 
           especialidad={
             proximoTurno
-              ? proximoTurno.especialidad
+              ? proximoTurno.medico.especialidad
               : "-"
           }
 
@@ -261,7 +195,7 @@ function GestionTurnos() {
         <TurnosTable
 
           turnos={turnosFiltrados}
-          
+
           onNuevoTurno={() =>
             setShowModal(true)
           }

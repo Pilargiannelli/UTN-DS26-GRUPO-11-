@@ -4,7 +4,7 @@ import Layout from "../components/Layout/Layout.tsx";
 import { BotonVolver } from "../components/BotonVolver.tsx";
 import { useFetch } from "../hooks/useFetch";
 import { apiFetch } from "../services/api";
-import type { Especialidad, Medico } from "../types/Medico";
+import type { MedicoTurno, Turno } from "../types/Turno";
 import "../assets/styles/PedirTurno.css";
 import "../assets/styles/PaginaPaciente.css";
 
@@ -12,10 +12,12 @@ const horariosDisponibles = ["09:00", "10:30", "11:15", "14:00", "15:30"];
 
 export function PedirTurno() {
     const navigate = useNavigate();
-    
-    // Consulta de catálogos y usuarios reales
-    const { data: especialidadesAPI } = useFetch<Especialidad[]>("/especialidades");
-    const { data: medicosAPI } = useFetch<Medico[]>("/medicos");
+
+    // Consulta de catálogos reales. GET /api/especialidades manda un
+    // array de strings (no hay modelo Especialidad en el schema); GET
+    // /api/medicos es público (matriz de permisos, sección 7).
+    const { data: especialidadesAPI } = useFetch<string[]>("/especialidades");
+    const { data: medicosAPI } = useFetch<MedicoTurno[]>("/medicos");
 
     const [especialidad, setEspecialidad] = useState("");
     const [medicoId, setMedicoId] = useState("");
@@ -24,10 +26,7 @@ export function PedirTurno() {
     const [loading, setLoading] = useState(false);
     const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
-    // Mapeo seguro de especialidades
-    const listaEspecialidades = (especialidadesAPI ?? []).map(e => 
-        typeof e === "string" ? e : e.nombre
-    );
+    const listaEspecialidades = especialidadesAPI ?? [];
 
     // Filtrar médicos según la especialidad elegida
     const medicosFiltrados = (medicosAPI ?? []).filter(
@@ -40,21 +39,21 @@ export function PedirTurno() {
         setLoading(true);
         setErrorMsg(null);
         try {
-            const payload = {
-                medicoId,
-                fecha,
-                hora: horario,
-                estado: "PENDIENTE"
-            };
+            // POST /api/turnos hoy sólo lo permiten SECRETARIA y MEDICO
+            // (backend/src/routes/turno.routes.ts): un PACIENTE autenticado
+            // recibe 403 acá — es el comportamiento esperado, no un bug de
+            // este formulario. pacienteId no viaja porque la sesión de un
+            // paciente no expone su propio id de Paciente todavía.
+            const fechaHora = new Date(`${fecha}T${horario}:00`).toISOString();
 
-            await apiFetch("/turnos", {
+            await apiFetch<Turno>("/turnos", {
                 method: "POST",
-                body: JSON.stringify(payload)
+                body: JSON.stringify({ medicoId: Number(medicoId), fechaHora }),
             });
 
             navigate("/mis-turnos");
-        } catch (err: any) {
-            setErrorMsg(err.message || "Error al registrar el turno");
+        } catch (err) {
+            setErrorMsg(err instanceof Error ? err.message : "Error al registrar el turno");
         } finally {
             setLoading(false);
         }
@@ -98,8 +97,8 @@ export function PedirTurno() {
                             {especialidad ? "Elegí un profesional" : "Elegí primero una especialidad"}
                         </option>
                         {medicosFiltrados.map((m) => (
-                            <option key={m.id || m.dni} value={m.id || m.dni}>
-                                {m.apellido}, {m.nombre}
+                            <option key={m.id} value={m.id}>
+                                {m.usuario.apellido}, {m.usuario.nombre}
                             </option>
                         ))}
                     </select>

@@ -3,6 +3,7 @@ import { Container } from "react-bootstrap";
 import { useTurnosMedico } from "../hooks/useTurnosMedico";
 import VistaAgendaSemanal from "../components/VistaAgendaSemanal";
 import Layout from "../components/Layout/Layout";
+import { formatearHora } from "../utils/fecha";
 import "../assets/styles/OrdenDelDia.css";
 
 type Vista = "dia" | "semana";
@@ -175,7 +176,8 @@ export default function OrdenDelDia() {
                 <div className="agenda-sin-turnos">Sin turnos para este día</div>
               )}
               {turnos.map((turno) => {
-                const top = calcularTop(turno.hora);
+                const hora = formatearHora(turno.fechaHora);
+                const top = calcularTop(hora);
                 const estadoClass = `estado-${turno.estado.toLowerCase()}`;
                 return (
                   <div
@@ -183,9 +185,11 @@ export default function OrdenDelDia() {
                     className={`agenda-evento ${estadoClass}`}
                     style={{ top, height: ALTURA_EVENTO }}
                   >
-                    <p className="agenda-evento-hora">{turno.hora}</p>
-                    <p className="agenda-evento-paciente">{turno.paciente}</p>
-                    <p className="agenda-evento-especialidad">{turno.especialidad}</p>
+                    <p className="agenda-evento-hora">{hora}</p>
+                    <p className="agenda-evento-paciente">
+                      {turno.paciente.usuario.nombre} {turno.paciente.usuario.apellido}
+                    </p>
+                    <p className="agenda-evento-especialidad">{turno.medico.especialidad}</p>
                   </div>
                 );
               })}

@@ -1,9 +1,10 @@
 import { Link } from "react-router-dom";
+import { Spinner, Alert } from "react-bootstrap";
 import Layout from "../components/Layout/Layout.tsx";
 import { BotonVolver } from "../components/BotonVolver.tsx";
 import { useTurnosPaciente } from "../hooks/useTurnosPaciente";
-import { parseFecha, formatearChipFecha } from "../utils/fecha";
-import type { TurnoReservadoProps } from "../types/TurnoReservadoProps";
+import { parseFechaHora, formatearChipFecha, formatearHora } from "../utils/fecha";
+import type { Turno } from "../types/Turno";
 import "../assets/styles/MisTurnos.css";
 import "../assets/styles/PaginaPaciente.css";
 
@@ -17,19 +18,19 @@ function obtenerClaseEstado(estado: string) {
 }
 
 function MisTurnos() {
-  const { misTurnos } = useTurnosPaciente();
+  const { misTurnos, loading, error } = useTurnosPaciente();
   const hoy = new Date();
 
   const proximas = misTurnos
-    .filter((t) => t.estado !== "Cancelado" && parseFecha(t.fecha) >= hoy)
-    .sort((a, b) => parseFecha(a.fecha).getTime() - parseFecha(b.fecha).getTime());
+    .filter((t) => t.estado !== "Cancelado" && parseFechaHora(t.fechaHora) >= hoy)
+    .sort((a, b) => parseFechaHora(a.fechaHora).getTime() - parseFechaHora(b.fechaHora).getTime());
 
   const pasadas = misTurnos
-    .filter((t) => t.estado === "Cancelado" || parseFecha(t.fecha) < hoy)
-    .sort((a, b) => parseFecha(b.fecha).getTime() - parseFecha(a.fecha).getTime());
+    .filter((t) => t.estado === "Cancelado" || parseFechaHora(t.fechaHora) < hoy)
+    .sort((a, b) => parseFechaHora(b.fechaHora).getTime() - parseFechaHora(a.fechaHora).getTime());
 
-  const renderTurno = (turno: TurnoReservadoProps, apagado = false) => {
-    const { dia, mes } = formatearChipFecha(turno.fecha);
+  const renderTurno = (turno: Turno, apagado = false) => {
+    const { dia, mes } = formatearChipFecha(turno.fechaHora);
     const clase = obtenerClaseEstado(turno.estado);
     return (
       <Link to={`/turnos/${turno.id}`} className={`turno-fila ${apagado ? "turno-fila-apagada" : ""}`} key={turno.id}>
@@ -41,8 +42,8 @@ function MisTurnos() {
               <p className="turno-fila-dia">{dia}</p>
             </div>
             <div>
-              <p className="turno-fila-titulo">{turno.especialidad}, {turno.hora}</p>
-              <p className="turno-fila-medico">Con {turno.medico}</p>
+              <p className="turno-fila-titulo">{turno.medico.especialidad}, {formatearHora(turno.fechaHora)}</p>
+              <p className="turno-fila-medico">Con {turno.medico.usuario.nombre} {turno.medico.usuario.apellido}</p>
             </div>
           </div>
           <span className={`turno-fila-badge ${clase}`}>
@@ -65,18 +66,30 @@ function MisTurnos() {
           </Link>
         </div>
 
-        <p className="mis-turnos-seccion">Próximas</p>
-        {proximas.length === 0 ? (
-          <p className="text-muted mb-4">No tenés consultas agendadas.</p>
-        ) : (
-          <div className="mb-4">{proximas.map((t) => renderTurno(t))}</div>
+        {loading && (
+          <div className="text-center mb-4">
+            <Spinner animation="border" size="sm" />
+          </div>
         )}
 
-        <p className="mis-turnos-seccion">Pasadas</p>
-        {pasadas.length === 0 ? (
-          <p className="text-muted">Todavía no tenés consultas anteriores.</p>
-        ) : (
-          <div>{pasadas.map((t) => renderTurno(t, true))}</div>
+        {error && <Alert variant="danger">{error.message}</Alert>}
+
+        {!loading && !error && (
+          <>
+            <p className="mis-turnos-seccion">Próximas</p>
+            {proximas.length === 0 ? (
+              <p className="text-muted mb-4">No tenés consultas agendadas.</p>
+            ) : (
+              <div className="mb-4">{proximas.map((t) => renderTurno(t))}</div>
+            )}
+
+            <p className="mis-turnos-seccion">Pasadas</p>
+            {pasadas.length === 0 ? (
+              <p className="text-muted">Todavía no tenés consultas anteriores.</p>
+            ) : (
+              <div>{pasadas.map((t) => renderTurno(t, true))}</div>
+            )}
+          </>
         )}
       </div>
     </Layout>
