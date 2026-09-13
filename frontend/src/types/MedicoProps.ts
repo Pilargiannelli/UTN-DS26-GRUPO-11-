@@ -1,8 +1,12 @@
-import type { UserProps } from "./UserProps.ts";
-
-interface MedicoProps extends UserProps {
-  especialidad: string;
-  matricula: string;
+export interface Especialidad {
+  id: number;
+  nombre: string;
 }
 
-export type { MedicoProps };
+export interface MedicoProps {
+  id: number;
+  usuarioId: number;
+  matricula: string;
+  especialidadId?: number;
+  especialidad?: Especialidad | string;
+}

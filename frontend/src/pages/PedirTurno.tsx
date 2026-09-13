@@ -3,116 +3,143 @@ import { useNavigate } from "react-router-dom";
 import Layout from "../components/Layout/Layout.tsx";
 import { BotonVolver } from "../components/BotonVolver.tsx";
 import { useFetch } from "../hooks/useFetch";
+import { apiFetch } from "../services/api";
+import type { Especialidad, Medico } from "../types/Medico";
 import "../assets/styles/PedirTurno.css";
 import "../assets/styles/PaginaPaciente.css";
 
-interface UsuarioJson {
-  rol: string;
-  docs: {
-    nombre: string;
-    apellido: string;
-    especialidad?: string;
-  };
-}
-
 const horariosDisponibles = ["09:00", "10:30", "11:15", "14:00", "15:30"];
 
-function PedirTurno() {
-  const navigate = useNavigate();
-  const { data: especialidades } = useFetch<string[]>("/especialidades.json");
-  const { data: usuarios } = useFetch<UsuarioJson[]>("/users.json");
+export function PedirTurno() {
+    const navigate = useNavigate();
+    
+    // Consulta de catálogos y usuarios reales
+    const { data: especialidadesAPI } = useFetch<Especialidad[]>("/especialidades");
+    const { data: medicosAPI } = useFetch<Medico[]>("/medicos");
 
-  const [especialidad, setEspecialidad] = useState("");
-  const [medico, setMedico] = useState("");
-  const [fecha, setFecha] = useState("");
-  const [horario, setHorario] = useState("");
+    const [especialidad, setEspecialidad] = useState("");
+    const [medicoId, setMedicoId] = useState("");
+    const [fecha, setFecha] = useState("");
+    const [horario, setHorario] = useState("");
+    const [loading, setLoading] = useState(false);
+    const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
-  const medicos = (usuarios ?? []).filter(
-    (u) => u.rol === "medico" && u.docs.especialidad === especialidad
-  );
+    // Mapeo seguro de especialidades
+    const listaEspecialidades = (especialidadesAPI ?? []).map(e => 
+        typeof e === "string" ? e : e.nombre
+    );
 
-  const puedeConfirmar = especialidad && medico && fecha && horario;
+    // Filtrar médicos según la especialidad elegida
+    const medicosFiltrados = (medicosAPI ?? []).filter(
+        (m) => !especialidad || m.especialidad === especialidad
+    );
 
-  const confirmarTurno = () => {
-    // Acá va la llamada real a la API cuando exista un endpoint de turnos.
-    navigate("/mis-turnos");
-  };
+    const puedeConfirmar = especialidad && medicoId && fecha && horario && !loading;
 
-  return (
-    <Layout>
-      <div className="pagina-paciente">
-        <BotonVolver />
+    const confirmarTurno = async () => {
+        setLoading(true);
+        setErrorMsg(null);
+        try {
+            const payload = {
+                medicoId,
+                fecha,
+                hora: horario,
+                estado: "PENDIENTE"
+            };
 
-        <p className="pedir-turno-titulo">Agendar una consulta</p>
+            await apiFetch("/turnos", {
+                method: "POST",
+                body: JSON.stringify(payload)
+            });
 
-        <div className="pedir-turno-card">
+            navigate("/mis-turnos");
+        } catch (err: any) {
+            setErrorMsg(err.message || "Error al registrar el turno");
+        } finally {
+            setLoading(false);
+        }
+    };
 
-          <label className="pedir-turno-label">Especialidad</label>
-          <select
-            className="pedir-turno-select"
-            value={especialidad}
-            onChange={(e) => {
-              setEspecialidad(e.target.value);
-              setMedico("");
-            }}
-          >
-            <option value="">Elegí una especialidad</option>
-            {(especialidades ?? []).map((esp) => (
-              <option key={esp} value={esp}>{esp}</option>
-            ))}
-          </select>
+    return (
+        <Layout>
+            <div className="pagina-paciente">
+                <BotonVolver />
 
-          <label className="pedir-turno-label">Profesional</label>
-          <select
-            className="pedir-turno-select"
-            value={medico}
-            onChange={(e) => setMedico(e.target.value)}
-            disabled={!especialidad}
-          >
-            <option value="">
-              {especialidad ? "Elegí un profesional" : "Elegí primero una especialidad"}
-            </option>
-            {medicos.map((m) => (
-              <option key={`${m.docs.nombre}-${m.docs.apellido}`} value={`${m.docs.nombre} ${m.docs.apellido}`}>
-                {m.docs.nombre} {m.docs.apellido}
-              </option>
-            ))}
-          </select>
+                <p className="pedir-turno-titulo">Agendar una consulta</p>
 
-          <label className="pedir-turno-label">Fecha</label>
-          <input
-            type="date"
-            className="pedir-turno-select"
-            value={fecha}
-            onChange={(e) => setFecha(e.target.value)}
-          />
+                <div className="pedir-turno-card">
+                    {errorMsg && <div className="alert alert-danger">{errorMsg}</div>}
 
-          <label className="pedir-turno-label">Horarios disponibles</label>
-          <div className="pedir-turno-horarios">
-            {horariosDisponibles.map((h) => (
-              <button
-                key={h}
-                type="button"
-                className={`pedir-turno-chip ${horario === h ? "pedir-turno-chip-activo" : ""}`}
-                onClick={() => setHorario(h)}
-              >
-                {h}
-              </button>
-            ))}
-          </div>
+                    {/* Especialidad */}
+                    <label className="pedir-turno-label">Especialidad</label>
+                    <select
+                        className="pedir-turno-select"
+                        value={especialidad}
+                        onChange={(e) => {
+                            setEspecialidad(e.target.value);
+                            setMedicoId("");
+                        }}
+                    >
+                        <option value="">Elegí una especialidad</option>
+                        {listaEspecialidades.map((esp) => (
+                            <option key={esp} value={esp}>{esp}</option>
+                        ))}
+                    </select>
 
-          <button
-            className="pedir-turno-btn-confirmar"
-            disabled={!puedeConfirmar}
-            onClick={confirmarTurno}
-          >
-            Confirmar consulta
-          </button>
+                    {/* Profesional */}
+                    <label className="pedir-turno-label">Profesional</label>
+                    <select
+                        className="pedir-turno-select"
+                        value={medicoId}
+                        onChange={(e) => setMedicoId(e.target.value)}
+                        disabled={!especialidad}
+                    >
+                        <option value="">
+                            {especialidad ? "Elegí un profesional" : "Elegí primero una especialidad"}
+                        </option>
+                        {medicosFiltrados.map((m) => (
+                            <option key={m.id || m.dni} value={m.id || m.dni}>
+                                {m.apellido}, {m.nombre}
+                            </option>
+                        ))}
+                    </select>
 
-        </div>
-      </div>
-    </Layout>
-  );
+                    {/* Fecha */}
+                    <label className="pedir-turno-label">Fecha</label>
+                    <input
+                        type="date"
+                        className="pedir-turno-select"
+                        value={fecha}
+                        onChange={(e) => setFecha(e.target.value)}
+                    />
+
+                    {/* Horarios */}
+                    <label className="pedir-turno-label">Horarios disponibles</label>
+                    <div className="pedir-turno-horarios">
+                        {horariosDisponibles.map((h) => (
+                            <button
+                                key={h}
+                                type="button"
+                                className={`pedir-turno-chip ${horario === h ? "pedir-turno-chip-activo" : ""}`}
+                                onClick={() => setHorario(h)}
+                            >
+                                {h}
+                            </button>
+                        ))}
+                    </div>
+
+                    {/* Botón de envío */}
+                    <button
+                        className="pedir-turno-btn-confirmar"
+                        disabled={!puedeConfirmar}
+                        onClick={confirmarTurno}
+                    >
+                        {loading ? "Confirmando..." : "Confirmar consulta"}
+                    </button>
+                </div>
+            </div>
+        </Layout>
+    );
 }
 
 export default PedirTurno;

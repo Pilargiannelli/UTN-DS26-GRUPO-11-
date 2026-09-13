@@ -1,8 +1,17 @@
-import type { PacienteProps } from "./PacienteProps.ts";
-import type { MedicoProps } from "./MedicoProps.ts";
-import type { UserProps } from "./UserProps.ts";
+import type { Paciente } from "./Paciente";
+import type { MedicoProps } from "./MedicoProps";
 
-export type Usuario =
-  | { u: string; p: string; rol: "paciente"; foto?: string; docs: PacienteProps }
-  | { u: string; p: string; rol: "medico"; foto?: string; docs: MedicoProps }
-  | { u: string; p: string; rol: "admin"; foto?: string; docs: UserProps };
+export type RolUsuario = "PACIENTE" | "MEDICO" | "SECRETARIA";
+
+export interface Usuario {
+  id: number;
+  username: string;
+  email: string;
+  nombre: string;
+  apellido: string;
+  dni: number;
+  fotoPerfil?: string | null;
+  rol: RolUsuario;
+  medico?: MedicoProps | null;
+  paciente?: Paciente | null;
+}

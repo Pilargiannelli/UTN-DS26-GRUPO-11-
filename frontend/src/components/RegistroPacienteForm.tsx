@@ -5,37 +5,66 @@ import { Button, Form, Row, Col, Spinner } from "react-bootstrap";
 import { useFetch } from "../hooks/useFetch.ts";
 import { SelectEditable } from "./SelectEditable.tsx";
 import { DateInput } from "./DateInput.tsx";
-import '../assets/styles/Form.css'
-import { useEffect } from "react";
+import '../assets/styles/Form.css';
+import { useEffect, useState } from "react";
 import { useMayus } from "../hooks/useMayus.ts";
-import { useRegistroPasoUno } from "../hooks/useRegistro1.ts";
-import type { Usuario } from "../types/Usuario.ts";
 import { dateInputToString } from "../hooks/useDateTransform.ts";
+import { apiFetch } from "../services/api.ts";
+import type { ObraSocial } from "../types/Paciente.ts";
 
 export function RegistroPacienteForm() {
     const handleMayus = useMayus();
-    const { procesarPasoUno } = useRegistroPasoUno();
-    const sexo = ["Masculino", "Femenino", "Otro"];
-    const { data: obrasSociales } = useFetch<string[]>("../../public/obras-sociales.json");
-    const osValidas = obrasSociales || [""];
-    const { data: usuariosDB, loading } = useFetch<Usuario[]>("../../public/users.json");
-    const emailsOcupados = usuariosDB ? usuariosDB.map(u => u?.docs?.email?.trim().toLowerCase()).filter((email): email is string => !!email) : [];
-    const schema = pacienteSchema(osValidas, sexo, emailsOcupados);
-    const {register, handleSubmit, formState: { errors }, control, clearErrors, setValue} = useForm<PacienteValidado>({
+    const [submitting, setSubmitting] = useState(false);
+    const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
+    const opcionesSexo = ["Masculino", "Femenino", "Otro"];
+
+    // Carga de obras sociales desde la API real
+    const { data: obrasSocialesAPI, loading } = useFetch<ObraSocial[]>("/obras-sociales");
+    const osValidas = obrasSocialesAPI 
+        ? obrasSocialesAPI.map(os => typeof os === "string" ? os : os.nombre) 
+        : ["Sin obra social"];
+
+    // Schema sin dependencia de users.json mockeado
+    const schema = pacienteSchema(osValidas, opcionesSexo, []);
+
+    const { register, handleSubmit, formState: { errors }, control, clearErrors, setValue } = useForm<PacienteValidado>({
         resolver: zodResolver(schema) as Resolver<PacienteValidado>,
         mode: "onBlur",
         defaultValues: { obraSocial: "", nroAfiliado: "", plan: "" }
     });
-    const onSubmit = (data: PacienteValidado) => {
-        const fechaString = dateInputToString(data.fechaNacimiento);
-        const sexo = data.sexo as "Masculino"|"Femenino"|"Otro";
-        const historial = { consultas: [], alergias: [], antecedentes: []};
-        const dniString = String(data.dni);
-        const pacienteFormateado = {...data, rol: "paciente", dni: dniString, fechaNacimiento: fechaString, sexo: sexo, historial: historial, nroAfiliado: data.nroAfiliado === "-" ? "" : data.nroAfiliado, plan: data.plan === "-" ? "" : data.plan,};
-        procesarPasoUno(pacienteFormateado, "/registrar-usuario");
+
+    const onSubmit = async (data: PacienteValidado) => {
+        setSubmitting(true);
+        setErrorMsg(null);
+        try {
+            const fechaString = dateInputToString(data.fechaNacimiento);
+            const payload = {
+                ...data,
+                dni: Number(data.dni),
+                fechaNacimiento: fechaString,
+                nroAfiliado: data.nroAfiliado === "-" ? "" : data.nroAfiliado,
+                plan: data.plan === "-" ? "" : data.plan,
+                rol: "PACIENTE"
+            };
+
+            // Petición real contra el backend
+            await apiFetch("/pacientes", {
+                method: "POST",
+                body: JSON.stringify(payload)
+            });
+
+            window.location.href = "/buscar-paciente";
+        } catch (err: any) {
+            setErrorMsg(err.message || "Error al registrar el paciente");
+        } finally {
+            setSubmitting(false);
+        }
     };
+
     const obraSocialSeleccionada = useWatch({ control, name: "obraSocial" });
     const sinObraSocial = (obraSocialSeleccionada === "Sin obra social");
+
     useEffect(() => {
         if (sinObraSocial) {
             setValue("nroAfiliado", "-");
@@ -45,10 +74,14 @@ export function RegistroPacienteForm() {
             setValue("plan", "");
         }
     }, [sinObraSocial, clearErrors, setValue]);
-    if (loading) return <Spinner/>;
+
+    if (loading) return <Spinner animation="border" />;
+
     return (
         <div className="container my-0 form-container">
             <Form className="container my-5 w-75" noValidate onSubmit={handleSubmit(onSubmit)}>
+                {errorMsg && <div className="alert alert-danger">{errorMsg}</div>}
+
                 {/* Datos personales */}
                 <Form.Label className="mb-1">Datos personales</Form.Label>
                 <Row className="g-3">
@@ -82,11 +115,12 @@ export function RegistroPacienteForm() {
                     <Col md={4}>
                         <DateInput label="Fecha de nacimiento" register={register} errors={errors} fieldName="fechaNacimiento" />
                     </Col>
-                    {/* Sexo */}
-                    <Col>
-                        <SelectEditable label="Sexo" name="sexo" jsonPath="/public/generos.json" register={register} error={errors.sexo?.message} />
+                    {/* Sexo (Sin jsonPath) */}
+                    <Col md={4}>
+                        <SelectEditable label="Sexo" name="sexo" options={opcionesSexo} register={register} error={errors.sexo?.message} />
                     </Col>
                 </Row>
+
                 {/* Contacto */}
                 <Form.Label className="mt-2 mb-1">Datos de contacto</Form.Label>
                 <Row className="g-3">
@@ -107,12 +141,13 @@ export function RegistroPacienteForm() {
                         </Form.Group>
                     </Col>
                 </Row>
+
                 {/* Cobertura médica */}
                 <Form.Label className="mt-2 mb-1">Cobertura médica</Form.Label>
                 <Row className="g-3">
-                    {/* Obra Social */}
+                    {/* Obra Social (Sin jsonPath) */}
                     <Col md={4}>
-                        <SelectEditable label="Obra social" name="obraSocial" jsonPath="/public/obras-sociales.json" register={register} error={errors.obraSocial?.message} />
+                        <SelectEditable label="Obra social" name="obraSocial" options={osValidas} register={register} error={errors.obraSocial?.message} />
                     </Col>
                     {/* Número de afiliado */}
                     <Col md={4}>
@@ -126,13 +161,16 @@ export function RegistroPacienteForm() {
                     <Col md={4}>
                         <Form.Group className="mb-3">
                             <Form.Label className="d-flex me-auto">Plan</Form.Label>
-                             <Form.Control type="text" placeholder="Ej: 210" {...register("plan")} onChange={handleMayus} isInvalid={!!errors.plan?.message} disabled={sinObraSocial} />
+                            <Form.Control type="text" placeholder="Ej: 210" {...register("plan")} onChange={handleMayus} isInvalid={!!errors.plan?.message} disabled={sinObraSocial} />
                             <Form.Control.Feedback type="invalid"> {errors.plan?.message} </Form.Control.Feedback>
                         </Form.Group>
                     </Col>
                 </Row>
+
                 <div className="d-flex justify-content-end">
-                    <Button type="submit" variant="primary"> Confirmar datos </Button>
+                    <Button type="submit" variant="primary" disabled={submitting}>
+                        {submitting ? <Spinner size="sm" /> : "Confirmar datos"}
+                    </Button>
                 </div>
             </Form>
         </div>

@@ -2,7 +2,6 @@ import { useAuth } from "../hooks/useAuth";
 import { useTurnosPaciente } from "../hooks/useTurnosPaciente";
 import { ProximoTurnoCard } from "./ProximoTurnoCard";
 import { AccesosRapidosPaciente } from "./AccesosRapidosPaciente";
-import "../assets/styles/HomePaciente.css";
 import "../assets/styles/PaginaPaciente.css";
 
 function formatearFechaHoy() {

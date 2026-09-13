@@ -1,33 +1,42 @@
-import { Button, Col, Form, Row } from "react-bootstrap";
+import { Button, Col, Form, Row, Spinner } from "react-bootstrap";
 import { SelectEditable } from "./SelectEditable";
 import { useMayus } from "../hooks/useMayus";
 import { useFetch } from "../hooks/useFetch";
-import type { Usuario } from "../types/Usuario";
 import { medicoSchema, type MedicoValidado } from "../schemas/medicoSchema";
 import { useForm, type Resolver } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { MedicoFormProps } from "../types/UserEditFormProps";
+import type { Especialidad } from "../types/Medico";
 
-export function MedicoFormFields({onSave, onCancel, medico}: MedicoFormProps<MedicoValidado>) {
+export function MedicoFormFields({ onSave, onCancel, medico }: MedicoFormProps<MedicoValidado>) {
     const handleMayus = useMayus();
-    const { data: especialidades } = useFetch<string[]>("/public/especialidades.json");
-    const espValidas = especialidades || [""];
-    const { data: usuariosDB } = useFetch<Usuario[]>("/public/users.json");
-    const emailsOcupados = usuariosDB ?.map(u => u.docs.email.trim().toLowerCase()).filter(email => email !== medico.email.trim().toLowerCase()) ?? [];
-    const schema = medicoSchema(espValidas, emailsOcupados);
+
+    // Consulta de especialidades desde la API real
+    const { data: especialidadesAPI, loading } = useFetch<Especialidad[]>("/especialidades");
+    const espValidas = especialidadesAPI 
+        ? especialidadesAPI.map(e => typeof e === "string" ? e : e.nombre) 
+        : ["General"];
+
+    // Schema sin dependencia de usuarios precargados en cliente
+    const schema = medicoSchema(espValidas, []);
+
     const initialValues: MedicoValidado = {
-            nombre: medico.nombre,
-            apellido: medico.apellido,
-            dni: parseInt(medico.dni),
-            email: medico.email,
-            matricula: medico.matricula,
-            especialidad: medico.especialidad,
-        };
-    const { register, handleSubmit, formState: {errors} } = useForm<MedicoValidado>({
+        nombre: medico.nombre,
+        apellido: medico.apellido,
+        dni: typeof medico.dni === "number" ? medico.dni : parseInt(medico.dni) || 0,
+        email: medico.email,
+        matricula: medico.matricula,
+        especialidad: medico.especialidad,
+    };
+
+    const { register, handleSubmit, formState: { errors } } = useForm<MedicoValidado>({
         resolver: zodResolver(schema) as Resolver<MedicoValidado>,
         mode: "onBlur",
         defaultValues: initialValues,
     });
+
+    if (loading) return <Spinner animation="border" size="sm" />;
+
     return (
         <div className="form-container animate-fadeIn text-start p-2">
             <Form noValidate onSubmit={handleSubmit(onSave)}>
@@ -66,13 +75,13 @@ export function MedicoFormFields({onSave, onCancel, medico}: MedicoFormProps<Med
                 <Row className="g-2">
                     <Col md={6}>
                         <Form.Group>
-                            <SelectEditable label="Especialidad" name="especialidad" jsonPath="../../public/especialidades.json" register={register} error={errors.especialidad?.message} />
+                            <SelectEditable label="Especialidad" name="especialidad" options={espValidas} register={register} error={errors.especialidad?.message} />
                         </Form.Group>
                     </Col>
                     <Col md={6}>
-                       <Form.Group>
-                            <Form.Label className="d-flex me-auto">Matrícula</Form.Label>
-                            <Form.Control type="text" placeholder="Ej: 12345" {...register("matricula")} onChange={ handleMayus } isInvalid={!!errors.matricula} />
+                        <Form.Group>
+                            <Form.Label className="d-flex me-auto text-xs mb-1">Matrícula</Form.Label>
+                            <Form.Control type="text" placeholder="Ej: 12345" {...register("matricula")} onChange={handleMayus} isInvalid={!!errors.matricula} />
                             <Form.Control.Feedback type="invalid"> {errors.matricula?.message} </Form.Control.Feedback>
                         </Form.Group>
                     </Col>
