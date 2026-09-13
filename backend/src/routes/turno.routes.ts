@@ -14,8 +14,10 @@ const router = Router();
 // Todas las rutas de turnos requieren estar autenticado
 router.use(authenticate);
 
-// Listar todos los turnos (Médico y Secretaria)
-router.get("/", authorize(Rol.MEDICO, Rol.SECRETARIA), turnoController.getAll);
+// Listar turnos: Secretaria ve todos, Médico y Paciente ven sólo los propios
+// (matriz de permisos, sección 8 — "✅ propio"). El filtrado por identidad
+// se resuelve en turno.service.findAllParaUsuario, no acá.
+router.get("/", authorize(Rol.MEDICO, Rol.SECRETARIA, Rol.PACIENTE), turnoController.getAll);
 
 // Obtener turno por ID (Médico y Secretaria)
 router.get("/:id", authorize(Rol.MEDICO, Rol.SECRETARIA), validateParams(idParamSchema), turnoController.getById);
