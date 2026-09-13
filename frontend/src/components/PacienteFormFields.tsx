@@ -1,4 +1,4 @@
-import { Form, Row, Col, Button } from "react-bootstrap";
+import { Form, Row, Col, Button, Spinner } from "react-bootstrap";
 import { SelectEditable } from "./SelectEditable";
 import { DateInput } from "./DateInput";
 import { useMayus } from "../hooks/useMayus";
@@ -7,22 +7,27 @@ import { useForm, useWatch, type Resolver } from "react-hook-form";
 import { pacienteSchema, type PacienteValidado } from "../schemas/pacienteSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useFetch } from "../hooks/useFetch";
-import type { Usuario } from "../types/Usuario";
 import type { PacienteFormProps } from "../types/UserEditFormProps";
 import { stringToDateInput } from "../hooks/useDateTransform";
+import type { ObraSocial } from "../types/Paciente";
 
-export function PacienteFormFields({onSave, onCancel, paciente}: PacienteFormProps<PacienteValidado>) {
+export function PacienteFormFields({ onSave, onCancel, paciente }: PacienteFormProps<PacienteValidado>) {
     const handleMayus = useMayus();
-    const sexo = ["Masculino", "Femenino", "Otro"];
-    const { data: obrasSociales } = useFetch<string[]>("../../public/obras-sociales.json");
-    const osValidas = obrasSociales || [""];
-    const { data: usuariosDB } = useFetch<Usuario[]>("../../public/users.json");
-    const emailsOcupados = usuariosDB ?.map(u => u.docs.email.trim().toLowerCase()).filter(email => email !== paciente.email.trim().toLowerCase()) ?? [];
-    const schema = pacienteSchema(osValidas, sexo, emailsOcupados);
+    const sexoOptions = ["Masculino", "Femenino", "Otro"];
+
+    // Carga de obras sociales desde la API real
+    const { data: obrasSocialesAPI, loading } = useFetch<ObraSocial[]>("/obras-sociales");
+    const osValidas = obrasSocialesAPI 
+        ? obrasSocialesAPI.map(os => typeof os === "string" ? os : os.nombre) 
+        : ["Sin obra social"];
+
+    // Schema sin dependencia de usuarios precargados en local
+    const schema = pacienteSchema(osValidas, sexoOptions, []);
+
     const initialValues: PacienteValidado = {
         nombre: paciente.nombre,
         apellido: paciente.apellido,
-        dni: parseInt(paciente.dni),
+        dni: typeof paciente.dni === "number" ? paciente.dni : parseInt(paciente.dni) || 0,
         email: paciente.email,
         telefono: paciente.telefono,
         obraSocial: paciente.obraSocial,
@@ -31,14 +36,17 @@ export function PacienteFormFields({onSave, onCancel, paciente}: PacienteFormPro
         sexo: paciente.sexo,
         fechaNacimiento: stringToDateInput(paciente.fechaNacimiento),
     };
-    const { register, handleSubmit, setValue, control, formState: {errors} } = useForm<PacienteValidado>({
+
+    const { register, handleSubmit, setValue, control, formState: { errors } } = useForm<PacienteValidado>({
         resolver: zodResolver(schema) as Resolver<PacienteValidado>,
         mode: "onBlur",
         defaultValues: initialValues,
     });
+
     const obraSocialSeleccionada = useWatch({ control, name: "obraSocial" });
     const sinObraSocial = (obraSocialSeleccionada === "Sin obra social");
     const primeraCarga = useRef(true);
+
     useEffect(() => {
         if (primeraCarga.current) {
             primeraCarga.current = false;
@@ -51,8 +59,10 @@ export function PacienteFormFields({onSave, onCancel, paciente}: PacienteFormPro
             setValue("nroAfiliado", `${paciente.nroAfiliado}`);
             setValue("plan", `${paciente.plan}`);
         }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [sinObraSocial, setValue]);
+    }, [sinObraSocial, setValue, paciente.nroAfiliado, paciente.plan]);
+
+    if (loading) return <Spinner animation="border" size="sm" />;
+
     return (
         <div className="form-container animate-fadeIn text-start p-2">
             <Form noValidate onSubmit={handleSubmit(onSave)}>
@@ -88,7 +98,7 @@ export function PacienteFormFields({onSave, onCancel, paciente}: PacienteFormPro
                         </Form.Group>
                     </Col>
                 </Row>
-                <Row className="g-2">
+                <Row className="g-2 mb-2">
                     <Col md={12}>
                         <DateInput label="Fecha de nacimiento" register={register} errors={errors} fieldName="fechaNacimiento" />
                     </Col>
@@ -96,33 +106,33 @@ export function PacienteFormFields({onSave, onCancel, paciente}: PacienteFormPro
                 <Row className="g-2">
                     <Col md={6}>
                         <Form.Group>
-                            <Form.Label>Teléfono</Form.Label>
+                            <Form.Label className="text-xs mb-1">Teléfono</Form.Label>
                             <Form.Control {...register("telefono")} isInvalid={!!errors.telefono} />
                             <Form.Control.Feedback type="invalid"> {errors.telefono?.message} </Form.Control.Feedback>
                         </Form.Group>
                     </Col>
                     <Col md={6}>
                         <Form.Group>
-                            <SelectEditable label="Sexo" name="sexo" jsonPath="/public/generos.json" register={register} error={errors.sexo?.message} />
+                            <SelectEditable label="Sexo" name="sexo" options={sexoOptions} register={register} error={errors.sexo?.message} />
                         </Form.Group>
                     </Col>
                 </Row>
-                <Row className="g-2">
+                <Row className="g-2 mt-1">
                     <Col md={4}>
                         <Form.Group>
-                            <SelectEditable label="Obra social" name="obraSocial" jsonPath="/public/obras-sociales.json" register={register} error={errors.obraSocial?.message} />
+                            <SelectEditable label="Obra social" name="obraSocial" options={osValidas} register={register} error={errors.obraSocial?.message} />
                         </Form.Group>
                     </Col>
                     <Col md={4}>
                         <Form.Group>
-                            <Form.Label className="d-flex me-auto">Nro. afiliado</Form.Label>
+                            <Form.Label className="d-flex me-auto text-xs mb-1">Nro. afiliado</Form.Label>
                             <Form.Control type="text" placeholder="Ej: A-123456" {...register("nroAfiliado")} onChange={handleMayus} isInvalid={!!errors.nroAfiliado?.message} disabled={sinObraSocial} />
                             <Form.Control.Feedback type="invalid"> {errors.nroAfiliado?.message} </Form.Control.Feedback>
                         </Form.Group>
                     </Col>
                     <Col md={4}>
                         <Form.Group>
-                            <Form.Label className="d-flex me-auto">Plan</Form.Label>
+                            <Form.Label className="d-flex me-auto text-xs mb-1">Plan</Form.Label>
                             <Form.Control type="text" placeholder="Ej: 210" {...register("plan")} onChange={handleMayus} isInvalid={!!errors.plan?.message} disabled={sinObraSocial} />
                             <Form.Control.Feedback type="invalid"> {errors.plan?.message} </Form.Control.Feedback>
                         </Form.Group>

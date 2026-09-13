@@ -1,28 +1,26 @@
 import { useForm, type Resolver } from "react-hook-form";
-import { useFetch } from "../hooks/useFetch";
 import { adminSchema, type AdminValidado } from "../schemas/adminSchema";
-import type { Usuario } from "../types/Usuario";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, Button, Col, Row } from "react-bootstrap";
 import type { AdminEditFormProps } from "../types/UserEditFormProps";
 
+export function AdminFormFields({ onSave, onCancel, admin }: AdminEditFormProps<AdminValidado>) {
+    // Schema sin dependencia de usuarios precargados en local
+    const schema = adminSchema([]);
 
-
-export function AdminFormFields({onSave, onCancel, admin}: AdminEditFormProps<AdminValidado>) {
-    const { data: usuariosDB } = useFetch<Usuario[]>("/public/users.json");
-    const emailsOcupados = usuariosDB ?.map(u => u.docs.email.trim().toLowerCase()).filter(email => email !== admin.email.trim().toLowerCase()) ?? [];
-    const schema = adminSchema(emailsOcupados);
     const initialValues: AdminValidado = {
-            nombre: admin.nombre,
-            apellido: admin.apellido,
-            dni: parseInt(admin.dni),
-            email: admin.email,
-        };
-    const { register, handleSubmit, formState: {errors} } = useForm<AdminValidado>({
+        nombre: admin.nombre,
+        apellido: admin.apellido,
+        dni: typeof admin.dni === "number" ? admin.dni : parseInt(admin.dni) || 0,
+        email: admin.email,
+    };
+
+    const { register, handleSubmit, formState: { errors } } = useForm<AdminValidado>({
         resolver: zodResolver(schema) as Resolver<AdminValidado>,
         mode: "onBlur",
         defaultValues: initialValues,
     });
+
     return (
         <div className="form-container animate-fadeIn text-start p-2">
             <Form noValidate onSubmit={handleSubmit(onSave)}>

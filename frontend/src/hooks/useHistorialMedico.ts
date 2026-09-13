@@ -1,6 +1,6 @@
 import { useAuth } from "./useAuth";
 import { useFetch } from "./useFetch";
-import type { Usuario } from "../types/Usuario";
+import type { Paciente } from "../types/Paciente";
 import type { Consulta } from "../types/ConsultaProps";
 
 export interface PacienteConConsultas {
@@ -12,22 +12,35 @@ export interface PacienteConConsultas {
 
 export function useHistorialMedico() {
   const { usuario } = useAuth();
-  const { data: users, loading } = useFetch<Usuario[]>("/users.json");
+  
+  // Consumo de la API real de pacientes en lugar del /users.json
+  const { data: pacientesAPI, loading } = useFetch<any[]>("/pacientes");
 
   const nombreMedico = usuario
-    ? `${usuario.docs?.nombre} ${usuario.docs?.apellido}`
+    ? `${usuario.nombre} ${usuario.apellido}`
     : "";
 
-  const pacientes: PacienteConConsultas[] = (users ?? [])
-    .filter((u): u is Extract<Usuario, { rol: "paciente" }> => u.rol === "paciente")
-    .map((u) => ({
-      username: u.u,
-      nombre: u.docs.nombre,
-      apellido: u.docs.apellido,
-      consultas: u.docs.historial.consultas.filter(
-        (c) => c.medico === nombreMedico
-      ),
-    }))
+  const pacientes: PacienteConConsultas[] = (pacientesAPI ?? [])
+    .map((p) => {
+      // Mapea la información recibida de la API real
+      const consultasPaciente: Consulta[] = (p.historiaClinica?.entradas ?? [])
+        .filter((e: any) => e.medicoNombre === nombreMedico)
+        .map((e: any) => ({
+          id: e.id,
+          fecha: e.fecha,
+          diagnostico: e.diagnostico,
+          evolucion: e.evolucion,
+          observaciones: e.observaciones,
+          medico: e.medicoNombre,
+        }));
+
+      return {
+        username: p.usuario?.username ?? "",
+        nombre: p.usuario?.nombre ?? "",
+        apellido: p.usuario?.apellido ?? "",
+        consultas: consultasPaciente,
+      };
+    })
     .filter((p) => p.consultas.length > 0)
     .sort((a, b) =>
       `${a.apellido} ${a.nombre}`.localeCompare(`${b.apellido} ${b.nombre}`)
