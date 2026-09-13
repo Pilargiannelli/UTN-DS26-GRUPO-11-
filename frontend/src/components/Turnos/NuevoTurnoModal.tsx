@@ -7,12 +7,16 @@ import {
   Form,
   Row,
   Col,
+  Alert,
+  Spinner,
 } from "react-bootstrap";
 
 import "../../assets/styles/ModalTurno.css";
 
 import { turnoSchema } from "../../schemas/TurnoSchema";
-import type { Turno } from "../../types/Turno";
+import { apiFetch } from "../../services/api";
+import { useFetch } from "../../hooks/useFetch";
+import type { Turno, MedicoTurno, PacienteTurno } from "../../types/Turno";
 
 interface NuevoTurnoModalProps {
   show: boolean;
@@ -28,20 +32,27 @@ function NuevoTurnoModal({
 
   const navigate = useNavigate();
 
+  // GET /api/medicos es público; GET /api/pacientes exige SECRETARIA o
+  // MEDICO (matriz de permisos, secciones 6 y 7) — es justamente quien usa
+  // esta pantalla.
+  const { data: medicos } = useFetch<MedicoTurno[]>("/medicos");
+  const { data: pacientes } = useFetch<PacienteTurno[]>("/pacientes");
+
   const [form, setForm] = useState({
-    paciente: "",
-    medico: "",
-    especialidad: "",
+    pacienteId: "",
+    medicoId: "",
     fecha: "",
     hora: "",
-    obraSocial: "",
     estado: "Pendiente" as
       | "Pendiente"
       | "Confirmado"
-      | "Cancelado",
+      | "Cancelado"
+      | "Reprogramado",
   });
 
   const [errores, setErrores] = useState<Record<string, string>>({});
+  const [enviando, setEnviando] = useState(false);
+  const [errorApi, setErrorApi] = useState<string | null>(null);
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -72,20 +83,21 @@ function NuevoTurnoModal({
   const limpiarFormulario = () => {
 
     setForm({
-      paciente: "",
-      medico: "",
-      especialidad: "",
+      pacienteId: "",
+      medicoId: "",
       fecha: "",
       hora: "",
-      obraSocial: "",
       estado: "Pendiente",
     });
 
     setErrores({});
+    setErrorApi(null);
 
   };
 
-  const guardarTurno = () => {
+  const guardarTurno = async () => {
+
+    setErrorApi(null);
 
     // ==========================
     // Validación con Zod
@@ -115,24 +127,20 @@ function NuevoTurnoModal({
     // Fecha no anterior a hoy
     // ==========================
 
-    // ==========================
-// Validación de fecha
-// ==========================
+    const hoy = new Date()
+      .toISOString()
+      .split("T")[0];
 
-const hoy = new Date()
-  .toISOString()
-  .split("T")[0];
+    if (form.fecha < hoy) {
 
-if (form.fecha < hoy) {
+      setErrores({
+        fecha:
+          "No es posible registrar turnos en fechas anteriores a hoy.",
+      });
 
-  setErrores({
-    fecha:
-      "No es posible registrar turnos en fechas anteriores a hoy.",
-  });
+      return;
 
-  return;
-
-}
+    }
 
     // ==========================
     // Horario laboral
@@ -176,26 +184,42 @@ if (form.fecha < hoy) {
     }
 
     // ==========================
-    // Crear turno
+    // POST /api/turnos con el token (lo agrega apiFetch solo)
     // ==========================
 
-    const nuevoTurno: Turno = {
+    const { pacienteId, medicoId, estado } = resultado.data;
+    const fechaHora = new Date(`${form.fecha}T${form.hora}:00`).toISOString();
 
-      id: Date.now(),
+    setEnviando(true);
 
-      ...resultado.data,
+    try {
 
-    };
+      const nuevoTurno = await apiFetch<Turno>("/turnos", {
+        method: "POST",
+        body: JSON.stringify({ pacienteId, medicoId, estado, fechaHora }),
+      });
 
-    onAgregar(nuevoTurno);
+      onAgregar(nuevoTurno);
 
-    limpiarFormulario();
+      limpiarFormulario();
 
-    onClose();
+      onClose();
 
-    navigate("/gestion-turnos", {
-      replace: true,
-    });
+      navigate("/gestion-turnos", {
+        replace: true,
+      });
+
+    } catch (error) {
+
+      // 401 sin token, 403 con rol PACIENTE, 400 si Zod rechaza el body:
+      // el mensaje real lo manda apiFetch, no uno genérico.
+      setErrorApi(error instanceof Error ? error.message : "Error al registrar el turno");
+
+    } finally {
+
+      setEnviando(false);
+
+    }
 
   };
 
@@ -229,22 +253,36 @@ if (form.fecha < hoy) {
 
       <Modal.Body>
 
+        {errorApi && <Alert variant="danger">{errorApi}</Alert>}
+
         <Form>
 
           <Form.Group className="mb-3">
 
             <Form.Label>Paciente</Form.Label>
 
-            <Form.Control
-              name="paciente"
-              value={form.paciente}
+            <Form.Select
+              name="pacienteId"
+              value={form.pacienteId}
               onChange={handleChange}
-              placeholder="Ingrese el paciente"
-              isInvalid={!!errores.paciente}
-            />
+              isInvalid={!!errores.pacienteId}
+            >
+
+              <option value="">
+                {pacientes ? "Seleccione un paciente" : "Cargando pacientes..."}
+              </option>
+
+              {(pacientes ?? []).map((p) => (
+                <option key={p.id} value={p.id}>
+                  {p.usuario.nombre} {p.usuario.apellido}
+                  {p.usuario.dni ? ` (DNI ${p.usuario.dni})` : ""}
+                </option>
+              ))}
+
+            </Form.Select>
 
             <Form.Control.Feedback type="invalid">
-              {errores.paciente}
+              {errores.pacienteId}
             </Form.Control.Feedback>
 
           </Form.Group>
@@ -254,50 +292,26 @@ if (form.fecha < hoy) {
             <Form.Label>Médico</Form.Label>
 
             <Form.Select
-              name="medico"
-              value={form.medico}
+              name="medicoId"
+              value={form.medicoId}
               onChange={handleChange}
-              isInvalid={!!errores.medico}
+              isInvalid={!!errores.medicoId}
             >
 
               <option value="">
-                Seleccione un médico
+                {medicos ? "Seleccione un médico" : "Cargando médicos..."}
               </option>
 
-              <option value="Dr. Font">
-                Dr. Font
-              </option>
-
-              <option value="Dr. Castelli">
-                Dr. Castelli
-              </option>
-
-              <option value="Dr. Messi">
-                Dr. Messi
-              </option>
+              {(medicos ?? []).map((m) => (
+                <option key={m.id} value={m.id}>
+                  Dr./Dra. {m.usuario.nombre} {m.usuario.apellido} — {m.especialidad}
+                </option>
+              ))}
 
             </Form.Select>
 
             <Form.Control.Feedback type="invalid">
-              {errores.medico}
-            </Form.Control.Feedback>
-
-          </Form.Group>
-
-          <Form.Group className="mb-3">
-
-            <Form.Label>Especialidad</Form.Label>
-
-            <Form.Control
-              name="especialidad"
-              value={form.especialidad}
-              onChange={handleChange}
-              placeholder="Ej. Traumatología"
-              isInvalid={!!errores.especialidad}
-            />
-
-            <Form.Control.Feedback type="invalid">
-              {errores.especialidad}
+              {errores.medicoId}
             </Form.Control.Feedback>
 
           </Form.Group>
@@ -351,24 +365,6 @@ if (form.fecha < hoy) {
 
           </Row>
 
-          <Form.Group className="mb-3">
-
-            <Form.Label>Obra Social</Form.Label>
-
-            <Form.Control
-              name="obraSocial"
-              value={form.obraSocial}
-              onChange={handleChange}
-              placeholder="Ej. OSDE"
-              isInvalid={!!errores.obraSocial}
-            />
-
-            <Form.Control.Feedback type="invalid">
-              {errores.obraSocial}
-            </Form.Control.Feedback>
-
-          </Form.Group>
-
           <Form.Group className="mb-4">
 
             <Form.Label>Estado</Form.Label>
@@ -392,6 +388,10 @@ if (form.fecha < hoy) {
                 Cancelado
               </option>
 
+              <option value="Reprogramado">
+                Reprogramado
+              </option>
+
             </Form.Select>
 
             <Form.Control.Feedback type="invalid">
@@ -409,6 +409,7 @@ if (form.fecha < hoy) {
         <Button
           variant="outline-secondary"
           onClick={onClose}
+          disabled={enviando}
         >
           Cancelar
         </Button>
@@ -416,8 +417,9 @@ if (form.fecha < hoy) {
         <Button
           variant="success"
           onClick={guardarTurno}
+          disabled={enviando}
         >
-          Guardar Turno
+          {enviando ? <Spinner size="sm" animation="border" /> : "Guardar Turno"}
         </Button>
 
       </Modal.Footer>

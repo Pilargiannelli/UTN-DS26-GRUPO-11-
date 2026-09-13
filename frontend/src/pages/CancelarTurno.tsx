@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import Layout from "../components/Layout/Layout.tsx";
 import { BotonVolver } from "../components/BotonVolver.tsx";
 import { useTurnosPaciente } from "../hooks/useTurnosPaciente";
+import { formatearChipFecha, formatearHora } from "../utils/fecha";
 import "../assets/styles/CancelarTurno.css";
 import "../assets/styles/PaginaPaciente.css";
 
@@ -52,7 +53,9 @@ function CancelarTurno() {
             </div>
 
             <p className="cancelar-turno-texto">
-              Vas a liberar el turno de {turno.especialidad} del {turno.fecha} a las {turno.hora} con {turno.medico}.
+              Vas a liberar el turno de {turno.medico.especialidad} del {formatearChipFecha(turno.fechaHora).dia} de{" "}
+              {formatearChipFecha(turno.fechaHora).mes} a las {formatearHora(turno.fechaHora)} con{" "}
+              {turno.medico.usuario.nombre} {turno.medico.usuario.apellido}.
             </p>
 
             <label className="cancelar-turno-label">Motivo (opcional)</label>

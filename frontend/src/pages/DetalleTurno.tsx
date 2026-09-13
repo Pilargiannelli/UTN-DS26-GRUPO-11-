@@ -2,7 +2,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import Layout from "../components/Layout/Layout.tsx";
 import { BotonVolver } from "../components/BotonVolver.tsx";
 import { useTurnosPaciente } from "../hooks/useTurnosPaciente";
-import { formatearChipFecha } from "../utils/fecha";
+import { formatearChipFecha, formatearHora } from "../utils/fecha";
 import "../assets/styles/DetalleTurno.css";
 import "../assets/styles/PaginaPaciente.css";
 
@@ -33,7 +33,7 @@ function DetalleTurno() {
     );
   }
 
-  const { dia, mes } = formatearChipFecha(turno.fecha);
+  const { dia, mes } = formatearChipFecha(turno.fechaHora);
 
   return (
     <Layout>
@@ -47,8 +47,8 @@ function DetalleTurno() {
               <p className="detalle-turno-chip-dia">{dia}</p>
             </div>
             <div className="detalle-turno-titulo-bloque">
-              <p className="detalle-turno-titulo">{turno.especialidad}</p>
-              <p className="detalle-turno-hora">{turno.hora} hs</p>
+              <p className="detalle-turno-titulo">{turno.medico.especialidad}</p>
+              <p className="detalle-turno-hora">{formatearHora(turno.fechaHora)} hs</p>
             </div>
             <span className={`detalle-turno-badge ${obtenerClaseEstado(turno.estado)}`}>{turno.estado}</span>
           </div>
@@ -56,7 +56,7 @@ function DetalleTurno() {
           <div className="detalle-turno-grid">
             <div>
               <p className="detalle-turno-label">Profesional</p>
-              <p className="detalle-turno-valor">{turno.medico}</p>
+              <p className="detalle-turno-valor">{turno.medico.usuario.nombre} {turno.medico.usuario.apellido}</p>
             </div>
             <div>
               <p className="detalle-turno-label">Consultorio</p>

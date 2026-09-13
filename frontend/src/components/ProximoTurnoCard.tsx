@@ -1,10 +1,10 @@
 import { Link } from "react-router-dom";
-import type { TurnoReservadoProps } from "../types/TurnoReservadoProps";
-import { formatearChipFecha } from "../utils/fecha";
+import type { Turno } from "../types/Turno";
+import { formatearChipFecha, formatearHora } from "../utils/fecha";
 import "../assets/styles/ProximoTurnoCard.css";
 
 interface ProximoTurnoCardProps {
-  turno: TurnoReservadoProps | null;
+  turno: Turno | null;
 }
 
 export function ProximoTurnoCard({ turno }: ProximoTurnoCardProps) {
@@ -19,7 +19,7 @@ export function ProximoTurnoCard({ turno }: ProximoTurnoCardProps) {
     );
   }
 
-  const { dia, mes } = formatearChipFecha(turno.fecha);
+  const { dia, mes } = formatearChipFecha(turno.fechaHora);
 
   return (
     <div className="proximo-turno-banner">
@@ -29,8 +29,10 @@ export function ProximoTurnoCard({ turno }: ProximoTurnoCardProps) {
           <p className="proximo-turno-chip-dia">{dia}</p>
         </div>
         <div>
-          <p className="proximo-turno-eyebrow">Te esperan en {turno.especialidad.toLowerCase()}</p>
-          <p className="proximo-turno-detalle">{turno.hora} con {turno.medico}</p>
+          <p className="proximo-turno-eyebrow">Te esperan en {turno.medico.especialidad.toLowerCase()}</p>
+          <p className="proximo-turno-detalle">
+            {formatearHora(turno.fechaHora)} con {turno.medico.usuario.nombre} {turno.medico.usuario.apellido}
+          </p>
         </div>
       </div>
       <div className="proximo-turno-acciones">

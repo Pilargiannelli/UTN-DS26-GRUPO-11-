@@ -30,7 +30,10 @@ app.use("/api/auth", authRoutes);
 app.use("/api/turnos", turnoRoutes);
 app.use("/api/obras-sociales", obraSocialRoutes);
 app.use("/api/especialidades", especialidadRoutes);
-app.use("/api/usuarios", usuarioRoutes);
+// usuarioRoutes define sus propias rutas en la raíz de /api (/medicos,
+// /pacientes, /usuarios) para que coincidan con api.http y la matriz de
+// permisos. Montarlo en "/api/usuarios" las dejaba en /api/usuarios/medicos.
+app.use("/api", usuarioRoutes);
 app.use((_req, res) => {
   res.status(404).json({ error: "Ruta no encontrada" });
 });

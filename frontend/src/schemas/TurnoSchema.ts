@@ -1,20 +1,12 @@
 import { z } from "zod";
 
+// Formulario de alta de turno (NuevoTurnoModal). El back espera fechaHora +
+// medicoId + pacienteId (backend/src/validations/turno.validation.ts); acá
+// separamos fecha/hora para la UI y los combinamos antes de mandarlos.
 export const turnoSchema = z.object({
-  paciente: z
-    .string()
-    .trim()
-    .min(3, "Ingrese el paciente"),
+  pacienteId: z.coerce.number().int().positive("Seleccione un paciente"),
 
-  medico: z
-    .string()
-    .trim()
-    .min(3, "Seleccione un médico"),
-
-  especialidad: z
-    .string()
-    .trim()
-    .min(3, "Ingrese la especialidad"),
+  medicoId: z.coerce.number().int().positive("Seleccione un médico"),
 
   fecha: z
     .string()
@@ -24,15 +16,11 @@ export const turnoSchema = z.object({
     .string()
     .min(1, "Seleccione un horario"),
 
-  obraSocial: z
-    .string()
-    .trim()
-    .min(2, "Ingrese la obra social"),
-
   estado: z.enum([
     "Pendiente",
     "Confirmado",
     "Cancelado",
+    "Reprogramado",
   ]),
 });
 

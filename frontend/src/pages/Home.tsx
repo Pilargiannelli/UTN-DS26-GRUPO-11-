@@ -9,10 +9,13 @@ import GestionTurnos from "./GestionTurnos.tsx";
 
 function Home() {
     const { showToast, setShowToast } = useToast("registroExitoso");
+    // Las claves tienen que coincidir con RolUsuario (mayúscula), como lo
+    // manda la API real (POST /api/auth/login) — no con los roles del mock
+    // viejo ("admin"/"medico"/"paciente" en minúscula).
     const vistaPorRol = useRolView({
-        admin: <GestionTurnos />,
-        medico: <GestionTurnos />,
-        paciente: <HomePaciente />,
+        SECRETARIA: <GestionTurnos />,
+        MEDICO: <GestionTurnos />,
+        PACIENTE: <HomePaciente />,
       });
     return (
         <Layout>

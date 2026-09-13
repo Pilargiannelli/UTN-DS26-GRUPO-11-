@@ -1,9 +1,10 @@
 import { Request, Response } from "express";
 import * as turnoService from "../services/turno.service";
 
-export async function getAll(_req: Request, res: Response) {
+export async function getAll(req: Request, res: Response) {
   try {
-    const turnos = await turnoService.findAll();
+    // authenticate corre antes en la ruta, así que req.usuario siempre está.
+    const turnos = await turnoService.findAllParaUsuario(req.usuario!);
     res.json(turnos);
   } catch (error) {
     res.status(500).json({ error: "Error interno del servidor" });

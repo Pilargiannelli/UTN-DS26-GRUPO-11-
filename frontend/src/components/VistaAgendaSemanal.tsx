@@ -1,4 +1,5 @@
-import type { TurnoReservadoProps } from "../types/TurnoReservadoProps";
+import type { Turno } from "../types/Turno";
+import { formatearHora } from "../utils/fecha";
 
 const DIAS_NOMBRES = ["lun", "mar", "mié", "jue", "vie", "sáb", "dom"];
 const HORAS_INICIO = 8;
@@ -30,7 +31,7 @@ function esMismaFecha(a: Date, b: Date) {
 
 interface Props {
   diasSemana: Date[];
-  turnosDelDia: (fecha: Date) => TurnoReservadoProps[];
+  turnosDelDia: (fecha: Date) => Turno[];
 }
 
 export default function VistaAgendaSemanal({ diasSemana, turnosDelDia }: Props) {
@@ -75,7 +76,8 @@ export default function VistaAgendaSemanal({ diasSemana, turnosDelDia }: Props) 
                 <div key={h} className="agenda-hora-fila" />
               ))}
               {turnos.map((turno) => {
-                const top = calcularTop(turno.hora);
+                const hora = formatearHora(turno.fechaHora);
+                const top = calcularTop(hora);
                 const estadoClass = `estado-${turno.estado.toLowerCase()}`;
                 return (
                   <div
@@ -83,8 +85,10 @@ export default function VistaAgendaSemanal({ diasSemana, turnosDelDia }: Props) 
                     className={`agenda-evento agenda-evento-compact ${estadoClass}`}
                     style={{ top, height: ALTURA_EVENTO }}
                   >
-                    <p className="agenda-evento-hora">{turno.hora}</p>
-                    <p className="agenda-evento-paciente">{turno.paciente}</p>
+                    <p className="agenda-evento-hora">{hora}</p>
+                    <p className="agenda-evento-paciente">
+                      {turno.paciente.usuario.nombre} {turno.paciente.usuario.apellido}
+                    </p>
                   </div>
                 );
               })}

@@ -13,6 +13,7 @@ import {
 
 import type { TurnosTableProps } from "../../types/TurnosTableProps";
 import { useRolView } from '../../hooks/useRolView';
+import { formatearHora, formatearChipFecha } from "../../utils/fecha";
 
 import "../../assets/styles/TurnosTable.css";
 import TurnosFilters from "./TurnosFilters";
@@ -87,8 +88,6 @@ function TurnosTable({
 
               <th>Fecha</th>
 
-              <th>Obra Social</th>
-
               <th>Estado</th>
 
               <th className="text-center">
@@ -101,14 +100,20 @@ function TurnosTable({
 
           <tbody>
 
-            {turnos.map((turno) => (
+            {turnos.map((turno) => {
+
+              const nombrePaciente = `${turno.paciente.usuario.nombre} ${turno.paciente.usuario.apellido}`;
+              const nombreMedico = `${turno.medico.usuario.nombre} ${turno.medico.usuario.apellido}`;
+              const { dia, mes } = formatearChipFecha(turno.fechaHora);
+
+              return (
 
               <tr key={turno.id}>
 
                 <td>
 
                   <span className="hora">
-                    {turno.hora}
+                    {formatearHora(turno.fechaHora)}
                   </span>
 
                 </td>
@@ -119,14 +124,14 @@ function TurnosTable({
 
                     <div className="avatar">
 
-                      {obtenerIniciales(turno.paciente)}
+                      {obtenerIniciales(nombrePaciente)}
 
                     </div>
 
                     <div>
 
                       <strong>
-                        {turno.paciente}
+                        {nombrePaciente}
                       </strong>
 
                     </div>
@@ -137,7 +142,7 @@ function TurnosTable({
 
                 <td>
 
-                  {turno.medico}
+                  {nombreMedico}
 
                 </td>
 
@@ -145,7 +150,7 @@ function TurnosTable({
 
                   <span className="texto-gris">
 
-                    {turno.especialidad}
+                    {turno.medico.especialidad}
 
                   </span>
 
@@ -153,13 +158,7 @@ function TurnosTable({
 
                 <td>
 
-                  {turno.fecha}
-
-                </td>
-
-                <td>
-
-                  {turno.obraSocial}
+                  {dia} {mes}
 
                 </td>
 
@@ -210,7 +209,8 @@ function TurnosTable({
 
               </tr>
 
-            ))}
+              );
+            })}
 
           </tbody>
 
