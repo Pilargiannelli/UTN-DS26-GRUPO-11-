@@ -101,3 +101,31 @@ docker compose logs -f api    # ver logs de la API
 docker compose down           # bajar todo (conserva los datos)
 docker compose down -v        # bajar todo y BORRAR la base
 ```
+
+---
+
+## Estado actual del proyecto
+
+### Stack técnico
+
+- **Backend:** Node.js + Express + TypeScript, Prisma ORM sobre PostgreSQL.
+- **Frontend:** React + TypeScript (Vite).
+- **Infraestructura:** Docker Compose (contenedores `db` con Postgres 16 y `api` con la API Express), con healthcheck para que la API espere a que la base esté lista.
+- **Documentación:** carpeta `Documentacion/` con Visión y Alcance, Análisis inicial, Modelado de Dominio, Backlog, UX/UI, Diseño de API y Seguridad.
+
+### Qué está funcionando
+
+- **Autenticación:** login real contra la API con `AuthContext` y manejo de token en el frontend.
+- **API REST:** endpoints montados en `/api/auth`, `/api/turnos`, `/api/obras-sociales`, `/api/especialidades` y `/api/usuarios` (incluye `/medicos` y `/pacientes`), con control de permisos por rol (paciente, médico, secretaria/admin).
+- **Turnos contra la API real:** se reemplazaron los mocks en JSON por llamadas reales a la API para pedir, listar y cancelar turnos.
+- **Gestión de usuarios:** registro de pacientes y médicos, listado y edición de usuarios, con formularios validados (Zod/schemas por tipo de usuario).
+- **Modelo de datos:** definido en Prisma (Usuario, Paciente, Médico, Secretaria, Turno, Agenda, HistoriaClínica, ObraSocial, Especialidad, entre otros), con migraciones y seed de datos de prueba.
+- **Entorno reproducible:** `docker compose up` levanta base de datos y API con un solo comando; variables de entorno separadas por `.env.example` en backend y frontend.
+
+### En qué estamos trabajando / pendiente
+
+- Terminar de pulir pantallas conectadas a la API real (se vienen corrigiendo bugs de datos y estilos a medida que se integra cada vista: Home, HomePaciente, PedirTurno, etc.).
+- Completar el circuito de historia clínica y agenda semanal del médico.
+- Integrar el asistente de WhatsApp (IA) para confirmación de turnos, validación de pagos y recordatorios — todavía no implementado, es la funcionalidad diferencial del proyecto.
+- Reforzar validaciones y matriz de permisos por rol en endpoints nuevos.
+- Sumar tests automatizados (actualmente la verificación es manual vía `api.http` y prueba en la UI).
