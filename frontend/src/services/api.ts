@@ -12,7 +12,9 @@ export async function apiFetch<T>(
     ...options,
     headers: {
       "Content-Type": "application/json",
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      ...(token
+        ? { Authorization: `Bearer ${token}` }
+        : {}),
       ...options.headers,
     },
   });
@@ -20,7 +22,15 @@ export async function apiFetch<T>(
   const cuerpo = await res.json().catch(() => null);
 
   if (!res.ok) {
-    throw new Error(cuerpo?.error ?? `Error ${res.status}`);
+    if (res.status === 401 && token) {
+      window.dispatchEvent(
+        new Event("sesion-expirada")
+      );
+    }
+
+    throw new Error(
+      cuerpo?.error ?? `Error ${res.status}`
+    );
   }
 
   return cuerpo as T;
