@@ -3,13 +3,28 @@ import { Container } from "react-bootstrap";
 import { useHistorialMedico } from "../hooks/useHistorialMedico";
 import { ConsultaCard } from "../components/ConsultaCard";
 import Layout from "../components/Layout/Layout";
+import { useAuth } from "../hooks/useAuth";
 import "../assets/styles/HistorialClinico.css";
 
 export default function HistorialClinico() {
+  const { tieneRol } = useAuth();
   const { pacientes, cargando } = useHistorialMedico();
   const [filtro, setFiltro] = useState("");
-  // Por defecto todos los pacientes están expandidos (undefined = expandido)
   const [expandidos, setExpandidos] = useState<Record<string, boolean>>({});
+
+  // Secretaria recibe 403 en todo el historial clínico
+  if (tieneRol("SECRETARIA")) {
+    return (
+      <Layout>
+        <Container className="py-5 text-center">
+          <div className="alert alert-danger" role="alert">
+            <h4>Acceso Restringido (403)</h4>
+            <p>El personal administrativo no tiene permiso para consultar la historia clínica.</p>
+          </div>
+        </Container>
+      </Layout>
+    );
+  }
 
   const pacientesFiltrados = filtro.trim()
     ? pacientes.filter((p) =>
@@ -21,16 +36,13 @@ export default function HistorialClinico() {
     setExpandidos((prev) => ({ ...prev, [username]: !isExpandido(username) }));
   };
 
-  // undefined → expandido por defecto; false → contraído
   const isExpandido = (username: string) => expandidos[username] !== false;
 
   return (
     <Layout>
       <Container className="py-4">
-        {/* Título */}
         <h2 className="histcli-titulo mb-3">Historial Clínico</h2>
 
-        {/* Buscador por nombre de usuario */}
         <div className="histcli-search-wrapper mb-4">
           <span className="histcli-search-icon">🔍</span>
           <input
@@ -50,12 +62,10 @@ export default function HistorialClinico() {
           )}
         </div>
 
-        {/* Estado de carga */}
         {cargando && (
           <p className="histcli-estado">Cargando historial...</p>
         )}
 
-        {/* Estado vacío */}
         {!cargando && pacientesFiltrados.length === 0 && (
           <p className="histcli-estado">
             {filtro
@@ -64,7 +74,6 @@ export default function HistorialClinico() {
           </p>
         )}
 
-        {/* Un bloque por paciente */}
         {pacientesFiltrados.map((paciente) => {
           const abierto = isExpandido(paciente.username);
           const consultasOrdenadas = [...paciente.consultas].sort(
@@ -73,7 +82,6 @@ export default function HistorialClinico() {
 
           return (
             <div key={paciente.username} className="histcli-paciente">
-              {/* Cabecera colapsable */}
               <button
                 className="histcli-paciente-header"
                 onClick={() => toggleExpandido(paciente.username)}
@@ -93,7 +101,6 @@ export default function HistorialClinico() {
                 </div>
               </button>
 
-              {/* Consultas */}
               {abierto && (
                 <div className="histcli-consultas">
                   {consultasOrdenadas.map((consulta, i) => (

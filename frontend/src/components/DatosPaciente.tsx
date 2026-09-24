@@ -1,8 +1,10 @@
 import type { PacienteProps } from "../types/PacienteProps.ts";
 import { useEdad } from "../hooks/useEdad";
+import { useAuth } from "../hooks/useAuth";
 
 export function DatosPaciente({ docs }: { docs: PacienteProps }) {
   const edad = useEdad(docs.fechaNacimiento);
+  const { tieneRol } = useAuth();
 
   return (
     <div className="text-start">
@@ -26,10 +28,14 @@ export function DatosPaciente({ docs }: { docs: PacienteProps }) {
             <h5>Obra Social:</h5>
             <p>{docs.obraSocial}</p>
         </div>
-        <div className="dato">
-            <h5>Consultas registradas:</h5>
-            <p>{docs.historial.consultas.length}</p>
-        </div>
+
+        {/* La SECRETARIA no tiene acceso al historial clínico ni a sus datos asociados */}
+        {!tieneRol("SECRETARIA") && (
+          <div className="dato">
+              <h5>Consultas registradas:</h5>
+              <p>{docs.historial?.consultas?.length ?? 0}</p>
+          </div>
+        )}
     </div>
   );
 }
