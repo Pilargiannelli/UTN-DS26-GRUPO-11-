@@ -1,4 +1,4 @@
-import { obtenerToken } from "./sesion";
+import { obtenerToken, borrarToken } from "./sesion";
 
 const BASE = import.meta.env.VITE_API_URL;
 
@@ -12,9 +12,7 @@ export async function apiFetch<T>(
     ...options,
     headers: {
       "Content-Type": "application/json",
-      ...(token
-        ? { Authorization: `Bearer ${token}` }
-        : {}),
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
       ...options.headers,
     },
   });
@@ -22,10 +20,17 @@ export async function apiFetch<T>(
   const cuerpo = await res.json().catch(() => null);
 
   if (!res.ok) {
-    if (res.status === 401 && token) {
-      window.dispatchEvent(
-        new Event("sesion-expirada")
-      );
+    // 🚨 MANEJO DE TOKEN VENCIDO / NO AUTORIZADO (401)
+    if (res.status === 401) {
+      borrarToken();
+
+      // Notificamos al AuthContext/App
+      window.dispatchEvent(new Event("sesion-expirada"));
+
+      // Redirigimos al login si no estamos ahí
+      if (window.location.pathname !== "/login") {
+        window.location.href = "/login?expired=true";
+      }
     }
 
     throw new Error(
