@@ -31,11 +31,11 @@ function Header() {
     { label: "Inicio", href: "/home" },
   ];
 
-  // Vista según el rol del enum de Prisma
+  // Vista según el rol del enum de Prisma (las claves deben coincidir con Rol)
   const vistaPorRol = useRolView({
-    admin: <Sidebar items={menuItemsAdmin} />,
-    medico: <Sidebar items={menuItemsMed} />,
-    paciente: <Sidebar items={itemsPaciente} />,
+    SECRETARIA: <Sidebar items={menuItemsAdmin} />,
+    MEDICO: <Sidebar items={menuItemsMed} />,
+    PACIENTE: <Sidebar items={itemsPaciente} />,
   });
 
   const manejarLogout = () => {
