@@ -43,13 +43,11 @@ describe("Auth Routes - Matriz sin DB", () => {
 
     it("debe retornar 200 si el token es válido", async () => {
       const tokenValido = jwt.sign({ sub: 1, rol: Rol.PACIENTE }, JWT_SECRET, { expiresIn: "1h" });
-
       const response = await request(app)
         .get("/api/auth/yo")
         .set("Authorization", `Bearer ${tokenValido}`);
-
       expect(response.status).toBe(200);
-      expect(response.body).toHaveProperty("id", 1);
+      expect(response.body).toEqual({ id: 1, rol: Rol.PACIENTE });
     });
   });
 });
