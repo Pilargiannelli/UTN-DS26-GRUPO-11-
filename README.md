@@ -129,3 +129,28 @@ docker compose down -v        # bajar todo y BORRAR la base
 - Integrar el asistente de WhatsApp (IA) para confirmación de turnos, validación de pagos y recordatorios — todavía no implementado, es la funcionalidad diferencial del proyecto.
 - Reforzar validaciones y matriz de permisos por rol en endpoints nuevos.
 - Sumar tests automatizados (actualmente la verificación es manual vía `api.http` y prueba en la UI).
+
+---
+
+## Testing
+
+El proyecto cuenta con una suite de pruebas automatizadas con **Vitest** y **Supertest**.
+
+### Estructura de pruebas
+- **Pruebas de Integración con Base de Datos (`*.db.test.ts`)**: Prueban los flujos completos contra PostgreSQL (autenticación con login/sesión y consulta real de turnos desde el `seed`).
+- **Pruebas de Matriz y Unitarias (`*.test.ts`)**: Prueban validaciones (Zod), middlewares y rechazos de permisos (401, 403, 400) aislando la base de datos con mocks.
+
+### Cómo ejecutar los tests (Docker)
+
+Asegúrate de tener la base de datos levantada y sembrada antes de ejecutar las pruebas de integración:
+
+```bash
+# 1. Aplicar migraciones y sembrar la base de datos (si no se realizó previamente)
+docker compose exec api npm run db:migrate
+docker compose exec api npm run db:seed
+
+# 2. Ejecutar únicamente las pruebas de integración con Base de Datos (en el contenedor)
+docker compose run --rm api npm run test:db
+
+# 3. Ejecutar la suite completa de pruebas unitarias y de matriz
+docker compose run --rm api npm run test
