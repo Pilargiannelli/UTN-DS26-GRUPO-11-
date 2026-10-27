@@ -14,7 +14,7 @@ import GestionTurnos from "./pages/GestionTurnos";
 import DetalleTurno from "./pages/DetalleTurno.tsx";
 import CancelarTurno from "./pages/CancelarTurno.tsx";
 import PedirTurno from "./pages/PedirTurno.tsx";
-import CambiarPassword from "./pages/CambiarPassword.tsx";
+import CambiarPassword from "./pages/CambiarPassword";
 import BuscarMedico from "./pages/BuscarMédico.tsx";
 import OrdenDelDia from "./pages/OrdenDelDia.tsx";
 import HistorialClinico from "./pages/HistorialClinico.tsx";
@@ -22,15 +22,19 @@ import HistorialClinico from "./pages/HistorialClinico.tsx";
 function App() {
   return (
     <Routes>
-      {/* Públicas: según la matriz de permisos, no requieren login */}
+      {/* ========================================== */}
+      {/* RUTAS PÚBLICAS */}
+      {/* ========================================== */}
       <Route path="/" element={<Login />} />
       <Route path="/crear-cuenta" element={<AutoregistroPaciente />} />
-      <Route path="/buscar-medico" element={<BuscarMedico />} />
       <Route path="/no-autorizado" element={<NoAutorizado />} />
 
-      {/* Protegidas: alcanza con estar logueado, cualquier rol */}
+      {/* ========================================== */}
+      {/* RUTAS PRIVADAS (Cualquier usuario logueado) */}
+      {/* ========================================== */}
       <Route element={<PrivateRoute />}>
         <Route path="/home" element={<Home />} />
+        <Route path="/buscar-medico" element={<BuscarMedico />} />
         <Route path="/ver-perfil" element={<VerUsuario />} />
         <Route path="/cambiar-password" element={<CambiarPassword />} />
         <Route path="/mis-turnos" element={<MisTurnos />} />
@@ -39,17 +43,28 @@ function App() {
         <Route path="/pedir-turno" element={<PedirTurno />} />
       </Route>
 
-      {/* Protegidas: personal del consultorio (SECRETARIA o MEDICO) */}
-      <Route element={<PrivateRoute roles={["SECRETARIA", "MEDICO"]} />}>
-        <Route path="/buscar-paciente" element={<BuscarPaciente />} />
-        <Route path="/gestion-turnos" element={<GestionTurnos />} />
+      {/* ========================================== */}
+      {/* RUTAS EXCLUSIVAS DE LA SECRETARIA */}
+      {/* ========================================== */}
+      <Route element={<PrivateRoute roles={["SECRETARIA"]} />}>
+        <Route path="/registrar-medico" element={<RegistrarMedico />} />
         <Route path="/registrar-paciente" element={<RegistroPaciente />} />
         <Route path="/registrar-usuario" element={<RegistroUsuario />} />
       </Route>
 
-      {/* Protegidas: solo MEDICO */}
+      {/* ========================================== */}
+      {/* RUTAS COMPARTIDAS (SECRETARIA o MEDICO) */}
+      {/* ========================================== */}
+      <Route element={<PrivateRoute roles={["SECRETARIA", "MEDICO"]} />}>
+        <Route path="/buscar-paciente" element={<BuscarPaciente />} />
+        <Route path="/gestion-turnos" element={<GestionTurnos />} />
+      </Route>
+
+      {/* ========================================== */}
+      {/* RUTAS EXCLUSIVAS MÉDICAS */}
+      {/* (Solo para el rol MEDICO) */}
+      {/* ========================================== */}
       <Route element={<PrivateRoute roles={["MEDICO"]} />}>
-        <Route path="/registrar-medico" element={<RegistrarMedico />} />
         <Route path="/orden-del-dia" element={<OrdenDelDia />} />
         <Route path="/historial" element={<HistorialClinico />} />
       </Route>
