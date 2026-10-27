@@ -1,6 +1,8 @@
 import { obtenerToken, borrarToken } from "./sesion";
 
-const BASE = import.meta.env.VITE_API_URL;
+// Fallback por si la variable de entorno de Vite no se inyectó en el build
+const ENV_URL = import.meta.env.VITE_API_URL;
+const BASE = (ENV_URL && ENV_URL !== "undefined") ? ENV_URL : "http://localhost:3000/api";
 
 export async function apiFetch<T>(
   path: string,
@@ -8,7 +10,14 @@ export async function apiFetch<T>(
 ): Promise<T> {
   const token = obtenerToken();
 
-  const res = await fetch(`${BASE}${path}`, {
+  // Asegura formato limpio del path y evita duplicar el prefijo /api
+  const cleanPath = path.startsWith("/") ? path : `/${path}`;
+  const finalPath = cleanPath.startsWith("/api/") ? cleanPath : `/api${cleanPath}`;
+
+  // Remueve /api del final de BASE si existiera para concatenar sin solapamientos
+  const baseUrlWithoutApi = BASE.replace(/\/api\/?$/, "");
+
+  const res = await fetch(`${baseUrlWithoutApi}${finalPath}`, {
     ...options,
     headers: {
       "Content-Type": "application/json",
