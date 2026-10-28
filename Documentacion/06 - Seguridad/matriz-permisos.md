@@ -71,7 +71,7 @@ incluido MEDICO, puede modificar la contraseña de otro usuario.
 |--------|----------|:--------:|:--------:|:----------:|:------:|
 | GET | /api/pacientes | 401 | 403 | ✅ | ✅ |
 | GET | /api/pacientes/:id | 401 | ✅ propio | ✅ | ✅ |
-| POST | /api/pacientes | 401 | 403 | ✅ | ✅ |
+| POST | /api/pacientes | 401 | 403 | ✅ | 403 |
 | PUT | /api/pacientes/:id | 401 | ✅ propio | ✅ | ✅ |
 | DELETE | /api/pacientes/:id | 401 | 403 | 403 | ✅ |
 
@@ -79,7 +79,8 @@ El listado de pacientes constituye la base de datos del consultorio, por lo que 
 autenticado no puede consultar la nómina de los demás. La respuesta es 403 y no 401, dado que
 la identidad es conocida y el impedimento es de permisos.
 
-El alta mediante POST corresponde a la carga administrativa que realiza el personal; el
+El alta mediante POST corresponde a la carga administrativa que realiza la secretaria
+(HU-001: "como personal administrativo"); el médico atiende pacientes ya registrados. El
 autorregistro se resuelve por `/api/auth/registro`. Las dos crean juntos el `Usuario` (rol
 PACIENTE) y su ficha de `Paciente`, para que no quede ningún paciente sin ficha. En el alta
 por el personal, el usuario y la contraseña inicial son el DNI del paciente. La baja, por tratarse de una operación

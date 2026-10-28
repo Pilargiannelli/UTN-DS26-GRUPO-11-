@@ -14,9 +14,10 @@ router.get("/medicos", usuarioController.getMedicos);
 // GET /api/pacientes -> Exige token y rol SECRETARIA o MEDICO (sección 6)
 router.get("/pacientes", authenticate, authorize(Rol.SECRETARIA, Rol.MEDICO), usuarioController.getPacientes);
 
-// POST /api/pacientes -> alta de paciente por el personal (sección 6, HU-001).
-// Crea Usuario + Paciente; usuario y contraseña inicial = DNI.
-router.post("/pacientes", authenticate, authorize(Rol.SECRETARIA, Rol.MEDICO), validate(pacienteCreateSchema), usuarioController.createPaciente);
+// POST /api/pacientes -> alta de paciente por la secretaria (HU-001: "como
+// personal administrativo"). Crea Usuario + Paciente; usuario y contraseña
+// inicial = DNI.
+router.post("/pacientes", authenticate, authorize(Rol.SECRETARIA), validate(pacienteCreateSchema), usuarioController.createPaciente);
 
 // PUT /api/pacientes/:id -> editar los datos (sección 6). El paciente, solo los
 // suyos: eso lo verifica el service.

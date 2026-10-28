@@ -32,10 +32,10 @@ describe("POST /api/pacientes - Matriz sin DB", () => {
     expect(res.status).toBe(401);
   });
 
-  it("devuelve 403 para PACIENTE", async () => {
+  it.each([Rol.PACIENTE, Rol.MEDICO])("devuelve 403 para %s (el alta es de la secretaria, HU-001)", async (rol) => {
     const res = await request(app)
       .post("/api/pacientes")
-      .set("Authorization", `Bearer ${tokenDe(Rol.PACIENTE)}`)
+      .set("Authorization", `Bearer ${tokenDe(rol)}`)
       .send(pacienteValido);
     expect(res.status).toBe(403);
   });
