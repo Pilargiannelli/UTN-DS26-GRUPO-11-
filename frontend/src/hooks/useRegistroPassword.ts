@@ -1,16 +1,22 @@
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "./useAuth";
+import { apiFetch } from "../services/api";
 import type { NewPasswordValidada } from "../schemas/newPasswordSchema.ts";
 
 export function useCambioPassword() {
     const navigate = useNavigate();
-    const { usuario } = useAuth();
-    const cambiarPassword = <T extends NewPasswordValidada>(datos: T) => {
-        if (!usuario) { throw new Error("No hay un usuario autenticado."); }
-        const usuarioActualizado = { ...usuario, password: datos.newPassword, };
-        console.log( "Objeto definitivo listo para el PATCH simulado:", usuarioActualizado );
-        // Espacio para la futura persistencia a través de la API
-        navigate("/ver-perfil", { state: { passwordActualizada: true, }, });
+
+    // PATCH /api/auth/password: el back verifica la actual (400 si no coincide)
+    // y guarda la nueva hasheada. Si falla, el error lo muestra el formulario.
+    const cambiarPassword = async (datos: NewPasswordValidada) => {
+        await apiFetch("/auth/password", {
+            method: "PATCH",
+            body: JSON.stringify({
+                passwordActual: datos.currentPassword,
+                passwordNueva: datos.newPassword,
+            }),
+        });
+        navigate("/ver-perfil", { state: { passwordActualizada: true } });
     };
+
     return { cambiarPassword };
 }

@@ -10,6 +10,7 @@ vi.mock("../controllers/auth.controller", () => ({
   registro: (req: any, res: any) => res.status(201).json({ mensaje: "Registrado" }),
   login: (req: any, res: any) => res.status(200).json({ token: "fake-token" }),
   yo: (req: any, res: any) => res.status(200).json({ id: req.usuario.sub, rol: req.usuario.rol }),
+  cambiarPassword: (_req: any, res: any) => res.status(204).send(),
 }));
 
 describe("Auth Routes - Matriz sin DB", () => {

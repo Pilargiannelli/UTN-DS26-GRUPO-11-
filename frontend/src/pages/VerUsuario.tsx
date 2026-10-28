@@ -21,6 +21,8 @@ import { ToastMensaje } from "../components/NotifyToast.tsx";
 
 function VerUsuario() {
     const { showToast, setShowToast } = useToast("registroExitoso");
+    // Viene de CambiarPassword después del PATCH /auth/password
+    const passwordToast = useToast("passwordActualizada");
     const { usuario } = useAuth();
     const { usuarioSeleccionado } = useUsuarioSeleccionado();
 
@@ -70,6 +72,7 @@ function VerUsuario() {
     return (
         <Layout>
             <ToastMensaje mensaje="Datos actualizados correctamente" tipo="toast-good" mostrar={showToast} onClose={() => setShowToast(false)} />
+            <ToastMensaje mensaje="Contraseña actualizada" tipo="toast-good" mostrar={passwordToast.showToast} onClose={() => passwordToast.setShowToast(false)} />
             <Container className="cont-perfil">
                 <Row className="mb-3">
                     <Col md="6" className="d-flex align-content-start">
