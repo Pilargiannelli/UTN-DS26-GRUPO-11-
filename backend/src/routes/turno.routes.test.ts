@@ -9,9 +9,11 @@ import { Rol } from "../generated/prisma/enums";
 // ../controllers, relativa a este archivo) para que ningún request llegue a
 // Prisma. Lo que se prueba acá son los middlewares authenticate / authorize.
 vi.mock("../controllers/turno.controller", () => {
-  const ok = (_req: unknown, res: { status: (c: number) => { json: (b: unknown) => void } }) =>
-    res.status(200).json({ ok: true });
-  return { getAll: ok, getById: ok, create: ok, update: ok, remove: ok };
+  type Res = { status: (c: number) => { json: (b: unknown) => void } };
+  const ok = (_req: unknown, res: Res) => res.status(200).json({ ok: true });
+  // create devuelve el body ya validado: así se ve qué campos dejó pasar Zod
+  const eco = (req: { body: unknown }, res: Res) => res.status(201).json(req.body);
+  return { getAll: ok, getOcupados: ok, getById: ok, create: eco, cancelar: ok, update: ok, remove: ok };
 });
 
 const tokenDe = (rol: Rol, sub = 1) => jwt.sign({ sub, rol }, JWT_SECRET, { expiresIn: "1h" });
@@ -20,15 +22,19 @@ const tokenMedico = tokenDe(Rol.MEDICO);
 const tokenSecretaria = tokenDe(Rol.SECRETARIA);
 const tokenPaciente = tokenDe(Rol.PACIENTE);
 
-type Metodo = "get" | "post" | "put" | "delete";
+type Metodo = "get" | "post" | "put" | "patch" | "delete";
 
-// Las 5 rutas de /api/turnos con su fila de la matriz de permisos
-// (Documentacion/06 - Seguridad/matriz-permisos-ui.md). `permitidos` son los
-// roles que pasan el middleware; el resto debe recibir 403.
+// Las 7 rutas de /api/turnos con su fila de la matriz de permisos
+// (Documentacion/06 - Seguridad/matriz-permisos.md, sección 8). `permitidos`
+// son los roles que pasan el middleware; el resto debe recibir 403. Que el
+// turno sea "propio" lo verifica el service (se prueba en el .db.test).
+const todos = [Rol.MEDICO, Rol.SECRETARIA, Rol.PACIENTE];
 const rutas: { metodo: Metodo; path: string; permitidos: Rol[] }[] = [
-  { metodo: "get", path: "/api/turnos", permitidos: [Rol.MEDICO, Rol.SECRETARIA, Rol.PACIENTE] },
-  { metodo: "get", path: "/api/turnos/1", permitidos: [Rol.MEDICO, Rol.SECRETARIA] },
-  { metodo: "post", path: "/api/turnos", permitidos: [Rol.SECRETARIA, Rol.MEDICO] },
+  { metodo: "get", path: "/api/turnos", permitidos: todos },
+  { metodo: "get", path: "/api/turnos/ocupados", permitidos: todos },
+  { metodo: "get", path: "/api/turnos/1", permitidos: todos },
+  { metodo: "post", path: "/api/turnos", permitidos: todos },
+  { metodo: "patch", path: "/api/turnos/1/cancelar", permitidos: todos },
   { metodo: "put", path: "/api/turnos/1", permitidos: [Rol.MEDICO, Rol.SECRETARIA] },
   { metodo: "delete", path: "/api/turnos/1", permitidos: [Rol.MEDICO, Rol.SECRETARIA] },
 ];
@@ -88,6 +94,47 @@ describe("Turno Routes - Matriz sin DB", () => {
       const res = await request(app)
         .get("/api/turnos/abc")
         .set("Authorization", `Bearer ${tokenSecretaria}`);
+
+      expect(res.status).toBe(400);
+    });
+
+    it("PATCH /api/turnos/abc/cancelar devuelve 400 para un :id no numérico", async () => {
+      const res = await request(app)
+        .patch("/api/turnos/abc/cancelar")
+        .set("Authorization", `Bearer ${tokenPaciente}`);
+
+      expect(res.status).toBe(400);
+    });
+  });
+
+  describe("POST /api/turnos como PACIENTE (turnoSolicitudSchema)", () => {
+    it("devuelve 400 si falta fechaHora", async () => {
+      const res = await request(app)
+        .post("/api/turnos")
+        .set("Authorization", `Bearer ${tokenPaciente}`)
+        .send({ medicoId: 1 });
+
+      expect(res.status).toBe(400);
+      expect(res.body.detalles).toEqual(
+        expect.arrayContaining([expect.objectContaining({ campo: "fechaHora" })])
+      );
+    });
+
+    it("descarta pacienteId, estado y pagoValidado del body (los decide el back)", async () => {
+      const res = await request(app)
+        .post("/api/turnos")
+        .set("Authorization", `Bearer ${tokenPaciente}`)
+        .send({ medicoId: 1, fechaHora: "2030-01-10T10:00:00.000Z", pacienteId: 99, estado: "Confirmado", pagoValidado: true });
+
+      expect(res.status).toBe(201);
+      expect(Object.keys(res.body).sort()).toEqual(["fechaHora", "medicoId"]);
+    });
+
+    it("la secretaria sigue necesitando pacienteId (turnoCreateSchema)", async () => {
+      const res = await request(app)
+        .post("/api/turnos")
+        .set("Authorization", `Bearer ${tokenSecretaria}`)
+        .send({ medicoId: 1, fechaHora: "2030-01-10T10:00:00.000Z" });
 
       expect(res.status).toBe(400);
     });

@@ -1,19 +1,18 @@
+import { useState } from "react";
 import {
+  Alert,
   Badge,
   Button,
   Card,
   Table,
 } from "react-bootstrap";
 
-import {
-  PencilSquare,
-  CalendarEvent,
-  Trash,
-} from "react-bootstrap-icons";
-
 import type { TurnosTableProps } from "../../types/TurnosTableProps";
+import type { Turno } from "../../types/Turno";
 import { formatearHora, formatearChipFecha } from "../../utils/fecha";
 import { useAuth } from "../../hooks/useAuth";
+import { apiFetch } from "../../services/api";
+import { yaPaso } from "../../utils/estadoTurno";
 
 import "../../assets/styles/TurnosTable.css";
 import TurnosFilters from "./TurnosFilters";
@@ -44,13 +43,31 @@ function obtenerIniciales(nombre: string) {
 }
 
 function TurnosTable({
-  turnos, onNuevoTurno
+  turnos, onNuevoTurno, onTurnoActualizado
 }: TurnosTableProps) {
   const { tieneRol } = useAuth();
+  const [procesando, setProcesando] = useState<number | null>(null);
+  const [errorAccion, setErrorAccion] = useState<string | null>(null);
 
   // Muestra filtros y creación de turno solo para roles administrativos o médicos
   const puedeCrearOFiltrar = tieneRol("SECRETARIA") || tieneRol("MEDICO");
-  const puedeEditarOReprogramar = tieneRol("SECRETARIA") || tieneRol("MEDICO");
+
+  // Confirmar: PUT con el estado nuevo. Cancelar: PATCH /cancelar (cambio de
+  // estado, el turno no se borra). El back verifica que el médico sea el dueño.
+  const ejecutarAccion = async (turno: Turno, accion: "confirmar" | "cancelar") => {
+    setProcesando(turno.id);
+    setErrorAccion(null);
+    try {
+      const actualizado = accion === "confirmar"
+        ? await apiFetch<Turno>(`/turnos/${turno.id}`, { method: "PUT", body: JSON.stringify({ estado: "Confirmado" }) })
+        : await apiFetch<Turno>(`/turnos/${turno.id}/cancelar`, { method: "PATCH" });
+      onTurnoActualizado(actualizado);
+    } catch (err) {
+      setErrorAccion(err instanceof Error ? err.message : "No se pudo actualizar el turno");
+    } finally {
+      setProcesando(null);
+    }
+  };
 
   return (
     <Card className="agenda-card">
@@ -62,6 +79,12 @@ function TurnosTable({
           </div>
           {puedeCrearOFiltrar && <TurnosFilters onNuevoTurno={onNuevoTurno} />}
         </div>
+
+        {errorAccion && (
+          <Alert variant="danger" dismissible onClose={() => setErrorAccion(null)}>
+            {errorAccion}
+          </Alert>
+        )}
 
         <Table
           responsive
@@ -125,22 +148,35 @@ function TurnosTable({
 
                   <td>
                     <div className="acciones d-flex gap-1 justify-content-center">
-                      {/* Reprogramar/Editar restringidos para PACIENTE según matriz */}
-                      {puedeEditarOReprogramar && (
-                        <>
-                          <Button variant="light" title="Editar">
-                            <PencilSquare />
-                          </Button>
-                          <Button variant="light" title="Reprogramar">
-                            <CalendarEvent />
-                          </Button>
-                        </>
+                      {yaPaso(turno.fechaHora) ? (
+                        // Un turno pasado ya no se confirma ni se cancela
+                        <span className="texto-gris small">Ya pasó</span>
+                      ) : (
+                      <>
+                      {(turno.estado === "Pendiente" || turno.estado === "Reprogramado") && (
+                        <Button
+                          size="sm"
+                          variant="success"
+                          disabled={procesando === turno.id}
+                          onClick={() => ejecutarAccion(turno, "confirmar")}
+                        >
+                          Confirmar
+                        </Button>
                       )}
-
-                      {/* Cancelar permitido para titular o personal */}
-                      <Button variant="light" title="Cancelar">
-                        <Trash />
-                      </Button>
+                      {turno.estado !== "Cancelado" ? (
+                        <Button
+                          size="sm"
+                          variant="outline-danger"
+                          disabled={procesando === turno.id}
+                          onClick={() => ejecutarAccion(turno, "cancelar")}
+                        >
+                          Cancelar
+                        </Button>
+                      ) : (
+                        <span className="texto-gris small">Horario liberado</span>
+                      )}
+                      </>
+                      )}
                     </div>
                   </td>
                 </tr>

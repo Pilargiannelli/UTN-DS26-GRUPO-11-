@@ -5,8 +5,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import '../assets/styles/Form.css';
 import { useState } from "react";
 import { apiFetch } from "../services/api";
+import { useNavigate } from "react-router-dom";
 
 export function UserForm() {
+    const navigate = useNavigate();
     const [submitting, setSubmitting] = useState(false);
     const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
@@ -33,9 +35,10 @@ export function UserForm() {
                 body: JSON.stringify(payload)
             });
 
-            window.location.href = "/login";
-        } catch (err: any) {
-            setErrorMsg(err.message || "Error al registrar el usuario");
+            // El login vive en "/" (App.tsx): "/login" no existe
+            navigate("/");
+        } catch (err) {
+            setErrorMsg(err instanceof Error ? err.message : "Error al registrar el usuario");
         } finally {
             setSubmitting(false);
         }

@@ -6,11 +6,58 @@ import { JWT_SECRET } from "../config/env";
 import { Rol } from "../generated/prisma/enums";
 
 // Mockeamos los controladores de usuarios
-vi.mock("../../controllers/usuario.controller", () => ({
+vi.mock("../controllers/usuario.controller", () => ({
   getMedicos: (req: any, res: any) => res.status(200).json([]),
   getPacientes: (req: any, res: any) => res.status(200).json([]),
   getUsuarios: (req: any, res: any) => res.status(200).json([]),
+  createPaciente: (req: any, res: any) => res.status(201).json(req.body),
 }));
+
+const tokenDe = (rol: Rol) => jwt.sign({ sub: 1, rol }, JWT_SECRET, { expiresIn: "1h" });
+
+describe("POST /api/pacientes - Matriz sin DB", () => {
+  const pacienteValido = {
+    nombre: "Ana",
+    apellido: "Pérez",
+    dni: "30123456",
+    email: "ana@imos.test",
+    telefono: "5492344555555",
+    sexo: "Femenino",
+    fechaNacimiento: "1990-05-20",
+  };
+
+  it("devuelve 401 sin token", async () => {
+    const res = await request(app).post("/api/pacientes").send(pacienteValido);
+    expect(res.status).toBe(401);
+  });
+
+  it("devuelve 403 para PACIENTE", async () => {
+    const res = await request(app)
+      .post("/api/pacientes")
+      .set("Authorization", `Bearer ${tokenDe(Rol.PACIENTE)}`)
+      .send(pacienteValido);
+    expect(res.status).toBe(403);
+  });
+
+  it("devuelve 400 con detalles por campo si el body es inválido", async () => {
+    const res = await request(app)
+      .post("/api/pacientes")
+      .set("Authorization", `Bearer ${tokenDe(Rol.SECRETARIA)}`)
+      .send({ ...pacienteValido, dni: "abc", nombre: "" });
+
+    expect(res.status).toBe(400);
+    const campos = res.body.detalles.map((d: { campo: string }) => d.campo);
+    expect(campos).toEqual(expect.arrayContaining(["dni", "nombre"]));
+  });
+
+  it("deja pasar a la SECRETARIA con un body válido (201)", async () => {
+    const res = await request(app)
+      .post("/api/pacientes")
+      .set("Authorization", `Bearer ${tokenDe(Rol.SECRETARIA)}`)
+      .send(pacienteValido);
+    expect(res.status).toBe(201);
+  });
+});
 
 describe("Usuario Routes - Matriz sin DB", () => {
   describe("GET /api/medicos", () => {

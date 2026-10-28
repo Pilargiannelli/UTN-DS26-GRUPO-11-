@@ -1,7 +1,21 @@
 import { useAuth } from "./useAuth";
 import { useFetch } from "./useFetch";
-import type { Paciente } from "../types/Paciente";
 import type { Consulta } from "../types/ConsultaProps";
+
+// Forma mínima de lo que se lee de GET /api/pacientes en este hook
+interface EntradaApi {
+  id: number;
+  fecha: string;
+  diagnostico: string;
+  evolucion: string;
+  observaciones: string;
+  medicoNombre: string;
+}
+
+interface PacienteApi {
+  usuario?: { username: string; nombre: string; apellido: string };
+  historiaClinica?: { entradas?: EntradaApi[] } | null;
+}
 
 export interface PacienteConConsultas {
   username: string;
@@ -14,7 +28,7 @@ export function useHistorialMedico() {
   const { usuario } = useAuth();
   
   // Consumo de la API real de pacientes en lugar del /users.json
-  const { data: pacientesAPI, loading } = useFetch<any[]>("/pacientes");
+  const { data: pacientesAPI, loading } = useFetch<PacienteApi[]>("/pacientes");
 
   const nombreMedico = usuario
     ? `${usuario.nombre} ${usuario.apellido}`
@@ -24,14 +38,13 @@ export function useHistorialMedico() {
     .map((p) => {
       // Mapea la información recibida de la API real
       const consultasPaciente: Consulta[] = (p.historiaClinica?.entradas ?? [])
-        .filter((e: any) => e.medicoNombre === nombreMedico)
-        .map((e: any) => ({
-          id: e.id,
+        .filter((e) => e.medicoNombre === nombreMedico)
+        .map((e) => ({
           fecha: e.fecha,
-          diagnostico: e.diagnostico,
-          evolucion: e.evolucion,
-          observaciones: e.observaciones,
           medico: e.medicoNombre,
+          motivo: e.observaciones,
+          diagnostico: e.diagnostico,
+          tratamiento: e.evolucion,
         }));
 
       return {

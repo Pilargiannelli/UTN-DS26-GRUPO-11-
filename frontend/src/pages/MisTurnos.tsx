@@ -5,20 +5,17 @@ import { BotonVolver } from "../components/BotonVolver.tsx";
 import { useTurnosPaciente } from "../hooks/useTurnosPaciente";
 import { parseFechaHora, formatearChipFecha, formatearHora } from "../utils/fecha";
 import type { Turno } from "../types/Turno";
+import { obtenerClaseEstado } from "../utils/estadoTurno";
+import { useToast } from "../hooks/useToast";
+import { ToastMensaje } from "../components/NotifyToast";
 import "../assets/styles/MisTurnos.css";
 import "../assets/styles/PaginaPaciente.css";
 
-function obtenerClaseEstado(estado: string) {
-  switch (estado) {
-    case "Confirmado": return "estado-confirmado";
-    case "Pendiente": return "estado-pendiente";
-    case "Cancelado": return "estado-cancelado";
-    default: return "";
-  }
-}
-
 function MisTurnos() {
   const { misTurnos, loading, error } = useTurnosPaciente();
+  // Vienen en el state de navigate() desde PedirTurno y CancelarTurno
+  const creado = useToast("turnoCreado");
+  const cancelado = useToast("turnoCancelado");
   const hoy = new Date();
 
   const proximas = misTurnos
@@ -56,6 +53,18 @@ function MisTurnos() {
 
   return (
     <Layout>
+      <ToastMensaje
+        mensaje="Turno solicitado. Queda pendiente hasta que el consultorio lo confirme."
+        tipo="toast-good"
+        mostrar={creado.showToast}
+        onClose={() => creado.setShowToast(false)}
+      />
+      <ToastMensaje
+        mensaje="Turno cancelado."
+        tipo="toast-good"
+        mostrar={cancelado.showToast}
+        onClose={() => cancelado.setShowToast(false)}
+      />
       <div className="pagina-paciente">
         <BotonVolver />
 

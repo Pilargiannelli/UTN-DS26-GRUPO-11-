@@ -6,7 +6,7 @@ import { JWT_SECRET } from "../config/env";
 import { Rol } from "../generated/prisma/enums";
 
 // Mockeamos los controladores para aislar las rutas y probar los middlewares de validación y auth
-vi.mock("../../controllers/auth.controller", () => ({
+vi.mock("../controllers/auth.controller", () => ({
   registro: (req: any, res: any) => res.status(201).json({ mensaje: "Registrado" }),
   login: (req: any, res: any) => res.status(200).json({ token: "fake-token" }),
   yo: (req: any, res: any) => res.status(200).json({ id: req.usuario.sub, rol: req.usuario.rol }),

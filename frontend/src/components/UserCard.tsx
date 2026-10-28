@@ -28,12 +28,14 @@ export function UserCard({ usuario, isEditing, onUpdate }: UserCardProps) {
   };
 
   const FormularioEdicionAlternativo = usePerfilRolView(usuario, {
-    admin: {
+    // La clave es el rol de quien mira el perfil (useAuth().rol): solo la
+    // secretaria edita perfiles ajenos.
+    SECRETARIA: {
       PACIENTE: (
         <PacienteFormFields onSave={handleFormSave} onCancel={handleCancel} paciente={paciente as unknown as PacienteProps} />
       ),
       MEDICO: (
-        <MedicoFormFields onSave={handleFormSave} onCancel={handleCancel} medico={medico as unknown as MedicoProps}/>
+        <MedicoFormFields onSave={handleFormSave} onCancel={handleCancel} medico={usuario}/>
       ),
       SECRETARIA: (
         <AdminFormFields onSave={handleFormSave} onCancel={handleCancel} admin={usuario as unknown as UserProps}/>

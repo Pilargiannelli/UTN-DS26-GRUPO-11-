@@ -6,16 +6,13 @@ import { medicoSchema, type MedicoValidado } from "../schemas/medicoSchema";
 import { useForm, type Resolver } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { MedicoFormProps } from "../types/UserEditFormProps";
-import type { Especialidad } from "../types/Medico";
 
 export function MedicoFormFields({ onSave, onCancel, medico }: MedicoFormProps<MedicoValidado>) {
     const handleMayus = useMayus();
 
-    // Consulta de especialidades desde la API real
-    const { data: especialidadesAPI, loading } = useFetch<Especialidad[]>("/especialidades");
-    const espValidas = especialidadesAPI 
-        ? especialidadesAPI.map(e => typeof e === "string" ? e : e.nombre) 
-        : ["General"];
+    // GET /api/especialidades devuelve un array de strings
+    const { data: especialidadesAPI, loading } = useFetch<string[]>("/especialidades");
+    const espValidas = especialidadesAPI ?? ["General"];
 
     // Schema sin dependencia de usuarios precargados en cliente
     const schema = medicoSchema(espValidas, []);
@@ -23,10 +20,10 @@ export function MedicoFormFields({ onSave, onCancel, medico }: MedicoFormProps<M
     const initialValues: MedicoValidado = {
         nombre: medico.nombre,
         apellido: medico.apellido,
-        dni: typeof medico.dni === "number" ? medico.dni : parseInt(medico.dni) || 0,
+        dni: parseInt(medico.dni) || 0,
         email: medico.email,
-        matricula: medico.matricula,
-        especialidad: medico.especialidad,
+        matricula: medico.medico?.matricula ?? "",
+        especialidad: medico.medico?.especialidad ?? "",
     };
 
     const { register, handleSubmit, formState: { errors } } = useForm<MedicoValidado>({

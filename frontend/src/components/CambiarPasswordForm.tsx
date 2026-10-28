@@ -2,15 +2,13 @@ import { useForm } from "react-hook-form";
 import { Form, Button } from 'react-bootstrap'
 import { zodResolver } from "@hookform/resolvers/zod";
 import '../assets/styles/Form.css'
-import { useAuth } from "../hooks/useAuth";
 import { newPasswordSchema, type NewPasswordValidada } from "../schemas/newPasswordSchema";
 import { useCambioPassword } from "../hooks/useRegistroPassword";
 
 export function NewPasswordForm(){
     const { cambiarPassword } = useCambioPassword();
-    const { usuario } = useAuth();
     const { register, handleSubmit, formState: { errors } } = useForm<NewPasswordValidada>({
-        resolver: zodResolver(newPasswordSchema(usuario?.p as string)),
+        resolver: zodResolver(newPasswordSchema),
         mode: "onBlur" 
     });
     const onSubmit = (data: NewPasswordValidada) => {

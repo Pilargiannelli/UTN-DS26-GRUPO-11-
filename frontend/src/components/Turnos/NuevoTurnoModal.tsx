@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 
 import {
   Modal,
@@ -12,10 +11,13 @@ import {
 } from "react-bootstrap";
 
 import "../../assets/styles/ModalTurno.css";
+import "../../assets/styles/PedirTurno.css";
 
 import { turnoSchema } from "../../schemas/TurnoSchema";
-import { apiFetch } from "../../services/api";
+import { apiFetch, ApiError } from "../../services/api";
 import { useFetch } from "../../hooks/useFetch";
+import { useHorariosOcupados } from "../../hooks/useHorariosOcupados";
+import { HORARIOS_CONSULTORIO, horarioNoDisponible } from "../../utils/horarios";
 import type { Turno, MedicoTurno, PacienteTurno } from "../../types/Turno";
 
 interface NuevoTurnoModalProps {
@@ -30,7 +32,6 @@ function NuevoTurnoModal({
   onAgregar,
 }: NuevoTurnoModalProps) {
 
-  const navigate = useNavigate();
 
   // GET /api/medicos es público; GET /api/pacientes exige SECRETARIA o
   // MEDICO (matriz de permisos, secciones 6 y 7) — es justamente quien usa
@@ -53,6 +54,16 @@ function NuevoTurnoModal({
   const [errores, setErrores] = useState<Record<string, string>>({});
   const [enviando, setEnviando] = useState(false);
   const [errorApi, setErrorApi] = useState<string | null>(null);
+  const [recargarOcupados, setRecargarOcupados] = useState(0);
+
+  // Horarios que el médico ya tiene tomados ese día (se muestran tachados)
+  const ocupados = useHorariosOcupados(form.medicoId, form.fecha, recargarOcupados);
+  const hoyISO = new Date().toLocaleDateString("en-CA");
+
+  const elegirHora = (hora: string) => {
+    setForm((prev) => ({ ...prev, hora }));
+    setErrores((prev) => ({ ...prev, hora: "" }));
+  };
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -67,6 +78,8 @@ function NuevoTurnoModal({
     setForm((prev) => ({
       ...prev,
       [name]: value,
+      // Otro médico u otro día: el horario elegido puede no estar libre
+      ...((name === "medicoId" || name === "fecha") && { hora: "" }),
     }));
 
     if (errores[name]) {
@@ -142,46 +155,8 @@ function NuevoTurnoModal({
 
     }
 
-    // ==========================
-    // Horario laboral
-    // ==========================
-
-    const [hora, minutos] =
-      form.hora.split(":").map(Number);
-
-    const horario = hora * 60 + minutos;
-
-    if (
-      horario < 8 * 60 ||
-      horario > 20 * 60
-    ) {
-
-      setErrores({
-        hora:
-          "El horario debe estar entre las 08:00 y las 20:00.",
-      });
-
-      return;
-
-    }
-
-    // ==========================
-    // Cada 30 minutos
-    // ==========================
-
-    if (
-      minutos !== 0 &&
-      minutos !== 30
-    ) {
-
-      setErrores({
-        hora:
-          "Los turnos sólo pueden registrarse cada 30 minutos.",
-      });
-
-      return;
-
-    }
+    // El horario laboral (08:00 a 19:30, cada 30 minutos) ya lo garantiza la
+    // grilla HORARIOS_CONSULTORIO: no hay forma de elegir otro.
 
     // ==========================
     // POST /api/turnos con el token (lo agrega apiFetch solo)
@@ -203,17 +178,21 @@ function NuevoTurnoModal({
 
       limpiarFormulario();
 
+      // Sin navegar: la tabla ya muestra el turno nuevo (onAgregar). Navegar a
+      // /gestion-turnos sacaba al usuario del Layout (sin header ni menú).
       onClose();
-
-      navigate("/gestion-turnos", {
-        replace: true,
-      });
 
     } catch (error) {
 
       // 401 sin token, 403 con rol PACIENTE, 400 si Zod rechaza el body:
       // el mensaje real lo manda apiFetch, no uno genérico.
       setErrorApi(error instanceof Error ? error.message : "Error al registrar el turno");
+
+      // 409: alguien tomó ese horario mientras tanto -> refrescar la grilla
+      if (error instanceof ApiError && error.status === 409) {
+        setForm((prev) => ({ ...prev, hora: "" }));
+        setRecargarOcupados((n) => n + 1);
+      }
 
     } finally {
 
@@ -327,6 +306,7 @@ function NuevoTurnoModal({
                 <Form.Control
                   type="date"
                   name="fecha"
+                  min={hoyISO}
                   value={form.fecha}
                   onChange={handleChange}
                   isInvalid={!!errores.fecha}
@@ -340,30 +320,41 @@ function NuevoTurnoModal({
 
             </Col>
 
-            <Col md={6}>
-
-              <Form.Group className="mb-3">
-
-                <Form.Label>Hora</Form.Label>
-
-                <Form.Control
-                  type="time"
-                  name="hora"
-                  step="1800"
-                  value={form.hora}
-                  onChange={handleChange}
-                  isInvalid={!!errores.hora}
-                />
-
-                <Form.Control.Feedback type="invalid">
-                  {errores.hora}
-                </Form.Control.Feedback>
-
-              </Form.Group>
-
-            </Col>
-
           </Row>
+
+          {/* Horarios predefinidos: los ocupados del médico ese día salen tachados */}
+          <Form.Group className="mb-3">
+
+            <Form.Label>Horario</Form.Label>
+
+            {!form.medicoId || !form.fecha ? (
+              <p className="pedir-turno-ayuda mt-0">Elegí un médico y una fecha para ver los horarios disponibles.</p>
+            ) : (
+              <>
+                <div className="pedir-turno-horarios mb-2">
+                  {HORARIOS_CONSULTORIO.map((h) => {
+                    const noDisponible = horarioNoDisponible(form.fecha, h, ocupados);
+                    return (
+                      <button
+                        key={h}
+                        type="button"
+                        className={`pedir-turno-chip ${form.hora === h ? "pedir-turno-chip-activo" : ""} ${noDisponible ? "pedir-turno-chip-ocupado" : ""}`}
+                        onClick={() => elegirHora(h)}
+                        disabled={noDisponible}
+                        aria-label={noDisponible ? `${h}, no disponible` : h}
+                      >
+                        {h}
+                      </button>
+                    );
+                  })}
+                </div>
+                <p className="pedir-turno-ayuda mt-0">Los horarios tachados ya están ocupados o pasaron.</p>
+              </>
+            )}
+
+            {errores.hora && <div className="text-danger small">{errores.hora}</div>}
+
+          </Form.Group>
 
           <Form.Group className="mb-4">
 

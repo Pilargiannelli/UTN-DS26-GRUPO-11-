@@ -11,6 +11,9 @@ const registroValido = {
   apellido: "Pérez",
   dni: "30123456",
   email: "ana@imos.test",
+  telefono: "5492344555555",
+  sexo: "Femenino",
+  fechaNacimiento: "1990-05-20",
 };
 
 describe("loginSchema", () => {
@@ -68,7 +71,12 @@ describe("registroSchema", () => {
     }
   });
 
-  // Decisión de seguridad: el rol lo asigna Prisma (@default(PACIENTE)).
+  it("el username es opcional (si falta, el back usa el DNI)", () => {
+    const { username: _omitido, ...sinUsername } = registroValido;
+    expect(registroSchema.safeParse(sinUsername).success).toBe(true);
+  });
+
+  // Decisión de seguridad: el rol lo asigna el back (siempre PACIENTE).
   // Si alguien manda rol en el body, el schema lo descarta.
   it("descarta el rol si viene en el body (nadie se autoasigna SECRETARIA)", () => {
     const r = registroSchema.safeParse({ ...registroValido, rol: "SECRETARIA" });

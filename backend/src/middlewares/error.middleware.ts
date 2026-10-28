@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { ZodError } from "zod";
 import { Prisma } from "../generated/prisma/client";
+import { ErrorNegocio } from "../errors/ErrorNegocio";
 
 export const errorHandler = (
   err: unknown,
@@ -17,6 +18,11 @@ export const errorHandler = (
         mensaje: i.message,
       })),
     });
+  }
+
+  // Reglas de negocio y titularidad lanzadas por los services (404, 409...)
+  if (err instanceof ErrorNegocio) {
+    return res.status(err.status).json({ error: err.message });
   }
 
   // Errores de Prisma Client

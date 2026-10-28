@@ -40,7 +40,7 @@ function Header() {
 
   const manejarLogout = () => {
     logout();
-    navigate("/login");
+    navigate("/");
   };
 
   const irAMiPerfil = () => {
@@ -85,7 +85,7 @@ function Header() {
               </NavDropdown>
             </div>
           ) : (
-            <Link className="btn btn-outline-light btn-sm" to="/login">
+            <Link className="btn btn-outline-light btn-sm" to="/">
               Ingresar
             </Link>
           )}

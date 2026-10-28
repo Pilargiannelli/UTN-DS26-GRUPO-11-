@@ -92,6 +92,15 @@
   padding-top: 16px;
 }
 
+.detalle-turno-nota {
+  border-top: 1px solid rgba(255,255,255,0.15);
+  margin: 18px 0 0;
+  padding-top: 16px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #d6e4de;
+}
+
 .detalle-turno-btn-cancelar {
   font-size: 13px;
   padding: 0 14px;

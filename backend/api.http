@@ -60,10 +60,13 @@ Content-Type: application/json
   "nombre": "Julia",
   "apellido": "Pérez",
   "dni": "41222333",
-  "email": "julia.perez@gmail.com"
+  "email": "julia.perez@gmail.com",
+  "telefono": "5492344555555",
+  "sexo": "Femenino",
+  "fechaNacimiento": "1995-04-12"
 }
 
-### Registro con email repetido -> 409 (Prisma P2002)
+### Registro con email repetido -> 409 ("El email ya se encuentra registrado")
 POST {{baseUrl}}/api/auth/registro
 Content-Type: application/json
 
@@ -73,7 +76,10 @@ Content-Type: application/json
   "nombre": "Julia",
   "apellido": "Pérez",
   "dni": "41222334",
-  "email": "julia.perez@gmail.com"
+  "email": "julia.perez@gmail.com",
+  "telefono": "5492344555555",
+  "sexo": "Femenino",
+  "fechaNacimiento": "1995-04-12"
 }
 
 ### Registro con contraseña débil -> 400 (Zod)
@@ -86,7 +92,10 @@ Content-Type: application/json
   "nombre": "Julia",
   "apellido": "Pérez",
   "dni": "41222335",
-  "email": "otra.julia@gmail.com"
+  "email": "otra.julia@gmail.com",
+  "telefono": "5492344555555",
+  "sexo": "Femenino",
+  "fechaNacimiento": "1995-04-12"
 }
 
 ### Login con contraseña incorrecta -> 401 (mensaje genérico)
@@ -161,6 +170,43 @@ Authorization: Bearer {{tokenSecretaria}}
 GET {{baseUrl}}/api/pacientes
 Authorization: Bearer {{tokenMedico}}
 
+### Alta de paciente por la secretaria -> 201 (usuario y contraseña inicial = DNI)
+POST {{baseUrl}}/api/pacientes
+Authorization: Bearer {{tokenSecretaria}}
+Content-Type: application/json
+
+{
+  "nombre": "Lucía",
+  "apellido": "Gómez",
+  "dni": "40111222",
+  "email": "lucia.gomez@gmail.com",
+  "telefono": "5492344666666",
+  "sexo": "Femenino",
+  "fechaNacimiento": "1998-11-03"
+}
+
+### Alta con el mismo DNI -> 409 ("El DNI ya se encuentra registrado")
+POST {{baseUrl}}/api/pacientes
+Authorization: Bearer {{tokenSecretaria}}
+Content-Type: application/json
+
+{
+  "nombre": "Otra",
+  "apellido": "Persona",
+  "dni": "40111222",
+  "email": "otra.persona@gmail.com",
+  "telefono": "5492344666667",
+  "sexo": "Otro",
+  "fechaNacimiento": "1990-01-01"
+}
+
+### Alta de paciente como Paciente -> 403 Forbidden
+POST {{baseUrl}}/api/pacientes
+Authorization: Bearer {{tokenPaciente}}
+Content-Type: application/json
+
+{}
+
 ### Listar Usuarios sin token -> 401 Unauthorized
 GET {{baseUrl}}/api/usuarios
 
@@ -180,7 +226,7 @@ Authorization: Bearer {{tokenSecretaria}}
 ### Listar turnos sin token -> 401 Unauthorized
 GET {{baseUrl}}/api/turnos
 
-### Listar turnos con rol Paciente -> 403 Forbidden (Rol sin acceso en authorize)
+### Listar turnos con rol Paciente -> 200 OK (solo los propios)
 GET {{baseUrl}}/api/turnos
 Authorization: Bearer {{tokenPaciente}}
 
@@ -272,6 +318,52 @@ Content-Type: application/json
   "medicoId": 99999,
   "pacienteId": 1
 }
+
+### ==========================================
+### 7b. TURNOS DEL PACIENTE (titularidad)
+### ==========================================
+
+### Paciente pide un turno -> 201 Created (Pendiente; el pacienteId del body se ignora)
+# @name pedirTurno
+POST {{baseUrl}}/api/turnos
+Authorization: Bearer {{tokenPaciente}}
+Content-Type: application/json
+
+{
+  "medicoId": 1,
+  "fechaHora": "2030-03-14T13:00:00.000Z",
+  "pacienteId": 999
+}
+
+### Paciente ve su turno -> 200 OK
+GET {{baseUrl}}/api/turnos/{{pedirTurno.response.body.id}}
+Authorization: Bearer {{tokenPaciente}}
+
+### Paciente pide un turno sin fechaHora -> 400 Bad Request
+POST {{baseUrl}}/api/turnos
+Authorization: Bearer {{tokenPaciente}}
+Content-Type: application/json
+
+{
+  "medicoId": 1
+}
+
+### Paciente cancela su turno Pendiente -> 200 OK (estado Cancelado)
+PATCH {{baseUrl}}/api/turnos/{{pedirTurno.response.body.id}}/cancelar
+Authorization: Bearer {{tokenPaciente}}
+
+### Paciente cancela el mismo turno de nuevo -> 409 Conflict ("El turno ya está cancelado")
+PATCH {{baseUrl}}/api/turnos/{{pedirTurno.response.body.id}}/cancelar
+Authorization: Bearer {{tokenPaciente}}
+
+### Paciente cancela un turno Confirmado -> 409 Conflict ("El turno ya fue confirmado; comunicate con el consultorio")
+### (usar el id de un turno Confirmado del paciente, por ejemplo el del seed)
+PATCH {{baseUrl}}/api/turnos/1/cancelar
+Authorization: Bearer {{tokenPaciente}}
+
+### Paciente ve un turno de otro paciente -> 404 Not Found (no 403: no se revela que existe)
+GET {{baseUrl}}/api/turnos/{{turnoId}}
+Authorization: Bearer {{tokenPaciente}}
 
 ### Eliminar el turno creado -> 200 OK
 DELETE {{baseUrl}}/api/turnos/{{turnoId}}

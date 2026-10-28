@@ -1,15 +1,15 @@
 import { Form } from "react-bootstrap";
-import type { UseFormRegister } from "react-hook-form";
+import type { FieldValues, Path, UseFormRegister } from "react-hook-form";
 
-interface SelectEditableProps {
+interface SelectEditableProps<T extends FieldValues> {
     label: string;
-    name: string;
+    name: Path<T>;
     options: string[];
-    register: UseFormRegister<any>;
+    register: UseFormRegister<T>;
     error?: string;
 }
 
-export function SelectEditable({ label, name, options, register, error }: SelectEditableProps) {
+export function SelectEditable<T extends FieldValues>({ label, name, options, register, error }: SelectEditableProps<T>) {
     return (
         <Form.Group>
             <Form.Label className="d-flex me-auto text-xs mb-1">{label}</Form.Label>

@@ -1,0 +1,51 @@
+.no-encontrada {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  padding: 80px 16px;
+  text-align: center;
+}
+
+.no-encontrada-codigo {
+  margin: 0;
+  font-family: Georgia, serif;
+  font-size: 96px;
+  line-height: 1;
+  color: #c9d8d2;
+}
+
+.no-encontrada-titulo {
+  margin: 0;
+  font-family: Georgia, serif;
+  font-weight: 400;
+  font-size: 28px;
+  color: #0d3b2e;
+}
+
+.no-encontrada-texto {
+  margin: 0;
+  max-width: 420px;
+  font-size: 15px;
+  line-height: 1.55;
+  color: #5f5e5a;
+}
+
+.no-encontrada-btn {
+  margin-top: 8px;
+  display: inline-flex;
+  align-items: center;
+  height: 46px;
+  padding: 0 22px;
+  border-radius: 10px;
+  background: #0f4d3a;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.no-encontrada-btn:hover {
+  background: #0d3b2e;
+  color: #fff;
+}

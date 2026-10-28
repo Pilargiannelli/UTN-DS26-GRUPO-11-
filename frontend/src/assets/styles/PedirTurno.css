@@ -49,6 +49,21 @@
   cursor: pointer;
 }
 
+.pedir-turno-chip-ocupado,
+.pedir-turno-chip:disabled {
+  border-style: dashed;
+  background: #f4f3ec;
+  color: #9a968b;
+  text-decoration: line-through;
+  cursor: not-allowed;
+}
+
+.pedir-turno-ayuda {
+  font-size: 12px;
+  color: #6b675e;
+  margin: -0.75rem 0 1.25rem;
+}
+
 .pedir-turno-chip-activo {
   background: #0f6e56;
   color: #fff;

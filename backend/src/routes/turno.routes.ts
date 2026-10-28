@@ -1,9 +1,10 @@
-import { Router } from "express";
+import { Router, Request, Response, NextFunction } from "express";
 import * as turnoController from "../controllers/turno.controller";
 import { validate, validateParams } from "../middlewares/validate.middleware";
 import { authenticate, authorize } from "../middlewares/auth.middleware";
 import {
   turnoCreateSchema,
+  turnoSolicitudSchema,
   turnoUpdateSchema,
   idParamSchema,
 } from "../validations/turno.validation";
@@ -14,21 +15,26 @@ const router = Router();
 // Todas las rutas de turnos requieren estar autenticado
 router.use(authenticate);
 
-// Listar turnos: Secretaria ve todos, Médico y Paciente ven sólo los propios
-// (matriz de permisos, sección 8 — "✅ propio"). El filtrado por identidad
-// se resuelve en turno.service.findAllParaUsuario, no acá.
-router.get("/", authorize(Rol.MEDICO, Rol.SECRETARIA, Rol.PACIENTE), turnoController.getAll);
+// El paciente pide un turno con { medicoId, fechaHora }; secretaria y médico
+// cargan el turno completo (con pacienteId).
+const validarAltaTurno = (req: Request, res: Response, next: NextFunction) =>
+  validate(req.usuario?.rol === Rol.PACIENTE ? turnoSolicitudSchema : turnoCreateSchema)(req, res, next);
 
-// Obtener turno por ID (Médico y Secretaria)
-router.get("/:id", authorize(Rol.MEDICO, Rol.SECRETARIA), validateParams(idParamSchema), turnoController.getById);
+// Los tres roles entran a estas rutas; la titularidad ("✅ propio" en la
+// matriz de permisos, sección 8) se resuelve en turno.service, no acá.
+const todos = authorize(Rol.MEDICO, Rol.SECRETARIA, Rol.PACIENTE);
 
-// Crear un nuevo turno (Secretaria y Médico)
-router.post("/", authorize(Rol.SECRETARIA, Rol.MEDICO), validate(turnoCreateSchema), turnoController.create);
+router.get("/", todos, turnoController.getAll);
+// Antes de "/:id" para que "ocupados" no se tome como un id
+router.get("/ocupados", todos, turnoController.getOcupados);
+router.get("/:id", todos, validateParams(idParamSchema), turnoController.getById);
+router.post("/", todos, validarAltaTurno, turnoController.create);
 
-// Actualizar / Reprogramar un turno (Médico y Secretaria)
+// Cancelar = cambio de estado a Cancelado (no borra: queda en el historial)
+router.patch("/:id/cancelar", todos, validateParams(idParamSchema), turnoController.cancelar);
+
+// Actualizar / Reprogramar y eliminar: Médico (sólo los suyos) y Secretaria
 router.put("/:id", authorize(Rol.MEDICO, Rol.SECRETARIA), validateParams(idParamSchema), validate(turnoUpdateSchema), turnoController.update);
-
-// Cancelar / Eliminar un turno (Médico y Secretaria)
 router.delete("/:id", authorize(Rol.MEDICO, Rol.SECRETARIA), validateParams(idParamSchema), turnoController.remove);
 
 export default router;

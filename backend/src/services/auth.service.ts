@@ -1,23 +1,16 @@
 import bcrypt from "bcrypt";
 import jwt, { SignOptions } from "jsonwebtoken";
 import { prisma } from "../config/prisma";
-import { JWT_SECRET, JWT_EXPIRES_IN, SALT_ROUNDS } from "../config/env";
+import { JWT_SECRET, JWT_EXPIRES_IN } from "../config/env";
 import { RegistroInput, LoginInput } from "../validations/auth.validation";
+import { crearPaciente } from "./paciente.service";
 
-// El passwordHash no viaja en la respuesta: prisma.ts lo omite globalmente
-// (omit: { usuario: { passwordHash: true } }) para todas las queries.
+// Autoregistro: el mismo alta que hace la secretaria (Usuario + Paciente),
+// pero con la contraseña que eligió el paciente. El passwordHash no viaja en
+// la respuesta: prisma.ts lo omite globalmente.
 export async function registrar(datos: RegistroInput) {
-  const { password, ...resto } = datos;
-  const passwordHash = await bcrypt.hash(password, SALT_ROUNDS);
-
-  return prisma.usuario.create({
-    data: { ...resto, passwordHash },
-    include: {
-      paciente: true,
-      medico: true,
-      secretaria: true,
-    },
-  });
+  const { password, username, ...paciente } = datos;
+  return crearPaciente(paciente, { username, password });
 }
 
 export async function login(datos: LoginInput) {
