@@ -10,7 +10,6 @@ export const menuPorRol: Record<RolUsuario, MenuItem[]> = {
     { label: "Gestión de turnos", href: "/home" },
     { label: "Pacientes", href: "/buscar-paciente" },
     { label: "Médicos", href: "/buscar-medico" },
-    { label: "Nueva obra social", href: "/obras-sociales/nueva" },
     miCuenta,
   ],
   MEDICO: [

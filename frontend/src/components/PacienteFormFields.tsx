@@ -12,6 +12,8 @@ import type { CoberturaPaciente, PacientePerfil } from "../types/Usuario";
 import { stringToDateInput, dateInputToString } from "../hooks/useDateTransform";
 import type { ObraSocial } from "../types/Paciente";
 import { apiFetch, ApiError } from "../services/api";
+import { useAuth } from "../hooks/useAuth";
+import { AgregarObraSocial } from "./AgregarObraSocial";
 
 // Respuesta de PUT /api/pacientes/:id (paciente.service.ts)
 interface PacienteActualizado extends PacientePerfil {
@@ -39,11 +41,13 @@ export function PacienteFormFields({ onSave, onCancel, usuario }: PacienteFormPr
     const paciente = usuario.paciente!;
     const cobertura = paciente.coberturas?.[0];
 
+    const { tieneRol } = useAuth();
     const { data: obrasSocialesAPI, loading } = useFetch<ObraSocial[]>("/obras-sociales");
-    const obrasSociales = obrasSocialesAPI ?? [];
+    const [obrasAgregadas, setObrasAgregadas] = useState<ObraSocial[]>([]);
+    const obrasSociales = [...(obrasSocialesAPI ?? []), ...obrasAgregadas];
     const osValidas = [SIN_OBRA_SOCIAL, ...obrasSociales.map((os) => os.nombre)];
 
-    const schema = pacienteSchema(osValidas, sexoOptions);
+    const schema = pacienteSchema(sexoOptions);
 
     const initialValues: PacienteValidado = {
         nombre: usuario.nombre,
@@ -166,6 +170,13 @@ export function PacienteFormFields({ onSave, onCancel, usuario }: PacienteFormPr
                 <Row className="g-2 mt-1">
                     <Col md={4}>
                         <SelectEditable label="Obra social" name="obraSocial" options={osValidas} register={register} error={errors.obraSocial?.message} />
+                        {/* Solo la secretaria crea obras sociales (POST /api/obras-sociales) */}
+                        {tieneRol("SECRETARIA") && (
+                            <AgregarObraSocial onCreada={(nueva) => {
+                                setObrasAgregadas((prev) => [...prev, nueva]);
+                                setValue("obraSocial", nueva.nombre, { shouldValidate: true });
+                            }} />
+                        )}
                     </Col>
                     <Col md={4}>
                         <Form.Group controlId="edit-afiliado">

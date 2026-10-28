@@ -91,7 +91,7 @@ describe("Header según el rol", () => {
     expect(screen.queryByRole("button", { name: "Abrir menú" })).not.toBeInTheDocument();
   });
 
-  it("SECRETARIA: menú administrativo con 'Nueva obra social' y sin historia clínica", () => {
+  it("SECRETARIA: menú administrativo y sin historia clínica", () => {
     renderizarHeader(crearUsuario("SECRETARIA"));
     abrirMenu();
 
@@ -99,10 +99,9 @@ describe("Header según el rol", () => {
     expect(screen.getByRole("link", { name: "Pacientes" })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Médicos" })).toBeInTheDocument();
     expect(screen.queryByRole("link", { name: "Historia clínica" })).not.toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Nueva obra social" })).toHaveAttribute("href", "/obras-sociales/nueva");
   });
 
-  it("MEDICO: menú con Agenda e Historia clínica, sin 'Médicos' ni 'Nueva obra social'", () => {
+  it("MEDICO: menú con Agenda e Historia clínica, sin 'Médicos'", () => {
     renderizarHeader(crearUsuario("MEDICO"));
     abrirMenu();
 
@@ -110,7 +109,6 @@ describe("Header según el rol", () => {
     expect(screen.getByRole("link", { name: "Agenda" })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Historia clínica" })).toBeInTheDocument();
     expect(screen.queryByRole("link", { name: "Médicos" })).not.toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: "Nueva obra social" })).not.toBeInTheDocument();
   });
 
   it("PACIENTE: menú con sus turnos y sin pantallas del personal", () => {

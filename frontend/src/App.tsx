@@ -19,7 +19,6 @@ import BuscarMedico from "./pages/BuscarMédico.tsx";
 import OrdenDelDia from "./pages/OrdenDelDia.tsx";
 import HistorialClinico from "./pages/HistorialClinico.tsx";
 import NoEncontrada from "./pages/NoEncontrada.tsx";
-import NuevaObraSocial from "./pages/NuevaObraSocial.tsx";
 import Layout from "./components/Layout/Layout.tsx";
 
 function App() {
@@ -54,7 +53,6 @@ function App() {
         <Route path="/registrar-medico" element={<RegistrarMedico />} />
         <Route path="/registrar-paciente" element={<RegistroPaciente />} />
         <Route path="/registrar-usuario" element={<RegistroUsuario />} />
-        <Route path="/obras-sociales/nueva" element={<NuevaObraSocial />} />
       </Route>
 
       {/* ========================================== */}

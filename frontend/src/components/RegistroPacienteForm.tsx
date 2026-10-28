@@ -12,6 +12,8 @@ import { dateInputToString } from "../hooks/useDateTransform.ts";
 import { apiFetch, ApiError } from "../services/api.ts";
 import type { ObraSocial } from "../types/Paciente.ts";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../hooks/useAuth.ts";
+import { AgregarObraSocial } from "./AgregarObraSocial.tsx";
 
 interface RegistroPacienteFormProps {
     // secretaria: POST /pacientes (usuario y contraseña inicial = DNI)
@@ -35,6 +37,7 @@ const CAMPO_FORM: Record<string, Path<PacienteValidado>> = {
 
 export function RegistroPacienteForm({ modo }: RegistroPacienteFormProps) {
     const navigate = useNavigate();
+    const { tieneRol } = useAuth();
     const handleMayus = useMayus();
     const [submitting, setSubmitting] = useState(false);
     const [errorMsg, setErrorMsg] = useState<string | null>(null);
@@ -43,12 +46,16 @@ export function RegistroPacienteForm({ modo }: RegistroPacienteFormProps) {
     const opcionesSexo = ["Masculino", "Femenino", "Otro"];
 
     // GET /api/obras-sociales devuelve [{ id, nombre }]: el select muestra el
-    // nombre y al enviar se manda el id (cobertura.obraSocialId)
+    // nombre y al enviar se manda el id (cobertura.obraSocialId). Se suman las
+    // que la secretaria agrega desde este mismo formulario.
     const { data: obrasSocialesAPI, loading } = useFetch<ObraSocial[]>("/obras-sociales");
-    const obrasSociales = obrasSocialesAPI ?? [];
+    const [obrasAgregadas, setObrasAgregadas] = useState<ObraSocial[]>([]);
+    const obrasSociales = [...(obrasSocialesAPI ?? []), ...obrasAgregadas];
     const osValidas = [SIN_OBRA_SOCIAL, ...obrasSociales.map((os) => os.nombre)];
+    // Solo la secretaria crea obras sociales (POST /api/obras-sociales)
+    const puedeAgregarObraSocial = !esAutoregistro && tieneRol("SECRETARIA");
 
-    const schema = pacienteSchema(osValidas, opcionesSexo, esAutoregistro);
+    const schema = pacienteSchema(opcionesSexo, esAutoregistro);
 
     const { register, handleSubmit, formState: { errors }, control, setValue, setError } = useForm<PacienteValidado>({
         resolver: zodResolver(schema) as Resolver<PacienteValidado>,
@@ -182,6 +189,12 @@ export function RegistroPacienteForm({ modo }: RegistroPacienteFormProps) {
                     {/* Obra Social */}
                     <Col md={4}>
                         <SelectEditable label="Obra social" name="obraSocial" options={osValidas} register={register} error={errors.obraSocial?.message} />
+                        {puedeAgregarObraSocial && (
+                            <AgregarObraSocial onCreada={(nueva) => {
+                                setObrasAgregadas((prev) => [...prev, nueva]);
+                                setValue("obraSocial", nueva.nombre, { shouldValidate: true });
+                            }} />
+                        )}
                     </Col>
                     {/* Número de afiliado */}
                     <Col md={4}>

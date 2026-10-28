@@ -14,7 +14,7 @@ const valido = {
   fechaNacimiento: { day: "20", month: "05", year: "1990" },
 };
 
-const schema = (conPassword = false) => pacienteSchema([SIN_OBRA_SOCIAL, "OSDE"], ["Masculino", "Femenino", "Otro"], conPassword);
+const schema = (conPassword = false) => pacienteSchema(["Masculino", "Femenino", "Otro"], conPassword);
 const campos = (r: ReturnType<ReturnType<typeof schema>["safeParse"]>) =>
   r.success ? [] : r.error.issues.map((i) => i.path.join("."));
 
