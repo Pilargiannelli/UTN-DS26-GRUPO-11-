@@ -3,79 +3,40 @@ import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth.ts";
 import { Sidebar } from "./Sidebar.tsx";
 import { useFotoPerfil } from "../../hooks/useFotoPerfil.ts";
-import { useRolView } from "../../hooks/useRolView.ts";
+import { menuPorRol } from "./menuPorRol.ts";
 import '../../assets/styles/Header.css';
 
 function Header() {
-  const { usuario, logout, estaAutenticado, tieneRol } = useAuth();
+  const { usuario, logout, estaAutenticado } = useAuth();
   const navigate = useNavigate();
 
-  // Cambiamos usuario.foto por usuario.fotoPerfil
   const fotoPerfil = useFotoPerfil(usuario?.fotoPerfil ?? undefined);
-
-  // Menús para el Sidebar
-  const menuItemsAdmin = [
-    { label: "Gestión de Turnos", href: "/home" },
-    { label: 'Pacientes', href: '/buscar-paciente' },
-    { label: 'Médicos', href: '/buscar-medico' },
-  ];
-
-  const menuItemsMed = [
-    { label: "Gestión de Turnos", href: "/home" },
-    { label: 'Pacientes', href: '/buscar-paciente' },
-    { label: 'Agenda', href: '/orden-del-dia' },
-    { label: 'Historial Clínico', href: '/historial' },
-  ];
-
-  const itemsPaciente = [
-    { label: "Inicio", href: "/home" },
-  ];
-
-  // Vista según el rol del enum de Prisma (las claves deben coincidir con Rol)
-  const vistaPorRol = useRolView({
-    SECRETARIA: <Sidebar items={menuItemsAdmin} />,
-    MEDICO: <Sidebar items={menuItemsMed} />,
-    PACIENTE: <Sidebar items={itemsPaciente} />,
-  });
 
   const manejarLogout = () => {
     logout();
     navigate("/");
   };
 
-  const irAMiPerfil = () => {
-    if (usuario) {
-      localStorage.setItem("usuarioSeleccionado", JSON.stringify(usuario));
-      navigate("/ver-perfil");
-    }
-  };
-
   return (
-    <Navbar id="colorNav">
+    <Navbar id="colorNav" as="header">
       <Container className="header-container container-fluid">
         <Navbar.Brand className="nav-logo m-0 d-flex align-items-center gap-2">
-          {estaAutenticado && vistaPorRol}
-          <img src="/IMOS_LOGO.png" width="180" height="180" alt="IMOS" />
+          {/* Menú desplegable (☰) con las pantallas del rol */}
+          {estaAutenticado && usuario && <Sidebar items={menuPorRol[usuario.rol]} />}
+          <Link to={estaAutenticado ? "/home" : "/"} aria-label="IMOS, ir al inicio">
+            <img src="/IMOS_LOGO.png" width="180" height="180" alt="IMOS" />
+          </Link>
         </Navbar.Brand>
-
-        {/* Autorización UI: link visible solo para SECRETARIA (rol administrativo) */}
-        <Nav className="me-auto ms-3 d-none d-md-flex">
-          {tieneRol("SECRETARIA") && (
-            <Link className="nav-link text-white" to="/obras-sociales/nueva">
-              + Nueva Obra Social
-            </Link>
-          )}
-        </Nav>
 
         {/* Control de Sesión */}
         <Nav className="ms-auto align-items-center">
           {estaAutenticado && usuario ? (
             <div className="d-flex align-items-center gap-2">
-              <span className="text-white d-none d-sm-inline">
+              <span className="header-saludo d-none d-sm-inline">
                 Hola, <strong>{usuario.nombre}</strong>
               </span>
-              <NavDropdown title={<div {...fotoPerfil} />} id="perfil-dropdown" align="end">
-                <NavDropdown.Item className="item" onClick={irAMiPerfil}>
+              <NavDropdown title={<div {...fotoPerfil} aria-label="Menú de la cuenta" />} id="perfil-dropdown" align="end">
+                <NavDropdown.Item className="item" onClick={() => navigate("/mi-cuenta")}>
                   Mi cuenta
                 </NavDropdown.Item>
                 <NavDropdown.Divider />
@@ -85,7 +46,7 @@ function Header() {
               </NavDropdown>
             </div>
           ) : (
-            <Link className="btn btn-outline-light btn-sm" to="/">
+            <Link className="btn btn-outline-success btn-sm" to="/">
               Ingresar
             </Link>
           )}

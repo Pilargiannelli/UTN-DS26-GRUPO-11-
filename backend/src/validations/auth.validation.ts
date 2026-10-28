@@ -28,5 +28,17 @@ export const loginSchema = z.object({
   password: z.string().min(1, "La contraseña es obligatoria"),
 });
 
+// PATCH /api/auth/password (cualquier usuario logueado, sobre su propia cuenta)
+export const cambioPasswordSchema = z
+  .object({
+    passwordActual: z.string().min(1, "Ingresá tu contraseña actual"),
+    passwordNueva: passwordFuerte,
+  })
+  .refine((d) => d.passwordNueva !== d.passwordActual, {
+    message: "La contraseña nueva tiene que ser distinta de la actual",
+    path: ["passwordNueva"],
+  });
+
 export type RegistroInput = z.infer<typeof registroSchema>;
+export type CambioPasswordInput = z.infer<typeof cambioPasswordSchema>;
 export type LoginInput = z.infer<typeof loginSchema>;

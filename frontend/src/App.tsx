@@ -38,6 +38,7 @@ function App() {
         <Route path="/home" element={<Home />} />
         <Route path="/buscar-medico" element={<BuscarMedico />} />
         <Route path="/ver-perfil" element={<VerUsuario />} />
+        <Route path="/mi-cuenta" element={<VerUsuario propio />} />
         <Route path="/cambiar-password" element={<CambiarPassword />} />
         <Route path="/mis-turnos" element={<MisTurnos />} />
         <Route path="/turnos/:id" element={<DetalleTurno />} />
@@ -50,6 +51,7 @@ function App() {
       {/* ========================================== */}
       <Route element={<PrivateRoute roles={["SECRETARIA"]} />}>
         <Route path="/registrar-medico" element={<RegistrarMedico />} />
+        {/* HU-001: el alta de pacientes es del personal administrativo */}
         <Route path="/registrar-paciente" element={<RegistroPaciente />} />
         <Route path="/registrar-usuario" element={<RegistroUsuario />} />
       </Route>

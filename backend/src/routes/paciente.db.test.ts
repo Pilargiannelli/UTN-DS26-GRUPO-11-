@@ -82,6 +82,46 @@ describe("POST /api/pacientes (secretaria)", () => {
   });
 });
 
+describe("PUT /api/pacientes/:id (editar)", () => {
+  const pacienteDePrueba = () =>
+    prisma.paciente.findFirstOrThrow({ where: { usuario: { dni: DNIS_PRUEBA[0] } } });
+
+  it("la secretaria cambia el teléfono y saca la obra social", async () => {
+    const paciente = await pacienteDePrueba();
+    const res = await request(app)
+      .put(`/api/pacientes/${paciente.id}`)
+      .set("Authorization", `Bearer ${tokenSecretaria}`)
+      .send({ ...datosPaciente(DNIS_PRUEBA[0], "alta.secretaria@test.local"), telefono: "5492344999999" });
+
+    expect(res.status).toBe(200);
+    expect(res.body.telefono).toBe("5492344999999");
+    expect(res.body.coberturas).toEqual([]);
+  });
+
+  it("no puede usar el DNI de otro paciente: 409", async () => {
+    const paciente = await pacienteDePrueba();
+    const maria = await prisma.usuario.findUniqueOrThrow({ where: { email: "maria.flores@gmail.com" } });
+    const res = await request(app)
+      .put(`/api/pacientes/${paciente.id}`)
+      .set("Authorization", `Bearer ${tokenSecretaria}`)
+      .send(datosPaciente(maria.dni, "alta.secretaria@test.local"));
+
+    expect(res.status).toBe(409);
+    expect(res.body).toEqual({ error: "El DNI ya se encuentra registrado" });
+  });
+
+  it("un paciente no puede editar a otro: 404", async () => {
+    const paciente = await pacienteDePrueba();
+    const login = await request(app).post("/api/auth/login").send({ email: "maria.flores@gmail.com", password: "Paciente1234" });
+    const res = await request(app)
+      .put(`/api/pacientes/${paciente.id}`)
+      .set("Authorization", `Bearer ${login.body.token}`)
+      .send(datosPaciente(DNIS_PRUEBA[0], "alta.secretaria@test.local"));
+
+    expect(res.status).toBe(404);
+  });
+});
+
 describe("POST /api/auth/registro (autoregistro)", () => {
   it("crea la ficha de Paciente y el paciente puede entrar y pedir turnos", async () => {
     const registro = await request(app)

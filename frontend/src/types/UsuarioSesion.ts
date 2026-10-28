@@ -1,3 +1,5 @@
+import type { PacientePerfil } from "./Usuario";
+
 // Los tres roles reales del back (Prisma enum Rol), no strings inventados.
 export type RolUsuario = "PACIENTE" | "SECRETARIA" | "MEDICO";
 
@@ -14,12 +16,7 @@ export interface UsuarioSesion {
   rol: RolUsuario;
   
   // Relaciones opcionales que el backend ahora incluye en la respuesta
-  paciente?: {
-    id: number;
-    fechaNacimiento: string | Date;
-    sexo: string;
-    telefono: string;
-  } | null;
+  paciente?: PacientePerfil | null;
   medico?: {
     id: number;
     especialidad: string;

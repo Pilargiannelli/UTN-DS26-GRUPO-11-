@@ -372,3 +372,51 @@ Authorization: Bearer {{tokenMedico}}
 ### Eliminar el mismo turno de nuevo -> 404 Not Found
 DELETE {{baseUrl}}/api/turnos/{{turnoId}}
 Authorization: Bearer {{tokenMedico}}
+
+### ==========================================
+### 8. HISTORIA CLÍNICA (matriz de permisos §10)
+### ==========================================
+### :id es el id de Paciente (no el de Usuario)
+
+### Médico ve la historia de un paciente -> 200 (consultas de la más nueva a la más vieja)
+GET {{baseUrl}}/api/pacientes/1/historia-clinica
+Authorization: Bearer {{tokenMedico}}
+
+### Médico registra una consulta -> 201 (devuelve la historia actualizada)
+POST {{baseUrl}}/api/pacientes/1/historia-clinica/entradas
+Authorization: Bearer {{tokenMedico}}
+Content-Type: application/json
+
+{
+  "diagnostico": "Esguince de tobillo grado I",
+  "evolucion": "Reposo relativo 7 días, hielo y control en 10 días",
+  "observaciones": ""
+}
+
+### Médico reemplaza alergias y antecedentes -> 200
+PUT {{baseUrl}}/api/pacientes/1/historia-clinica
+Authorization: Bearer {{tokenMedico}}
+Content-Type: application/json
+
+{
+  "alergias": ["Penicilina"],
+  "antecedentes": ["Hipertensión"]
+}
+
+### Secretaria pide una historia -> 403
+GET {{baseUrl}}/api/pacientes/1/historia-clinica
+Authorization: Bearer {{tokenSecretaria}}
+
+### ==========================================
+### 9. CAMBIO DE CONTRASEÑA
+### ==========================================
+
+### Contraseña actual incorrecta -> 400 (no 401: el usuario sí está logueado)
+PATCH {{baseUrl}}/api/auth/password
+Authorization: Bearer {{tokenPaciente}}
+Content-Type: application/json
+
+{
+  "passwordActual": "NoEsMiPassword1",
+  "passwordNueva": "Segura123"
+}

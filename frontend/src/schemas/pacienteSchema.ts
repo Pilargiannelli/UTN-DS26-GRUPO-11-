@@ -6,8 +6,10 @@ export const SIN_OBRA_SOCIAL = "Sin obra social";
 // Mismas reglas que backend/src/validations/paciente.validation.ts, para que
 // el formulario marque los errores antes de enviar. Con conPassword (modo
 // autoregistro) suma la contraseña con la misma fortaleza que exige el back.
-export const pacienteSchema = (obrasSociales: string[], sexo: string[], conPassword = false) => {
-    const OSValidas = obrasSociales as [string, ...string[]];
+// La obra social no se valida contra una lista cerrada: la secretaria puede
+// agregar una nueva desde el mismo formulario, y el select ya limita las
+// opciones. Al enviar, el formulario la busca por nombre para mandar su id.
+export const pacienteSchema = (sexo: string[], conPassword = false) => {
     const sexosValidos = sexo as [string, ...string[]];
     return z.object({
         nombre: z.string().trim().min(1, "Por favor, ingrese el nombre del paciente"),
@@ -16,7 +18,7 @@ export const pacienteSchema = (obrasSociales: string[], sexo: string[], conPassw
         email: z.string().trim().min(1, "Por favor, ingrese el correo electrónico del paciente")
             .email("El correo ingresado no corresponde a una dirección de correo válida"),
         telefono: z.string().trim().regex(/^\+?\d{8,15}$/, "El teléfono debe tener entre 8 y 15 números, con código de área"),
-        obraSocial: z.enum(OSValidas, { message: "Por favor, seleccione una obra social válida" }),
+        obraSocial: z.string().min(1, "Por favor, seleccione una obra social"),
         nroAfiliado: z.string().min(1, "Por favor, ingrese el número de afiliado"),
         plan: z.string().min(1, "Por favor, ingrese el plan"),
         sexo: z.enum(sexosValidos, { message: "Por favor, seleccione un sexo válido" }),

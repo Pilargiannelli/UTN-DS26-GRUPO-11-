@@ -1,9 +1,10 @@
 import bcrypt from "bcrypt";
 import jwt, { SignOptions } from "jsonwebtoken";
 import { prisma } from "../config/prisma";
-import { JWT_SECRET, JWT_EXPIRES_IN } from "../config/env";
-import { RegistroInput, LoginInput } from "../validations/auth.validation";
+import { JWT_SECRET, JWT_EXPIRES_IN, SALT_ROUNDS } from "../config/env";
+import { RegistroInput, LoginInput, CambioPasswordInput } from "../validations/auth.validation";
 import { crearPaciente } from "./paciente.service";
+import { ErrorNegocio } from "../errors/ErrorNegocio";
 
 // Autoregistro: el mismo alta que hace la secretaria (Usuario + Paciente),
 // pero con la contraseña que eligió el paciente. El passwordHash no viaja en
@@ -20,7 +21,7 @@ export async function login(datos: LoginInput) {
     where: { email: datos.email },
     omit: { passwordHash: false },
     include: {
-      paciente: true,
+      paciente: { include: { coberturas: { include: { obraSocial: true } } } },
       medico: true,
       secretaria: true,
     },
@@ -40,11 +41,32 @@ export async function login(datos: LoginInput) {
   return { token, usuario: usuarioSinHash };
 }
 
+// Cambio de contraseña del propio usuario. La actual incorrecta responde 400,
+// no 401: en el front un 401 con token significa "sesión vencida" y cierra la
+// sesión, y acá el usuario sí está autenticado.
+export async function cambiarPassword(usuarioId: number, datos: CambioPasswordInput) {
+  const usuario = await prisma.usuario.findUniqueOrThrow({
+    where: { id: usuarioId },
+    // select explícito: pisa el omit global solo para esta query
+    select: { passwordHash: true },
+  });
+
+  if (!(await bcrypt.compare(datos.passwordActual, usuario.passwordHash))) {
+    throw new ErrorNegocio(400, "La contraseña actual es incorrecta");
+  }
+
+  await prisma.usuario.update({
+    where: { id: usuarioId },
+    data: { passwordHash: await bcrypt.hash(datos.passwordNueva, SALT_ROUNDS) },
+  });
+}
+
 export async function obtenerPerfil(id: number) {
   return prisma.usuario.findUnique({
     where: { id },
     include: {
-      paciente: true,
+      // Con la obra social: el paciente la ve y la edita en su perfil
+      paciente: { include: { coberturas: { include: { obraSocial: true } } } },
       medico: true,
       secretaria: true,
     },

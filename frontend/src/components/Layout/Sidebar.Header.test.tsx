@@ -6,6 +6,7 @@ import type { AuthContextType } from "../../context/AuthContextBase";
 import type { RolUsuario, UsuarioSesion } from "../../types/UsuarioSesion";
 import Header from "./Header";
 import { Sidebar } from "./Sidebar";
+import { menuPorRol } from "./menuPorRol";
 
 afterEach(cleanup);
 
@@ -44,22 +45,23 @@ function renderizarHeader(usuario: UsuarioSesion | null) {
 }
 
 // El menú es un Offcanvas: sus links sólo existen en el DOM una vez abierto.
-const abrirMenu = () => fireEvent.click(screen.getByRole("button", { name: "☰" }));
+const abrirMenu = () => fireEvent.click(screen.getByRole("button", { name: "Abrir menú" }));
 
-describe("Sidebar", () => {
+describe("Sidebar (menú desplegable)", () => {
   const items = [
     { label: "Inicio", href: "/home" },
     { label: "Agenda", href: "/orden-del-dia" },
   ];
+  const renderizarSidebar = () => render(<MemoryRouter><Sidebar items={items} /></MemoryRouter>);
 
   it("no muestra los links hasta abrir el menú", () => {
-    render(<Sidebar items={items} />);
+    renderizarSidebar();
 
     expect(screen.queryByText("Inicio")).not.toBeInTheDocument();
   });
 
   it("muestra un link por cada item, con su href, al abrir el menú", () => {
-    render(<Sidebar items={items} />);
+    renderizarSidebar();
     abrirMenu();
 
     expect(screen.getByRole("link", { name: "Inicio" })).toHaveAttribute("href", "/home");
@@ -67,48 +69,58 @@ describe("Sidebar", () => {
   });
 });
 
+describe("Sidebar marca la página actual", () => {
+  it("el link de la ruta abierta tiene la clase active", () => {
+    render(
+      <MemoryRouter initialEntries={["/mis-turnos"]}>
+        <Sidebar items={menuPorRol.PACIENTE} />
+      </MemoryRouter>
+    );
+    abrirMenu();
+
+    expect(screen.getByRole("link", { name: "Mis turnos" })).toHaveClass("active");
+    expect(screen.getByRole("link", { name: "Inicio" })).not.toHaveClass("active");
+  });
+});
+
 describe("Header según el rol", () => {
-  it("invitado: muestra 'Ingresar' y no muestra el menú lateral", () => {
+  it("invitado: muestra 'Ingresar' y no muestra el menú", () => {
     renderizarHeader(null);
 
     expect(screen.getByRole("link", { name: "Ingresar" })).toBeInTheDocument();
-    expect(screen.queryByRole("button", { name: "☰" })).not.toBeInTheDocument();
-    expect(screen.queryByText("+ Nueva Obra Social")).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Abrir menú" })).not.toBeInTheDocument();
   });
 
-  it("SECRETARIA: sidebar administrativo y link '+ Nueva Obra Social'", () => {
+  it("SECRETARIA: menú administrativo y sin historia clínica", () => {
     renderizarHeader(crearUsuario("SECRETARIA"));
     abrirMenu();
 
-    expect(screen.getByRole("link", { name: "Gestión de Turnos" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Gestión de turnos" })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Pacientes" })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Médicos" })).toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: "Historial Clínico" })).not.toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "+ Nueva Obra Social" })).toHaveAttribute(
-      "href",
-      "/obras-sociales/nueva"
-    );
+    expect(screen.queryByRole("link", { name: "Historia clínica" })).not.toBeInTheDocument();
   });
 
-  it("MEDICO: sidebar con Agenda e Historial Clínico, sin 'Médicos' ni 'Nueva Obra Social'", () => {
+  it("MEDICO: menú con Agenda e Historia clínica, sin 'Médicos'", () => {
     renderizarHeader(crearUsuario("MEDICO"));
     abrirMenu();
 
-    expect(screen.getByRole("link", { name: "Gestión de Turnos" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Gestión de turnos" })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Agenda" })).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Historial Clínico" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Historia clínica" })).toBeInTheDocument();
     expect(screen.queryByRole("link", { name: "Médicos" })).not.toBeInTheDocument();
-    expect(screen.queryByText("+ Nueva Obra Social")).not.toBeInTheDocument();
   });
 
-  it("PACIENTE: sidebar reducido (sólo Inicio) y sin 'Nueva Obra Social'", () => {
+  it("PACIENTE: menú con sus turnos y sin pantallas del personal", () => {
     renderizarHeader(crearUsuario("PACIENTE"));
     abrirMenu();
 
     expect(screen.getByRole("link", { name: "Inicio" })).toHaveAttribute("href", "/home");
-    expect(screen.queryByRole("link", { name: "Gestión de Turnos" })).not.toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Mis turnos" })).toHaveAttribute("href", "/mis-turnos");
+    expect(screen.getByRole("link", { name: "Pedir turno" })).toHaveAttribute("href", "/pedir-turno");
+    expect(screen.getByRole("link", { name: "Mi cuenta" })).toHaveAttribute("href", "/mi-cuenta");
+    expect(screen.queryByRole("link", { name: "Gestión de turnos" })).not.toBeInTheDocument();
     expect(screen.queryByRole("link", { name: "Pacientes" })).not.toBeInTheDocument();
-    expect(screen.queryByText("+ Nueva Obra Social")).not.toBeInTheDocument();
   });
 
   it("usuario autenticado: saluda por nombre y no muestra 'Ingresar'", () => {

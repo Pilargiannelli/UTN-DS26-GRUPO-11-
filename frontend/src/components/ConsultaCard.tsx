@@ -1,35 +1,40 @@
-import type { Consulta } from "../types/ConsultaProps";
+import type { EntradaClinica } from "../types/HistoriaClinica";
 import '../assets/styles/ConsultaCard.css'
 
 interface ConsultaCardProps {
-  consulta: Consulta;
+  entrada: EntradaClinica;
+  medico?: string | null;
 }
 
-export function ConsultaCard({ consulta }: ConsultaCardProps) {
+export function ConsultaCard({ entrada, medico }: ConsultaCardProps) {
+  const fecha = new Date(entrada.fecha).toLocaleDateString("es-AR", {
+    day: "2-digit", month: "2-digit", year: "numeric",
+  });
+
   return (
     <div className="consulta-item">
         <div className="dato">
             <h5>Fecha:</h5>
-            <p>{consulta.fecha}</p>
+            <p>{fecha}</p>
         </div>
-        <div className="dato">
-            <h5>Médico:</h5>
-            <p>{consulta.medico}</p>
-        </div>
-        <div className="dato">
-            <h5>Motivo:</h5>
-            <p>{consulta.motivo}</p>
-        </div>
-      {consulta.diagnostico && (
+        {medico && (
+          <div className="dato">
+              <h5>Médico:</h5>
+              <p>{medico}</p>
+          </div>
+        )}
         <div className="dato">
             <h5>Diagnóstico:</h5>
-            <p>{consulta.diagnostico}</p>
+            <p>{entrada.diagnostico}</p>
         </div>
-      )}
-      {consulta.tratamiento && (
         <div className="dato">
-            <h5>Tratamiento:</h5>
-            <p>{consulta.tratamiento}</p>
+            <h5>Evolución:</h5>
+            <p>{entrada.evolucion}</p>
+        </div>
+      {entrada.observaciones && (
+        <div className="dato">
+            <h5>Observaciones:</h5>
+            <p>{entrada.observaciones}</p>
         </div>
       )}
     </div>

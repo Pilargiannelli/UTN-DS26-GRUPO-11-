@@ -38,6 +38,8 @@ export async function listarPacientes() {
           dni: true,
         },
       },
+      // La obra social se muestra en el perfil y se edita desde ahí
+      coberturas: { include: { obraSocial: true } },
     },
   });
 }

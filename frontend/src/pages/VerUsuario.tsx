@@ -6,9 +6,6 @@ import { useUsuarioSeleccionado } from "../hooks/useUsuarioSeleccionado.ts";
 import { HistorialMedicoCard } from "../components/HistorialMedicoCard.tsx";
 import { Container, Row, Col } from 'react-bootstrap';
 import { useState } from "react";
-import type { UserProps } from "../types/UserProps.ts";
-import type { MedicoProps } from "../types/MedicoProps.ts";
-import type { PacienteProps } from "../types/PacienteProps.ts";
 import type { Usuario } from "../types/Usuario.ts"; // Tipo estricto
 import { ConfigMenu } from "../components/ConfigMenu.tsx";
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -19,17 +16,28 @@ import { useNavigate } from "react-router-dom";
 import { useToast } from "../hooks/useToast.ts";
 import { ToastMensaje } from "../components/NotifyToast.tsx";
 
-function VerUsuario() {
-    const { showToast, setShowToast } = useToast("registroExitoso");
-    const { usuario } = useAuth();
-    const { usuarioSeleccionado } = useUsuarioSeleccionado();
+interface VerUsuarioProps {
+    // /mi-cuenta: siempre el usuario logueado, nunca el último perfil que se
+    // abrió desde Pacientes o Médicos (eso queda en /ver-perfil)
+    propio?: boolean;
+}
 
-    // Fallback inteligente: si no hay un usuario seleccionado, muestra el perfil del usuario logueado actual
-    const usuarioAMostrar = usuarioSeleccionado || usuario;
+function VerUsuario({ propio = false }: VerUsuarioProps) {
+    const { showToast, setShowToast } = useToast("registroExitoso");
+    // Viene de CambiarPassword después del PATCH /auth/password
+    const passwordToast = useToast("passwordActualizada");
+    const { usuario, setUsuario, tieneRol } = useAuth();
+    const { usuarioSeleccionado, seleccionarUsuario } = useUsuarioSeleccionado();
+    const [datosGuardados, setDatosGuardados] = useState(false);
+
+    // Sin usuario seleccionado (o en /mi-cuenta), muestra el perfil del usuario logueado
+    const usuarioAMostrar = propio ? usuario : usuarioSeleccionado || usuario;
 
     const esMiPerfil = !!usuario && !!usuarioAMostrar && usuario.id === usuarioAMostrar.id;
-    const rolActual = String(usuario?.rol ?? "").toLowerCase();
-    const puedeEditar = rolActual === "admin" || rolActual === "administrador" || rolActual === "secretaria";
+    // Solo se editan pacientes (PUT /api/pacientes/:id): el personal edita a
+    // cualquiera y el paciente, su propio perfil
+    const puedeEditar = usuarioAMostrar?.rol === "PACIENTE" &&
+        (tieneRol("SECRETARIA") || tieneRol("MEDICO") || esMiPerfil);
     const puedeCambiarPassword = esMiPerfil;
     
     const navigate = useNavigate();
@@ -38,17 +46,14 @@ function VerUsuario() {
     // Casteo tipado y estricto utilizando la interfaz Usuario en lugar de 'any'
     const usuarioTipado = usuarioAMostrar as unknown as Usuario;
 
-    // Renderizado condicional de la vista lateral según el rol del usuario a mostrar
+    // Historia clínica al costado del perfil de un paciente. Las claves son los
+    // roles reales (en mayúscula): quien mira -> rol del perfil. La SECRETARIA
+    // no la ve (matriz §10); el paciente ve la suya.
+    const pacienteId = usuarioTipado?.paciente?.id;
+    const historiaClinica = pacienteId ? <HistorialMedicoCard pacienteId={pacienteId} /> : null;
     const vistaPorRol = usePerfilRolView(usuarioTipado, {
-        admin: {
-            paciente: <HistorialMedicoCard usuario={usuarioTipado} />,
-        },
-        medico: {
-            paciente: <HistorialMedicoCard usuario={usuarioTipado} />,
-        },
-        paciente: {
-            paciente: <HistorialMedicoCard usuario={usuarioTipado} />,
-        },
+        MEDICO: { PACIENTE: historiaClinica },
+        PACIENTE: { PACIENTE: historiaClinica },
     });
 
     if (!usuarioAMostrar) {
@@ -62,14 +67,20 @@ function VerUsuario() {
         );
     }
 
-    const handleUpdate = (updatedDocs: PacienteProps | MedicoProps | UserProps) => {
-        console.log("Datos actualizados recibidos en la página:", updatedDocs);
+    // El formulario ya guardó en el back: se refleja en la pantalla y, si es el
+    // propio perfil, también en la sesión
+    const handleUpdate = (actualizado: Usuario) => {
+        if (!propio) seleccionarUsuario(actualizado);
+        if (esMiPerfil && usuario) setUsuario({ ...usuario, ...actualizado, fotoPerfil: actualizado.fotoPerfil ?? null });
         setIsEditing(false);
+        setDatosGuardados(true);
     };
 
     return (
         <Layout>
             <ToastMensaje mensaje="Datos actualizados correctamente" tipo="toast-good" mostrar={showToast} onClose={() => setShowToast(false)} />
+            <ToastMensaje mensaje="Datos actualizados correctamente" tipo="toast-good" mostrar={datosGuardados} onClose={() => setDatosGuardados(false)} />
+            <ToastMensaje mensaje="Contraseña actualizada" tipo="toast-good" mostrar={passwordToast.showToast} onClose={() => passwordToast.setShowToast(false)} />
             <Container className="cont-perfil">
                 <Row className="mb-3">
                     <Col md="6" className="d-flex align-content-start">

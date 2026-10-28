@@ -4,6 +4,7 @@ import { SALT_ROUNDS } from "../config/env";
 import { Rol } from "../generated/prisma/enums";
 import { ErrorNegocio } from "../errors/ErrorNegocio";
 import type { PacienteCreate } from "../validations/paciente.validation";
+import type { TokenPayload } from "../middlewares/auth.middleware";
 
 const includePaciente = {
   usuario: { select: { id: true, username: true, nombre: true, apellido: true, email: true, dni: true } },
@@ -12,10 +13,18 @@ const includePaciente = {
 
 // Los duplicados se chequean antes de crear para devolver un mensaje por
 // campo (HU-001 CA2: "El DNI ya se encuentra registrado") en vez del 409
-// genérico de P2002.
-async function assertSinDuplicados(datos: PacienteCreate, username: string) {
+// genérico de P2002. Al editar, excluir.usuarioId / excluir.pacienteId evitan
+// que el paciente choque consigo mismo.
+async function assertSinDuplicados(
+  datos: PacienteCreate,
+  username?: string,
+  excluir?: { usuarioId: number; pacienteId: number }
+) {
   const existente = await prisma.usuario.findFirst({
-    where: { OR: [{ dni: datos.dni }, { email: datos.email }, { username }] },
+    where: {
+      OR: [{ dni: datos.dni }, { email: datos.email }, ...(username ? [{ username }] : [])],
+      ...(excluir && { NOT: { id: excluir.usuarioId } }),
+    },
     select: { dni: true, email: true },
   });
   if (existente?.dni === datos.dni) throw new ErrorNegocio(409, "El DNI ya se encuentra registrado");
@@ -30,7 +39,7 @@ async function assertSinDuplicados(datos: PacienteCreate, username: string) {
     const afiliadoRepetido = await prisma.cobertura.findUnique({
       where: { obraSocialId_nroAfiliado: { obraSocialId, nroAfiliado } },
     });
-    if (afiliadoRepetido) {
+    if (afiliadoRepetido && afiliadoRepetido.pacienteId !== excluir?.pacienteId) {
       throw new ErrorNegocio(409, "Ese número de afiliado ya está registrado en esa obra social");
     }
   }
@@ -66,4 +75,25 @@ export async function crearPaciente(datos: PacienteCreate, credenciales?: { user
 
   // Devuelve la ficha del paciente con la misma forma que GET /api/pacientes
   return prisma.paciente.findUniqueOrThrow({ where: { usuarioId: usuario.id }, include: includePaciente });
+}
+
+// PUT /api/pacientes/:id: reemplaza los datos del paciente. Sin cobertura en
+// el body = "Sin obra social" (se borran las que tenía). El PACIENTE solo
+// edita la suya: otra responde 404, igual que los turnos.
+export async function actualizarPaciente(pacienteId: number, datos: PacienteCreate, usuario: TokenPayload) {
+  const paciente = await prisma.paciente.findUnique({ where: { id: pacienteId } });
+  if (!paciente || (usuario.rol === Rol.PACIENTE && paciente.usuarioId !== usuario.sub)) {
+    throw new ErrorNegocio(404, "Paciente no encontrado");
+  }
+  await assertSinDuplicados(datos, undefined, { usuarioId: paciente.usuarioId, pacienteId });
+
+  const { cobertura, telefono, sexo, fechaNacimiento, ...datosUsuario } = datos;
+  await prisma.$transaction([
+    prisma.usuario.update({ where: { id: paciente.usuarioId }, data: datosUsuario }),
+    prisma.paciente.update({ where: { id: pacienteId }, data: { telefono, sexo, fechaNacimiento } }),
+    prisma.cobertura.deleteMany({ where: { pacienteId } }),
+    ...(cobertura ? [prisma.cobertura.create({ data: { ...cobertura, pacienteId } })] : []),
+  ]);
+
+  return prisma.paciente.findUniqueOrThrow({ where: { id: pacienteId }, include: includePaciente });
 }

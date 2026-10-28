@@ -123,3 +123,69 @@
   text-align: center;
   padding: 40px 0;
 }
+
+/* ── Paciente elegido y su historia ── */
+.histcli-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 520px;
+  overflow-y: auto;
+}
+
+.histcli-paciente-activo {
+  background: #e1f5ee;
+  border-color: #0f6e56;
+}
+
+.histcli-cabecera {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.histcli-subtitulo {
+  font-family: Georgia, serif;
+  font-size: 18px;
+  color: #0d3b2e;
+  margin: 0 0 12px;
+}
+
+.histcli-listas {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  background: #fff;
+  border: 1px solid #e5e2d8;
+  border-radius: 12px;
+  padding: 14px 16px;
+  margin-bottom: 20px;
+}
+
+.histcli-etiqueta {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #6b675e;
+  margin: 0 0 8px;
+}
+
+.histcli-chip {
+  display: inline-block;
+  margin: 0 6px 6px 0;
+  padding: 4px 10px;
+  border-radius: 20px;
+  background: #faeeda;
+  color: #854f0b;
+  font-size: 13px;
+}
+
+.histcli-form {
+  background: #fff;
+  border: 1px solid #e5e2d8;
+  border-radius: 12px;
+  padding: 16px;
+}

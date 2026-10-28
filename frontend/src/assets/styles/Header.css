@@ -14,8 +14,9 @@
     padding: 0 !important;
 }
 
-#ColorNav {
-  background-color: linear-gradient(90deg, #0f4d3a, #2e7d5b);
+.header-saludo {
+  color: #1f2933;
+  font-size: 15px;
 }
 
 .header-container {

@@ -2,49 +2,74 @@ import { Form, Row, Col, Button, Spinner } from "react-bootstrap";
 import { SelectEditable } from "./SelectEditable";
 import { DateInput } from "./DateInput";
 import { useMayus } from "../hooks/useMayus";
-import { useEffect, useRef } from "react";
-import { useForm, useWatch, type Resolver } from "react-hook-form";
-import { pacienteSchema, type PacienteValidado } from "../schemas/pacienteSchema";
+import { useEffect, useRef, useState } from "react";
+import { useForm, useWatch, type Path, type Resolver } from "react-hook-form";
+import { pacienteSchema, SIN_OBRA_SOCIAL, type PacienteValidado } from "../schemas/pacienteSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useFetch } from "../hooks/useFetch";
 import type { PacienteFormProps } from "../types/UserEditFormProps";
-import { stringToDateInput } from "../hooks/useDateTransform";
+import type { CoberturaPaciente, PacientePerfil } from "../types/Usuario";
+import { stringToDateInput, dateInputToString } from "../hooks/useDateTransform";
 import type { ObraSocial } from "../types/Paciente";
+import { apiFetch, ApiError } from "../services/api";
+import { useAuth } from "../hooks/useAuth";
+import { AgregarObraSocial } from "./AgregarObraSocial";
 
-export function PacienteFormFields({ onSave, onCancel, paciente }: PacienteFormProps<PacienteValidado>) {
+// Respuesta de PUT /api/pacientes/:id (paciente.service.ts)
+interface PacienteActualizado extends PacientePerfil {
+    usuario: { id: number; username: string; nombre: string; apellido: string; email: string; dni: string };
+    coberturas: CoberturaPaciente[];
+}
+
+// Campos del back (paciente.validation.ts) -> campos de este formulario
+const CAMPO_FORM: Record<string, Path<PacienteValidado>> = {
+    nombre: "nombre",
+    apellido: "apellido",
+    dni: "dni",
+    email: "email",
+    telefono: "telefono",
+    sexo: "sexo",
+    fechaNacimiento: "fechaNacimiento.year",
+    "cobertura.nroAfiliado": "nroAfiliado",
+    "cobertura.plan": "plan",
+};
+
+export function PacienteFormFields({ onSave, onCancel, usuario }: PacienteFormProps) {
     const handleMayus = useMayus();
     const sexoOptions = ["Masculino", "Femenino", "Otro"];
+    const [errorMsg, setErrorMsg] = useState<string | null>(null);
+    const paciente = usuario.paciente!;
+    const cobertura = paciente.coberturas?.[0];
 
-    // Carga de obras sociales desde la API real
+    const { tieneRol } = useAuth();
     const { data: obrasSocialesAPI, loading } = useFetch<ObraSocial[]>("/obras-sociales");
-    const osValidas = obrasSocialesAPI 
-        ? obrasSocialesAPI.map(os => typeof os === "string" ? os : os.nombre) 
-        : ["Sin obra social"];
+    const [obrasAgregadas, setObrasAgregadas] = useState<ObraSocial[]>([]);
+    const obrasSociales = [...(obrasSocialesAPI ?? []), ...obrasAgregadas];
+    const osValidas = [SIN_OBRA_SOCIAL, ...obrasSociales.map((os) => os.nombre)];
 
-    // Schema sin dependencia de usuarios precargados en local
-    const schema = pacienteSchema(osValidas, sexoOptions);
+    const schema = pacienteSchema(sexoOptions);
 
     const initialValues: PacienteValidado = {
-        nombre: paciente.nombre,
-        apellido: paciente.apellido,
-        dni: String(paciente.dni ?? ""),
-        email: paciente.email,
+        nombre: usuario.nombre,
+        apellido: usuario.apellido,
+        dni: usuario.dni,
+        email: usuario.email,
         telefono: paciente.telefono,
-        obraSocial: paciente.obraSocial,
-        nroAfiliado: paciente.nroAfiliado,
-        plan: paciente.plan,
+        obraSocial: cobertura?.obraSocial.nombre ?? SIN_OBRA_SOCIAL,
+        nroAfiliado: cobertura?.nroAfiliado ?? "-",
+        plan: cobertura?.plan ?? "-",
         sexo: paciente.sexo,
-        fechaNacimiento: stringToDateInput(paciente.fechaNacimiento),
+        fechaNacimiento: stringToDateInput(paciente.fechaNacimiento.split("T")[0]),
     };
 
-    const { register, handleSubmit, setValue, control, formState: { errors } } = useForm<PacienteValidado>({
+    const { register, handleSubmit, setValue, setError, control, formState: { errors, isSubmitting } } = useForm<PacienteValidado>({
         resolver: zodResolver(schema) as Resolver<PacienteValidado>,
         mode: "onBlur",
         defaultValues: initialValues,
     });
 
     const obraSocialSeleccionada = useWatch({ control, name: "obraSocial" });
-    const sinObraSocial = (obraSocialSeleccionada === "Sin obra social");
+    const sinObraSocial = (obraSocialSeleccionada === SIN_OBRA_SOCIAL);
     const primeraCarga = useRef(true);
 
     useEffect(() => {
@@ -52,49 +77,76 @@ export function PacienteFormFields({ onSave, onCancel, paciente }: PacienteFormP
             primeraCarga.current = false;
             return;
         }
-        if (sinObraSocial) {
-            setValue("nroAfiliado", "-");
-            setValue("plan", "-");
-        } else {
-            setValue("nroAfiliado", `${paciente.nroAfiliado}`);
-            setValue("plan", `${paciente.plan}`);
+        setValue("nroAfiliado", sinObraSocial ? "-" : cobertura?.nroAfiliado ?? "");
+        setValue("plan", sinObraSocial ? "-" : cobertura?.plan ?? "");
+    }, [sinObraSocial, setValue, cobertura?.nroAfiliado, cobertura?.plan]);
+
+    const guardar = async (data: PacienteValidado) => {
+        setErrorMsg(null);
+        const obraSocial = obrasSociales.find((os) => os.nombre === data.obraSocial);
+        try {
+            const actualizado = await apiFetch<PacienteActualizado>(`/pacientes/${paciente.id}`, {
+                method: "PUT",
+                body: JSON.stringify({
+                    nombre: data.nombre,
+                    apellido: data.apellido,
+                    dni: data.dni,
+                    email: data.email,
+                    telefono: data.telefono,
+                    sexo: data.sexo,
+                    fechaNacimiento: dateInputToString(data.fechaNacimiento),
+                    ...(obraSocial && {
+                        cobertura: { obraSocialId: obraSocial.id, nroAfiliado: data.nroAfiliado, plan: data.plan },
+                    }),
+                }),
+            });
+            const { usuario: datosUsuario, ...ficha } = actualizado;
+            onSave({ ...usuario, ...datosUsuario, paciente: ficha });
+        } catch (err) {
+            const detalles = err instanceof ApiError ? err.detalles : [];
+            detalles.forEach(({ campo, mensaje }) => {
+                const campoForm = CAMPO_FORM[campo];
+                if (campoForm) setError(campoForm, { message: mensaje });
+            });
+            setErrorMsg(err instanceof Error ? err.message : "No se pudieron guardar los cambios");
         }
-    }, [sinObraSocial, setValue, paciente.nroAfiliado, paciente.plan]);
+    };
 
     if (loading) return <Spinner animation="border" size="sm" />;
 
     return (
         <div className="form-container animate-fadeIn text-start p-2">
-            <Form noValidate onSubmit={handleSubmit(onSave)}>
+            <Form noValidate onSubmit={handleSubmit(guardar)}>
+                {errorMsg && <div className="alert alert-danger" role="alert">{errorMsg}</div>}
                 <Row className="g-2 mb-2">
                     <Col md={6}>
-                        <Form.Group>
+                        <Form.Group controlId="edit-nombre">
                             <Form.Label className="text-xs mb-1">Nombre</Form.Label>
                             <Form.Control type="text" {...register("nombre")} isInvalid={!!errors.nombre} />
-                            <Form.Control.Feedback type="invalid"> {errors.nombre?.message as string} </Form.Control.Feedback>
+                            <Form.Control.Feedback type="invalid"> {errors.nombre?.message} </Form.Control.Feedback>
                         </Form.Group>
                     </Col>
                     <Col md={6}>
-                        <Form.Group>
+                        <Form.Group controlId="edit-apellido">
                             <Form.Label className="text-xs mb-1">Apellido</Form.Label>
                             <Form.Control type="text" {...register("apellido")} isInvalid={!!errors.apellido} />
-                            <Form.Control.Feedback type="invalid"> {errors.apellido?.message as string} </Form.Control.Feedback>
+                            <Form.Control.Feedback type="invalid"> {errors.apellido?.message} </Form.Control.Feedback>
                         </Form.Group>
                     </Col>
                 </Row>
                 <Row className="g-2 mb-3">
                     <Col md={6}>
-                        <Form.Group>
+                        <Form.Group controlId="edit-dni">
                             <Form.Label className="text-xs mb-1">DNI</Form.Label>
-                            <Form.Control type="number" {...register("dni")} isInvalid={!!errors.dni} />
-                            <Form.Control.Feedback type="invalid"> {errors.dni?.message as string} </Form.Control.Feedback>
+                            <Form.Control type="text" inputMode="numeric" {...register("dni")} isInvalid={!!errors.dni} />
+                            <Form.Control.Feedback type="invalid"> {errors.dni?.message} </Form.Control.Feedback>
                         </Form.Group>
                     </Col>
                     <Col md={6}>
-                        <Form.Group>
+                        <Form.Group controlId="edit-email">
                             <Form.Label className="text-xs mb-1">Email</Form.Label>
                             <Form.Control type="email" {...register("email")} isInvalid={!!errors.email} />
-                            <Form.Control.Feedback type="invalid"> {errors.email?.message as string} </Form.Control.Feedback>
+                            <Form.Control.Feedback type="invalid"> {errors.email?.message} </Form.Control.Feedback>
                         </Form.Group>
                     </Col>
                 </Row>
@@ -105,33 +157,36 @@ export function PacienteFormFields({ onSave, onCancel, paciente }: PacienteFormP
                 </Row>
                 <Row className="g-2">
                     <Col md={6}>
-                        <Form.Group>
+                        <Form.Group controlId="edit-telefono">
                             <Form.Label className="text-xs mb-1">Teléfono</Form.Label>
-                            <Form.Control {...register("telefono")} isInvalid={!!errors.telefono} />
+                            <Form.Control type="tel" inputMode="numeric" {...register("telefono")} isInvalid={!!errors.telefono} />
                             <Form.Control.Feedback type="invalid"> {errors.telefono?.message} </Form.Control.Feedback>
                         </Form.Group>
                     </Col>
                     <Col md={6}>
-                        <Form.Group>
-                            <SelectEditable label="Sexo" name="sexo" options={sexoOptions} register={register} error={errors.sexo?.message} />
-                        </Form.Group>
+                        <SelectEditable label="Sexo" name="sexo" options={sexoOptions} register={register} error={errors.sexo?.message} />
                     </Col>
                 </Row>
                 <Row className="g-2 mt-1">
                     <Col md={4}>
-                        <Form.Group>
-                            <SelectEditable label="Obra social" name="obraSocial" options={osValidas} register={register} error={errors.obraSocial?.message} />
-                        </Form.Group>
+                        <SelectEditable label="Obra social" name="obraSocial" options={osValidas} register={register} error={errors.obraSocial?.message} />
+                        {/* Solo la secretaria crea obras sociales (POST /api/obras-sociales) */}
+                        {tieneRol("SECRETARIA") && (
+                            <AgregarObraSocial onCreada={(nueva) => {
+                                setObrasAgregadas((prev) => [...prev, nueva]);
+                                setValue("obraSocial", nueva.nombre, { shouldValidate: true });
+                            }} />
+                        )}
                     </Col>
                     <Col md={4}>
-                        <Form.Group>
+                        <Form.Group controlId="edit-afiliado">
                             <Form.Label className="d-flex me-auto text-xs mb-1">Nro. afiliado</Form.Label>
                             <Form.Control type="text" placeholder="Ej: A-123456" {...register("nroAfiliado")} onChange={handleMayus} isInvalid={!!errors.nroAfiliado?.message} disabled={sinObraSocial} />
                             <Form.Control.Feedback type="invalid"> {errors.nroAfiliado?.message} </Form.Control.Feedback>
                         </Form.Group>
                     </Col>
                     <Col md={4}>
-                        <Form.Group>
+                        <Form.Group controlId="edit-plan">
                             <Form.Label className="d-flex me-auto text-xs mb-1">Plan</Form.Label>
                             <Form.Control type="text" placeholder="Ej: 210" {...register("plan")} onChange={handleMayus} isInvalid={!!errors.plan?.message} disabled={sinObraSocial} />
                             <Form.Control.Feedback type="invalid"> {errors.plan?.message} </Form.Control.Feedback>
@@ -139,8 +194,10 @@ export function PacienteFormFields({ onSave, onCancel, paciente }: PacienteFormP
                     </Col>
                 </Row>
                 <div className="d-flex justify-content-end gap-2 mt-4 pt-2 border-t">
-                    <Button type="button" variant="secondary" size="sm" onClick={onCancel}> Cancelar </Button>
-                    <Button type="submit" variant="primary" size="sm"> Confirmar datos </Button>
+                    <Button type="button" variant="secondary" size="sm" onClick={onCancel} disabled={isSubmitting}> Cancelar </Button>
+                    <Button type="submit" variant="primary" size="sm" disabled={isSubmitting}>
+                        {isSubmitting ? <Spinner size="sm" animation="border" /> : "Guardar cambios"}
+                    </Button>
                 </div>
             </Form>
         </div>

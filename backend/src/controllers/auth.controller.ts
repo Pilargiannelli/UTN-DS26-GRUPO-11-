@@ -25,6 +25,15 @@ export async function login(req: Request, res: Response, next: NextFunction) {
   }
 }
 
+export async function cambiarPassword(req: Request, res: Response, next: NextFunction) {
+  try {
+    await authService.cambiarPassword(req.usuario!.sub, req.body);
+    res.status(204).send();
+  } catch (error) {
+    next(error);
+  }
+}
+
 export async function yo(req: Request, res: Response, next: NextFunction) {
   try {
     const usuario = await authService.obtenerPerfil(req.usuario!.sub);

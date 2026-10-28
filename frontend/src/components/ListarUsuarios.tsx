@@ -7,6 +7,8 @@ import { useState } from "react";
 import { useUsuarioSeleccionado } from "../hooks/useUsuarioSeleccionado";
 import { useNavigate } from "react-router-dom";
 import { BotonAgregar } from "./BotonAgregar";
+import type { CoberturaPaciente } from "../types/Usuario";
+import { useAuth } from "../hooks/useAuth";
 
 interface ListarUsuariosProps {
     rol: "paciente" | "medico";
@@ -33,9 +35,10 @@ interface MedicoRegistro {
 interface PacienteRegistro {
     id: number;
     usuarioId: number;
-    fechaNacimiento: string | Date;
+    fechaNacimiento: string;
     sexo: string;
     telefono: string;
+    coberturas?: CoberturaPaciente[];
     usuario: UsuarioBasico;
 }
 
@@ -50,6 +53,7 @@ export function ListarUsuarios({ rol }: ListarUsuariosProps) {
     
     const [busqueda, setBusqueda] = useState("");
     const navigate = useNavigate();
+    const { tieneRol } = useAuth();
     const { seleccionarUsuario } = useUsuarioSeleccionado();
 
     if (loading) return <Spinner animation="border" />;
@@ -96,6 +100,7 @@ export function ListarUsuarios({ rol }: ListarUsuariosProps) {
                 fechaNacimiento: (item as PacienteRegistro).fechaNacimiento,
                 sexo: (item as PacienteRegistro).sexo,
                 telefono: (item as PacienteRegistro).telefono,
+                coberturas: (item as PacienteRegistro).coberturas ?? [],
                 usuarioId: item.usuarioId
             } : null,
         };
@@ -129,8 +134,8 @@ export function ListarUsuarios({ rol }: ListarUsuariosProps) {
                     )}
                 </div>
 
-                {/* Solo se registran pacientes: POST /medicos no existe en esta versión */}
-                {rol === "paciente" && (
+                {/* Solo la secretaria registra pacientes (HU-001); POST /medicos no existe */}
+                {rol === "paciente" && tieneRol("SECRETARIA") && (
                     <div className="barra-busqueda-accion">
                         <BotonAgregar rol={rol} />
                     </div>

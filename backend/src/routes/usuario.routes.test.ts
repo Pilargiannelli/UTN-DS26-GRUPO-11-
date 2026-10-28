@@ -11,6 +11,7 @@ vi.mock("../controllers/usuario.controller", () => ({
   getPacientes: (req: any, res: any) => res.status(200).json([]),
   getUsuarios: (req: any, res: any) => res.status(200).json([]),
   createPaciente: (req: any, res: any) => res.status(201).json(req.body),
+  updatePaciente: (req: any, res: any) => res.status(200).json(req.body),
 }));
 
 const tokenDe = (rol: Rol) => jwt.sign({ sub: 1, rol }, JWT_SECRET, { expiresIn: "1h" });
@@ -31,10 +32,10 @@ describe("POST /api/pacientes - Matriz sin DB", () => {
     expect(res.status).toBe(401);
   });
 
-  it("devuelve 403 para PACIENTE", async () => {
+  it.each([Rol.PACIENTE, Rol.MEDICO])("devuelve 403 para %s (el alta es de la secretaria, HU-001)", async (rol) => {
     const res = await request(app)
       .post("/api/pacientes")
-      .set("Authorization", `Bearer ${tokenDe(Rol.PACIENTE)}`)
+      .set("Authorization", `Bearer ${tokenDe(rol)}`)
       .send(pacienteValido);
     expect(res.status).toBe(403);
   });

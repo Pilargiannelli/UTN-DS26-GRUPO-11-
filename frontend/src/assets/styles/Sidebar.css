@@ -31,7 +31,7 @@
   z-index: 10;
   background-color: transparent;
   border: none;
-  color: #fff;
+  color: #0f4d3a;
   font-size: 1.5rem;
   cursor: pointer;
   transition: opacity 0.3s ease;
@@ -81,4 +81,16 @@ button.btn-close:active, button.btn-close:focus {
 .offcanvas-body .nav-link:hover {
   color: #157a6e;
   transform: translateX(5px);
+}
+
+.offcanvas-body .nav-link.active {
+  color: #085041 !important;
+  background: #e1f5ee;
+  border-radius: 8px;
+}
+
+.menu-button:hover,
+.menu-button:focus-visible {
+  color: #0d3b2e !important;
+  background-color: #e1f5ee !important;
 }
