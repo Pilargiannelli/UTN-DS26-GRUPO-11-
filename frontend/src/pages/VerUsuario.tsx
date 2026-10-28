@@ -16,7 +16,13 @@ import { useNavigate } from "react-router-dom";
 import { useToast } from "../hooks/useToast.ts";
 import { ToastMensaje } from "../components/NotifyToast.tsx";
 
-function VerUsuario() {
+interface VerUsuarioProps {
+    // /mi-cuenta: siempre el usuario logueado, nunca el último perfil que se
+    // abrió desde Pacientes o Médicos (eso queda en /ver-perfil)
+    propio?: boolean;
+}
+
+function VerUsuario({ propio = false }: VerUsuarioProps) {
     const { showToast, setShowToast } = useToast("registroExitoso");
     // Viene de CambiarPassword después del PATCH /auth/password
     const passwordToast = useToast("passwordActualizada");
@@ -24,8 +30,8 @@ function VerUsuario() {
     const { usuarioSeleccionado, seleccionarUsuario } = useUsuarioSeleccionado();
     const [datosGuardados, setDatosGuardados] = useState(false);
 
-    // Fallback inteligente: si no hay un usuario seleccionado, muestra el perfil del usuario logueado actual
-    const usuarioAMostrar = usuarioSeleccionado || usuario;
+    // Sin usuario seleccionado (o en /mi-cuenta), muestra el perfil del usuario logueado
+    const usuarioAMostrar = propio ? usuario : usuarioSeleccionado || usuario;
 
     const esMiPerfil = !!usuario && !!usuarioAMostrar && usuario.id === usuarioAMostrar.id;
     // Solo se editan pacientes (PUT /api/pacientes/:id): el personal edita a
@@ -64,7 +70,7 @@ function VerUsuario() {
     // El formulario ya guardó en el back: se refleja en la pantalla y, si es el
     // propio perfil, también en la sesión
     const handleUpdate = (actualizado: Usuario) => {
-        seleccionarUsuario(actualizado);
+        if (!propio) seleccionarUsuario(actualizado);
         if (esMiPerfil && usuario) setUsuario({ ...usuario, ...actualizado, fotoPerfil: actualizado.fotoPerfil ?? null });
         setIsEditing(false);
         setDatosGuardados(true);

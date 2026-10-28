@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Container } from "react-bootstrap";
+import { Alert, Container, Spinner } from "react-bootstrap";
 import { useTurnosMedico } from "../hooks/useTurnosMedico";
 import VistaAgendaSemanal from "../components/VistaAgendaSemanal";
 import Layout from "../components/Layout/Layout";
@@ -76,7 +76,7 @@ function subtituloSemana(dias: Date[]): string {
 export default function OrdenDelDia() {
   const [fechaSeleccionada, setFechaSeleccionada] = useState(new Date());
   const [vista, setVista] = useState<Vista>("dia");
-  const { turnosDelDia } = useTurnosMedico();
+  const { turnosDelDia, loading, error } = useTurnosMedico();
 
   const turnos = turnosDelDia(fechaSeleccionada);
   const esHoy = esMismaFecha(fechaSeleccionada, new Date());
@@ -154,8 +154,15 @@ export default function OrdenDelDia() {
         )}
       </div>
 
+      {loading && (
+        <div className="text-center py-4">
+          <Spinner animation="border" role="status" aria-label="Cargando agenda" />
+        </div>
+      )}
+      {error && <Alert variant="danger">No se pudo cargar la agenda: {error.message}</Alert>}
+
       {/* ── Vista diaria ── */}
-      {vista === "dia" && (
+      {!loading && !error && vista === "dia" && (
         <div className="agenda-scroll">
           <div className="agenda-grid">
             <div className="agenda-col-horas">
@@ -199,7 +206,7 @@ export default function OrdenDelDia() {
       )}
 
       {/* ── Vista semanal ── */}
-      {vista === "semana" && (
+      {!loading && !error && vista === "semana" && (
         <VistaAgendaSemanal diasSemana={diasSemana} turnosDelDia={turnosDelDia} />
       )}
     </Container>

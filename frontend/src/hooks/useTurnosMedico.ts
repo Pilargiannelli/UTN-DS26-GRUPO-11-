@@ -6,7 +6,7 @@ import type { Turno } from "../types/Turno";
 // autenticado (filtrado por identidad en el backend, matriz de permisos
 // sección 8): no hace falta comparar nombres a mano como hacía el mock.
 export function useTurnosMedico() {
-  const { data } = useFetch<Turno[]>("/turnos");
+  const { data, loading, error } = useFetch<Turno[]>("/turnos");
   const misTurnos = data ?? [];
 
   function turnosDelDia(fecha: Date): Turno[] {
@@ -22,5 +22,5 @@ export function useTurnosMedico() {
       .sort((a, b) => a.fechaHora.localeCompare(b.fechaHora));
   }
 
-  return { misTurnos, turnosDelDia };
+  return { misTurnos, turnosDelDia, loading, error };
 }

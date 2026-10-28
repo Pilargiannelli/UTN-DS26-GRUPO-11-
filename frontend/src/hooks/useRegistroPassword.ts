@@ -15,7 +15,7 @@ export function useCambioPassword() {
                 passwordNueva: datos.newPassword,
             }),
         });
-        navigate("/ver-perfil", { state: { passwordActualizada: true } });
+        navigate("/mi-cuenta", { state: { passwordActualizada: true } });
     };
 
     return { cambiarPassword };
