@@ -4,7 +4,7 @@ import type { SidebarProps } from '../../types/SidebarProps';
 import '../../assets/styles/Sidebar.css'
 import { useState } from 'react';
 
-// Menú desplegable para pantallas chicas (en grandes se usa MenuLateral)
+// Menú desplegable (☰) con las pantallas del rol
 export function Sidebar({ items }: SidebarProps) {
   const [show, setShow] = useState(false);
 

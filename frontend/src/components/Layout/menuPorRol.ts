@@ -1,9 +1,8 @@
 import type { MenuItem } from "../../types/MenuItem";
 import type { RolUsuario } from "../../types/UsuarioSesion";
 
-// Menú de navegación de cada rol, en un solo lugar: lo usan el menú lateral
-// fijo (pantallas grandes) y el desplegable ☰ (celular). Cada link coincide
-// con una ruta de App.tsx que el rol tiene permitida.
+// Menú de navegación (desplegable ☰) de cada rol, en un solo lugar. Cada link
+// coincide con una ruta de App.tsx que el rol tiene permitida.
 const miCuenta: MenuItem = { label: "Mi cuenta", href: "/mi-cuenta" };
 
 export const menuPorRol: Record<RolUsuario, MenuItem[]> = {

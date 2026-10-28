@@ -21,12 +21,8 @@ function Header() {
     <Navbar id="colorNav" as="header">
       <Container className="header-container container-fluid">
         <Navbar.Brand className="nav-logo m-0 d-flex align-items-center gap-2">
-          {/* En pantallas chicas el menú se abre con ☰; en grandes está fijo al costado (Layout) */}
-          {estaAutenticado && usuario && (
-            <div className="d-lg-none">
-              <Sidebar items={menuPorRol[usuario.rol]} />
-            </div>
-          )}
+          {/* Menú desplegable (☰) con las pantallas del rol */}
+          {estaAutenticado && usuario && <Sidebar items={menuPorRol[usuario.rol]} />}
           <Link to={estaAutenticado ? "/home" : "/"} aria-label="IMOS, ir al inicio">
             <img src="/IMOS_LOGO.png" width="180" height="180" alt="IMOS" />
           </Link>

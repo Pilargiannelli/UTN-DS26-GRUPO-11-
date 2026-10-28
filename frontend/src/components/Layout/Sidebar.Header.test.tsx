@@ -6,7 +6,6 @@ import type { AuthContextType } from "../../context/AuthContextBase";
 import type { RolUsuario, UsuarioSesion } from "../../types/UsuarioSesion";
 import Header from "./Header";
 import { Sidebar } from "./Sidebar";
-import { MenuLateral } from "./MenuLateral";
 import { menuPorRol } from "./menuPorRol";
 
 afterEach(cleanup);
@@ -48,7 +47,7 @@ function renderizarHeader(usuario: UsuarioSesion | null) {
 // El menú es un Offcanvas: sus links sólo existen en el DOM una vez abierto.
 const abrirMenu = () => fireEvent.click(screen.getByRole("button", { name: "Abrir menú" }));
 
-describe("Sidebar (menú desplegable del celular)", () => {
+describe("Sidebar (menú desplegable)", () => {
   const items = [
     { label: "Inicio", href: "/home" },
     { label: "Agenda", href: "/orden-del-dia" },
@@ -70,13 +69,14 @@ describe("Sidebar (menú desplegable del celular)", () => {
   });
 });
 
-describe("MenuLateral (fijo en pantallas grandes)", () => {
-  it("marca como activo el link de la página actual", () => {
+describe("Sidebar marca la página actual", () => {
+  it("el link de la ruta abierta tiene la clase active", () => {
     render(
       <MemoryRouter initialEntries={["/mis-turnos"]}>
-        <MenuLateral items={menuPorRol.PACIENTE} />
+        <Sidebar items={menuPorRol.PACIENTE} />
       </MemoryRouter>
     );
+    abrirMenu();
 
     expect(screen.getByRole("link", { name: "Mis turnos" })).toHaveClass("active");
     expect(screen.getByRole("link", { name: "Inicio" })).not.toHaveClass("active");
