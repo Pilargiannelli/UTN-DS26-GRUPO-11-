@@ -24,7 +24,8 @@ function DashboardCards({
 
   const cards = [
     {
-      titulo: "Turnos del día",
+      // Los otros tres cuentan los turnos de hoy en adelante, por estado
+      titulo: "Turnos de hoy",
       numero: total,
       icono: <Calendar2Check />,
       clase: "verde",

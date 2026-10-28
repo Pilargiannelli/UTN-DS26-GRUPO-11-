@@ -1,7 +1,6 @@
 import { Routes, Route } from "react-router-dom";
 import Login from "./pages/Login";
 import Home from "./pages/Home.tsx";
-import RegistrarMedico from "./pages/RegistroDeMédico.tsx";
 import MisTurnos from "./pages/MisTurnos.tsx";
 import RegistroPaciente from "./pages/RegistroPaciente.tsx";
 import AutoregistroPaciente from "./pages/AutoregistroPaciente";
@@ -9,7 +8,6 @@ import BuscarPaciente from "./pages/BuscarPaciente";
 import PrivateRoute from "./components/PrivateRoute";
 import NoAutorizado from "./pages/NoAutorizado";
 import VerUsuario from "./pages/VerUsuario.tsx";
-import RegistroUsuario from "./pages/RegistroUsuario.tsx";
 import GestionTurnos from "./pages/GestionTurnos";
 import DetalleTurno from "./pages/DetalleTurno.tsx";
 import CancelarTurno from "./pages/CancelarTurno.tsx";
@@ -50,10 +48,8 @@ function App() {
       {/* RUTAS EXCLUSIVAS DE LA SECRETARIA */}
       {/* ========================================== */}
       <Route element={<PrivateRoute roles={["SECRETARIA"]} />}>
-        <Route path="/registrar-medico" element={<RegistrarMedico />} />
         {/* HU-001: el alta de pacientes es del personal administrativo */}
         <Route path="/registrar-paciente" element={<RegistroPaciente />} />
-        <Route path="/registrar-usuario" element={<RegistroUsuario />} />
       </Route>
 
       {/* ========================================== */}

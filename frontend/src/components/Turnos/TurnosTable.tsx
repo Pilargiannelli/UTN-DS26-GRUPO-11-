@@ -43,7 +43,7 @@ function obtenerIniciales(nombre: string) {
 }
 
 function TurnosTable({
-  turnos, onNuevoTurno, onTurnoActualizado
+  turnos, onNuevoTurno, onTurnoActualizado, verAnteriores, onToggleAnteriores
 }: TurnosTableProps) {
   const { tieneRol } = useAuth();
   const [procesando, setProcesando] = useState<number | null>(null);
@@ -75,7 +75,10 @@ function TurnosTable({
         <div className="agenda-header">
           <div>
             <h2>Agenda Médica</h2>
-            <p>Turnos programados para hoy</p>
+            <p>{verAnteriores ? "Todos los turnos" : "Turnos de hoy en adelante"}</p>
+            <Button variant="link" size="sm" className="p-0" onClick={onToggleAnteriores}>
+              {verAnteriores ? "Ocultar anteriores" : "Ver anteriores"}
+            </Button>
           </div>
           {puedeCrearOFiltrar && <TurnosFilters onNuevoTurno={onNuevoTurno} />}
         </div>
@@ -104,6 +107,13 @@ function TurnosTable({
           </thead>
 
           <tbody>
+            {turnos.length === 0 && (
+              <tr>
+                <td colSpan={7} className="text-center texto-gris py-4">
+                  {verAnteriores ? "No hay turnos registrados." : "No hay turnos de hoy en adelante."}
+                </td>
+              </tr>
+            )}
             {turnos.map((turno) => {
               const nombrePaciente = `${turno.paciente.usuario.nombre} ${turno.paciente.usuario.apellido}`;
               const nombreMedico = `${turno.medico.usuario.nombre} ${turno.medico.usuario.apellido}`;

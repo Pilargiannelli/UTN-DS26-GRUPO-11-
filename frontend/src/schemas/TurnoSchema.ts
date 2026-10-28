@@ -16,12 +16,8 @@ export const turnoSchema = z.object({
     .string()
     .min(1, "Seleccione un horario"),
 
-  estado: z.enum([
-    "Pendiente",
-    "Confirmado",
-    "Cancelado",
-    "Reprogramado",
-  ]),
+  // Un turno nuevo solo puede nacer Pendiente o Confirmado
+  estado: z.enum(["Pendiente", "Confirmado"]),
 });
 
 export type TurnoForm = z.infer<typeof turnoSchema>;
