@@ -2,8 +2,9 @@ import { Router } from "express";
 import * as usuarioController from "../controllers/usuario.controller";
 import { authenticate, authorize } from "../middlewares/auth.middleware";
 import { Rol } from "../generated/prisma/enums";
-import { validate } from "../middlewares/validate.middleware";
+import { validate, validateParams } from "../middlewares/validate.middleware";
 import { pacienteCreateSchema } from "../validations/paciente.validation";
+import { idParamSchema } from "../validations/turno.validation";
 
 const router = Router();
 
@@ -16,6 +17,17 @@ router.get("/pacientes", authenticate, authorize(Rol.SECRETARIA, Rol.MEDICO), us
 // POST /api/pacientes -> alta de paciente por el personal (sección 6, HU-001).
 // Crea Usuario + Paciente; usuario y contraseña inicial = DNI.
 router.post("/pacientes", authenticate, authorize(Rol.SECRETARIA, Rol.MEDICO), validate(pacienteCreateSchema), usuarioController.createPaciente);
+
+// PUT /api/pacientes/:id -> editar los datos (sección 6). El paciente, solo los
+// suyos: eso lo verifica el service.
+router.put(
+  "/pacientes/:id",
+  authenticate,
+  authorize(Rol.SECRETARIA, Rol.MEDICO, Rol.PACIENTE),
+  validateParams(idParamSchema),
+  validate(pacienteCreateSchema),
+  usuarioController.updatePaciente
+);
 
 // GET /api/usuarios -> Exige token y rol SECRETARIA o MEDICO
 router.get("/usuarios", authenticate, authorize(Rol.SECRETARIA, Rol.MEDICO), usuarioController.getUsuarios);

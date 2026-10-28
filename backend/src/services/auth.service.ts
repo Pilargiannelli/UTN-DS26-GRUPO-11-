@@ -21,7 +21,7 @@ export async function login(datos: LoginInput) {
     where: { email: datos.email },
     omit: { passwordHash: false },
     include: {
-      paciente: true,
+      paciente: { include: { coberturas: { include: { obraSocial: true } } } },
       medico: true,
       secretaria: true,
     },
@@ -65,7 +65,8 @@ export async function obtenerPerfil(id: number) {
   return prisma.usuario.findUnique({
     where: { id },
     include: {
-      paciente: true,
+      // Con la obra social: el paciente la ve y la edita en su perfil
+      paciente: { include: { coberturas: { include: { obraSocial: true } } } },
       medico: true,
       secretaria: true,
     },

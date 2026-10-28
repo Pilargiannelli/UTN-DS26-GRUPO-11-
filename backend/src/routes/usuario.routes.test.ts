@@ -11,6 +11,7 @@ vi.mock("../controllers/usuario.controller", () => ({
   getPacientes: (req: any, res: any) => res.status(200).json([]),
   getUsuarios: (req: any, res: any) => res.status(200).json([]),
   createPaciente: (req: any, res: any) => res.status(201).json(req.body),
+  updatePaciente: (req: any, res: any) => res.status(200).json(req.body),
 }));
 
 const tokenDe = (rol: Rol) => jwt.sign({ sub: 1, rol }, JWT_SECRET, { expiresIn: "1h" });

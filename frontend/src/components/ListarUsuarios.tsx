@@ -7,6 +7,7 @@ import { useState } from "react";
 import { useUsuarioSeleccionado } from "../hooks/useUsuarioSeleccionado";
 import { useNavigate } from "react-router-dom";
 import { BotonAgregar } from "./BotonAgregar";
+import type { CoberturaPaciente } from "../types/Usuario";
 
 interface ListarUsuariosProps {
     rol: "paciente" | "medico";
@@ -33,9 +34,10 @@ interface MedicoRegistro {
 interface PacienteRegistro {
     id: number;
     usuarioId: number;
-    fechaNacimiento: string | Date;
+    fechaNacimiento: string;
     sexo: string;
     telefono: string;
+    coberturas?: CoberturaPaciente[];
     usuario: UsuarioBasico;
 }
 
@@ -96,6 +98,7 @@ export function ListarUsuarios({ rol }: ListarUsuariosProps) {
                 fechaNacimiento: (item as PacienteRegistro).fechaNacimiento,
                 sexo: (item as PacienteRegistro).sexo,
                 telefono: (item as PacienteRegistro).telefono,
+                coberturas: (item as PacienteRegistro).coberturas ?? [],
                 usuarioId: item.usuarioId
             } : null,
         };

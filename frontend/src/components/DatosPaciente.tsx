@@ -1,6 +1,5 @@
-import type { PacienteProps } from "../types/PacienteProps.ts";
+import type { PacientePerfil } from "../types/Usuario";
 import { useEdad } from "../hooks/useEdad";
-import { useAuth } from "../hooks/useAuth";
 
 const formatearFecha = (fechaStr: string | undefined | null) => {
     if (!fechaStr) return "-";
@@ -13,9 +12,9 @@ const formatearFecha = (fechaStr: string | undefined | null) => {
     return fechaStr;
 };
 
-export function DatosPaciente({ docs }: { docs: PacienteProps }) {
+export function DatosPaciente({ docs }: { docs: PacientePerfil }) {
   const edad = useEdad(docs.fechaNacimiento);
-  const { tieneRol } = useAuth();
+  const cobertura = docs.coberturas?.[0];
 
   return (
     <div className="text-start">
@@ -37,16 +36,12 @@ export function DatosPaciente({ docs }: { docs: PacienteProps }) {
         </div>
         <div className="dato">
             <h5>Obra Social:</h5>
-            <p>{docs.obraSocial}</p>
+            <p>
+              {cobertura
+                ? `${cobertura.obraSocial.nombre} · Plan ${cobertura.plan} · Afiliado ${cobertura.nroAfiliado}`
+                : "Sin obra social"}
+            </p>
         </div>
-
-        {/* La SECRETARIA no tiene acceso al historial clínico ni a sus datos asociados */}
-        {!tieneRol("SECRETARIA") && (
-          <div className="dato">
-              <h5>Consultas registradas:</h5>
-              <p>{docs.historial?.consultas?.length ?? 0}</p>
-          </div>
-        )}
     </div>
   );
 }

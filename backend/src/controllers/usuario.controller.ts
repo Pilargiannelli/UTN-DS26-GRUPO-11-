@@ -29,6 +29,15 @@ export async function getPacientes(_req: Request, res: Response, next: NextFunct
   }
 }
 
+export async function updatePaciente(req: Request, res: Response, next: NextFunction) {
+  try {
+    const paciente = await pacienteService.actualizarPaciente(Number(req.params.id), req.body, req.usuario!);
+    return res.json(paciente);
+  } catch (error) {
+    return next(error);
+  }
+}
+
 export async function createPaciente(req: Request, res: Response, next: NextFunction) {
   try {
     // DNI o email repetido -> ErrorNegocio 409 con el mensaje del campo
