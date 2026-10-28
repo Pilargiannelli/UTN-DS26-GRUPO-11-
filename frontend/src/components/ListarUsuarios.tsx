@@ -1,7 +1,7 @@
 import { Search } from "react-bootstrap-icons";
 import { useFetch } from "../hooks/useFetch";
 import { useFotoPerfil } from "../hooks/useFotoPerfil";
-import { Container, Row, Col, Card, Button, Spinner, Form} from "react-bootstrap";
+import { Container, Row, Col, Card, Button, Spinner, Form } from "react-bootstrap";
 import '../assets/styles/ListarUsuarios.css';
 import { useState } from "react";
 import { useUsuarioSeleccionado } from "../hooks/useUsuarioSeleccionado";
@@ -12,13 +12,41 @@ interface ListarUsuariosProps {
     rol: "paciente" | "medico";
 }
 
+interface UsuarioBasico {
+    id: number;
+    username?: string;
+    nombre: string;
+    apellido: string;
+    dni: string;
+    email: string;
+    fotoPerfil?: string | null;
+}
+
+interface MedicoRegistro {
+    id: number;
+    usuarioId: number;
+    especialidad: string;
+    matricula: string;
+    usuario: UsuarioBasico;
+}
+
+interface PacienteRegistro {
+    id: number;
+    usuarioId: number;
+    fechaNacimiento: string | Date;
+    sexo: string;
+    telefono: string;
+    usuario: UsuarioBasico;
+}
+
+type RegistroUsuario = MedicoRegistro | PacienteRegistro;
+
 const sinAcentos = (texto: string) =>
     texto.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 
 export function ListarUsuarios({ rol }: ListarUsuariosProps) {
     const endpoint = rol === "medico" ? "/medicos" : "/pacientes";
-    // Tipamos como any temporalmente o según tu interfaz de Usuario del backend nuevo
-    const { data: registros, loading, error } = useFetch<any[]>(endpoint);
+    const { data: registros, loading, error } = useFetch<RegistroUsuario[]>(endpoint);
     
     const [busqueda, setBusqueda] = useState("");
     const navigate = useNavigate();
@@ -40,19 +68,40 @@ export function ListarUsuarios({ rol }: ListarUsuariosProps) {
         const texto = sinAcentos(busqueda.toLowerCase().trim());
         if (texto === "") return true;
         
-        // Dependiendo de si el endpoint trae el usuario dentro de 'usuario' o a nivel plano:
-        const u = item.usuario || item; 
+        const u = item.usuario; 
         const nombreCompleto = sinAcentos(`${u.nombre} ${u.apellido}`.toLowerCase());
         const coincideNombre = nombreCompleto.includes(texto);
         const numerosBuscados = texto.replace(/\D/g, "");
-        const coincideDni = numerosBuscados !== "" && u.dni.startsWith(numerosBuscados);
+        const coincideDni = numerosBuscados !== "" && u.dni?.startsWith(numerosBuscados);
 
         return coincideNombre || coincideDni;
     });
 
-    const handleVerPerfil = (item: any) => {
-        seleccionarUsuario(item);
-        navigate("/ver-perfil", { state: {from: `/buscar-${rol}`} });
+    const handleVerPerfil = (item: RegistroUsuario) => {
+        const isMedico = rol === "medico";
+        
+        // Normalizamos asegurando que username sea string para cumplir con el tipo Usuario
+        const usuarioNormalizado = {
+            ...item.usuario,
+            username: item.usuario.username || item.usuario.email || "",
+            rol: isMedico ? ("MEDICO" as const) : ("PACIENTE" as const),
+            medico: isMedico ? {
+                id: item.id,
+                especialidad: (item as MedicoRegistro).especialidad,
+                matricula: (item as MedicoRegistro).matricula,
+                usuarioId: item.usuarioId
+            } : null,
+            paciente: !isMedico ? {
+                id: item.id,
+                fechaNacimiento: (item as PacienteRegistro).fechaNacimiento,
+                sexo: (item as PacienteRegistro).sexo,
+                telefono: (item as PacienteRegistro).telefono,
+                usuarioId: item.usuarioId
+            } : null,
+        };
+
+        seleccionarUsuario(usuarioNormalizado as Parameters<typeof seleccionarUsuario>[0]);
+        navigate("/ver-perfil", { state: { from: `/buscar-${rol}` } });
     };
 
     return (
@@ -92,11 +141,11 @@ export function ListarUsuarios({ rol }: ListarUsuariosProps) {
             ) : (
                 <Row>
                     {usuariosFiltrados.map((item) => {
-                        // Extraemos los datos del usuario vinculado según el schema de Prisma
-                        const u = item.usuario || item; 
+                        const u = item.usuario; 
                         // eslint-disable-next-line react-hooks/rules-of-hooks
-                        const estilosFoto = useFotoPerfil(u.fotoPerfil);
+                        const estilosFoto = useFotoPerfil(u.fotoPerfil ?? null);
                         const nombreCompleto = `${u.nombre} ${u.apellido}`;
+                        const especialidadMedico = rol === "medico" ? (item as MedicoRegistro).especialidad : null;
                         
                         return (
                             <Col key={item.id} xs={12} sm={6} md={4} lg={3} className="mb-4">
@@ -109,7 +158,7 @@ export function ListarUsuarios({ rol }: ListarUsuariosProps) {
                                             <Card.Title className="fs-5 mb-1 nombre">{nombreCompleto}</Card.Title>
                                             <Card.Text className="text-muted small">
                                                 {rol === "medico" ? ( 
-                                                    <span>{item.especialidad}</span> 
+                                                    <span>{especialidadMedico}</span> 
                                                 ) : ( 
                                                     <span>@{u.username || u.email}</span> 
                                                 )}

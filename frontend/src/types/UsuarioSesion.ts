@@ -12,6 +12,22 @@ export interface UsuarioSesion {
   email: string;
   fotoPerfil: string | null;
   rol: RolUsuario;
+  
+  // Relaciones opcionales que el backend ahora incluye en la respuesta
+  paciente?: {
+    id: number;
+    fechaNacimiento: string | Date;
+    sexo: string;
+    telefono: string;
+  } | null;
+  medico?: {
+    id: number;
+    especialidad: string;
+    matricula: string;
+  } | null;
+  secretaria?: {
+    id: number;
+  } | null;
 }
 
 // Respuesta de POST /api/auth/login

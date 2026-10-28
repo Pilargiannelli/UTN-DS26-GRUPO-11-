@@ -12,6 +12,11 @@ export async function registrar(datos: RegistroInput) {
 
   return prisma.usuario.create({
     data: { ...resto, passwordHash },
+    include: {
+      paciente: true,
+      medico: true,
+      secretaria: true,
+    },
   });
 }
 
@@ -21,6 +26,11 @@ export async function login(datos: LoginInput) {
   const usuario = await prisma.usuario.findUnique({
     where: { email: datos.email },
     omit: { passwordHash: false },
+    include: {
+      paciente: true,
+      medico: true,
+      secretaria: true,
+    },
   });
 
   const credencialesValidas =
@@ -38,5 +48,12 @@ export async function login(datos: LoginInput) {
 }
 
 export async function obtenerPerfil(id: number) {
-  return prisma.usuario.findUnique({ where: { id } });
+  return prisma.usuario.findUnique({
+    where: { id },
+    include: {
+      paciente: true,
+      medico: true,
+      secretaria: true,
+    },
+  });
 }
