@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
+import helmet from "helmet";
 import turnoRoutes from "./routes/turno.routes";
 import authRoutes from "./routes/auth.routes";
 import obraSocialRoutes from "./routes/obraSocial.routes";
@@ -18,11 +19,22 @@ const corsOptions = {
 };
 
 
+// En Render la API está detrás de un proxy: sin esto, el límite de intentos de
+// login vería la IP del proxy y no la del usuario
+app.set("trust proxy", 1);
+
+// Cabeceras de seguridad (y sin "x-powered-by: Express")
+app.use(helmet());
 app.use(cors(corsOptions));
 app.use(express.json());
 
 app.get("/", (_req, res) => {
   res.json({ mensaje: "API de Gestión de Turnos y Pacientes - IMOS Saladillo" });
+});
+
+// Para "despertar" el servidor antes de la demo: no toca la base de datos
+app.get("/api/health", (_req, res) => {
+  res.json({ status: "ok" });
 });
 
 app.use("/api/auth", authRoutes);

@@ -22,9 +22,10 @@ export const registroSchema = pacienteCreateSchema.extend({
   password: passwordFuerte,
 });
 
-// POST /api/auth/login
+// POST /api/auth/login. El email se normaliza igual que en el alta (que lo
+// guarda en minúscula): si no, "Maria@..." no encontraría a "maria@...".
 export const loginSchema = z.object({
-  email: z.email("El email no es válido"),
+  email: z.string().trim().toLowerCase().pipe(z.email("El email no es válido")),
   password: z.string().min(1, "La contraseña es obligatoria"),
 });
 

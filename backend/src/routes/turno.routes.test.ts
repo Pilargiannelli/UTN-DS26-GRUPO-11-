@@ -52,7 +52,7 @@ describe("Turno Routes - Matriz sin DB", () => {
       const res = await request(app)[metodo](path).set("Authorization", "Bearer token-falso");
 
       expect(res.status).toBe(401);
-      expect(res.body).toEqual({ error: "Token inválido o vencido" });
+      expect(res.body).toEqual({ error: "Token inválido" });
     });
 
     it("devuelve 401 con un token firmado con otro secreto", async () => {
