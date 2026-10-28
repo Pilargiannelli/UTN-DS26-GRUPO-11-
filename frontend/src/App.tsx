@@ -51,7 +51,6 @@ function App() {
       {/* ========================================== */}
       <Route element={<PrivateRoute roles={["SECRETARIA"]} />}>
         <Route path="/registrar-medico" element={<RegistrarMedico />} />
-        <Route path="/registrar-paciente" element={<RegistroPaciente />} />
         <Route path="/registrar-usuario" element={<RegistroUsuario />} />
       </Route>
 
@@ -60,6 +59,8 @@ function App() {
       {/* ========================================== */}
       <Route element={<PrivateRoute roles={["SECRETARIA", "MEDICO"]} />}>
         <Route path="/buscar-paciente" element={<BuscarPaciente />} />
+        {/* Matriz §6: POST /api/pacientes permitido a SECRETARIA y MEDICO */}
+        <Route path="/registrar-paciente" element={<RegistroPaciente />} />
         {/* GestionTurnos no trae Layout propio (Home lo usa adentro del suyo) */}
         <Route path="/gestion-turnos" element={<Layout><GestionTurnos /></Layout>} />
       </Route>
