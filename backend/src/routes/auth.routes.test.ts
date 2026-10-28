@@ -39,7 +39,7 @@ describe("Auth Routes - Matriz sin DB", () => {
         .set("Authorization", "Bearer token_falso_invalido");
 
       expect(response.status).toBe(401);
-      expect(response.body).toEqual({ error: "Token inválido o vencido" });
+      expect(response.body).toEqual({ error: "Token inválido" });
     });
 
     it("debe retornar 200 si el token es válido", async () => {

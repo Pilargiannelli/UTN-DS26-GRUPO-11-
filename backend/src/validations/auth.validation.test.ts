@@ -28,13 +28,12 @@ describe("loginSchema", () => {
     if (!r.success) expect(r.error.issues[0].path).toEqual(["email"]);
   });
 
-  // Hoy el login no aplica .trim().toLowerCase() al email: un email con
-  // espacios alrededor se rechaza en vez de normalizarse. Si el grupo decide
-  // normalizarlo, este test se pone rojo y hay que reemplazarlo por uno que
-  // verifique r.data.email === "admin@imos.test".
-  it("rechaza un email con espacios alrededor (todavía no se normaliza)", () => {
+  // El alta guarda el email en minúscula: el login lo normaliza igual, así
+  // "  Admin@IMOS.test " entra como "admin@imos.test"
+  it("normaliza el email (espacios y mayúsculas)", () => {
     const r = loginSchema.safeParse({ email: "  Admin@IMOS.test ", password: "x" });
-    expect(r.success).toBe(false);
+    expect(r.success).toBe(true);
+    if (r.success) expect(r.data.email).toBe("admin@imos.test");
   });
 
   it("rechaza una contraseña vacía con el mensaje propio", () => {

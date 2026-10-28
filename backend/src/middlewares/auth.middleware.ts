@@ -27,8 +27,13 @@ export function authenticate(req: Request, res: Response, next: NextFunction) {
   try {
     req.usuario = jwt.verify(token, JWT_SECRET) as unknown as TokenPayload;
     next();
-  } catch {
-    return res.status(401).json({ error: "Token inválido o vencido" });
+  } catch (error) {
+    // Vencido es lo normal después de JWT_EXPIRES_IN; inválido (mal firmado,
+    // adulterado) es otra cosa, y conviene distinguirlos
+    if (error instanceof jwt.TokenExpiredError) {
+      return res.status(401).json({ error: "Tu sesión expiró" });
+    }
+    return res.status(401).json({ error: "Token inválido" });
   }
 }
 

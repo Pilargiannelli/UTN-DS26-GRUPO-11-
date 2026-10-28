@@ -87,25 +87,25 @@ describe("authenticate", () => {
   });
 
   // expiresIn: "-1s" fabrica un token ya vencido: no hay que esperar nada
-  it("401 'Token inválido o vencido' con un token vencido", () => {
+  it("401 'Tu sesión expiró' con un token vencido", () => {
     const token = jwt.sign({ sub: 7, rol: Rol.PACIENTE }, JWT_SECRET, { expiresIn: "-1s" });
     const { req, res, next } = conToken(token);
 
     authenticate(req, res, next);
 
     expect(res.status).toHaveBeenCalledWith(401);
-    expect(res.json).toHaveBeenCalledWith({ error: "Token inválido o vencido" });
+    expect(res.json).toHaveBeenCalledWith({ error: "Tu sesión expiró" });
     expect(next).not.toHaveBeenCalled();
   });
 
-  it("401 'Token inválido o vencido' con un token firmado con otro secret", () => {
+  it("401 'Token inválido' con un token firmado con otro secret", () => {
     const token = jwt.sign({ sub: 7, rol: Rol.SECRETARIA }, "otro-secret", { expiresIn: "1h" });
     const { req, res, next } = conToken(token);
 
     authenticate(req, res, next);
 
     expect(res.status).toHaveBeenCalledWith(401);
-    expect(res.json).toHaveBeenCalledWith({ error: "Token inválido o vencido" });
+    expect(res.json).toHaveBeenCalledWith({ error: "Token inválido" });
     expect(next).not.toHaveBeenCalled();
     expect(req.usuario).toBeUndefined();
   });

@@ -420,3 +420,8 @@ Content-Type: application/json
   "passwordActual": "NoEsMiPassword1",
   "passwordNueva": "Segura123"
 }
+
+### ==========================================
+### 10. SALUD DE LA API (sin DB, para despertar el servidor antes de la demo)
+### ==========================================
+GET {{baseUrl}}/api/health
