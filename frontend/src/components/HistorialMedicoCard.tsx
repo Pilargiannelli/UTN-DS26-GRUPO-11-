@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
-import type { Usuario } from "../types/Usuario";
-import type { Consulta } from "../types/ConsultaProps";
+import { useNavigate } from "react-router-dom";
+import { Alert, Spinner } from "react-bootstrap";
 import { ConsultaCard } from "./ConsultaCard";
 import { Boton } from "./Boton.tsx";
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -12,49 +12,60 @@ import { EditorTags } from "./EditorTags.tsx";
 import { ModalConfirmacion } from "./ModalConfirmacion.tsx";
 import type { EditorTagsRef } from "../types/EditorTagsProps.ts";
 import { useAuth } from "../hooks/useAuth";
+import { useHistoriaClinica } from "../hooks/useHistoriaClinica";
 
 interface HistorialMedicoCardProps {
-  usuario: Usuario;
+  // id de Paciente (usuario.paciente.id), no de Usuario
+  pacienteId: number;
 }
 
-export function HistorialMedicoCard({ usuario }: HistorialMedicoCardProps) {
+// Historia clínica en el perfil del paciente. El médico ve y edita alergias y
+// antecedentes (PUT); el paciente solo la lee. La secretaria no llega acá
+// (VerUsuario no la muestra y el back responde 403).
+export function HistorialMedicoCard({ pacienteId }: HistorialMedicoCardProps) {
     const { tieneRol } = useAuth();
-    const historial = (usuario as Usuario & { docs?: { historial?: { consultas?: Consulta[]; alergias?: string[]; antecedentes?: string[] } } }).docs?.historial;
-    const consultas = historial?.consultas ?? [];
-    const [listaAlergias, setListaAlergias] = useState<string[]>(historial?.alergias ?? []);
-    const [listaAntecedentes, setListaAntecedentes] = useState<string[]>(historial?.antecedentes ?? []);
+    const navigate = useNavigate();
+    const esMedico = tieneRol("MEDICO");
+    const { historia, loading, error, actualizarListas } = useHistoriaClinica(pacienteId);
+    const [errorGuardar, setErrorGuardar] = useState<string | null>(null);
     const alergiasRef = useRef<EditorTagsRef>(null);
     const antecedentesRef = useRef<EditorTagsRef>(null);
-    const [modalConfig, setModalConfig] = useState<{ 
-        isOpen: boolean; 
-        mensaje: string; 
-        accion: () => void 
+    const [modalConfig, setModalConfig] = useState<{
+        isOpen: boolean;
+        mensaje: string;
+        accion: () => void
     }>({
         isOpen: false,
         mensaje: '',
         accion: () => {},
     });
 
+    // EditorTags muestra los botones de edición solo a quien corresponde
+    const soloMedico = ({ medico }: { medico: React.ReactNode }) => (esMedico ? medico : null);
+
+    if (loading) return <div className="historial-card shadow-sm"><Spinner animation="border" size="sm" /></div>;
+    if (error) return <div className="historial-card shadow-sm"><Alert variant="danger">{error.message}</Alert></div>;
+    if (!historia) return null;
+
     const abrirModalConfirmacion = (seccion: 'alergias' | 'antecedentes', tituloTexto: string, nuevosTags: string[]) => {
       setModalConfig({
           isOpen: true,
           mensaje: `¿Está seguro que quiere guardar los cambios en ${tituloTexto}?`,
-          accion: () => {
-              if (seccion === 'alergias') {
-                  setListaAlergias(nuevosTags);
-                  alergiasRef.current?.finalizarEdicionExitosamente();
-              } else {
-                  setListaAntecedentes(nuevosTags);
-                  antecedentesRef.current?.finalizarEdicionExitosamente();
-              }
+          accion: async () => {
               setModalConfig(prev => ({ ...prev, isOpen: false }));
+              setErrorGuardar(null);
+              try {
+                  await actualizarListas({
+                      alergias: seccion === 'alergias' ? nuevosTags : historia.alergias,
+                      antecedentes: seccion === 'antecedentes' ? nuevosTags : historia.antecedentes,
+                  });
+                  (seccion === 'alergias' ? alergiasRef : antecedentesRef).current?.finalizarEdicionExitosamente();
+              } catch (err) {
+                  setErrorGuardar(err instanceof Error ? err.message : "No se pudieron guardar los cambios");
+              }
           }
       });
     };
-
-    const consultasOrdenadas = [...consultas].sort(
-        (a: Consulta, b: Consulta) => new Date(b.fecha).getTime() - new Date(a.fecha).getTime()
-    );
 
     const misTabs = [
         {
@@ -62,13 +73,13 @@ export function HistorialMedicoCard({ usuario }: HistorialMedicoCardProps) {
             component: (
                 <>
                     <div className="consultas-scroll">
-                        {consultasOrdenadas.length > 0 ? ( consultasOrdenadas.map((consulta, i) => (
-                            <ConsultaCard key={i} consulta={consulta} />
-                        ))) : ( <p>No hay consultas registradas.</p> )}
+                        {historia.entradas.length > 0 ? historia.entradas.map((entrada) => (
+                            <ConsultaCard key={entrada.id} entrada={entrada} medico={historia.medicoResponsable} />
+                        )) : <p>No hay consultas registradas.</p>}
                     </div>
-                    {tieneRol("MEDICO") && (
+                    {esMedico && (
                       <div className="my-2">
-                        <Boton texto="Nueva consulta" onClick={() => null}/>
+                        <Boton texto="Nueva consulta" onClick={() => navigate(`/historial?paciente=${pacienteId}`)}/>
                       </div>
                     )}
                 </>
@@ -78,17 +89,14 @@ export function HistorialMedicoCard({ usuario }: HistorialMedicoCardProps) {
             label: "Alergias y Antecedentes",
             component: (
                 <div className="consultas-scroll datos-medicos-tab">
+                    {errorGuardar && <Alert variant="danger">{errorGuardar}</Alert>}
                     <ContenedorDatos>
-                        <EditorTags ref={alergiasRef} titulo="Alergias" tagsIniciales={listaAlergias} placeholderInput="Nueva alergia..."
-                        onPreGuardar={(tags) => abrirModalConfirmacion("alergias", "Alergias", tags)} useRolView={function (): React.ReactNode {
-                            throw new Error("Function not implemented.");
-                        } } />
+                        <EditorTags ref={alergiasRef} titulo="Alergias" tagsIniciales={historia.alergias} placeholderInput="Nueva alergia..."
+                        onPreGuardar={(tags) => abrirModalConfirmacion("alergias", "Alergias", tags)} useRolView={soloMedico} />
                     </ContenedorDatos>
                     <ContenedorDatos>
-                        <EditorTags ref={antecedentesRef} titulo="Antecedentes Médicos" tagsIniciales={listaAntecedentes} placeholderInput="Nuevo antecedente..."
-                        onPreGuardar={(tags) => abrirModalConfirmacion("antecedentes", "Antecedentes Médicos", tags)} useRolView={function (): React.ReactNode {
-                            throw new Error("Function not implemented.");
-                        } } />
+                        <EditorTags ref={antecedentesRef} titulo="Antecedentes Médicos" tagsIniciales={historia.antecedentes} placeholderInput="Nuevo antecedente..."
+                        onPreGuardar={(tags) => abrirModalConfirmacion("antecedentes", "Antecedentes Médicos", tags)} useRolView={soloMedico} />
                     </ContenedorDatos>
                 </div>
             )
@@ -97,7 +105,7 @@ export function HistorialMedicoCard({ usuario }: HistorialMedicoCardProps) {
 
     return (
         <div className="historial-card shadow-sm">
-            <h4>Historial Médico</h4>
+            <h4>Historia clínica</h4>
             <DesplazadorTabs tabs={misTabs} />
             <ModalConfirmacion isOpen={modalConfig.isOpen} mensaje={modalConfig.mensaje} onAceptar={modalConfig.accion} onCancelar={() => setModalConfig(prev => ({ ...prev, isOpen: false }))} />
         </div>

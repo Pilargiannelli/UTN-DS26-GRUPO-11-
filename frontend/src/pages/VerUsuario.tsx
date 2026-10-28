@@ -40,17 +40,14 @@ function VerUsuario() {
     // Casteo tipado y estricto utilizando la interfaz Usuario en lugar de 'any'
     const usuarioTipado = usuarioAMostrar as unknown as Usuario;
 
-    // Renderizado condicional de la vista lateral según el rol del usuario a mostrar
+    // Historia clínica al costado del perfil de un paciente. Las claves son los
+    // roles reales (en mayúscula): quien mira -> rol del perfil. La SECRETARIA
+    // no la ve (matriz §10); el paciente ve la suya.
+    const pacienteId = usuarioTipado?.paciente?.id;
+    const historiaClinica = pacienteId ? <HistorialMedicoCard pacienteId={pacienteId} /> : null;
     const vistaPorRol = usePerfilRolView(usuarioTipado, {
-        admin: {
-            paciente: <HistorialMedicoCard usuario={usuarioTipado} />,
-        },
-        medico: {
-            paciente: <HistorialMedicoCard usuario={usuarioTipado} />,
-        },
-        paciente: {
-            paciente: <HistorialMedicoCard usuario={usuarioTipado} />,
-        },
+        MEDICO: { PACIENTE: historiaClinica },
+        PACIENTE: { PACIENTE: historiaClinica },
     });
 
     if (!usuarioAMostrar) {
