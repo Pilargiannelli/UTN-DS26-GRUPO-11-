@@ -6,7 +6,7 @@ function RegistroPaciente() {
     return (
         <Layout>
             <BotonVolver destino="/buscar-paciente" />
-            <RegistroPacienteForm />
+            <RegistroPacienteForm modo="secretaria" />
         </Layout>
     );
 }

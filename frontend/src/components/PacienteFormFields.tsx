@@ -22,12 +22,12 @@ export function PacienteFormFields({ onSave, onCancel, paciente }: PacienteFormP
         : ["Sin obra social"];
 
     // Schema sin dependencia de usuarios precargados en local
-    const schema = pacienteSchema(osValidas, sexoOptions, []);
+    const schema = pacienteSchema(osValidas, sexoOptions);
 
     const initialValues: PacienteValidado = {
         nombre: paciente.nombre,
         apellido: paciente.apellido,
-        dni: typeof paciente.dni === "number" ? paciente.dni : parseInt(paciente.dni) || 0,
+        dni: String(paciente.dni ?? ""),
         email: paciente.email,
         telefono: paciente.telefono,
         obraSocial: paciente.obraSocial,

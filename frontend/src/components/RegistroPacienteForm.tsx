@@ -1,6 +1,6 @@
-import { useForm, type Resolver, useWatch } from "react-hook-form";
+import { useForm, type Resolver, useWatch, type Path } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { pacienteSchema, type PacienteValidado } from '../schemas/pacienteSchema.ts';
+import { pacienteSchema, SIN_OBRA_SOCIAL, type PacienteValidado } from '../schemas/pacienteSchema.ts';
 import { Button, Form, Row, Col, Spinner } from "react-bootstrap";
 import { useFetch } from "../hooks/useFetch.ts";
 import { SelectEditable } from "./SelectEditable.tsx";
@@ -9,26 +9,48 @@ import '../assets/styles/Form.css';
 import { useEffect, useState } from "react";
 import { useMayus } from "../hooks/useMayus.ts";
 import { dateInputToString } from "../hooks/useDateTransform.ts";
-import { apiFetch } from "../services/api.ts";
+import { apiFetch, ApiError } from "../services/api.ts";
 import type { ObraSocial } from "../types/Paciente.ts";
+import { useNavigate } from "react-router-dom";
 
-export function RegistroPacienteForm() {
+interface RegistroPacienteFormProps {
+    // secretaria: POST /pacientes (usuario y contraseña inicial = DNI)
+    // autoregistro: POST /auth/registro con la contraseña que elige el paciente
+    modo: "secretaria" | "autoregistro";
+}
+
+// Campos del back (paciente.validation.ts) -> campos de este formulario
+const CAMPO_FORM: Record<string, Path<PacienteValidado>> = {
+    nombre: "nombre",
+    apellido: "apellido",
+    dni: "dni",
+    email: "email",
+    telefono: "telefono",
+    sexo: "sexo",
+    fechaNacimiento: "fechaNacimiento.year",
+    "cobertura.nroAfiliado": "nroAfiliado",
+    "cobertura.plan": "plan",
+    password: "password",
+};
+
+export function RegistroPacienteForm({ modo }: RegistroPacienteFormProps) {
+    const navigate = useNavigate();
     const handleMayus = useMayus();
     const [submitting, setSubmitting] = useState(false);
     const [errorMsg, setErrorMsg] = useState<string | null>(null);
+    const esAutoregistro = modo === "autoregistro";
 
     const opcionesSexo = ["Masculino", "Femenino", "Otro"];
 
-    // Carga de obras sociales desde la API real
+    // GET /api/obras-sociales devuelve [{ id, nombre }]: el select muestra el
+    // nombre y al enviar se manda el id (cobertura.obraSocialId)
     const { data: obrasSocialesAPI, loading } = useFetch<ObraSocial[]>("/obras-sociales");
-    const osValidas = obrasSocialesAPI 
-        ? obrasSocialesAPI.map(os => typeof os === "string" ? os : os.nombre) 
-        : ["Sin obra social"];
+    const obrasSociales = obrasSocialesAPI ?? [];
+    const osValidas = [SIN_OBRA_SOCIAL, ...obrasSociales.map((os) => os.nombre)];
 
-    // Schema sin dependencia de users.json mockeado
-    const schema = pacienteSchema(osValidas, opcionesSexo, []);
+    const schema = pacienteSchema(osValidas, opcionesSexo, esAutoregistro);
 
-    const { register, handleSubmit, formState: { errors }, control, clearErrors, setValue } = useForm<PacienteValidado>({
+    const { register, handleSubmit, formState: { errors }, control, setValue, setError } = useForm<PacienteValidado>({
         resolver: zodResolver(schema) as Resolver<PacienteValidado>,
         mode: "onBlur",
         defaultValues: { obraSocial: "", nroAfiliado: "", plan: "" }
@@ -37,33 +59,45 @@ export function RegistroPacienteForm() {
     const onSubmit = async (data: PacienteValidado) => {
         setSubmitting(true);
         setErrorMsg(null);
-        try {
-            const fechaString = dateInputToString(data.fechaNacimiento);
-            const payload = {
-                ...data,
-                dni: Number(data.dni),
-                fechaNacimiento: fechaString,
-                nroAfiliado: data.nroAfiliado === "-" ? "" : data.nroAfiliado,
-                plan: data.plan === "-" ? "" : data.plan,
-                rol: "PACIENTE"
-            };
+        const obraSocial = obrasSociales.find((os) => os.nombre === data.obraSocial);
+        const payload = {
+            nombre: data.nombre,
+            apellido: data.apellido,
+            dni: data.dni,
+            email: data.email,
+            telefono: data.telefono,
+            sexo: data.sexo,
+            fechaNacimiento: dateInputToString(data.fechaNacimiento),
+            ...(obraSocial && {
+                cobertura: { obraSocialId: obraSocial.id, nroAfiliado: data.nroAfiliado, plan: data.plan },
+            }),
+            ...(esAutoregistro && { password: data.password }),
+        };
 
-            // Petición real contra el backend
-            await apiFetch("/pacientes", {
+        try {
+            await apiFetch(esAutoregistro ? "/auth/registro" : "/pacientes", {
                 method: "POST",
                 body: JSON.stringify(payload)
             });
 
-            window.location.href = "/buscar-paciente";
-        } catch (err: any) {
-            setErrorMsg(err.message || "Error al registrar el paciente");
+            // El toast lo muestra la pantalla de destino (Login o BuscarPaciente)
+            if (esAutoregistro) navigate("/", { state: { registroExitoso: true } });
+            else navigate("/buscar-paciente", { state: { pacienteCreado: true } });
+        } catch (err) {
+            // 400 de Zod: marcamos cada campo. 409 (DNI repetido...): arriba del form
+            const detalles = err instanceof ApiError ? err.detalles : [];
+            detalles.forEach(({ campo, mensaje }) => {
+                const campoForm = CAMPO_FORM[campo];
+                if (campoForm) setError(campoForm, { message: mensaje });
+            });
+            setErrorMsg(err instanceof Error ? err.message : "Error al registrar el paciente");
         } finally {
             setSubmitting(false);
         }
     };
 
     const obraSocialSeleccionada = useWatch({ control, name: "obraSocial" });
-    const sinObraSocial = (obraSocialSeleccionada === "Sin obra social");
+    const sinObraSocial = (obraSocialSeleccionada === SIN_OBRA_SOCIAL);
 
     useEffect(() => {
         if (sinObraSocial) {
@@ -73,21 +107,21 @@ export function RegistroPacienteForm() {
             setValue("nroAfiliado", "");
             setValue("plan", "");
         }
-    }, [sinObraSocial, clearErrors, setValue]);
+    }, [sinObraSocial, setValue]);
 
     if (loading) return <Spinner animation="border" />;
 
     return (
         <div className="container my-0 form-container">
             <Form className="container my-5 w-75" noValidate onSubmit={handleSubmit(onSubmit)}>
-                {errorMsg && <div className="alert alert-danger">{errorMsg}</div>}
+                {errorMsg && <div className="alert alert-danger" role="alert">{errorMsg}</div>}
 
                 {/* Datos personales */}
                 <Form.Label className="mb-1">Datos personales</Form.Label>
                 <Row className="g-3">
                     {/* Nombre */}
                     <Col md={6}>
-                        <Form.Group className="mb-3">
+                        <Form.Group className="mb-3" controlId="reg-nombre">
                             <Form.Label className="d-flex me-auto">Nombre</Form.Label>
                             <Form.Control type="text" placeholder="Ej: Ana" {...register("nombre")} isInvalid={!!errors.nombre} />
                             <Form.Control.Feedback type="invalid"> {errors.nombre?.message} </Form.Control.Feedback>
@@ -95,7 +129,7 @@ export function RegistroPacienteForm() {
                     </Col>
                     {/* Apellido */}
                     <Col md={6}>
-                        <Form.Group className="mb-3">
+                        <Form.Group className="mb-3" controlId="reg-apellido">
                             <Form.Label className="d-flex me-auto">Apellido</Form.Label>
                             <Form.Control type="text" placeholder="Ej: Martínez" {...register("apellido")} isInvalid={!!errors.apellido} />
                             <Form.Control.Feedback type="invalid"> {errors.apellido?.message} </Form.Control.Feedback>
@@ -105,9 +139,9 @@ export function RegistroPacienteForm() {
                 <Row className="g-3">
                     {/* DNI */}
                     <Col md={4}>
-                        <Form.Group className="mb-3">
+                        <Form.Group className="mb-3" controlId="reg-dni">
                             <Form.Label className="d-flex me-auto">DNI</Form.Label>
-                            <Form.Control type="number" placeholder="Ej: 38122078" {...register("dni")} isInvalid={!!errors.dni} />
+                            <Form.Control type="text" inputMode="numeric" placeholder="Ej: 38122078" {...register("dni")} isInvalid={!!errors.dni} />
                             <Form.Control.Feedback type="invalid"> {errors.dni?.message} </Form.Control.Feedback>
                         </Form.Group>
                     </Col>
@@ -115,7 +149,7 @@ export function RegistroPacienteForm() {
                     <Col md={4}>
                         <DateInput label="Fecha de nacimiento" register={register} errors={errors} fieldName="fechaNacimiento" />
                     </Col>
-                    {/* Sexo (Sin jsonPath) */}
+                    {/* Sexo */}
                     <Col md={4}>
                         <SelectEditable label="Sexo" name="sexo" options={opcionesSexo} register={register} error={errors.sexo?.message} />
                     </Col>
@@ -126,17 +160,17 @@ export function RegistroPacienteForm() {
                 <Row className="g-3">
                     {/* Teléfono */}
                     <Col md={6}>
-                        <Form.Group className="mb-3">
+                        <Form.Group className="mb-3" controlId="reg-telefono">
                             <Form.Label className="d-flex me-auto">Teléfono</Form.Label>
-                            <Form.Control type="number" placeholder="Ej: 5492215555555" {...register("telefono")} isInvalid={!!errors.telefono} />
+                            <Form.Control type="tel" inputMode="numeric" placeholder="Ej: 5492344555555" {...register("telefono")} isInvalid={!!errors.telefono} />
                             <Form.Control.Feedback type="invalid"> {errors.telefono?.message} </Form.Control.Feedback>
                         </Form.Group>
                     </Col>
                     {/* Correo */}
                     <Col md={6}>
-                        <Form.Group className="mb-3">
+                        <Form.Group className="mb-3" controlId="reg-email">
                             <Form.Label className="d-flex me-auto">Email</Form.Label>
-                            <Form.Control type="text" placeholder="Ej: paciente1@gmail.com" {...register("email")} isInvalid={!!errors.email} />
+                            <Form.Control type="email" placeholder="Ej: paciente1@gmail.com" {...register("email")} isInvalid={!!errors.email} />
                             <Form.Control.Feedback type="invalid"> {errors.email?.message} </Form.Control.Feedback>
                         </Form.Group>
                     </Col>
@@ -145,13 +179,13 @@ export function RegistroPacienteForm() {
                 {/* Cobertura médica */}
                 <Form.Label className="mt-2 mb-1">Cobertura médica</Form.Label>
                 <Row className="g-3">
-                    {/* Obra Social (Sin jsonPath) */}
+                    {/* Obra Social */}
                     <Col md={4}>
                         <SelectEditable label="Obra social" name="obraSocial" options={osValidas} register={register} error={errors.obraSocial?.message} />
                     </Col>
                     {/* Número de afiliado */}
                     <Col md={4}>
-                        <Form.Group className="mb-3">
+                        <Form.Group className="mb-3" controlId="reg-afiliado">
                             <Form.Label className="d-flex me-auto">Número de afiliado</Form.Label>
                             <Form.Control type="text" placeholder="Ej: A-123456" {...register("nroAfiliado")} onChange={handleMayus} isInvalid={!!errors.nroAfiliado?.message} disabled={sinObraSocial} />
                             <Form.Control.Feedback type="invalid"> {errors.nroAfiliado?.message} </Form.Control.Feedback>
@@ -159,7 +193,7 @@ export function RegistroPacienteForm() {
                     </Col>
                     {/* Plan */}
                     <Col md={4}>
-                        <Form.Group className="mb-3">
+                        <Form.Group className="mb-3" controlId="reg-plan">
                             <Form.Label className="d-flex me-auto">Plan</Form.Label>
                             <Form.Control type="text" placeholder="Ej: 210" {...register("plan")} onChange={handleMayus} isInvalid={!!errors.plan?.message} disabled={sinObraSocial} />
                             <Form.Control.Feedback type="invalid"> {errors.plan?.message} </Form.Control.Feedback>
@@ -167,9 +201,37 @@ export function RegistroPacienteForm() {
                     </Col>
                 </Row>
 
+                {esAutoregistro ? (
+                    <>
+                        {/* Acceso */}
+                        <Form.Label className="mt-2 mb-1">Contraseña para ingresar</Form.Label>
+                        <Row className="g-3">
+                            <Col md={6}>
+                                <Form.Group className="mb-3" controlId="reg-password">
+                                    <Form.Label className="d-flex me-auto">Contraseña</Form.Label>
+                                    <Form.Control type="password" autoComplete="new-password" {...register("password")} isInvalid={!!errors.password} />
+                                    <Form.Text>Al menos 8 caracteres, con mayúscula, minúscula y número.</Form.Text>
+                                    <Form.Control.Feedback type="invalid"> {errors.password?.message} </Form.Control.Feedback>
+                                </Form.Group>
+                            </Col>
+                            <Col md={6}>
+                                <Form.Group className="mb-3" controlId="reg-repetir">
+                                    <Form.Label className="d-flex me-auto">Repetir contraseña</Form.Label>
+                                    <Form.Control type="password" autoComplete="new-password" {...register("repetirPassword")} isInvalid={!!errors.repetirPassword} />
+                                    <Form.Control.Feedback type="invalid"> {errors.repetirPassword?.message} </Form.Control.Feedback>
+                                </Form.Group>
+                            </Col>
+                        </Row>
+                    </>
+                ) : (
+                    <p className="text-muted small">
+                        El paciente va a poder ingresar con su email y su DNI como contraseña inicial.
+                    </p>
+                )}
+
                 <div className="d-flex justify-content-end">
                     <Button type="submit" variant="primary" disabled={submitting}>
-                        {submitting ? <Spinner size="sm" /> : "Confirmar datos"}
+                        {submitting ? <Spinner size="sm" /> : esAutoregistro ? "Crear cuenta" : "Registrar paciente"}
                     </Button>
                 </div>
             </Form>

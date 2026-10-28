@@ -118,7 +118,8 @@ docker compose down -v        # bajar todo y BORRAR la base
 - **Autenticación:** login real contra la API con `AuthContext` y manejo de token en el frontend.
 - **API REST:** endpoints montados en `/api/auth`, `/api/turnos`, `/api/obras-sociales`, `/api/especialidades` y `/api/usuarios` (incluye `/medicos` y `/pacientes`), con control de permisos por rol (paciente, médico, secretaria/admin).
 - **Turnos contra la API real:** se reemplazaron los mocks en JSON por llamadas reales a la API para pedir, listar y cancelar turnos.
-- **Gestión de usuarios:** registro de pacientes y médicos, listado y edición de usuarios, con formularios validados (Zod/schemas por tipo de usuario).
+- **Gestión de usuarios:** registro de pacientes (por la secretaria o con "Crear cuenta"), listado y búsqueda de pacientes y médicos, con formularios validados (Zod/schemas por tipo de usuario).
+  - Un paciente que da de alta la secretaria entra con su **email** y su **DNI como contraseña inicial**. Quien se registra con "Crear cuenta" elige su contraseña.
 - **Modelo de datos:** definido en Prisma (Usuario, Paciente, Médico, Secretaria, Turno, Agenda, HistoriaClínica, ObraSocial, Especialidad, entre otros), con migraciones y seed de datos de prueba.
 - **Entorno reproducible:** `docker compose up` levanta base de datos y API con un solo comando; variables de entorno separadas por `.env.example` en backend y frontend.
 

@@ -1,6 +1,6 @@
 import type z from "zod";
 import type { PacienteProps } from "./PacienteProps";
-import type { MedicoProps } from "./MedicoProps";
+import type { Usuario } from "./Usuario";
 import type { UserProps } from "./UserProps";
 
 interface AdminEditFormProps<AdminValidado> {
@@ -16,7 +16,9 @@ interface PacienteFormProps<PacienteValidado> {
 }
 
 interface MedicoFormProps<MedicoValidado> {
-    medico: MedicoProps;
+    // El usuario completo: nombre, apellido, DNI y email viven en Usuario;
+    // matrícula y especialidad, en usuario.medico.
+    medico: Usuario;
     onSave: (values: z.output<MedicoValidado>) => void;
     onCancel: () => void;
 }

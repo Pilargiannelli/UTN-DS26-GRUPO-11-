@@ -6,5 +6,6 @@ type RolComponents = {
 
 export function useRolView(componentesPorRol: RolComponents) {
   const { rol } = useAuth();
+  if (!rol) return null;
   return componentesPorRol[rol] || null;
 }

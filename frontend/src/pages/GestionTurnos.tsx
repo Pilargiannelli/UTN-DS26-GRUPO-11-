@@ -35,7 +35,11 @@ function GestionTurnos() {
     error,
   } = useFetch<Turno[]>("/turnos");
 
-  const turnos = data ?? [];
+  // Turnos que se confirmaron o cancelaron desde la tabla: pisan al que vino
+  // en el GET para no tener que volver a pedir toda la lista
+  const [actualizados, setActualizados] = useState<Record<number, Turno>>({});
+
+  const turnos = (data ?? []).map((t) => actualizados[t.id] ?? t);
 
   const turnosOrdenados = [...turnos].sort(
     (a, b) => a.fechaHora.localeCompare(b.fechaHora)
@@ -107,7 +111,14 @@ function GestionTurnos() {
     setTurnosNuevos((prev) => [...prev, nuevoTurno]);
   };
 
-  const turnosFiltrados = [...turnosOrdenados, ...turnosNuevos].sort(
+  const actualizarTurno = (turno: Turno) => {
+    setActualizados((prev) => ({ ...prev, [turno.id]: turno }));
+  };
+
+  const turnosFiltrados = [
+    ...turnosOrdenados,
+    ...turnosNuevos.map((t) => actualizados[t.id] ?? t),
+  ].sort(
     (a, b) => a.fechaHora.localeCompare(b.fechaHora)
   );
 
@@ -199,6 +210,8 @@ function GestionTurnos() {
           onNuevoTurno={() =>
             setShowModal(true)
           }
+
+          onTurnoActualizado={actualizarTurno}
 
         />
 

@@ -5,7 +5,7 @@ import { loginSchema, type LoginData } from "../schemas/loginSchema";
 import { apiFetch } from "../services/api";
 import imosLogo from "../assets/img/IMOS_LOGO.png";
 import { Form, Button, Spinner } from "react-bootstrap";
-import { useNavigate } from "react-router-dom";
+import { Link, Navigate, useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import type { SesionLogin } from "../types/UsuarioSesion";
 import "../assets/styles/Login.css";
@@ -18,8 +18,11 @@ export default function Login() {
   const [success, setSuccess] = useState(false);
   const [enviando, setEnviando] = useState(false);
 
-  const { login } = useAuth();
+  const { login, estaAutenticado } = useAuth();
   const navigate = useNavigate();
+  // api.ts redirige acá con ?expired=true cuando el token venció
+  const [searchParams] = useSearchParams();
+  const sesionExpirada = searchParams.get("expired") === "true";
 
   const {
     register,
@@ -56,6 +59,11 @@ export default function Login() {
     }
   };
 
+  // Ya logueado (y no es el redirect de recién autenticado): directo al inicio
+  if (estaAutenticado && !success) {
+    return <Navigate to="/home" replace />;
+  }
+
   return (
     <div className="login-page">
       <ToastMensaje
@@ -75,11 +83,17 @@ export default function Login() {
         </section>
 
         <section className="login-form-panel">
-          <h1 className="login-title">Login</h1>
+          <h1 className="login-title">Ingresá a tu cuenta</h1>
 
           <p className="login-subtitle">
             Ingresá tus credenciales para continuar
           </p>
+
+          {sesionExpirada && !authError && (
+            <div className="login-info-message" role="status">
+              Tu sesión expiró. Volvé a ingresar.
+            </div>
+          )}
 
           <Form onSubmit={handleSubmit(onSubmit)}>
             <Form.Group
@@ -137,7 +151,7 @@ export default function Login() {
               ) : enviando ? (
                 <Spinner size="sm" animation="border" />
               ) : (
-                "LOGIN"
+                "Ingresar"
               )}
             </Button>
 
@@ -150,12 +164,16 @@ export default function Login() {
                 >
                   {authError}
                 </div>
-
-                <span className="login-forgot">
-                  olvidaste tu contraseña
-                </span>
               </div>
             )}
+
+            {/* No hay recuperación de contraseña: lo decimos en vez de prometerla */}
+            <p className="login-help">
+              ¿No tenés cuenta? <Link to="/crear-cuenta">Crear cuenta</Link>
+            </p>
+            <p className="login-help">
+              ¿Olvidaste tu contraseña? Comunicate con la secretaría de la clínica.
+            </p>
           </Form>
         </section>
       </div>

@@ -4,6 +4,20 @@ import { obtenerToken, borrarToken } from "./sesion";
 const ENV_URL = import.meta.env.VITE_API_URL;
 const BASE = (ENV_URL && ENV_URL !== "undefined") ? ENV_URL : "http://localhost:3000/api";
 
+// Error de la API con el status y, si es un 400 de Zod, los errores por campo
+// (errorHandler del back: { error, detalles: [{ campo, mensaje }] })
+export class ApiError extends Error {
+  status: number;
+  detalles: { campo: string; mensaje: string }[];
+
+  constructor(message: string, status: number, detalles: { campo: string; mensaje: string }[] = []) {
+    super(message);
+    this.name = "ApiError";
+    this.status = status;
+    this.detalles = detalles;
+  }
+}
+
 export async function apiFetch<T>(
   path: string,
   options: RequestInit = {}
@@ -30,20 +44,24 @@ export async function apiFetch<T>(
 
   if (!res.ok) {
     // 🚨 MANEJO DE TOKEN VENCIDO / NO AUTORIZADO (401)
-    if (res.status === 401) {
+    // Solo es "sesión vencida" si mandamos un token. Un 401 sin token es el
+    // login con credenciales incorrectas: ese error lo muestra el formulario.
+    if (res.status === 401 && token) {
       borrarToken();
 
       // Notificamos al AuthContext/App
       window.dispatchEvent(new Event("sesion-expirada"));
 
-      // Redirigimos al login si no estamos ahí
-      if (window.location.pathname !== "/login") {
-        window.location.href = "/login?expired=true";
+      // El login vive en "/" (App.tsx); "/login" no existe
+      if (window.location.pathname !== "/") {
+        window.location.href = "/?expired=true";
       }
     }
 
-    throw new Error(
-      cuerpo?.error ?? `Error ${res.status}`
+    throw new ApiError(
+      cuerpo?.error ?? `Error ${res.status}`,
+      res.status,
+      cuerpo?.detalles ?? []
     );
   }
 

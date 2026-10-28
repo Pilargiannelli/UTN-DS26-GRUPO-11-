@@ -1,21 +1,23 @@
 import { Button, Col, Form, Row, Spinner } from "react-bootstrap";
-import { useForm } from "react-hook-form";
+import { useForm, type Resolver } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { SelectEditable } from "./SelectEditable.tsx";
 import { medicoSchema, type MedicoValidado } from "../schemas/medicoSchema.ts";
 import { useFetch } from "../hooks/useFetch.ts";
 import { useMayus } from "../hooks/useMayus.ts";
 import { apiFetch } from "../services/api.ts";
-import type { Especialidad } from "../types/MedicoProps.ts";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export function RegistroMedicoForm() {
+    const navigate = useNavigate();
     const handleMayus = useMayus();
     const [submitting, setSubmitting] = useState(false);
     const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
     // Carga de especialidades desde la API real
-    const { data: especialidadesAPI, loading } = useFetch<Especialidad[]>("/especialidades");
-    const espValidas = especialidadesAPI ? especialidadesAPI.map(e => typeof e === "string" ? e : e.nombre) : [""];
+    const { data: especialidadesAPI, loading } = useFetch<string[]>("/especialidades");
+    const espValidas = especialidadesAPI ?? [""];
 
     // Schema sin dependencia de usuariosDB.json mockeado
     const schema = medicoSchema(espValidas, []);
@@ -41,9 +43,9 @@ export function RegistroMedicoForm() {
                 body: JSON.stringify(payload)
             });
 
-            window.location.href = "/buscar-medico";
-        } catch (err: any) {
-            setErrorMsg(err.message || "Error al registrar el médico");
+            navigate("/buscar-medico");
+        } catch (err) {
+            setErrorMsg(err instanceof Error ? err.message : "Error al registrar el médico");
         } finally {
             setSubmitting(false);
         }

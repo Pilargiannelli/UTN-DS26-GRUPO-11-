@@ -8,7 +8,7 @@ export const singinSchema = (usuariosExistentes: Usuario[]) => z.object({
 }).refine((data) => data.password === data.password2, {
     message: "Las contraseñas no coinciden",
     path: ["password2"],
-}).refine((data) => {const existe = usuariosExistentes.some( (u) => u.u.toLowerCase() === data.username.trim().toLowerCase() );
+}).refine((data) => {const existe = usuariosExistentes.some( (u) => u.username.toLowerCase() === data.username.trim().toLowerCase() );
     return !existe;
 },{
     message: "El nombre de usuario ya se encuentra registrado",

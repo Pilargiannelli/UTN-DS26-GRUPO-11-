@@ -1,4 +1,4 @@
-import { useEffect, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useState, type ReactNode } from "react";
 import { AuthContext } from "./AuthContextBase";
 import type {
   UsuarioSesion,
@@ -18,7 +18,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [usuario, setUsuarioState] = useState<UsuarioSesion | null>(null);
   const [cargando, setCargando] = useState(true);
 
-  const setUsuario = (nuevo: UsuarioSesion | null) => {
+  // useCallback: setUsuario y logout son dependencias de los useEffect de abajo
+  const setUsuario = useCallback((nuevo: UsuarioSesion | null) => {
     setUsuarioState(nuevo);
 
     if (nuevo) {
@@ -26,17 +27,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     } else {
       localStorage.removeItem(USUARIO_KEY);
     }
-  };
+  }, []);
 
   const login = (sesion: SesionLogin) => {
     guardarToken(sesion.token);
     setUsuario(sesion.usuario);
   };
 
-  const logout = () => {
+  const logout = useCallback(() => {
     borrarToken();
     setUsuario(null);
-  };
+  }, [setUsuario]);
 
   const tieneRol = (rol: RolUsuario) => {
     return usuario?.rol === rol;
@@ -65,7 +66,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     };
 
     void rehidratarSesion();
-  }, []);
+  }, [setUsuario, logout]);
 
   useEffect(() => {
     const manejarSesionExpirada = () => {
@@ -83,7 +84,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         manejarSesionExpirada
       );
     };
-  }, []);
+  }, [logout]);
 
   return (
     <AuthContext.Provider

@@ -80,7 +80,9 @@ autenticado no puede consultar la nómina de los demás. La respuesta es 403 y n
 la identidad es conocida y el impedimento es de permisos.
 
 El alta mediante POST corresponde a la carga administrativa que realiza el personal; el
-autorregistro se resuelve por `/api/auth/registro`. La baja, por tratarse de una operación
+autorregistro se resuelve por `/api/auth/registro`. Las dos crean juntos el `Usuario` (rol
+PACIENTE) y su ficha de `Paciente`, para que no quede ningún paciente sin ficha. En el alta
+por el personal, el usuario y la contraseña inicial son el DNI del paciente. La baja, por tratarse de una operación
 irreversible sobre datos clínicos asociados, se reserva al rol MEDICO.
 
 ## 7. Médico
@@ -110,15 +112,26 @@ define los horarios de atención del médico.
 | GET | /api/turnos | 401 | ✅ propio | ✅ | ✅ propio |
 | GET | /api/turnos/:id | 401 | ✅ propio | ✅ | ✅ propio |
 | POST | /api/turnos | 401 | ✅ | ✅ | ✅ |
-| PUT | /api/turnos/:id | 401 | 403 | ✅ | ✅ |
-| DELETE | /api/turnos/:id | 401 | ✅ propio | ✅ | ✅ |
+| PATCH | /api/turnos/:id/cancelar | 401 | ✅ propio | ✅ | ✅ propio |
+| PUT | /api/turnos/:id | 401 | 403 | ✅ | ✅ propio |
+| DELETE | /api/turnos/:id | 401 | 403 | ✅ | ✅ propio |
+
+Un turno ajeno ("propio" no se cumple) responde **404**, no 403: así no se revela que ese
+id existe. La titularidad se verifica en `turno.service`, no en `authorize`.
+
+Cuando el PACIENTE pide un turno (`POST`), solo envía `medicoId` y `fechaHora`: el
+`pacienteId` sale del token y el turno nace en estado Pendiente.
 
 `GET /api/turnos` devuelve un conjunto distinto según el rol: el paciente obtiene sus propios
 turnos (pantalla MisTurnos) y el médico los correspondientes a su agenda. No se trata de una
 denegación sino de un filtrado por identidad. El rol SECRETARIA accede a la totalidad de los
 turnos, conforme a sus funciones administrativas.
 
-El paciente puede cancelar su turno pero no reprogramarlo. La reprogramación modifica un
+El paciente puede cancelar su turno pero no reprogramarlo. Cancelar es un cambio de estado
+(`PATCH /cancelar` → Cancelado) y no un borrado: el turno se conserva en el historial y se
+pueden contar las cancelaciones. El paciente solo cancela turnos Pendientes o Reprogramados
+(RN-006); si ya fue confirmado recibe 409 y debe comunicarse con el consultorio. El borrado
+físico (`DELETE`) queda para el personal. La reprogramación modifica un
 bloque de la agenda del profesional y genera un nuevo turno en estado Pendiente, por lo que
 se canaliza a través del personal administrativo.
 

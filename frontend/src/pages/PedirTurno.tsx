@@ -3,12 +3,12 @@ import { useNavigate } from "react-router-dom";
 import Layout from "../components/Layout/Layout.tsx";
 import { BotonVolver } from "../components/BotonVolver.tsx";
 import { useFetch } from "../hooks/useFetch";
-import { apiFetch } from "../services/api";
+import { apiFetch, ApiError } from "../services/api";
+import { useHorariosOcupados } from "../hooks/useHorariosOcupados";
+import { HORARIOS_CONSULTORIO, horarioNoDisponible as noDisponibleEn } from "../utils/horarios";
 import type { MedicoTurno, Turno } from "../types/Turno";
 import "../assets/styles/PedirTurno.css";
 import "../assets/styles/PaginaPaciente.css";
-
-const horariosDisponibles = ["09:00", "10:30", "11:15", "14:00", "15:30"];
 
 export function PedirTurno() {
     const navigate = useNavigate();
@@ -25,8 +25,17 @@ export function PedirTurno() {
     const [horario, setHorario] = useState("");
     const [loading, setLoading] = useState(false);
     const [errorMsg, setErrorMsg] = useState<string | null>(null);
+    const [recargarOcupados, setRecargarOcupados] = useState(0);
 
     const listaEspecialidades = especialidadesAPI ?? [];
+
+    // Fecha mínima del calendario: hoy, en hora local (YYYY-MM-DD)
+    const hoyISO = new Date().toLocaleDateString("en-CA");
+
+    // Un horario no se puede elegir si ya lo tomó otro paciente (RN-002) o si
+    // es de hoy y ya pasó (RN-008)
+    const ocupados = useHorariosOcupados(medicoId, fecha, recargarOcupados);
+    const horarioNoDisponible = (h: string) => noDisponibleEn(fecha, h, ocupados);
 
     // Filtrar médicos según la especialidad elegida
     const medicosFiltrados = (medicosAPI ?? []).filter(
@@ -39,11 +48,8 @@ export function PedirTurno() {
         setLoading(true);
         setErrorMsg(null);
         try {
-            // POST /api/turnos hoy sólo lo permiten SECRETARIA y MEDICO
-            // (backend/src/routes/turno.routes.ts): un PACIENTE autenticado
-            // recibe 403 acá — es el comportamiento esperado, no un bug de
-            // este formulario. pacienteId no viaja porque la sesión de un
-            // paciente no expone su propio id de Paciente todavía.
+            // POST /api/turnos como PACIENTE: solo viajan medicoId y fechaHora.
+            // El back toma el pacienteId del token y deja el turno Pendiente.
             const fechaHora = new Date(`${fecha}T${horario}:00`).toISOString();
 
             await apiFetch<Turno>("/turnos", {
@@ -51,9 +57,15 @@ export function PedirTurno() {
                 body: JSON.stringify({ medicoId: Number(medicoId), fechaHora }),
             });
 
-            navigate("/mis-turnos");
+            navigate("/mis-turnos", { state: { turnoCreado: true } });
         } catch (err) {
             setErrorMsg(err instanceof Error ? err.message : "Error al registrar el turno");
+            // 409: otro paciente tomó el horario mientras tanto. Se vuelven a
+            // pedir los ocupados y se deselecciona.
+            if (err instanceof ApiError && err.status === 409) {
+                setHorario("");
+                setRecargarOcupados((n) => n + 1);
+            }
         } finally {
             setLoading(false);
         }
@@ -77,6 +89,7 @@ export function PedirTurno() {
                         onChange={(e) => {
                             setEspecialidad(e.target.value);
                             setMedicoId("");
+                            setHorario("");
                         }}
                     >
                         <option value="">Elegí una especialidad</option>
@@ -90,7 +103,10 @@ export function PedirTurno() {
                     <select
                         className="pedir-turno-select"
                         value={medicoId}
-                        onChange={(e) => setMedicoId(e.target.value)}
+                        onChange={(e) => {
+                            setMedicoId(e.target.value);
+                            setHorario("");
+                        }}
                         disabled={!especialidad}
                     >
                         <option value="">
@@ -108,24 +124,42 @@ export function PedirTurno() {
                     <input
                         type="date"
                         className="pedir-turno-select"
+                        min={hoyISO}
                         value={fecha}
-                        onChange={(e) => setFecha(e.target.value)}
+                        onChange={(e) => {
+                            setFecha(e.target.value);
+                            setHorario("");
+                        }}
                     />
 
                     {/* Horarios */}
                     <label className="pedir-turno-label">Horarios disponibles</label>
-                    <div className="pedir-turno-horarios">
-                        {horariosDisponibles.map((h) => (
-                            <button
-                                key={h}
-                                type="button"
-                                className={`pedir-turno-chip ${horario === h ? "pedir-turno-chip-activo" : ""}`}
-                                onClick={() => setHorario(h)}
-                            >
-                                {h}
-                            </button>
-                        ))}
-                    </div>
+                    {!medicoId || !fecha ? (
+                        <p className="pedir-turno-ayuda">Elegí un profesional y una fecha para ver los horarios.</p>
+                    ) : (
+                        <>
+                            <div className="pedir-turno-horarios">
+                                {HORARIOS_CONSULTORIO.map((h) => {
+                                    const noDisponible = horarioNoDisponible(h);
+                                    return (
+                                        <button
+                                            key={h}
+                                            type="button"
+                                            className={`pedir-turno-chip ${horario === h ? "pedir-turno-chip-activo" : ""} ${noDisponible ? "pedir-turno-chip-ocupado" : ""}`}
+                                            onClick={() => setHorario(h)}
+                                            disabled={noDisponible}
+                                            aria-label={noDisponible ? `${h}, no disponible` : h}
+                                        >
+                                            {h}
+                                        </button>
+                                    );
+                                })}
+                            </div>
+                            {HORARIOS_CONSULTORIO.some(horarioNoDisponible) && (
+                                <p className="pedir-turno-ayuda">Los horarios tachados ya no están disponibles.</p>
+                            )}
+                        </>
+                    )}
 
                     {/* Botón de envío */}
                     <button

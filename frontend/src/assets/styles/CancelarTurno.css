@@ -92,3 +92,19 @@
   border-radius: 8px;
   cursor: pointer;
 }
+
+.cancelar-turno-btn-confirmar:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.cancelar-turno-error {
+  margin: 0 0 16px;
+  padding: 12px 14px;
+  border: 1px solid #f0c4c4;
+  border-radius: 10px;
+  background: #fcebeb;
+  color: #6e1f1f;
+  font-size: 13px;
+  line-height: 1.5;
+}

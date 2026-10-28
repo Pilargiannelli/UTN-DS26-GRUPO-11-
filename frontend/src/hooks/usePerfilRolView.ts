@@ -11,7 +11,7 @@ export function usePerfilRolView(usuario?: Usuario, componentesPorRol?: RolPerfi
   const { rol: rolEspectador } = useAuth();
   const rolPerfil = usuario?.rol;
 
-  if (!rolPerfil || !componentesPorRol) return null;
+  if (!rolEspectador || !rolPerfil || !componentesPorRol) return null;
 
   return componentesPorRol[rolEspectador]?.[rolPerfil] || null;
 }

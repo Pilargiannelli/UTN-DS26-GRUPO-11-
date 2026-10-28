@@ -18,6 +18,8 @@ import CambiarPassword from "./pages/CambiarPassword";
 import BuscarMedico from "./pages/BuscarMédico.tsx";
 import OrdenDelDia from "./pages/OrdenDelDia.tsx";
 import HistorialClinico from "./pages/HistorialClinico.tsx";
+import NoEncontrada from "./pages/NoEncontrada.tsx";
+import Layout from "./components/Layout/Layout.tsx";
 
 function App() {
   return (
@@ -57,7 +59,8 @@ function App() {
       {/* ========================================== */}
       <Route element={<PrivateRoute roles={["SECRETARIA", "MEDICO"]} />}>
         <Route path="/buscar-paciente" element={<BuscarPaciente />} />
-        <Route path="/gestion-turnos" element={<GestionTurnos />} />
+        {/* GestionTurnos no trae Layout propio (Home lo usa adentro del suyo) */}
+        <Route path="/gestion-turnos" element={<Layout><GestionTurnos /></Layout>} />
       </Route>
 
       {/* ========================================== */}
@@ -68,6 +71,9 @@ function App() {
         <Route path="/orden-del-dia" element={<OrdenDelDia />} />
         <Route path="/historial" element={<HistorialClinico />} />
       </Route>
+
+      {/* Cualquier otra URL: página 404 en vez de pantalla en blanco */}
+      <Route path="*" element={<NoEncontrada />} />
     </Routes>
   );
 }

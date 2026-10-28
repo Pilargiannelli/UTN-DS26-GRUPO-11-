@@ -1,39 +1,45 @@
 import { useParams, useNavigate } from "react-router-dom";
+import { Spinner } from "react-bootstrap";
 import Layout from "../components/Layout/Layout.tsx";
 import { BotonVolver } from "../components/BotonVolver.tsx";
-import { useTurnosPaciente } from "../hooks/useTurnosPaciente";
+import { useFetch } from "../hooks/useFetch";
 import { formatearChipFecha, formatearHora } from "../utils/fecha";
+import { obtenerClaseEstado, puedeCancelarPaciente, yaPaso } from "../utils/estadoTurno";
+import type { Turno } from "../types/Turno";
 import "../assets/styles/DetalleTurno.css";
 import "../assets/styles/PaginaPaciente.css";
-
-function obtenerClaseEstado(estado: string) {
-  switch (estado) {
-    case "Confirmado": return "estado-confirmado";
-    case "Pendiente": return "estado-pendiente";
-    case "Cancelado": return "estado-cancelado";
-    default: return "";
-  }
-}
 
 function DetalleTurno() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { misTurnos } = useTurnosPaciente();
+  // GET /api/turnos/:id: el back devuelve 404 si el turno no existe o no es tuyo
+  const { data: turno, loading, error } = useFetch<Turno>(`/turnos/${id}`);
 
-  const turno = misTurnos.find((t) => t.id === Number(id));
+  if (loading) {
+    return (
+      <Layout>
+        <div className="pagina-paciente text-center py-5">
+          <Spinner animation="border" role="status" aria-label="Cargando turno" />
+        </div>
+      </Layout>
+    );
+  }
 
-  if (!turno) {
+  if (error || !turno) {
     return (
       <Layout>
         <div className="pagina-paciente">
           <BotonVolver />
-          <p className="text-muted">No se encontró el turno.</p>
+          <p className="text-muted">No encontramos este turno.</p>
         </div>
       </Layout>
     );
   }
 
   const { dia, mes } = formatearChipFecha(turno.fechaHora);
+  const fechaLarga = new Date(turno.fechaHora).toLocaleDateString("es-AR", {
+    weekday: "long", day: "numeric", month: "long",
+  });
 
   return (
     <Layout>
@@ -59,17 +65,24 @@ function DetalleTurno() {
               <p className="detalle-turno-valor">{turno.medico.usuario.nombre} {turno.medico.usuario.apellido}</p>
             </div>
             <div>
-              <p className="detalle-turno-label">Consultorio</p>
-              <p className="detalle-turno-valor">Sede Centro</p>
+              <p className="detalle-turno-label">Fecha</p>
+              <p className="detalle-turno-valor">{fechaLarga}</p>
             </div>
           </div>
 
-          {turno.estado !== "Cancelado" && (
+          {/* RN-006: el paciente cancela solo antes de la confirmación */}
+          {puedeCancelarPaciente(turno.estado, turno.fechaHora) && (
             <div className="detalle-turno-acciones">
               <button className="detalle-turno-btn-cancelar" onClick={() => navigate(`/turnos/${turno.id}/cancelar`)}>
                 Cancelar este turno
               </button>
             </div>
+          )}
+
+          {turno.estado === "Confirmado" && !yaPaso(turno.fechaHora) && (
+            <p className="detalle-turno-nota">
+              Este turno ya fue confirmado. Si no podés asistir, comunicate con el consultorio.
+            </p>
           )}
         </div>
       </div>

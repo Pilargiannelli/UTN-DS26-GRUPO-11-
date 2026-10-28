@@ -56,8 +56,8 @@ export function ListarUsuarios({ rol }: ListarUsuariosProps) {
     
     if (error) {
         return (
-            <div className="text-center my-5 text-danger">
-                <p>Hubo un error al cargar los usuarios.</p>
+            <div className="text-center my-5 text-danger" role="alert">
+                <p>No se pudo cargar el listado: {error.message}</p>
             </div>
         );
     }
@@ -129,12 +129,19 @@ export function ListarUsuarios({ rol }: ListarUsuariosProps) {
                     )}
                 </div>
 
-                <div className="barra-busqueda-accion">
-                    <BotonAgregar rol={rol} />
-                </div>
+                {/* Solo se registran pacientes: POST /medicos no existe en esta versión */}
+                {rol === "paciente" && (
+                    <div className="barra-busqueda-accion">
+                        <BotonAgregar rol={rol} />
+                    </div>
+                )}
             </div>
 
-            {usuariosFiltrados.length === 0 ? (
+            {listaRegistros.length === 0 ? (
+                <div className="text-center my-5 text-muted bg-light p-5 rounded shadow-sm">
+                    <p className="m-0">Todavía no hay {rol === "paciente" ? "pacientes" : "médicos"} registrados.</p>
+                </div>
+            ) : usuariosFiltrados.length === 0 ? (
                 <div className="text-center my-5 text-muted bg-light p-5 rounded shadow-sm">
                     <p className="m-0">No se encontraron resultados para "<strong>{busqueda}</strong>".</p>
                 </div>
@@ -159,8 +166,8 @@ export function ListarUsuarios({ rol }: ListarUsuariosProps) {
                                             <Card.Text className="text-muted small">
                                                 {rol === "medico" ? ( 
                                                     <span>{especialidadMedico}</span> 
-                                                ) : ( 
-                                                    <span>@{u.username || u.email}</span> 
+                                                ) : (
+                                                    <span>DNI {u.dni}</span>
                                                 )}
                                             </Card.Text>
                                         </div>
