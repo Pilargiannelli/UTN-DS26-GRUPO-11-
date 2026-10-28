@@ -13,54 +13,62 @@ import type { PacienteProps } from "../types/PacienteProps.ts";
 import type { UserProps } from "../types/UserProps.ts";
 import type { MedicoProps } from "../types/MedicoProps.ts";
 
-export function UserCard({usuario, isEditing, onUpdate}: UserCardProps) {
-  const { foto, docs, rol } = usuario;
-  const fotoPerfil = useFotoPerfil(foto);
+export function UserCard({ usuario, isEditing, onUpdate }: UserCardProps) {
+  // Extraemos directamente del modelo Usuario de Prisma
+  const { fotoPerfil, rol, medico, paciente, nombre, apellido, dni, email } = usuario;
+
+  const fotoPerfilHook = useFotoPerfil(fotoPerfil);
+
   const handleFormSave = (values: unknown) => {
     onUpdate(values as PacienteProps | UserProps | MedicoProps);
   };
+
   const handleCancel = () => {
-    onUpdate(docs as PacienteProps | UserProps | MedicoProps);
+    onUpdate(usuario as unknown as PacienteProps | UserProps | MedicoProps);
   };
+
   const FormularioEdicionAlternativo = usePerfilRolView(usuario, {
     admin: {
-      paciente: (
-        <PacienteFormFields onSave={handleFormSave} onCancel={handleCancel} paciente={docs as PacienteProps} />
+      PACIENTE: (
+        <PacienteFormFields onSave={handleFormSave} onCancel={handleCancel} paciente={paciente as unknown as PacienteProps} />
       ),
-      medico: (
-        <MedicoFormFields onSave={handleFormSave} onCancel={handleCancel} medico={docs as MedicoProps}/>
+      MEDICO: (
+        <MedicoFormFields onSave={handleFormSave} onCancel={handleCancel} medico={medico as unknown as MedicoProps}/>
       ),
-      admin: (
-        <AdminFormFields onSave={handleFormSave} onCancel={handleCancel} admin={docs as UserProps}/>
+      SECRETARIA: (
+        <AdminFormFields onSave={handleFormSave} onCancel={handleCancel} admin={usuario as unknown as UserProps}/>
       ),
     },
   });
+
   return (
     <Card className="user-card shadow-sm m-0">
       <Card.Body className="text-center">
-        {isEditing ? ( FormularioEdicionAlternativo ) : (
+        {isEditing ? ( 
+          FormularioEdicionAlternativo 
+        ) : (
           <>
             {/* Foto */}
-            <div {...fotoPerfil} />
+            <div {...fotoPerfilHook} />
             {/* Nombre */}
             <Card.Title className="user-card-nombre">
-              {docs.nombre} {docs.apellido}
+              {nombre} {apellido}
             </Card.Title>
-            {/* Datos comunes */}
+            {/* Datos comunes del Usuario */}
             <div className="user-card-datos">
-            <div className="dato">
-              <h5>DNI:</h5>
-              <p>{docs.dni}</p>
+              <div className="dato">
+                <h5>DNI:</h5>
+                <p>{dni}</p>
+              </div>
+              <div className="dato">
+                <h5>Email:</h5>
+                <p>{email}</p>
+              </div>
+              {/* Datos específicos según el Enum Rol de Prisma */}
+              {rol === "PACIENTE" && paciente && <DatosPaciente docs={paciente as unknown as PacienteProps} />}
+              {rol === "MEDICO" && medico && <DatosMedico docs={medico as unknown as MedicoProps} />}
             </div>
-            <div className="dato">
-              <h5>Email:</h5>
-              <p>{docs.email}</p>
-            </div>
-            {/* Datos específicos */}
-            {rol === "paciente" && <DatosPaciente docs={docs} />}
-            {rol === "medico" && <DatosMedico docs={docs} />}
-          </div>
-        </>
+          </>
         )}
       </Card.Body>
     </Card>

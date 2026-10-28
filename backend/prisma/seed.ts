@@ -51,10 +51,6 @@ async function main() {
 
   // ==========================================
   // USUARIOS + ROLES
-  // Un usuario por rol (MEDICO, SECRETARIA, PACIENTE), con la contraseña
-  // hasheada con bcrypt. El rol no lo elige quien se registra: acá lo
-  // asignamos nosotros a propósito, como haría @default(PACIENTE) en el
-  // registro real.
   // ==========================================
 
   console.log("🌱 Insertando usuarios con contraseña hasheada...");
@@ -99,9 +95,6 @@ async function main() {
     },
   ] as const;
 
-  // password se saca del spread ANTES de llegar a Prisma: si viajara dentro
-  // de "datos", tsc no se queja (el spread no chequea propiedades sobrantes)
-  // y Prisma revienta en runtime con "Unknown argument `password`".
   const usuariosPorUsername: Record<string, { id: number }> = {};
 
   for (const { password, ...datos } of usuariosBase) {
@@ -109,7 +102,7 @@ async function main() {
 
     const usuario = await prisma.usuario.upsert({
       where: { email: datos.email },
-      update: {}, // upsert = idempotente: correr el seed de nuevo no pisa ni duplica
+      update: {},
       create: { ...datos, passwordHash },
     });
 
@@ -158,7 +151,6 @@ async function main() {
 
   // ==========================================
   // COBERTURAS
-  // N:M explícita Paciente <-> ObraSocial
   // ==========================================
 
   console.log("🌱 Insertando coberturas...");
@@ -229,10 +221,10 @@ async function main() {
   }
 
   // ==========================================
-  // HISTORIA CLÍNICA
+  // HISTORIA CLÍNICA Y ENTRADAS
   // ==========================================
 
-  console.log("🌱 Insertando historia clínica...");
+  console.log("🌱 Insertando historia clínica y entradas...");
 
   const historiaClinica1 = await prisma.historiaClinica.upsert({
     where: { pacienteId: paciente1.id },
@@ -240,17 +232,10 @@ async function main() {
     create: {
       pacienteId: paciente1.id,
       medicoId: medico.id,
-      // N:M implícitas HistoriaClinica <-> Alergia / Antecedente
       alergias: { connect: [{ id: alergiaPenicilina.id }, { id: alergiaIbuprofeno.id }] },
       antecedentes: { connect: [{ id: antecedenteHipertension.id }] },
     },
   });
-
-  // ==========================================
-  // ENTRADAS CLÍNICAS
-  // ==========================================
-
-  console.log("🌱 Insertando entradas clínicas...");
 
   const entradasExistentes = await prisma.entradaClinica.count({
     where: { historiaClinicaId: historiaClinica1.id },
@@ -278,13 +263,11 @@ async function main() {
   }
 
   // ==========================================
-  // TURNOS
+  // TURNOS Y ASISTENTE IA
   // ==========================================
 
   console.log("🌱 Insertando turnos...");
 
-  // idWhatsapp no es @unique: no sirve como where de un upsert. Se busca por
-  // el par medico+paciente, que en este seed alcanza para identificar el turno.
   let turno1 = await prisma.turno.findFirst({
     where: { medicoId: medico.id, pacienteId: paciente1.id },
   });
@@ -318,10 +301,6 @@ async function main() {
       },
     });
   }
-
-  // ==========================================
-  // ASISTENTE IA
-  // ==========================================
 
   console.log("🌱 Insertando Asistente IA...");
 

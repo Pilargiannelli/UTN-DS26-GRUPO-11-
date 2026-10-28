@@ -9,7 +9,7 @@ export interface Usuario {
   email: string;
   nombre: string;
   apellido: string;
-  dni: number;
+  dni: string;
   fotoPerfil?: string | null;
   rol: RolUsuario;
   medico?: MedicoProps | null;

@@ -45,5 +45,16 @@ services:
     # asi el contenedor nunca queda con un cliente desactualizado.
     command: sh -c "npx prisma generate && npm run dev"
 
+  frontend:
+    build: ./frontend
+    container_name: imos-frontend
+    restart: unless-stopped
+    ports:
+      - "5173:5173"
+    environment:
+      - VITE_API_URL=http://localhost:3000
+    depends_on:
+      - api
+
 volumes:
   pgdata:

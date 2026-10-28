@@ -1,4 +1,4 @@
-export function useFotoPerfil(foto?: string) {
+export function useFotoPerfil(foto?: string | null) {
   if (foto) {
     return {
       className: "user-card__foto user-card__foto--con-imagen",

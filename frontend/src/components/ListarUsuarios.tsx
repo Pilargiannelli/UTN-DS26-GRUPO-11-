@@ -1,8 +1,7 @@
 import { Search } from "react-bootstrap-icons";
 import { useFetch } from "../hooks/useFetch";
 import { useFotoPerfil } from "../hooks/useFotoPerfil";
-import { type Usuario } from "../types/Usuario";
-import { Container, Row, Col, Card, Button, Spinner, Form} from "react-bootstrap";
+import { Container, Row, Col, Card, Button, Spinner, Form } from "react-bootstrap";
 import '../assets/styles/ListarUsuarios.css';
 import { useState } from "react";
 import { useUsuarioSeleccionado } from "../hooks/useUsuarioSeleccionado";
@@ -13,15 +12,48 @@ interface ListarUsuariosProps {
     rol: "paciente" | "medico";
 }
 
+interface UsuarioBasico {
+    id: number;
+    username?: string;
+    nombre: string;
+    apellido: string;
+    dni: string;
+    email: string;
+    fotoPerfil?: string | null;
+}
+
+interface MedicoRegistro {
+    id: number;
+    usuarioId: number;
+    especialidad: string;
+    matricula: string;
+    usuario: UsuarioBasico;
+}
+
+interface PacienteRegistro {
+    id: number;
+    usuarioId: number;
+    fechaNacimiento: string | Date;
+    sexo: string;
+    telefono: string;
+    usuario: UsuarioBasico;
+}
+
+type RegistroUsuario = MedicoRegistro | PacienteRegistro;
+
 const sinAcentos = (texto: string) =>
     texto.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 
 export function ListarUsuarios({ rol }: ListarUsuariosProps) {
-    const { data: usuarios, loading, error } = useFetch<Usuario[]>("/users.json");
+    const endpoint = rol === "medico" ? "/medicos" : "/pacientes";
+    const { data: registros, loading, error } = useFetch<RegistroUsuario[]>(endpoint);
+    
     const [busqueda, setBusqueda] = useState("");
     const navigate = useNavigate();
     const { seleccionarUsuario } = useUsuarioSeleccionado();
-    if (loading) return <Spinner animation="border" />
+
+    if (loading) return <Spinner animation="border" />;
+    
     if (error) {
         return (
             <div className="text-center my-5 text-danger">
@@ -29,31 +61,52 @@ export function ListarUsuarios({ rol }: ListarUsuariosProps) {
             </div>
         );
     }
-    const usuariosPorRol = usuarios ? usuarios.filter((u) => u.rol === rol) : [];
 
-    const usuariosFiltrados = usuariosPorRol.filter((usuario) => {
+    const listaRegistros = registros ?? [];
 
+    const usuariosFiltrados = listaRegistros.filter((item) => {
         const texto = sinAcentos(busqueda.toLowerCase().trim());
-
         if (texto === "") return true;
-
         
-        const nombreCompleto = sinAcentos(`${usuario.docs.nombre} ${usuario.docs.apellido}`.toLowerCase());
+        const u = item.usuario; 
+        const nombreCompleto = sinAcentos(`${u.nombre} ${u.apellido}`.toLowerCase());
         const coincideNombre = nombreCompleto.includes(texto);
         const numerosBuscados = texto.replace(/\D/g, "");
-        const coincideDni = numerosBuscados !== "" && usuario.docs.dni.startsWith(numerosBuscados);
+        const coincideDni = numerosBuscados !== "" && u.dni?.startsWith(numerosBuscados);
 
         return coincideNombre || coincideDni;
-
     });
-    const handleVerPerfil = (usuario: Usuario) => {
-        seleccionarUsuario(usuario);
-        navigate("/ver-perfil", { state: {from: `/buscar-${rol}`} });
+
+    const handleVerPerfil = (item: RegistroUsuario) => {
+        const isMedico = rol === "medico";
+        
+        // Normalizamos asegurando que username sea string para cumplir con el tipo Usuario
+        const usuarioNormalizado = {
+            ...item.usuario,
+            username: item.usuario.username || item.usuario.email || "",
+            rol: isMedico ? ("MEDICO" as const) : ("PACIENTE" as const),
+            medico: isMedico ? {
+                id: item.id,
+                especialidad: (item as MedicoRegistro).especialidad,
+                matricula: (item as MedicoRegistro).matricula,
+                usuarioId: item.usuarioId
+            } : null,
+            paciente: !isMedico ? {
+                id: item.id,
+                fechaNacimiento: (item as PacienteRegistro).fechaNacimiento,
+                sexo: (item as PacienteRegistro).sexo,
+                telefono: (item as PacienteRegistro).telefono,
+                usuarioId: item.usuarioId
+            } : null,
+        };
+
+        seleccionarUsuario(usuarioNormalizado as Parameters<typeof seleccionarUsuario>[0]);
+        navigate("/ver-perfil", { state: { from: `/buscar-${rol}` } });
     };
+
     return (
         <Container className="my-4">
             <div className="barra-busqueda mb-4">
-                
                 <div className="position-relative buscador-container">
                     <Search className="icono-buscador" />
                     <Form.Control
@@ -74,27 +127,28 @@ export function ListarUsuarios({ rol }: ListarUsuariosProps) {
                             &times;
                         </button>
                     )}
-
                 </div>
 
                 <div className="barra-busqueda-accion">
                     <BotonAgregar rol={rol} />
                 </div>
-
             </div>
+
             {usuariosFiltrados.length === 0 ? (
                 <div className="text-center my-5 text-muted bg-light p-5 rounded shadow-sm">
                     <p className="m-0">No se encontraron resultados para "<strong>{busqueda}</strong>".</p>
                 </div>
             ) : (
                 <Row>
-                    {usuariosFiltrados.map((usuario) => {
+                    {usuariosFiltrados.map((item) => {
+                        const u = item.usuario; 
                         // eslint-disable-next-line react-hooks/rules-of-hooks
-                        const estilosFoto = useFotoPerfil(usuario.foto);
-                        const datosPersonales = usuario.docs;
-                        const nombreCompleto = `${datosPersonales.nombre} ${datosPersonales.apellido}`;
+                        const estilosFoto = useFotoPerfil(u.fotoPerfil ?? null);
+                        const nombreCompleto = `${u.nombre} ${u.apellido}`;
+                        const especialidadMedico = rol === "medico" ? (item as MedicoRegistro).especialidad : null;
+                        
                         return (
-                            <Col key={usuario.u} xs={12} sm={6} md={4} lg={3} className="mb-4">
+                            <Col key={item.id} xs={12} sm={6} md={4} lg={3} className="mb-4">
                                 <Card className="h-100 shadow-sm text-center border-0 p-3 user-card">
                                     <div className="d-flex justify-content-center my-3">
                                         <div {...estilosFoto} aria-label={`Foto de ${nombreCompleto}`} />
@@ -103,10 +157,14 @@ export function ListarUsuarios({ rol }: ListarUsuariosProps) {
                                         <div>
                                             <Card.Title className="fs-5 mb-1 nombre">{nombreCompleto}</Card.Title>
                                             <Card.Text className="text-muted small">
-                                                {usuario.rol === "medico" ? ( <span>{usuario.docs.especialidad}</span> ) : ( <span>@{usuario.u}</span> )}
+                                                {rol === "medico" ? ( 
+                                                    <span>{especialidadMedico}</span> 
+                                                ) : ( 
+                                                    <span>@{u.username || u.email}</span> 
+                                                )}
                                             </Card.Text>
                                         </div>
-                                        <Button variant="primary" className="mt-3 w-100 btn-custom" onClick={() => handleVerPerfil(usuario)}> Ver Perfil </Button>
+                                        <Button variant="primary" className="mt-3 w-100 btn-custom" onClick={() => handleVerPerfil(item)}> Ver Perfil </Button>
                                     </Card.Body>
                                 </Card>
                             </Col>

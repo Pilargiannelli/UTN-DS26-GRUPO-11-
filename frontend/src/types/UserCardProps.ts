@@ -24,7 +24,7 @@ interface DatosMedicoFormProps {
 
 interface UserCardProps {
     usuario: Usuario;
-    onUpdate: (updatedDocs: PacienteProps | MedicoProps | UserProps) => void;
+    onUpdate: (updatedData: PacienteProps | MedicoProps | UserProps) => void;
     isEditing: boolean;
     onEditingChange: (editing: boolean) => void;
 }

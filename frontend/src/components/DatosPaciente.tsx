@@ -2,6 +2,17 @@ import type { PacienteProps } from "../types/PacienteProps.ts";
 import { useEdad } from "../hooks/useEdad";
 import { useAuth } from "../hooks/useAuth";
 
+const formatearFecha = (fechaStr: string | undefined | null) => {
+    if (!fechaStr) return "-";
+    const soloFecha = fechaStr.split("T")[0];
+    const partes = soloFecha.split("-");
+    if (partes.length === 3) {
+        const [year, month, day] = partes;
+        return `${day}/${month}/${year}`;
+    }
+    return fechaStr;
+};
+
 export function DatosPaciente({ docs }: { docs: PacienteProps }) {
   const edad = useEdad(docs.fechaNacimiento);
   const { tieneRol } = useAuth();
@@ -14,7 +25,7 @@ export function DatosPaciente({ docs }: { docs: PacienteProps }) {
         </div>
         <div className="dato">
             <h5>Fecha de nacimiento:</h5>
-            <p>{docs.fechaNacimiento}</p>
+            <p>{formatearFecha(docs.fechaNacimiento)}</p>
         </div>
         <div className="dato">
             <h5>Edad:</h5>
