@@ -237,3 +237,70 @@
 
     box-shadow: 0 10px 22px rgba(13,72,43,.32);
 }
+/* ── Agenda agrupada por día (menos ruido visual) ── */
+
+.agenda-header h2 {
+    font-size: 26px;
+}
+
+.agenda-table {
+    border-spacing: 0 6px;
+}
+
+.agenda-table tbody tr:hover {
+    transform: none;
+    box-shadow: 0 3px 12px rgba(0,0,0,.03);
+}
+
+.agenda-table .hora {
+    font-size: 17px;
+    font-weight: 700;
+    color: #245B43;
+    width: 90px;
+}
+
+/* Título de cada día: no es una fila de turno */
+.agenda-table tr.agenda-dia,
+.agenda-table tr.agenda-dia:hover {
+    background: transparent;
+    box-shadow: none;
+}
+
+.agenda-table tr.agenda-dia th {
+    padding: 18px 4px 4px;
+    font-size: 14px;
+    font-weight: 700;
+    color: #0d3b2e;
+    border: none;
+    text-align: left;
+}
+
+.agenda-especialidad {
+    display: block;
+    font-size: 12px;
+    color: #6b675e;
+}
+
+/* Turnos que ya pasaron (solo con "Ver anteriores") */
+.agenda-table tr.agenda-fila-pasada td {
+    color: #6b675e;
+    opacity: .75;
+}
+
+.agenda-cancelados {
+    margin-top: 16px;
+    border-top: 1px solid #e5e2d8;
+    padding-top: 12px;
+    text-align: left;
+}
+
+.agenda-cancelados summary {
+    cursor: pointer;
+    font-weight: 600;
+    color: #6b675e;
+    margin-bottom: 8px;
+}
+
+.agenda-cancelados summary:hover {
+    color: #0d3b2e;
+}
