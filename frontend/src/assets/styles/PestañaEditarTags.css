@@ -76,7 +76,7 @@
 
 .btn-add-tag {
   background-color: var(--color-pino-800);
-  color: white;
+  color: var(--color-on-primary);
   border: none;
   padding: 0.4rem 0.9rem;
   font-weight: 700;
@@ -99,9 +99,17 @@
   cursor: pointer;
 }
 
+.btn-cancelar-cambios:hover {
+  color: var(--color-text);
+}
+
+.btn-guardar-cambios:hover {
+  background-color: var(--color-primary-hover);
+}
+
 .btn-guardar-cambios {
   background-color: var(--color-pino-800);
-  color: white;
+  color: var(--color-on-primary);
   border: none;
   padding: 0.5rem 1rem;
   font-weight: 600;

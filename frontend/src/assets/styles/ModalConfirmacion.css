@@ -1,49 +1,66 @@
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background-color: rgba(0, 0, 0, 0.4);
+  background-color: var(--color-overlay);
   display: flex;
   justify-content: center;
   align-items: center;
+  padding: var(--space-4);
   z-index: 9999;
 }
 
 .modal-box {
   background: var(--color-surface);
-  padding: 1.5rem;
-  border-radius: var(--radius-md);
-  max-width: 400px;
-  width: 90%;
+  padding: var(--space-5);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-lg);
+  max-width: 420px;
+  width: 100%;
   text-align: center;
 }
 
 .modal-mensaje {
   font-size: var(--text-md);
-  font-weight: 600;
-  color: var(--color-text);
-  margin-bottom: 1.5rem;
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-tight);
+  color: var(--color-heading);
+  margin-bottom: var(--space-5);
 }
 
 .modal-acciones {
   display: flex;
-  gap: 1rem;
+  gap: var(--space-3);
   justify-content: center;
 }
 
 .btn-modal {
-  padding: 0.5rem 1.5rem;
+  min-height: 40px;
+  min-width: 112px;
+  padding: var(--space-2) var(--space-5);
   border-radius: var(--radius-sm);
-  font-weight: 600;
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
   cursor: pointer;
-  border: none;
+  border: 1px solid transparent;
+  transition: background-color var(--transition-fast), border-color var(--transition-fast);
 }
 
 .btn-cancelar {
-  background-color: var(--color-border);
-  color: var(--color-text-muted);
+  background-color: var(--color-surface);
+  border-color: var(--color-border-strong);
+  color: var(--color-text);
+}
+
+.btn-cancelar:hover {
+  background-color: var(--color-surface-muted);
 }
 
 .btn-aceptar {
-  background-color: var(--color-pino-800);
+  background-color: var(--color-primary);
   color: var(--color-on-primary);
+}
+
+.btn-aceptar:hover {
+  background-color: var(--color-primary-hover);
 }

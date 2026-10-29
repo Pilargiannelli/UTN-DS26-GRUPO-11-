@@ -11,7 +11,7 @@
 
 .editar-paciente-topbar {
   background: linear-gradient(90deg, var(--color-pino-800), var(--color-pino-600));
-  color: white;
+  color: var(--color-on-primary);
   padding: 16px 22px;
 }
 
@@ -89,7 +89,7 @@
   border: none;
   border-radius: var(--radius-sm);
   background-color: var(--color-pino-800);
-  color: white;
+  color: var(--color-on-primary);
   padding: 8px 14px;
   font-size: var(--text-sm);
   font-weight: 700;
@@ -134,7 +134,7 @@
 .modal-confirmacion {
   width: 100%;
   max-width: 420px;
-  background-color: white;
+  background-color: var(--color-surface);
   border-radius: var(--radius-md);
   padding: 24px;
   box-shadow: var(--shadow-lg);
@@ -163,7 +163,7 @@
   border: none;
   border-radius: var(--radius-sm);
   padding: 9px 16px;
-  color: white;
+  color: var(--color-on-primary);
   font-weight: 700;
   cursor: pointer;
 }

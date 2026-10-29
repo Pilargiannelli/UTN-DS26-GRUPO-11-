@@ -12,7 +12,7 @@
     border: none;
     border-radius: var(--radius-lg);
     background-color: var(--color-pino-800);
-    color: white;
+    color: var(--color-on-primary);
     cursor: pointer;
     box-shadow: var(--shadow-md);
     transition: background-color .2s ease, transform .15s ease, box-shadow .2s ease;
@@ -29,7 +29,7 @@
 }
 
 .add-button svg {
-    stroke: white;
+    stroke: var(--color-on-primary);
 }
 
 .signo-mas * {

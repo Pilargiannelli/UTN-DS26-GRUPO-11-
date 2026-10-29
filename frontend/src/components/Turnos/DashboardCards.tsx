@@ -55,6 +55,7 @@ function DashboardCards({
       {cards.map((card) => (
 
         <Col
+          xs={6}
           lg={3}
           md={6}
           key={card.titulo}

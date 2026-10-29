@@ -174,3 +174,10 @@ body:has(.form-container) .h2 {
   font-size: var(--text-xs);
   line-height: 1.2;
 }
+/* En pantallas chicas el formulario usa todo el ancho disponible */
+@media (max-width: 768px) {
+  .form-container form.container.my-5 {
+    width: 100% !important;
+    padding: var(--space-4);
+  }
+}

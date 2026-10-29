@@ -189,6 +189,7 @@
 
 /* ---------- Tablas ---------- */
 .table {
+  --bs-table-bg: var(--color-surface);
   --bs-table-color: var(--color-text);
   --bs-table-border-color: var(--color-border);
   --bs-table-striped-bg: var(--color-pino-50);
@@ -346,4 +347,18 @@
 
 .rounded {
   border-radius: var(--radius-sm) !important;
+}
+
+/* ---------- Títulos de página (misma jerarquía en todas las vistas) ---------- */
+.mis-turnos-titulo,
+.pedir-turno-titulo,
+.agenda-titulo,
+.histcli-titulo,
+.cancelar-turno-titulo,
+.no-encontrada-titulo {
+  font-family: var(--font-sans);
+  font-size: var(--text-xl);
+  font-weight: var(--weight-semibold);
+  letter-spacing: -0.01em;
+  color: var(--color-heading);
 }

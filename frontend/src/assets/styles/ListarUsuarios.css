@@ -25,27 +25,11 @@
     text-transform: uppercase;
 }
 
-.btn-primary {
+/* Botón "Ver perfil" de las tarjetas (acotado para no afectar a otros botones) */
+.user-card .btn-primary {
     min-width: 138px;
-    min-height: 42px;
-    background: var(--btn-color);
-    border-color: var(--btn-color);
-    border-radius: var(--radius-sm);
-    color: var(--color-on-primary);
-    font-weight: var(--weight-bold);
-    box-shadow: var(--shadow-md);
-}
-
-.btn-primary:hover,
-.btn-primary:focus {
-    background: var(--color-pino-600);
-    border-color: var(--color-pino-600);
-    box-shadow: var(--shadow-sm) !important;
-}
-
-.btn-primary:active {
-    background: var(--color-pino-900) !important;
-    border-color: var(--color-pino-900) !important;
+    min-height: 40px;
+    font-weight: var(--weight-semibold);
 }
 
 .barra-busqueda {
