@@ -5,6 +5,7 @@ import './assets/styles/index.css'
 import { AuthProvider } from './context/AuthContext.tsx';
 import App from './App.tsx'
 import 'bootstrap/dist/css/bootstrap.min.css';
+import './assets/styles/theme.css'
 import './assets/styles/App.css'
 import { RegistroProvider } from './context/RegistroProvider.tsx';
 

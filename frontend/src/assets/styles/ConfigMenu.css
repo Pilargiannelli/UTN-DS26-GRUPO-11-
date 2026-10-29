@@ -21,7 +21,7 @@
 .config-icon {
     width: 28px;
     height: 28px;
-    color: #0f4d3a;
+    color: var(--color-pino-800);
     stroke-width: 2.2;
     transition: transform .4s ease;
 }
@@ -35,9 +35,9 @@
     top: calc(100% + .5rem);
     right: 0;
     min-width: 170px;
-    background: #fff;
-    border: 1px solid #dee2e6;
-    border-radius: .5rem;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
     overflow: hidden;
     animation: fadeIn .2s ease;
     z-index: 1000;
@@ -51,13 +51,13 @@
     text-align: left;
     cursor: pointer;
     transition: background-color .15s ease;
-    color: #000;
+    color: var(--color-text);
     font-weight: 500;
 
 }
 
 .config-menu-dropdown-item:hover {
-    background-color: #e9f7ef;
+    background-color: var(--color-pino-100);
 }
 
 @keyframes fadeIn {

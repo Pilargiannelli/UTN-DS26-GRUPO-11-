@@ -63,7 +63,7 @@ function CancelarTurno() {
           <div className="cancelar-turno-card">
             <div className="cancelar-turno-encabezado">
               <div className="cancelar-turno-icono">
-                <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#993c1d" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--color-danger)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <rect x="3" y="4" width="18" height="18" rx="2" />
                   <line x1="16" y1="2" x2="16" y2="6" />
                   <line x1="8" y1="2" x2="8" y2="6" />

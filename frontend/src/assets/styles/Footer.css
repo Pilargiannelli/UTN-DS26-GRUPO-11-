@@ -1,9 +1,9 @@
 .footer {
     text-align: center;
-    font-family: 'Montserrat', sans-serif;
+    font-family: var(--font-sans);
     font-weight: 600;
-    font-size: 0.85rem;
-    color: #0f4d3a;
+    font-size: var(--text-sm);
+    color: var(--color-pino-800);
     padding: 0.35rem 0;
-    border-top: 1px solid #dde2ea;
+    border-top: 1px solid var(--color-border);
 }

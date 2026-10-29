@@ -1,22 +1,22 @@
 .agenda-titulo {
-  font-family: Georgia, serif;
-  font-size: 22px;
-  color: #0d3b2e;
+  font-family: var(--font-sans);
+  font-size: var(--text-xl);
+  color: var(--color-pino-900);
   margin: 0;
 }
 
 .agenda-fecha-sub {
-  font-size: 12px;
-  color: #8a8578;
+  font-size: var(--text-xs);
+  color: var(--color-text-subtle);
   text-transform: uppercase;
   letter-spacing: 0.5px;
   margin: 0;
 }
 
 .agenda-fecha-header {
-  font-size: 18px;
+  font-size: var(--text-md);
   font-weight: 500;
-  color: #0d3b2e;
+  color: var(--color-pino-900);
   text-transform: capitalize;
   margin: 2px 0 0;
 }
@@ -24,42 +24,42 @@
 /* Botones de navegación */
 .agenda-nav-btn {
   background: transparent;
-  border: 1px solid #e5e2d8;
-  border-radius: 8px;
-  color: #0d3b2e;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  color: var(--color-pino-900);
   padding: 4px 14px;
   cursor: pointer;
-  font-size: 18px;
+  font-size: var(--text-md);
   line-height: 1;
   transition: background 0.15s;
 }
 
 .agenda-nav-btn:hover {
-  background: #f4f3ec;
+  background: var(--color-bg);
 }
 
 .agenda-hoy-btn {
-  background: #0f6e56;
-  color: #fff;
+  background: var(--color-pino-600);
+  color: var(--color-on-primary);
   border: none;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   padding: 4px 14px;
   cursor: pointer;
-  font-size: 13px;
+  font-size: var(--text-sm);
   transition: background 0.15s;
 }
 
 .agenda-hoy-btn:hover {
-  background: #0a5040;
+  background: var(--color-pino-800);
 }
 
 /* Contenedor con scroll */
 .agenda-scroll {
   overflow-y: auto;
   max-height: calc(100vh - 341px);
-  border: 1px solid #e5e2d8;
-  border-radius: 12px;
-  background: #fff;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
 }
 
 /* Grid principal */
@@ -73,8 +73,8 @@
 .agenda-col-horas {
   width: 60px;
   flex-shrink: 0;
-  border-right: 1px solid #e5e2d8;
-  background: #fafaf8;
+  border-right: 1px solid var(--color-border);
+  background: var(--color-surface-muted);
 }
 
 .agenda-hora-label {
@@ -83,8 +83,8 @@
   align-items: flex-start;
   justify-content: flex-end;
   padding: 6px 10px 0 0;
-  font-size: 11px;
-  color: #8a8578;
+  font-size: var(--text-xs);
+  color: var(--color-text-subtle);
   box-sizing: border-box;
 }
 
@@ -96,7 +96,7 @@
 
 .agenda-hora-fila {
   height: 64px;
-  border-top: 1px solid #e5e2d8;
+  border-top: 1px solid var(--color-border);
   box-sizing: border-box;
 }
 
@@ -109,9 +109,9 @@
   position: absolute;
   left: 10px;
   right: 10px;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   padding: 6px 10px;
-  font-size: 13px;
+  font-size: var(--text-sm);
   overflow: hidden;
   cursor: default;
   box-sizing: border-box;
@@ -119,26 +119,26 @@
 }
 
 .agenda-evento.estado-confirmado {
-  background: #e1f5ee;
-  border-left-color: #0f6e56;
-  color: #085041;
+  background: var(--color-pino-100);
+  border-left-color: var(--color-pino-600);
+  color: var(--color-pino-800);
 }
 
 .agenda-evento.estado-pendiente {
-  background: #faeeda;
-  border-left-color: #e0a733;
-  color: #854f0b;
+  background: var(--color-warning-bg);
+  border-left-color: var(--color-warning-solid);
+  color: var(--color-warning);
 }
 
 .agenda-evento.estado-cancelado {
-  background: #fcebeb;
-  border-left-color: #d85a30;
-  color: #a32d2d;
+  background: var(--color-danger-bg);
+  border-left-color: var(--color-danger);
+  color: var(--color-danger);
   opacity: 0.7;
 }
 
 .agenda-evento-hora {
-  font-size: 11px;
+  font-size: var(--text-xs);
   font-weight: 600;
   margin: 0;
   line-height: 1.2;
@@ -154,7 +154,7 @@
 }
 
 .agenda-evento-especialidad {
-  font-size: 11px;
+  font-size: var(--text-xs);
   margin: 0;
   opacity: 0.75;
   line-height: 1.2;
@@ -166,8 +166,8 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  color: #8a8578;
-  font-size: 14px;
+  color: var(--color-text-subtle);
+  font-size: var(--text-sm);
   text-align: center;
   pointer-events: none;
 }
@@ -175,8 +175,8 @@
 /* ── Toggle Día / Semana ── */
 .agenda-toggle {
   display: flex;
-  border: 1px solid #e5e2d8;
-  border-radius: 8px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
   overflow: hidden;
 }
 
@@ -184,28 +184,28 @@
   background: transparent;
   border: none;
   padding: 5px 16px;
-  font-size: 13px;
-  color: #5f5e5a;
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
   cursor: pointer;
   transition: background 0.15s, color 0.15s;
 }
 
 .agenda-toggle-btn.activo {
-  background: #0f6e56;
-  color: #fff;
+  background: var(--color-pino-600);
+  color: var(--color-on-primary);
 }
 
 .agenda-toggle-btn:not(.activo):hover {
-  background: #f4f3ec;
+  background: var(--color-bg);
 }
 
 /* ── Vista semanal ── */
 .agenda-semana-header {
   display: flex;
-  border-bottom: 1px solid #e5e2d8;
+  border-bottom: 1px solid var(--color-border);
   position: sticky;
   top: 0;
-  background: #fff;
+  background: var(--color-surface);
   z-index: 2;
 }
 
@@ -215,20 +215,20 @@
   flex-direction: column;
   align-items: center;
   padding: 8px 0 6px;
-  border-left: 1px solid #e5e2d8;
+  border-left: 1px solid var(--color-border);
 }
 
 .agenda-dia-nombre {
-  font-size: 11px;
-  color: #8a8578;
+  font-size: var(--text-xs);
+  color: var(--color-text-subtle);
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 
 .agenda-dia-numero {
-  font-size: 20px;
+  font-size: var(--text-lg);
   font-weight: 400;
-  color: #0d3b2e;
+  color: var(--color-pino-900);
   width: 36px;
   height: 36px;
   display: flex;
@@ -239,15 +239,15 @@
 }
 
 .agenda-dia-hoy {
-  background: #0f6e56;
-  color: #fff !important;
+  background: var(--color-pino-600);
+  color: var(--color-on-primary) !important;
   font-weight: 600;
 }
 
 .agenda-dia-col {
   flex: 1;
   position: relative;
-  border-left: 1px solid #e5e2d8;
+  border-left: 1px solid var(--color-border);
   overflow: hidden;
   min-width: 0;
 }
@@ -260,9 +260,9 @@
 }
 
 .agenda-evento-compact .agenda-evento-hora {
-  font-size: 10px;
+  font-size: var(--text-xs);
 }
 
 .agenda-evento-compact .agenda-evento-paciente {
-  font-size: 11px;
+  font-size: var(--text-xs);
 }

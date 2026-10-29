@@ -7,14 +7,14 @@
 }
 
 .home-paciente-nombre {
-  font-size: 24px;
-  color: #0d3b2e;
+  font-size: var(--text-xl);
+  color: var(--color-pino-900);
   margin: 0;
 }
 
 .home-paciente-fecha {
-  font-size: 13px;
-  color: #8a8578;
+  font-size: var(--text-sm);
+  color: var(--color-text-subtle);
   margin: 4px 0 0;
   text-transform: capitalize;
 }
@@ -25,13 +25,13 @@
     align-items: center;
     gap: 32px;
 
-    background: #ffffff;
-    border-radius: 20px;
+    background: var(--color-surface);
+    border-radius: var(--radius-lg);
     padding: 22px 30px;
 
     margin-bottom: 22px;
 
-    box-shadow: 0 8px 20px rgba(0, 0, 0, .05);
+    box-shadow: var(--shadow-md);
 }
 
 .hero-left {
@@ -41,10 +41,10 @@
 .hero-left h1 {
     margin: 6px 0;
 
-    font-size: 46px;
-    font-weight: 800;
+    font-size: var(--text-3xl);
+    font-weight: var(--weight-bold);
 
-    color: #1f2937;
+    color: var(--color-text);
     letter-spacing:-1px;
 }
 
@@ -52,9 +52,9 @@
 
     margin-top: 6px;
 
-    font-size: 1rem;
+    font-size: var(--text-base);
 
-    color: #6b7280;
+    color: var(--color-text-muted);
 
     max-width: 560px;
 
@@ -64,8 +64,8 @@
 
 .hero p{
 
-    font-size:18px;
-    color:#64748B; 
+    font-size:var(--text-md);
+    color:var(--color-text-muted); 
     line-height:1.6;
 }
 
@@ -81,7 +81,7 @@
 
     min-width: 150px;
 
-    border-left: 1px solid #ececec;
+    border-left: 1px solid var(--color-border);
 
     padding-left: 18px;
 

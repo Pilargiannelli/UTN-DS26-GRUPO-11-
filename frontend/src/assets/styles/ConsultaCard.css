@@ -1,15 +1,13 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Montserrat:wght@400;600;800&family=Poppins:wght@400;600;800&display=swap");
-
 :root {
-    --consul-card-font: "Inter", sans-serif;
-    --consul-card-title-font: "Monserrat", "Poppins", sans-serif;
-    --consul-card-title-color: #0f4d3a;
+    --consul-card-font: var(--font-sans);
+    --consul-card-title-font: var(--font-sans);
+    --consul-card-title-color: var(--color-pino-800);
     --consul-card-width: 30rem;
 }
 
 .consulta-item {
-    background: #ffffff;
-    border: 1px solid #d6e4de;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
     box-shadow: none;
     overflow: hidden;
     padding: 1rem;
@@ -18,7 +16,7 @@
 
 .consulta-item:last-child {
     position: relative;
-    border-bottom: linear-gradient(90deg, #0f4d3a, #2e7d5b);
+    border-bottom: linear-gradient(90deg, var(--color-pino-800), var(--color-pino-600));
 }
 
 .consulta-item p {
@@ -39,12 +37,12 @@
     font-family: var(--user-card-nombre-font) !important;
     color: var(--user-card-nombre-color);
     font-weight: 650;
-    font-size: 0.9rem;
+    font-size: var(--text-base);
 }
 
 .dato p {
     font-family: var(--user-card-font);
-    font-size: 0.9rem !important;
+    font-size: var(--text-base) !important;
     font-weight: 600;
     margin: 0 0 0 0;
 }

@@ -7,19 +7,19 @@
 
 .btn-editar-tag {
   background: none;
-  border: 1px solid #0f4d3a;
-  color: #0f4d3a;
+  border: 1px solid var(--color-pino-800);
+  color: var(--color-pino-800);
   padding: 0.25rem 0.75rem;
-  border-radius: 4px;
-  font-size: 0.85rem;
+  border-radius: var(--radius-xs);
+  font-size: var(--text-sm);
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .btn-editar-tag:hover {
-  background-color: #0f4d3a;
-  color: #ffffff;
+  background-color: var(--color-pino-800);
+  color: var(--color-on-primary);
 }
 
 .tags-container-grid {
@@ -29,13 +29,13 @@
 }
 
 .tag-item {
-  background-color: #f1f5f9;
-  border: 1px solid #cbd5e1;
+  background-color: var(--color-surface-muted);
+  border: 1px solid var(--color-border-strong);
   padding: 0.4rem 0.8rem;
-  border-radius: 6px;
-  color: #0f4d3a;
+  border-radius: var(--radius-sm);
+  color: var(--color-pino-800);
   font-weight: 600;
-  font-size: 0.95rem;
+  font-size: var(--text-base);
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -44,8 +44,8 @@
 .btn-remove-tag {
   background: none;
   border: none;
-  color: #0f4d3a;
-  font-size: 1.1rem;
+  color: var(--color-pino-800);
+  font-size: var(--text-md);
   font-weight: 700;
   cursor: pointer;
   padding: 0;
@@ -55,7 +55,7 @@
 .editor-tags-actions {
   margin-top: 1.5rem;
   padding-top: 1rem;
-  border-top: 1px dashed #e2e8f0;
+  border-top: 1px dashed var(--color-border);
   display: flex;
   flex-direction: column;
   gap: 1rem;
@@ -69,19 +69,19 @@
 .input-agregar-tag-group input {
   flex-grow: 1;
   padding: 0.4rem 0.75rem;
-  border: 1px solid #cbd5e1;
-  border-radius: 6px;
-  outline: none;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-sm);
+
 }
 
 .btn-add-tag {
-  background-color: #0f4d3a;
+  background-color: var(--color-pino-800);
   color: white;
   border: none;
   padding: 0.4rem 0.9rem;
   font-weight: 700;
-  font-size: 1.1rem;
-  border-radius: 6px;
+  font-size: var(--text-md);
+  border-radius: var(--radius-sm);
   cursor: pointer;
 }
 
@@ -94,27 +94,27 @@
 .btn-cancelar-cambios {
   background: none;
   border: none;
-  color: #64748b;
+  color: var(--color-text-muted);
   font-weight: 600;
   cursor: pointer;
 }
 
 .btn-guardar-cambios {
-  background-color: #0f4d3a;
+  background-color: var(--color-pino-800);
   color: white;
   border: none;
   padding: 0.5rem 1rem;
   font-weight: 600;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   cursor: pointer;
 }
 
 .input-agregar-tag-group input {
     min-height: var(--buscador-min-height);
-    border: 1.5px solid #2e7d5b;
-    border-radius: 8px;
-    color: #1f2933;
-    font-size: 16px;
-    background-color: #ffffff;
+    border: 1.5px solid var(--color-pino-600);
+    border-radius: var(--radius-sm);
+    color: var(--color-text);
+    font-size: var(--text-base);
+    background-color: var(--color-surface);
     box-shadow: none;
 }

@@ -1,9 +1,7 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Montserrat:wght@400;600;800&family=Poppins:wght@400;600;800&display=swap");
-
 :root {
-    --hist-card-font: "Inter", sans-serif;
-    --hist-card-title-font: "Monserrat", "Poppins", sans-serif;
-    --hist-card-title-color: #0f4d3a;
+    --hist-card-font: var(--font-sans);
+    --hist-card-title-font: var(--font-sans);
+    --hist-card-title-color: var(--color-pino-800);
     --hist-card-width: 40rem;
 }
 
@@ -14,9 +12,9 @@
     height: calc(100dvh - 280px);
     font-family: var(--hist-card-font);
     width: var(--hist-card-width);
-    background: #ffffff;
-    border: 1px solid #d6e4de;
-    border-radius: 14px;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
     overflow: hidden;
     padding: 1rem 1rem 0 1rem;
     margin-top: 0;
@@ -28,7 +26,7 @@
     position: absolute;
     inset: 0 0 auto;
     height: 6px;
-    background: linear-gradient(90deg, #0f4d3a, #2e7d5b);
+    background: linear-gradient(90deg, var(--color-pino-800), var(--color-pino-600));
 }
 
 .historial-card h4 {
@@ -49,7 +47,7 @@
     inset: 0 0 auto;
     top: 2rem;
     height: 2px;
-    background: linear-gradient(90deg, #0f4d3a, #2e7d5b);
+    background: linear-gradient(90deg, var(--color-pino-800), var(--color-pino-600));
 }
 
 .consultas-scroll {
@@ -69,17 +67,17 @@
 }
 
 .consultas-scroll::-webkit-scrollbar-track {
-  background: #f1f5f9;
-  border-radius: 10px;
+  background: var(--color-surface-muted);
+  border-radius: var(--radius-md);
 }
 
 .consultas-scroll::-webkit-scrollbar-thumb {
-  background: #0f4d3a;
-  border-radius: 10px;
-  border: 2px solid #f1f5f9;
+  background: var(--color-pino-800);
+  border-radius: var(--radius-md);
+  border: 2px solid var(--color-surface-muted);
   transition: background 0.3s ease;
 }
 
 .consultas-scroll::-webkit-scrollbar-thumb:hover {
-  background: #19795c;
+  background: var(--color-pino-600);
 }

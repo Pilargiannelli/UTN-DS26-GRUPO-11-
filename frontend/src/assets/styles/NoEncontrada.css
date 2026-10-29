@@ -9,26 +9,26 @@
 
 .no-encontrada-codigo {
   margin: 0;
-  font-family: Georgia, serif;
-  font-size: 96px;
+  font-family: var(--font-sans);
+  font-size: var(--text-3xl);
   line-height: 1;
-  color: #c9d8d2;
+  color: var(--color-border-strong);
 }
 
 .no-encontrada-titulo {
   margin: 0;
-  font-family: Georgia, serif;
+  font-family: var(--font-sans);
   font-weight: 400;
-  font-size: 28px;
-  color: #0d3b2e;
+  font-size: var(--text-2xl);
+  color: var(--color-pino-900);
 }
 
 .no-encontrada-texto {
   margin: 0;
   max-width: 420px;
-  font-size: 15px;
+  font-size: var(--text-base);
   line-height: 1.55;
-  color: #5f5e5a;
+  color: var(--color-text-muted);
 }
 
 .no-encontrada-btn {
@@ -37,15 +37,15 @@
   align-items: center;
   height: 46px;
   padding: 0 22px;
-  border-radius: 10px;
-  background: #0f4d3a;
-  color: #fff;
-  font-size: 15px;
+  border-radius: var(--radius-md);
+  background: var(--color-pino-800);
+  color: var(--color-on-primary);
+  font-size: var(--text-base);
   font-weight: 600;
   text-decoration: none;
 }
 
 .no-encontrada-btn:hover {
-  background: #0d3b2e;
-  color: #fff;
+  background: var(--color-pino-900);
+  color: var(--color-on-primary);
 }

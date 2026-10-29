@@ -1,6 +1,6 @@
 .proximo-turno-banner {
-  background: #ffffff;
-  border-radius: 14px;
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
   padding: 1.5rem;
   display: flex;
   align-items: center;
@@ -13,7 +13,7 @@
   flex-direction: column;
   gap: 14px;
   text-align: center;
-  color: #fff;
+  color: var(--color-on-primary);
   padding: 2rem;
 }
 
@@ -27,39 +27,39 @@
 .proximo-turno-chip-fecha {
   text-align: center;
   background: rgba(255,255,255,0.12);
-  border-radius: 10px;
-  border-left: 1px solid #ececec;
-  border-right: 1px solid #ececec;
+  border-radius: var(--radius-md);
+  border-left: 1px solid var(--color-border);
+  border-right: 1px solid var(--color-border);
   padding-right: 18px;
   padding-left: 18px;
   flex-shrink: 0;
 }
 
 .proximo-turno-chip-mes {
-  font-size: 11px;
-  color: #9fd4bc;
+  font-size: var(--text-xs);
+  color: var(--color-pino-200);
   margin: 0;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 
 .proximo-turno-chip-dia {
-  font-size: 22px;
-  color: #fff;
+  font-size: var(--text-xl);
+  color: var(--color-on-primary);
   font-weight: 500;
   margin: 0;
   line-height: 1;
 }
 
 .proximo-turno-eyebrow {
-  font-size: 12px;
-  color: #9fd4bc;
+  font-size: var(--text-xs);
+  color: var(--color-pino-200);
   margin: 0 0 4px;
 }
 
 .proximo-turno-detalle {
-  font-size: 18px;
-  color: #fff;
+  font-size: var(--text-md);
+  color: var(--color-on-primary);
   font-weight: 500;
   margin: 0;
 }
@@ -71,19 +71,19 @@
 }
 
 .proximo-turno-btn {
-  font-size: 13px;
+  font-size: var(--text-sm);
   padding: 0 14px;
   height: 34px;
-  background: linear-gradient(90deg, #17775a, #2e7d5b);
-  color: #fff;
-  border-radius: 8px;
+  background: linear-gradient(90deg, var(--color-pino-600), var(--color-pino-600));
+  color: var(--color-on-primary);
+  border-radius: var(--radius-sm);
   cursor: pointer;
   border: none;
   font-weight: 500;
 }
 
 .proximo-turno-btn-cancelar {
-  background: linear-gradient(90deg, #981e1e, #ad4040);
+  background: linear-gradient(90deg, var(--color-danger-hover), var(--color-danger));
 }
 
 .proximo-turno-btn-primario {

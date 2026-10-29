@@ -1,10 +1,8 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Montserrat:wght@400;600;800&family=Poppins:wght@400;600;800&display=swap");
-
 :root {
-    --user-card-font: "Inter", sans-serif;
-    --user-card-nombre-font: "Monserrat", "Poppins", sans-serif;
-    --user-card-nombre-color: #0f4d3a;
-    --btn-color: #0f4d3a;
+    --user-card-font: var(--font-sans);
+    --user-card-nombre-font: var(--font-sans);
+    --user-card-nombre-color: var(--color-pino-800);
+    --btn-color: var(--color-pino-800);
     --user-card-width: 22rem;
     --user-card-foto-size: 150px;
     --buscador-min-height: 42px;
@@ -22,7 +20,7 @@
 .nombre {
     font-family: var(--user-card-nombre-font) !important;
     color: var(--user-card-nombre-color);
-    font-weight: 800;
+    font-weight: var(--weight-bold);
     letter-spacing: 1.5px;
     text-transform: uppercase;
 }
@@ -32,22 +30,22 @@
     min-height: 42px;
     background: var(--btn-color);
     border-color: var(--btn-color);
-    border-radius: 8px;
-    color: #ffffff;
-    font-weight: 800;
-    box-shadow: 0 10px 20px rgba(15, 77, 58, 0.18);
+    border-radius: var(--radius-sm);
+    color: var(--color-on-primary);
+    font-weight: var(--weight-bold);
+    box-shadow: var(--shadow-md);
 }
 
 .btn-primary:hover,
 .btn-primary:focus {
-    background: #2e7d5b;
-    border-color: #2e7d5b;
-    box-shadow: #2e7d5b !important;
+    background: var(--color-pino-600);
+    border-color: var(--color-pino-600);
+    box-shadow: var(--shadow-sm) !important;
 }
 
 .btn-primary:active {
-    background: #0b3d2e !important;
-    border-color: #0b3d2e !important;
+    background: var(--color-pino-900) !important;
+    border-color: var(--color-pino-900) !important;
 }
 
 .barra-busqueda {
@@ -57,7 +55,6 @@
     align-items: center;
     min-height: 60px;
 }
-
 
 .barra-busqueda-accion {
     position: absolute;
@@ -72,12 +69,11 @@
     width: min(520px, 100%);
 }
 
-
 .icono-buscador {
     position: absolute;
     left: 18px;
-    color: #0f4d3a;
-    font-size: 17px;
+    color: var(--color-pino-800);
+    font-size: var(--text-base);
     pointer-events: none;
     z-index: 5;
 }
@@ -85,22 +81,22 @@
 .buscador-container .form-control {
     min-height: var(--buscador-min-height);
     padding-left: 46px;
-    background-color: #EEF5F1;
+    background-color: var(--color-pino-100);
     border: none;
-    border-radius: 12px;
-    color: #1f2933;
-    font-size: 15px;
+    border-radius: var(--radius-md);
+    color: var(--color-text);
+    font-size: var(--text-base);
     box-shadow: none;
     transition: background-color .2s ease, box-shadow .2s ease;
 }
 
 .buscador-container .form-control::placeholder {
-    color: #7d938a;
+    color: var(--color-text-subtle);
 }
 
 .buscador-container .form-control:focus {
-    background-color: #E7F0EB;
-    box-shadow: 0 0 0 3px rgba(46, 125, 91, .18);
+    background-color: var(--color-pino-100);
+    box-shadow: var(--focus-ring);
 }
 
 @media (max-width: 768px) {
@@ -122,7 +118,7 @@
     right: 12px;
     background: none;
     border: none;
-    font-size: 22px;
+    font-size: var(--text-xl);
     line-height: 1;
     color: var(--btn-color);
     cursor: pointer;
@@ -132,10 +128,10 @@
 }
 
 .btn-limpiar:hover {
-    color: #2e7d5b;;
+    color: var(--color-pino-600);;
     transform: scale(1.1);
 }
 
 .btn-limpiar:focus {
-    outline: none;
+
 }

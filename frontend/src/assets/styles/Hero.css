@@ -4,13 +4,13 @@
     align-items: center;
     gap: 32px;
 
-    background: #ffffff;
-    border-radius: 20px;
+    background: var(--color-surface);
+    border-radius: var(--radius-lg);
     padding: 10px 30px;
 
     margin-bottom: 22px;
     margin-top: 2rem;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, .05);
+    box-shadow: var(--shadow-md);
 }
 
 .hero-left {
@@ -18,8 +18,8 @@
 }
 
 .hero-role {
-    color: #4f8a63;
-    font-size: .9rem;
+    color: var(--color-pino-600);
+    font-size: var(--text-base);
     font-weight: 700;
     letter-spacing: 2px;
 }
@@ -27,10 +27,10 @@
 .hero-left h1 {
     margin: 6px 0;
 
-    font-size: 42px;
-    font-weight: 800;
+    font-size: var(--text-3xl);
+    font-weight: var(--weight-bold);
 
-    color: #1f2937;
+    color: var(--color-text);
     letter-spacing:-1px;
 }
 
@@ -38,9 +38,9 @@
 
     margin-top: 6px;
 
-    font-size: 1rem;
+    font-size: var(--text-base);
 
-    color: #6b7280;
+    color: var(--color-text-muted);
 
     max-width: 560px;
 
@@ -50,8 +50,8 @@
 
 .hero p{
 
-    font-size:18px;
-    color:#64748B; 
+    font-size:var(--text-md);
+    color:var(--color-text-muted); 
     line-height:1.6;
 }
 
@@ -67,7 +67,7 @@
 
     min-width: 150px;
 
-    border-left: 1px solid #ececec;
+    border-left: 1px solid var(--color-border);
 
     padding-left: 18px;
 
@@ -77,9 +77,9 @@
 
     display: block;
 
-    color: #6b7280;
+    color: var(--color-text-muted);
 
-    font-size: .95rem;
+    font-size: var(--text-base);
 
     margin-bottom: 6px;
 
@@ -89,23 +89,23 @@
 
     display: block;
 
-    font-size: 1.45rem;
+    font-size: var(--text-xl);
 
-    color: #1f2937;
+    color: var(--color-text);
 
 }
 
 .hero-item small {
 
-    color: #6b7280;
+    color: var(--color-text-muted);
 
-    font-size: .95rem;
+    font-size: var(--text-base);
 
 }
 
 .status {
 
-    color: #2d6a4f;
+    color: var(--color-pino-600);
 
     font-weight: 600;
 

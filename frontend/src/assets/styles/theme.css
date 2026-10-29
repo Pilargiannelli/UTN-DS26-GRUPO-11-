@@ -1,0 +1,349 @@
+/* Tema IMOS sobre Bootstrap: se importa DESPUÉS de bootstrap.min.css para que
+   botones, formularios, tablas, modales y badges usen los tokens de index.css. */
+:root {
+  --bs-body-font-family: var(--font-sans);
+  --bs-body-color: var(--color-text);
+  --bs-body-bg: var(--color-bg);
+  --bs-emphasis-color: var(--color-text);
+  --bs-secondary-color: var(--color-text-muted);
+  --bs-border-color: var(--color-border);
+  --bs-border-radius: var(--radius-sm);
+  --bs-border-radius-sm: var(--radius-xs);
+  --bs-border-radius-lg: var(--radius-md);
+  --bs-border-radius-xl: var(--radius-lg);
+  --bs-link-color: var(--color-pino-600);
+  --bs-link-color-rgb: 29, 117, 86;
+  --bs-link-hover-color: var(--color-pino-800);
+  --bs-link-hover-color-rgb: 15, 77, 58;
+  --bs-primary: var(--color-primary);
+  --bs-primary-rgb: 15, 77, 58;
+  --bs-success: var(--color-success);
+  --bs-success-rgb: 30, 122, 76;
+  --bs-danger: var(--color-danger);
+  --bs-danger-rgb: 180, 35, 24;
+  --bs-warning: var(--color-warning-solid);
+  --bs-warning-rgb: 201, 138, 18;
+  --bs-info: var(--color-info);
+  --bs-info-rgb: 31, 95, 153;
+  --bs-secondary-rgb: 79, 91, 87;
+  --bs-light-rgb: 241, 244, 243;
+  --bs-dark-rgb: 11, 58, 44;
+  --bs-focus-ring-color: rgba(29, 117, 86, 0.28);
+}
+
+/* ---------- Botones ---------- */
+.btn {
+  --bs-btn-font-family: var(--font-sans);
+  --bs-btn-font-weight: var(--weight-semibold);
+  --bs-btn-border-radius: var(--radius-sm);
+  --bs-btn-focus-box-shadow: var(--focus-ring);
+  transition: background-color var(--transition-fast), border-color var(--transition-fast),
+    color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.btn-primary,
+.btn-success {
+  --bs-btn-color: var(--color-on-primary);
+  --bs-btn-bg: var(--color-primary);
+  --bs-btn-border-color: var(--color-primary);
+  --bs-btn-hover-color: var(--color-on-primary);
+  --bs-btn-hover-bg: var(--color-primary-hover);
+  --bs-btn-hover-border-color: var(--color-primary-hover);
+  --bs-btn-active-color: var(--color-on-primary);
+  --bs-btn-active-bg: var(--color-primary-hover);
+  --bs-btn-active-border-color: var(--color-primary-hover);
+  --bs-btn-disabled-color: var(--color-on-primary);
+  --bs-btn-disabled-bg: var(--color-border-strong);
+  --bs-btn-disabled-border-color: var(--color-border-strong);
+}
+
+.btn-danger {
+  --bs-btn-color: var(--color-on-primary);
+  --bs-btn-bg: var(--color-danger);
+  --bs-btn-border-color: var(--color-danger);
+  --bs-btn-hover-color: var(--color-on-primary);
+  --bs-btn-hover-bg: var(--color-danger-hover);
+  --bs-btn-hover-border-color: var(--color-danger-hover);
+  --bs-btn-active-bg: var(--color-danger-hover);
+  --bs-btn-active-border-color: var(--color-danger-hover);
+}
+
+.btn-warning {
+  --bs-btn-color: var(--color-warning);
+  --bs-btn-bg: var(--color-warning-bg);
+  --bs-btn-border-color: var(--color-warning-border);
+  --bs-btn-hover-color: var(--color-warning);
+  --bs-btn-hover-bg: var(--color-warning-border);
+  --bs-btn-hover-border-color: var(--color-warning-solid);
+}
+
+.btn-secondary {
+  --bs-btn-color: var(--color-text);
+  --bs-btn-bg: var(--color-surface-muted);
+  --bs-btn-border-color: var(--color-border-strong);
+  --bs-btn-hover-color: var(--color-text);
+  --bs-btn-hover-bg: var(--color-border);
+  --bs-btn-hover-border-color: var(--color-border-input);
+  --bs-btn-active-bg: var(--color-border);
+}
+
+.btn-outline-primary,
+.btn-outline-success {
+  --bs-btn-color: var(--color-primary);
+  --bs-btn-border-color: var(--color-pino-200);
+  --bs-btn-hover-color: var(--color-primary);
+  --bs-btn-hover-bg: var(--color-primary-soft);
+  --bs-btn-hover-border-color: var(--color-pino-600);
+  --bs-btn-active-color: var(--color-on-primary);
+  --bs-btn-active-bg: var(--color-primary);
+  --bs-btn-active-border-color: var(--color-primary);
+}
+
+.btn-outline-secondary {
+  --bs-btn-color: var(--color-text-muted);
+  --bs-btn-border-color: var(--color-border-strong);
+  --bs-btn-hover-color: var(--color-text);
+  --bs-btn-hover-bg: var(--color-surface-muted);
+  --bs-btn-hover-border-color: var(--color-border-input);
+  --bs-btn-active-color: var(--color-text);
+  --bs-btn-active-bg: var(--color-border);
+}
+
+.btn-outline-danger {
+  --bs-btn-color: var(--color-danger);
+  --bs-btn-border-color: var(--color-danger-border);
+  --bs-btn-hover-color: var(--color-danger);
+  --bs-btn-hover-bg: var(--color-danger-bg);
+  --bs-btn-hover-border-color: var(--color-danger);
+  --bs-btn-active-color: var(--color-on-primary);
+  --bs-btn-active-bg: var(--color-danger);
+}
+
+.btn-outline-warning {
+  --bs-btn-color: var(--color-warning);
+  --bs-btn-border-color: var(--color-warning-border);
+  --bs-btn-hover-color: var(--color-warning);
+  --bs-btn-hover-bg: var(--color-warning-bg);
+  --bs-btn-hover-border-color: var(--color-warning-solid);
+}
+
+.btn-link {
+  --bs-btn-color: var(--color-pino-600);
+  --bs-btn-hover-color: var(--color-pino-800);
+  --bs-btn-font-weight: var(--weight-medium);
+}
+
+/* ---------- Formularios ---------- */
+.form-label {
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  color: var(--color-text);
+  margin-bottom: var(--space-1);
+}
+
+.form-control,
+.form-select {
+  border-color: var(--color-border-input);
+  border-radius: var(--radius-sm);
+  color: var(--color-text);
+  background-color: var(--color-surface);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.form-control::placeholder {
+  color: var(--color-text-subtle);
+}
+
+.form-control:focus,
+.form-select:focus {
+  border-color: var(--color-pino-600);
+  box-shadow: var(--focus-ring);
+}
+
+.form-control:disabled,
+.form-select:disabled,
+.form-control[readonly] {
+  background-color: var(--color-surface-muted);
+  color: var(--color-text-muted);
+}
+
+.form-control.is-invalid,
+.form-select.is-invalid {
+  border-color: var(--color-danger);
+}
+
+.invalid-feedback,
+.text-danger {
+  color: var(--color-danger) !important;
+}
+
+.form-check-input:checked {
+  background-color: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+.form-check-input:focus {
+  border-color: var(--color-pino-600);
+  box-shadow: var(--focus-ring);
+}
+
+/* ---------- Tablas ---------- */
+.table {
+  --bs-table-color: var(--color-text);
+  --bs-table-border-color: var(--color-border);
+  --bs-table-striped-bg: var(--color-pino-50);
+  --bs-table-hover-bg: var(--color-primary-soft);
+  font-size: var(--text-sm);
+}
+
+.table > thead th {
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+}
+
+.table-dark {
+  --bs-table-bg: var(--color-primary);
+  --bs-table-color: var(--color-on-primary);
+  --bs-table-border-color: var(--color-pino-700);
+}
+
+.table-dark > tr > th,
+.table > thead.table-dark th {
+  color: var(--color-on-primary);
+}
+
+/* ---------- Badges y alertas ---------- */
+.badge {
+  font-weight: var(--weight-semibold);
+  border-radius: var(--radius-pill);
+  padding: 0.35em 0.75em;
+  letter-spacing: 0.01em;
+}
+
+.badge.bg-success,
+.text-bg-success {
+  background-color: var(--color-success-bg) !important;
+  color: var(--color-success) !important;
+}
+
+.badge.bg-warning,
+.text-bg-warning {
+  background-color: var(--color-warning-bg) !important;
+  color: var(--color-warning) !important;
+}
+
+.badge.bg-danger,
+.text-bg-danger {
+  background-color: var(--color-danger-bg) !important;
+  color: var(--color-danger) !important;
+}
+
+.badge.bg-info,
+.badge.bg-primary,
+.text-bg-info {
+  background-color: var(--color-info-bg) !important;
+  color: var(--color-info) !important;
+}
+
+.badge.bg-secondary {
+  background-color: var(--color-surface-muted) !important;
+  color: var(--color-text-muted) !important;
+}
+
+.alert {
+  --bs-alert-border-radius: var(--radius-md);
+  font-size: var(--text-sm);
+}
+
+.alert-success {
+  --bs-alert-color: var(--color-success);
+  --bs-alert-bg: var(--color-success-bg);
+  --bs-alert-border-color: var(--color-success-border);
+}
+
+.alert-danger {
+  --bs-alert-color: var(--color-danger);
+  --bs-alert-bg: var(--color-danger-bg);
+  --bs-alert-border-color: var(--color-danger-border);
+}
+
+.alert-warning {
+  --bs-alert-color: var(--color-warning);
+  --bs-alert-bg: var(--color-warning-bg);
+  --bs-alert-border-color: var(--color-warning-border);
+}
+
+.alert-info {
+  --bs-alert-color: var(--color-info);
+  --bs-alert-bg: var(--color-info-bg);
+  --bs-alert-border-color: var(--color-info-border);
+}
+
+/* ---------- Modales, cards y navegación ---------- */
+.modal {
+  --bs-modal-border-radius: var(--radius-lg);
+  --bs-modal-inner-border-radius: var(--radius-lg);
+  --bs-modal-border-color: var(--color-border);
+  --bs-modal-box-shadow: var(--shadow-lg);
+  --bs-modal-header-border-color: var(--color-border);
+  --bs-modal-footer-border-color: var(--color-border);
+}
+
+.modal-title {
+  font-size: var(--text-lg);
+  font-weight: var(--weight-semibold);
+  color: var(--color-heading);
+}
+
+.modal-backdrop {
+  --bs-backdrop-bg: #0b1b16;
+  --bs-backdrop-opacity: 0.5;
+}
+
+.card {
+  --bs-card-border-color: var(--color-border);
+  --bs-card-border-radius: var(--radius-lg);
+  --bs-card-inner-border-radius: var(--radius-lg);
+}
+
+.nav-link {
+  --bs-nav-link-color: var(--color-text-muted);
+  --bs-nav-link-hover-color: var(--color-pino-800);
+}
+
+.nav-tabs {
+  --bs-nav-tabs-link-active-color: var(--color-pino-800);
+  --bs-nav-tabs-border-color: var(--color-border);
+}
+
+.nav-pills {
+  --bs-nav-pills-link-active-bg: var(--color-primary);
+}
+
+.toast {
+  --bs-toast-border-radius: var(--radius-md);
+  --bs-toast-box-shadow: var(--shadow-md);
+}
+
+.text-muted,
+.text-secondary {
+  color: var(--color-text-muted) !important;
+}
+
+.text-success {
+  color: var(--color-success) !important;
+}
+
+.shadow-sm {
+  box-shadow: var(--shadow-sm) !important;
+}
+
+.shadow {
+  box-shadow: var(--shadow-md) !important;
+}
+
+.rounded {
+  border-radius: var(--radius-sm) !important;
+}

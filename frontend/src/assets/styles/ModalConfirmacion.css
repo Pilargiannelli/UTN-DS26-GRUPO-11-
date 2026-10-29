@@ -9,18 +9,18 @@
 }
 
 .modal-box {
-  background: #ffffff;
+  background: var(--color-surface);
   padding: 1.5rem;
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   max-width: 400px;
   width: 90%;
   text-align: center;
 }
 
 .modal-mensaje {
-  font-size: 1.1rem;
+  font-size: var(--text-md);
   font-weight: 600;
-  color: #1e293b;
+  color: var(--color-text);
   margin-bottom: 1.5rem;
 }
 
@@ -32,18 +32,18 @@
 
 .btn-modal {
   padding: 0.5rem 1.5rem;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   font-weight: 600;
   cursor: pointer;
   border: none;
 }
 
 .btn-cancelar {
-  background-color: #e2e8f0;
-  color: #475569;
+  background-color: var(--color-border);
+  color: var(--color-text-muted);
 }
 
 .btn-aceptar {
-  background-color: #0f4d3a;
-  color: #ffffff;
+  background-color: var(--color-pino-800);
+  color: var(--color-on-primary);
 }

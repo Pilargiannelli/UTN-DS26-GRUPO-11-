@@ -6,26 +6,26 @@
 }
 
 .mis-turnos-titulo {
-  font-family: Georgia, serif;
-  font-size: 22px;
-  color: #0d3b2e;
+  font-family: var(--font-sans);
+  font-size: var(--text-xl);
+  color: var(--color-pino-900);
   margin: 0;
 }
 
 .mis-turnos-btn-agendar {
-  font-size: 13px;
+  font-size: var(--text-sm);
   padding: 0 14px;
   height: 34px;
-  background: #0f6e56;
-  color: #fff;
+  background: var(--color-pino-600);
+  color: var(--color-on-primary);
   border: none;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   cursor: pointer;
 }
 
 .mis-turnos-seccion {
-  font-size: 12px;
-  color: #8a8578;
+  font-size: var(--text-xs);
+  color: var(--color-text-subtle);
   text-transform: uppercase;
   letter-spacing: 0.5px;
   margin: 0 0 10px;
@@ -46,19 +46,19 @@
 
 .turno-fila-barra {
   width: 4px;
-  border-radius: 2px;
+  border-radius: var(--radius-xs);
   flex-shrink: 0;
-  background: #b4b2a9;
+  background: var(--color-text-subtle);
 }
 
-.turno-fila-barra.estado-confirmado { background: #0f6e56; }
-.turno-fila-barra.estado-pendiente { background: #e0a733; }
-.turno-fila-barra.estado-cancelado { background: #d85a30; }
+.turno-fila-barra.estado-confirmado { background: var(--color-pino-600); }
+.turno-fila-barra.estado-pendiente { background: var(--color-warning-solid); }
+.turno-fila-barra.estado-cancelado { background: var(--color-danger); }
 
 .turno-fila-card {
-  background: #fff;
-  border: 1px solid #e5e2d8;
-  border-radius: 12px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
   padding: 14px 18px;
   flex: 1;
   display: flex;
@@ -78,43 +78,43 @@
 }
 
 .turno-fila-mes {
-  font-size: 10px;
-  color: #8a8578;
+  font-size: var(--text-xs);
+  color: var(--color-text-subtle);
   margin: 0;
   text-transform: uppercase;
 }
 
 .turno-fila-dia {
-  font-size: 20px;
-  color: #0d3b2e;
+  font-size: var(--text-lg);
+  color: var(--color-pino-900);
   font-weight: 500;
   margin: 0;
   line-height: 1.1;
 }
 
 .turno-fila-titulo {
-  font-size: 14px;
+  font-size: var(--text-sm);
   font-weight: 500;
   margin: 0;
-  color: #2a2a28;
+  color: var(--color-text);
 }
 
 .turno-fila-medico {
-  font-size: 12px;
-  color: #8a8578;
+  font-size: var(--text-xs);
+  color: var(--color-text-subtle);
   margin: 2px 0 0;
 }
 
 .turno-fila-badge {
-  font-size: 11px;
+  font-size: var(--text-xs);
   padding: 4px 10px;
-  border-radius: 20px;
+  border-radius: var(--radius-lg);
   font-weight: 500;
   flex-shrink: 0;
-  background: #f1efe8;
-  color: #5f5e5a;
+  background: var(--color-surface-muted);
+  color: var(--color-text-muted);
 }
 
-.turno-fila-badge.estado-confirmado { background: #e1f5ee; color: #085041; }
-.turno-fila-badge.estado-pendiente { background: #faeeda; color: #854f0b; }
-.turno-fila-badge.estado-cancelado { background: #fcebeb; color: #a32d2d; }
+.turno-fila-badge.estado-confirmado { background: var(--color-pino-100); color: var(--color-pino-800); }
+.turno-fila-badge.estado-pendiente { background: var(--color-warning-bg); color: var(--color-warning); }
+.turno-fila-badge.estado-cancelado { background: var(--color-danger-bg); color: var(--color-danger); }

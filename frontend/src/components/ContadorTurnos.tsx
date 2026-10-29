@@ -11,9 +11,9 @@ export default function ContadorTurnos({
 }: ContadorTurnosProps) {
 
   const tarjetas = [
-    { id: 1, valor: turnosHoy,       label: "Turnos de hoy",   icono: "📅", color: "#4e9af1" },
-    { id: 2, valor: turnosAtendidos, label: "Atendidos",        icono: "✅", color: "#2ecc71" },
-    { id: 3, valor: turnosMañana,    label: "Turnos de mañana", icono: "🗓️", color: "#f39c12" },
+    { id: 1, valor: turnosHoy,       label: "Turnos de hoy",   icono: "📅", color: "var(--color-info)" },
+    { id: 2, valor: turnosAtendidos, label: "Atendidos",        icono: "✅", color: "var(--color-success)" },
+    { id: 3, valor: turnosMañana,    label: "Turnos de mañana", icono: "🗓️", color: "var(--color-warning-solid)" },
   ];
 
   return (
