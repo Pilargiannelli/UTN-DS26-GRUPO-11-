@@ -62,7 +62,7 @@ async function main() {
       apellido: "Gómez",
       dni: "28456789",
       email: "carlos.gomez@clinica.com",
-      fotoPerfil: "https://example.com/fotos/dr_gomez.jpg",
+      fotoPerfil: null,
       rol: Rol.MEDICO,
       password: "Medico1234",
     },

@@ -6,7 +6,7 @@ import { useUsuarioSeleccionado } from "../hooks/useUsuarioSeleccionado.ts";
 import { HistorialMedicoCard } from "../components/HistorialMedicoCard.tsx";
 import { Container, Row, Col } from 'react-bootstrap';
 import { useState } from "react";
-import type { Usuario } from "../types/Usuario.ts"; // Tipo estricto
+import type { Usuario } from "../types/Usuario.ts";
 import { ConfigMenu } from "../components/ConfigMenu.tsx";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import "../assets/styles/Boton.css";
@@ -17,38 +17,32 @@ import { useToast } from "../hooks/useToast.ts";
 import { ToastMensaje } from "../components/NotifyToast.tsx";
 
 interface VerUsuarioProps {
-    // /mi-cuenta: siempre el usuario logueado, nunca el último perfil que se
-    // abrió desde Pacientes o Médicos (eso queda en /ver-perfil)
     propio?: boolean;
 }
 
 function VerUsuario({ propio = false }: VerUsuarioProps) {
     const { showToast, setShowToast } = useToast("registroExitoso");
-    // Viene de CambiarPassword después del PATCH /auth/password
     const passwordToast = useToast("passwordActualizada");
     const { usuario, setUsuario, tieneRol } = useAuth();
     const { usuarioSeleccionado, seleccionarUsuario } = useUsuarioSeleccionado();
     const [datosGuardados, setDatosGuardados] = useState(false);
 
-    // Sin usuario seleccionado (o en /mi-cuenta), muestra el perfil del usuario logueado
     const usuarioAMostrar = propio ? usuario : usuarioSeleccionado || usuario;
 
     const esMiPerfil = !!usuario && !!usuarioAMostrar && usuario.id === usuarioAMostrar.id;
-    // Solo se editan pacientes (PUT /api/pacientes/:id): el personal edita a
-    // cualquiera y el paciente, su propio perfil
-    const puedeEditar = usuarioAMostrar?.rol === "PACIENTE" &&
-        (tieneRol("SECRETARIA") || tieneRol("MEDICO") || esMiPerfil);
+    
+    // Reglas de permisos: Solo secretaria edita datos, solo el propio usuario cambia contraseña
+    const puedeEditar = tieneRol("SECRETARIA");
     const puedeCambiarPassword = esMiPerfil;
+
+    // Si no hay ninguna acción permitida, no se debe mostrar el menú de configuración (tuerca)
+    const tieneOpcionesConfig = puedeEditar || puedeCambiarPassword;
     
     const navigate = useNavigate();
     const [isEditing, setIsEditing] = useState<boolean>(false);
 
-    // Casteo tipado y estricto utilizando la interfaz Usuario en lugar de 'any'
     const usuarioTipado = usuarioAMostrar as unknown as Usuario;
 
-    // Historia clínica al costado del perfil de un paciente. Las claves son los
-    // roles reales (en mayúscula): quien mira -> rol del perfil. La SECRETARIA
-    // no la ve (matriz §10); el paciente ve la suya.
     const pacienteId = usuarioTipado?.paciente?.id;
     const historiaClinica = pacienteId ? <HistorialMedicoCard pacienteId={pacienteId} /> : null;
     const vistaPorRol = usePerfilRolView(usuarioTipado, {
@@ -67,8 +61,6 @@ function VerUsuario({ propio = false }: VerUsuarioProps) {
         );
     }
 
-    // El formulario ya guardó en el back: se refleja en la pantalla y, si es el
-    // propio perfil, también en la sesión
     const handleUpdate = (actualizado: Usuario) => {
         if (!propio) seleccionarUsuario(actualizado);
         if (esMiPerfil && usuario) setUsuario({ ...usuario, ...actualizado, fotoPerfil: actualizado.fotoPerfil ?? null });
@@ -87,7 +79,7 @@ function VerUsuario({ propio = false }: VerUsuarioProps) {
                         <BotonVolver />
                     </Col>
                     <Col md="6" className="d-flex justify-content-end align-items-end">
-                        {!isEditing && (
+                        {!isEditing && tieneOpcionesConfig && (
                             <ConfigMenu 
                                 canEdit={puedeEditar} 
                                 canChangePassword={puedeCambiarPassword as boolean} 
