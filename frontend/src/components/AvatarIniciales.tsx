@@ -5,7 +5,7 @@ interface AvatarInicialesProps {
   apellido: string;
   // Define el color: la misma persona siempre tiene el mismo
   id: number;
-  tamanio?: "md" | "lg";
+  tamanio?: "md" | "lg" | "xl";
 }
 
 const TONOS = ["pino", "info", "accent", "warning"] as const;

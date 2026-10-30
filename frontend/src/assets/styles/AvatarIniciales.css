@@ -38,3 +38,9 @@
   color: var(--color-warning);
   background: var(--color-warning-bg);
 }
+
+.avatar-iniciales-xl {
+  width: 88px;
+  height: 88px;
+  font-size: var(--text-2xl);
+}

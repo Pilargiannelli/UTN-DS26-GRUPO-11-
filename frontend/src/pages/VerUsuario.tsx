@@ -1,10 +1,10 @@
-import { useState } from "react";
-import { Button, Container } from "react-bootstrap";
-import { CalendarPlus, PencilSquare } from "react-bootstrap-icons";
+import { useState, type ReactNode } from "react";
+import { Button, Container, Tab, Tabs } from "react-bootstrap";
+import { CalendarPlus } from "react-bootstrap-icons";
 import Layout from "../components/Layout/Layout.tsx";
 import { BotonVolver } from "../components/BotonVolver.tsx";
 import { AvatarIniciales } from "../components/AvatarIniciales.tsx";
-import { SeccionPerfil, DatosPerfil } from "../components/Perfil/SeccionPerfil.tsx";
+import { DatosPerfil } from "../components/Perfil/DatosPerfil.tsx";
 import { DatosCuentaForm } from "../components/Perfil/DatosCuentaForm.tsx";
 import { ProximosTurnosPaciente } from "../components/Perfil/ProximosTurnosPaciente.tsx";
 import { NewPasswordForm } from "../components/CambiarPasswordForm.tsx";
@@ -30,19 +30,31 @@ const NOMBRE_ROL = { SECRETARIA: "Secretaría", MEDICO: "Médico", PACIENTE: "Pa
 // "2026-05-14T00:00:00.000Z" -> "14/05/2026" (sin pasar por la zona horaria)
 const fechaCorta = (iso?: string) => (iso ? iso.slice(0, 10).split("-").reverse().join("/") : "—");
 
-type Edicion = "cuenta" | "paciente" | "password" | null;
+// Panel de una pestaña: título + descripción y el contenido en una tarjeta
+function Panel({ titulo, descripcion, children }: { titulo: string; descripcion?: string; children: ReactNode }) {
+    return (
+        <section className="perfil-panel">
+            <header className="perfil-panel-encabezado">
+                <h2 className="perfil-panel-titulo">{titulo}</h2>
+                {descripcion && <p className="perfil-panel-descripcion">{descripcion}</p>}
+            </header>
+            {children}
+        </section>
+    );
+}
 
-// Perfil: la cuenta propia (/mi-cuenta) o el de un paciente o médico abierto
-// desde los listados (/ver-perfil). Todas las acciones están a la vista en su
-// sección ("Editar", "Cambiar", "Dar turno") y se editan en el mismo lugar.
+// Mi cuenta (/mi-cuenta) y perfil de un paciente o médico (/ver-perfil).
+// Arriba, quién es; abajo, una pestaña por tema con los datos editables
+// directo (sin "Editar" previo): "Guardar cambios" se habilita al cambiar algo.
 function VerUsuario({ propio = false }: VerUsuarioProps) {
     const { usuario, setUsuario, tieneRol } = useAuth();
     const { usuarioSeleccionado, seleccionarUsuario } = useUsuarioSeleccionado();
-    const [editando, setEditando] = useState<Edicion>(null);
     const [aviso, setAviso] = useState<string | null>(null);
     const [darTurno, setDarTurno] = useState(false);
-    // Cambia al agendar un turno, para volver a pedir los próximos turnos
+    // Cambian para volver a montar: los próximos turnos al agendar uno, y el
+    // formulario del paciente al descartar cambios
     const [turnosVersion, setTurnosVersion] = useState(0);
+    const [fichaVersion, setFichaVersion] = useState(0);
 
     const perfil = (propio ? usuario : usuarioSeleccionado || usuario) as Usuario | null;
     const paciente = perfil?.paciente ?? null;
@@ -68,130 +80,121 @@ function VerUsuario({ propio = false }: VerUsuarioProps) {
     const verHistoria = esPaciente && !!paciente && (tieneRol("MEDICO") || esMiPerfil);
     const cobertura = paciente?.coberturas?.[0];
 
-    const terminarEdicion = (mensaje: string) => {
-        setEditando(null);
-        setAviso(mensaje);
-    };
+    const fichaPaciente: [string, string][] = paciente ? [
+        ["Teléfono", paciente.telefono],
+        ["Sexo", paciente.sexo],
+        ["Nacimiento", `${fechaCorta(paciente.fechaNacimiento)}${edad !== null ? ` (${edad} años)` : ""}`],
+        ["Obra social", cobertura ? `${cobertura.obraSocial.nombre} · Plan ${cobertura.plan} · Afiliado ${cobertura.nroAfiliado}` : "Sin obra social"],
+    ] : [];
 
     // Mi cuenta: PATCH /auth/yo devolvió el usuario actualizado
     const cuentaGuardada = (actualizado: UsuarioSesion) => {
         if (usuario) setUsuario({ ...usuario, ...actualizado });
-        terminarEdicion("Datos actualizados correctamente");
+        setAviso("Datos actualizados correctamente");
     };
 
-    // Ficha del paciente: PUT /pacientes/:id (la hace la secretaria)
+    // Datos del paciente: PUT /pacientes/:id (la hace la secretaria)
     const pacienteGuardado = (actualizado: Usuario) => {
         seleccionarUsuario(actualizado);
-        terminarEdicion("Datos del paciente actualizados");
+        setFichaVersion((v) => v + 1);
+        setAviso("Datos del paciente actualizados");
     };
-
-    const botonEditar = (seccion: Edicion, texto = "Editar") =>
-        editando !== seccion && (
-            <Button variant="outline-primary" size="sm" onClick={() => setEditando(seccion)}>
-                <PencilSquare aria-hidden="true" className="me-1" />{texto}
-            </Button>
-        );
 
     return (
         <Layout>
             <ToastMensaje mensaje={aviso ?? ""} tipo="toast-good" mostrar={aviso !== null} onClose={() => setAviso(null)} />
 
             <Container className="perfil">
-                <BotonVolver />
+                {!propio && <BotonVolver />}
 
-                {/* ── Encabezado: quién es y las acciones principales ── */}
+                {/* ── Quién es: avatar, nombre, contacto y rol ── */}
                 <header className="perfil-encabezado">
-                    <AvatarIniciales nombre={perfil.nombre} apellido={perfil.apellido} id={perfil.id} tamanio="lg" />
-                    <div className="perfil-encabezado-texto">
-                        <h1 className="perfil-nombre">{perfil.nombre} {perfil.apellido}</h1>
-                        <p className="perfil-subtitulo">
-                            {esMiPerfil ? "Mi cuenta" : NOMBRE_ROL[perfil.rol]}
-                            {" · "}{perfil.email}
-                        </p>
-                    </div>
+                    <AvatarIniciales nombre={perfil.nombre} apellido={perfil.apellido} id={perfil.id} tamanio="xl" />
+                    <h1 className="perfil-nombre">{perfil.nombre} {perfil.apellido}</h1>
+                    <p className="perfil-subtitulo">
+                        {perfil.email}
+                        {paciente?.telefono && <> · {paciente.telefono}</>}
+                    </p>
+                    <span className={`perfil-rol perfil-rol-${perfil.rol.toLowerCase()}`}>
+                        {esMiPerfil ? `Mi cuenta · ${NOMBRE_ROL[perfil.rol]}` : NOMBRE_ROL[perfil.rol]}
+                    </span>
                     {secretariaEditaPaciente && paciente && (
-                        <Button variant="primary" onClick={() => setDarTurno(true)}>
+                        <Button variant="primary" className="perfil-accion" onClick={() => setDarTurno(true)}>
                             <CalendarPlus aria-hidden="true" className="me-2" />Dar turno
                         </Button>
                     )}
                 </header>
 
-                <div className="perfil-grilla">
-                    <div className="perfil-columna">
-                        {/* ── Datos ── */}
+                {/* ── Una pestaña por tema ── */}
+                <Tabs
+                    defaultActiveKey="datos"
+                    id="perfil-pestanias"
+                    variant="pills"
+                    className="perfil-tabs"
+                    mountOnEnter
+                    unmountOnExit
+                    transition={false}
+                >
+                    <Tab eventKey="datos" title={secretariaEditaPaciente ? "Datos del paciente" : "Datos personales"}>
                         {secretariaEditaPaciente ? (
-                            <SeccionPerfil titulo="Datos del paciente" accion={botonEditar("paciente")}>
-                                {editando === "paciente" ? (
-                                    <PacienteFormFields usuario={perfil} onSave={pacienteGuardado} onCancel={() => setEditando(null)} />
-                                ) : (
-                                    <DatosPerfil datos={[
-                                        ["DNI", perfil.dni],
-                                        ["Email", perfil.email],
-                                        ["Teléfono", paciente?.telefono ?? "—"],
-                                        ["Sexo", paciente?.sexo ?? "—"],
-                                        ["Nacimiento", `${fechaCorta(paciente?.fechaNacimiento)}${edad !== null ? ` (${edad} años)` : ""}`],
-                                        ["Obra social", cobertura ? `${cobertura.obraSocial.nombre} · Plan ${cobertura.plan} · Afiliado ${cobertura.nroAfiliado}` : "Sin obra social"],
-                                    ]} />
-                                )}
-                            </SeccionPerfil>
+                            <Panel titulo="Datos del paciente" descripcion="Datos personales, de contacto y obra social.">
+                                <PacienteFormFields
+                                    key={fichaVersion}
+                                    usuario={perfil}
+                                    onSave={pacienteGuardado}
+                                    onCancel={() => setFichaVersion((v) => v + 1)}
+                                />
+                            </Panel>
+                        ) : esMiPerfil && usuario ? (
+                            <Panel titulo="Datos personales" descripcion="Tu nombre y el email con el que ingresás.">
+                                <DatosCuentaForm usuario={usuario} onGuardado={cuentaGuardada} />
+                            </Panel>
                         ) : (
-                            <SeccionPerfil titulo="Datos personales" accion={esMiPerfil && botonEditar("cuenta")}>
-                                {editando === "cuenta" && usuario ? (
-                                    <DatosCuentaForm usuario={usuario} onGuardado={cuentaGuardada} onCancelar={() => setEditando(null)} />
-                                ) : (
-                                    <DatosPerfil datos={[
-                                        ["Nombre", `${perfil.nombre} ${perfil.apellido}`],
-                                        ["DNI", perfil.dni],
-                                        ["Email", perfil.email],
-                                        ...(perfil.medico
-                                            ? ([["Especialidad", perfil.medico.especialidad], ["Matrícula", perfil.medico.matricula]] as [string, string][])
-                                            : []),
-                                    ]} />
-                                )}
-                            </SeccionPerfil>
-                        )}
-
-                        {/* El paciente ve su ficha, pero la modifica la secretaría */}
-                        {esPaciente && !secretariaEditaPaciente && paciente && (
-                            <SeccionPerfil titulo="Ficha del paciente">
+                            <Panel titulo="Datos personales">
                                 <DatosPerfil datos={[
-                                    ["Teléfono", paciente.telefono],
-                                    ["Sexo", paciente.sexo],
-                                    ["Nacimiento", `${fechaCorta(paciente.fechaNacimiento)}${edad !== null ? ` (${edad} años)` : ""}`],
-                                    ["Obra social", cobertura ? `${cobertura.obraSocial.nombre} · Plan ${cobertura.plan} · Afiliado ${cobertura.nroAfiliado}` : "Sin obra social"],
+                                    ["Nombre", `${perfil.nombre} ${perfil.apellido}`],
+                                    ["DNI", perfil.dni],
+                                    ["Email", perfil.email],
+                                    ...(perfil.medico
+                                        ? ([["Especialidad", perfil.medico.especialidad], ["Matrícula", perfil.medico.matricula]] as [string, string][])
+                                        : []),
+                                    ...fichaPaciente,
                                 ]} />
-                                {esMiPerfil && (
-                                    <p className="perfil-nota">Para cambiar estos datos, comunicate con la secretaría de la clínica.</p>
-                                )}
-                            </SeccionPerfil>
+                            </Panel>
                         )}
+                    </Tab>
 
-                        {/* ── Seguridad: solo en la cuenta propia ── */}
-                        {esMiPerfil && (
-                            <SeccionPerfil titulo="Seguridad" accion={botonEditar("password", "Cambiar")}>
-                                {editando === "password" ? (
-                                    <NewPasswordForm
-                                        onListo={() => terminarEdicion("Contraseña actualizada")}
-                                        onCancelar={() => setEditando(null)}
-                                    />
-                                ) : (
-                                    <DatosPerfil datos={[["Contraseña", "••••••••"]]} />
-                                )}
-                            </SeccionPerfil>
-                        )}
-                    </div>
-
-                    {(verTurnos || verHistoria) && paciente && (
-                        <div className="perfil-columna">
-                            {verTurnos && (
-                                <SeccionPerfil titulo="Próximos turnos">
-                                    <ProximosTurnosPaciente key={turnosVersion} pacienteId={paciente.id} />
-                                </SeccionPerfil>
-                            )}
-                            {verHistoria && <HistorialMedicoCard pacienteId={paciente.id} />}
-                        </div>
+                    {/* El paciente ve su ficha, pero la modifica la secretaría */}
+                    {esMiPerfil && esPaciente && paciente && (
+                        <Tab eventKey="ficha" title="Mi ficha">
+                            <Panel titulo="Mi ficha" descripcion="Para cambiar estos datos, comunicate con la secretaría de la clínica.">
+                                <DatosPerfil datos={fichaPaciente} />
+                            </Panel>
+                        </Tab>
                     )}
-                </div>
+
+                    {verTurnos && paciente && (
+                        <Tab eventKey="turnos" title="Próximos turnos">
+                            <Panel titulo="Próximos turnos">
+                                <ProximosTurnosPaciente key={turnosVersion} pacienteId={paciente.id} />
+                            </Panel>
+                        </Tab>
+                    )}
+
+                    {verHistoria && paciente && (
+                        <Tab eventKey="historia" title="Historia clínica">
+                            <HistorialMedicoCard pacienteId={paciente.id} />
+                        </Tab>
+                    )}
+
+                    {esMiPerfil && (
+                        <Tab eventKey="seguridad" title="Seguridad">
+                            <Panel titulo="Contraseña" descripcion="Elegí una contraseña que no uses en otros sitios.">
+                                <NewPasswordForm onListo={() => setAviso("Contraseña actualizada")} />
+                            </Panel>
+                        </Tab>
+                    )}
+                </Tabs>
             </Container>
 
             {darTurno && paciente && (

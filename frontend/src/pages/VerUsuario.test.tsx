@@ -50,51 +50,51 @@ beforeEach(() => localStorage.clear());
 afterEach(cleanup);
 
 describe("Mi cuenta", () => {
-  it("las acciones están a la vista (sin la ruedita) y la contraseña se cambia en el lugar", () => {
+  it("muestra quién es y los datos se editan directo: Guardar se habilita al cambiar algo", () => {
     renderizar(secretaria, true);
 
     expect(screen.getByRole("heading", { name: "Ana Martínez" })).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: "Datos personales" })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Editar" })).toBeInTheDocument();
+    expect(screen.getByText("Mi cuenta · Secretaría")).toBeInTheDocument();
+    expect(screen.getByLabelText("DNI")).toBeDisabled();
 
-    fireEvent.click(screen.getByRole("button", { name: "Cambiar" }));
-    expect(screen.getByLabelText("Contraseña actual")).toBeInTheDocument();
-
-    fireEvent.click(screen.getByRole("button", { name: "Cancelar" }));
-    expect(screen.queryByLabelText("Contraseña actual")).not.toBeInTheDocument();
+    const guardar = screen.getByRole("button", { name: "Guardar cambios" });
+    expect(guardar).toBeDisabled();
+    fireEvent.change(screen.getByLabelText("Apellido"), { target: { value: "Martín" } });
+    expect(guardar).toBeEnabled();
+    expect(screen.getByRole("button", { name: "Descartar cambios" })).toBeInTheDocument();
   });
 
-  it("Editar abre el formulario de nombre y email en la misma tarjeta", () => {
+  it("la contraseña está en la pestaña Seguridad, sin pasos intermedios", () => {
     renderizar(secretaria, true);
-    fireEvent.click(screen.getByRole("button", { name: "Editar" }));
+    fireEvent.click(screen.getByRole("tab", { name: "Seguridad" }));
 
-    expect(screen.getByLabelText("Email")).toHaveValue("ana@clinica.com");
-    expect(screen.getByRole("button", { name: "Guardar cambios" })).toBeInTheDocument();
+    expect(screen.getByLabelText("Contraseña actual")).toBeInTheDocument();
+    expect(screen.queryByLabelText("Apellido")).not.toBeInTheDocument();
   });
 });
 
 describe("Perfil de un paciente", () => {
   beforeEach(() => localStorage.setItem("usuarioSeleccionado", JSON.stringify(pacienteMaria)));
 
-  it("la secretaria ve sus datos, puede editarlos y darle turno", () => {
+  it("la secretaria edita sus datos directo, le da turno y ve sus próximos turnos", () => {
     renderizar(secretaria, false);
 
-    expect(screen.getByRole("heading", { name: "Datos del paciente" })).toBeInTheDocument();
-    expect(screen.getByText("OSDE · Plan 210 · Afiliado OS-1")).toBeInTheDocument();
+    expect(screen.getByRole("tab", { name: "Datos del paciente" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Dar turno" })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Editar" })).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: "Próximos turnos" })).toBeInTheDocument();
-    // La secretaria no ve la historia clínica (matriz §10)
-    expect(screen.queryByText("Historia clínica de prueba")).not.toBeInTheDocument();
-    // Ni la sección de contraseña, que es solo de la cuenta propia
-    expect(screen.queryByRole("heading", { name: "Seguridad" })).not.toBeInTheDocument();
+    expect(screen.getByRole("tab", { name: "Próximos turnos" })).toBeInTheDocument();
+    // Ni historia clínica (matriz §10) ni Seguridad (es de la cuenta propia)
+    expect(screen.queryByRole("tab", { name: "Historia clínica" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("tab", { name: "Seguridad" })).not.toBeInTheDocument();
   });
 
-  it("el médico ve la historia clínica pero no edita ni da turnos", () => {
+  it("el médico ve los datos en solo lectura y la historia clínica", () => {
     renderizar(medico, false);
 
-    expect(screen.getByText("Historia clínica de prueba")).toBeInTheDocument();
-    expect(screen.queryByRole("button", { name: "Editar" })).not.toBeInTheDocument();
+    expect(screen.getByText("OSDE · Plan 210 · Afiliado OS-1")).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Guardar cambios" })).not.toBeInTheDocument();
     expect(screen.queryByRole("button", { name: "Dar turno" })).not.toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("tab", { name: "Historia clínica" }));
+    expect(screen.getByText("Historia clínica de prueba")).toBeInTheDocument();
   });
 });

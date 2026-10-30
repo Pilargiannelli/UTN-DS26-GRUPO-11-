@@ -7,15 +7,14 @@ import { apiFetch } from "../services/api";
 
 interface NewPasswordFormProps {
     onListo: () => void;
-    onCancelar: () => void;
 }
 
-// Cambio de contraseña dentro de "Mi cuenta" (sección Seguridad), sin ir a
-// otra página. PATCH /api/auth/password: el back verifica la actual (400 si no
+// Cambio de contraseña en la pestaña Seguridad de "Mi cuenta", directo, sin
+// ir a otra página. PATCH /api/auth/password: el back verifica la actual (400 si no
 // coincide) y guarda la nueva hasheada.
-export function NewPasswordForm({ onListo, onCancelar }: NewPasswordFormProps) {
+export function NewPasswordForm({ onListo }: NewPasswordFormProps) {
     const [errorMsg, setErrorMsg] = useState<string | null>(null);
-    const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<NewPasswordValidada>({
+    const { register, handleSubmit, reset, formState: { errors, isSubmitting, isDirty } } = useForm<NewPasswordValidada>({
         resolver: zodResolver(newPasswordSchema),
         mode: "onBlur"
     });
@@ -27,6 +26,7 @@ export function NewPasswordForm({ onListo, onCancelar }: NewPasswordFormProps) {
                 method: "PATCH",
                 body: JSON.stringify({ passwordActual: data.currentPassword, passwordNueva: data.newPassword }),
             });
+            reset();
             onListo();
         } catch (error) {
             // Por ejemplo "La contraseña actual es incorrecta" (400 del back)
@@ -39,7 +39,7 @@ export function NewPasswordForm({ onListo, onCancelar }: NewPasswordFormProps) {
             {errorMsg && <div className="alert alert-danger" role="alert">{errorMsg}</div>}
             <Form.Group className="mb-3" controlId="pass-actual">
                 <Form.Label>Contraseña actual</Form.Label>
-                <Form.Control type="password" autoComplete="current-password" {...register("currentPassword")} isInvalid={!!errors.currentPassword} autoFocus />
+                <Form.Control type="password" autoComplete="current-password" {...register("currentPassword")} isInvalid={!!errors.currentPassword} />
                 <Form.Control.Feedback type="invalid">{errors.currentPassword?.message}</Form.Control.Feedback>
             </Form.Group>
             <Row className="g-3">
@@ -60,8 +60,10 @@ export function NewPasswordForm({ onListo, onCancelar }: NewPasswordFormProps) {
             </Row>
             <p className="perfil-nota">Al menos 8 caracteres, con mayúscula, minúscula y número.</p>
             <div className="perfil-form-acciones">
-                <Button variant="outline-secondary" onClick={onCancelar} disabled={isSubmitting}>Cancelar</Button>
-                <Button type="submit" variant="primary" disabled={isSubmitting}>
+                {isDirty && (
+                    <Button variant="outline-secondary" onClick={() => reset()} disabled={isSubmitting}>Descartar</Button>
+                )}
+                <Button type="submit" variant="primary" disabled={isSubmitting || !isDirty}>
                     {isSubmitting ? <Spinner size="sm" animation="border" /> : "Cambiar contraseña"}
                 </Button>
             </div>
