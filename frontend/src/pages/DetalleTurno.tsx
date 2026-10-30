@@ -1,7 +1,9 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { Spinner } from "react-bootstrap";
 import Layout from "../components/Layout/Layout.tsx";
-import { BotonVolver } from "../components/BotonVolver.tsx";
+import { Migas } from "../components/Migas.tsx";
+import { IndicacionesMedico } from "../components/Paciente/IndicacionesMedico";
+import { consultaDelTurno, useMiHistoria } from "../hooks/useMiHistoria";
 import { useFetch } from "../hooks/useFetch";
 import { formatearChipFecha, formatearHora } from "../utils/fecha";
 import { obtenerClaseEstado, puedeCancelarPaciente, yaPaso } from "../utils/estadoTurno";
@@ -14,6 +16,7 @@ function DetalleTurno() {
   const navigate = useNavigate();
   // GET /api/turnos/:id: el back devuelve 404 si el turno no existe o no es tuyo
   const { data: turno, loading, error } = useFetch<Turno>(`/turnos/${id}`);
+  const { historia } = useMiHistoria();
 
   if (loading) {
     return (
@@ -29,7 +32,7 @@ function DetalleTurno() {
     return (
       <Layout>
         <div className="pagina-paciente">
-          <BotonVolver />
+          <Migas items={[{ texto: "Mis turnos", a: "/mis-turnos" }, { texto: "Turno" }]} />
           <p className="text-muted">No encontramos este turno.</p>
         </div>
       </Layout>
@@ -41,10 +44,12 @@ function DetalleTurno() {
     weekday: "long", day: "numeric", month: "long",
   });
 
+  const consulta = yaPaso(turno.fechaHora) ? consultaDelTurno(turno, historia?.entradas ?? []) : undefined;
+
   return (
     <Layout>
       <div className="pagina-paciente">
-        <BotonVolver />
+        <Migas items={[{ texto: "Mis turnos", a: "/mis-turnos" }, { texto: `Turno del ${dia} de ${mes.toLowerCase()}` }]} />
 
         <div className="detalle-turno-card">
           <div className="detalle-turno-encabezado">
@@ -78,6 +83,8 @@ function DetalleTurno() {
               </button>
             </div>
           )}
+
+          {consulta && <IndicacionesMedico consulta={consulta} />}
 
           {turno.estado === "Confirmado" && !yaPaso(turno.fechaHora) && (
             <p className="detalle-turno-nota">
