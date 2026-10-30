@@ -381,10 +381,6 @@ body:has(.container.mt-4 .table) {
 }
 
   /* Header blanco: el logo es verde y sobre el verde oscuro no se veía */
-  #colorNav{
-    background-color: var(--color-surface);
-    border-bottom: 1px solid var(--color-border);
-  }
   body:has(.form-container) {
   background: var(--color-surface);
 }

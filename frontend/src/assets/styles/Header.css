@@ -118,8 +118,16 @@ a#perfil-dropdown.dropdown-toggle::after {
     background-position: center;
     margin-top: 0.5rem;
 }
-/* Altura fija del header: no depende de lo que tenga adentro (antes la daba
-   el avatar, que ya no está) */
+/* Header: blanco con una franja verde pino arriba (el mismo detalle que las
+   tarjetas), borde abajo y sombra suave. Queda fijo arriba al hacer scroll.
+   La altura no depende de lo que tenga adentro (antes la daba el avatar). */
 #colorNav {
+    position: sticky;
+    top: 0;
+    z-index: 1020;
     min-height: var(--header-height);
+    background-color: var(--color-surface);
+    border-top: 3px solid var(--color-primary);
+    border-bottom: 1px solid var(--color-border);
+    box-shadow: var(--shadow-sm);
 }
