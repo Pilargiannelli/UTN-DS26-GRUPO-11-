@@ -1,0 +1,38 @@
+.encabezado-pagina {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  margin: var(--space-6) 0 var(--space-5);
+  text-align: left;
+}
+
+.encabezado-pagina .encabezado-pagina-titulo {
+  margin: 0;
+  font-size: var(--text-2xl);
+  font-weight: var(--weight-semibold);
+  color: var(--color-heading);
+}
+
+.encabezado-pagina .encabezado-pagina-descripcion {
+  margin-top: var(--space-1);
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+
+@media (max-width: 576px) {
+  .encabezado-pagina {
+    margin-top: var(--space-4);
+  }
+
+  .encabezado-pagina .encabezado-pagina-titulo {
+    font-size: var(--text-xl);
+  }
+
+  /* En el celular la acción principal ocupa todo el ancho */
+  .encabezado-pagina-accion,
+  .encabezado-pagina-accion .btn {
+    width: 100%;
+  }
+}

@@ -24,12 +24,15 @@ interface NuevoTurnoModalProps {
   show: boolean;
   onClose: () => void;
   onAgregar: (turno: Turno) => void;
+  // "Dar turno" desde el listado de pacientes: el modal abre con ese paciente
+  pacienteIdInicial?: number;
 }
 
 function NuevoTurnoModal({
   show,
   onClose,
   onAgregar,
+  pacienteIdInicial,
 }: NuevoTurnoModalProps) {
 
 
@@ -40,7 +43,7 @@ function NuevoTurnoModal({
   const { data: pacientes } = useFetch<PacienteTurno[]>("/pacientes");
 
   const [form, setForm] = useState({
-    pacienteId: "",
+    pacienteId: pacienteIdInicial ? String(pacienteIdInicial) : "",
     medicoId: "",
     fecha: "",
     hora: "",

@@ -95,6 +95,16 @@
   --content-max: 1200px;
   --header-height: 66px;
 
+  /* Alias de componentes (perfil, consultas, editor de alergias). Estaban en
+     ListarUsuarios.css y esas pantallas solo los veían si antes se había
+     abierto el listado. */
+  --user-card-font: var(--font-sans);
+  --user-card-nombre-font: var(--font-sans);
+  --user-card-nombre-color: var(--color-pino-800);
+  --user-card-width: 22rem;
+  --user-card-foto-size: 150px;
+  --buscador-min-height: 42px;
+
   /* Alias de la paleta anterior (siguen funcionando) */
   --imos-verde-oscuro: var(--color-pino-900);
   --imos-verde: var(--color-pino-800);

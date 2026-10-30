@@ -1,121 +1,229 @@
-:root {
-    --user-card-font: var(--font-sans);
-    --user-card-nombre-font: var(--font-sans);
-    --user-card-nombre-color: var(--color-pino-800);
-    --btn-color: var(--color-pino-800);
-    --user-card-width: 22rem;
-    --user-card-foto-size: 150px;
-    --buscador-min-height: 42px;
+/* Directorio de pacientes y médicos (ListarUsuarios) */
+
+.directorio {
+    text-align: left;
+    padding-bottom: var(--space-6);
 }
 
-.user-card_foto--con-imagen,
-.user-card_foto--sin-imagen {
-    width: 120px;
-    height: 120px;
-    border-radius: 50%;
-    background-size: cover;
-    background-position: center;
+.directorio-card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
 }
 
-.nombre {
-    font-family: var(--user-card-nombre-font) !important;
-    color: var(--user-card-nombre-color);
-    font-weight: var(--weight-bold);
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-}
+/* ── Buscador ── */
 
-/* Botón "Ver perfil" de las tarjetas (acotado para no afectar a otros botones) */
-.user-card .btn-primary {
-    min-width: 138px;
-    min-height: 40px;
-    font-weight: var(--weight-semibold);
-}
-
-.barra-busqueda {
+.directorio-buscador {
     position: relative;
     display: flex;
-    justify-content: center;
     align-items: center;
-    min-height: 60px;
+    gap: var(--space-3);
+    padding: var(--space-4);
+    border-bottom: 1px solid var(--color-border);
 }
 
-.barra-busqueda-accion {
+.directorio-buscador .form-control {
+    max-width: 420px;
+    padding-left: var(--space-7);
+    min-height: var(--buscador-min-height);
+}
+
+.directorio-buscador-icono {
     position: absolute;
-    right: 0;
-    top: 50%;
-    transform: translateY(-50%);
+    left: calc(var(--space-4) + var(--space-4));
+    color: var(--color-text-subtle);
+    pointer-events: none;
 }
 
-.buscador-container {
+.directorio-resultados {
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+}
+
+/* ── Tabla ── */
+
+.directorio-tabla thead th {
+    background: var(--color-surface-muted);
+    color: var(--color-text-muted);
+    font-size: var(--text-xs);
+    font-weight: var(--weight-semibold);
+    letter-spacing: var(--tracking-caps);
+    text-transform: uppercase;
+    padding: var(--space-3) var(--space-4);
+    border-bottom: 1px solid var(--color-border);
+    white-space: nowrap;
+}
+
+.directorio-tabla td {
+    padding: var(--space-3) var(--space-4);
+    font-size: var(--text-sm);
+    color: var(--color-text);
+    border-bottom: 1px solid var(--color-border);
+}
+
+.directorio-tabla tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.directorio-tabla tbody tr {
+    transition: background-color var(--transition-fast);
+}
+
+.directorio-tabla tbody tr:hover > td {
+    background: var(--color-pino-50);
+}
+
+.directorio-numero {
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+}
+
+.directorio-persona {
     display: flex;
     align-items: center;
-    width: min(520px, 100%);
+    gap: var(--space-3);
 }
 
-.icono-buscador {
-    position: absolute;
-    left: 18px;
-    color: var(--color-pino-800);
-    font-size: var(--text-base);
-    pointer-events: none;
-    z-index: 5;
-}
-
-.buscador-container .form-control {
-    min-height: var(--buscador-min-height);
-    padding-left: 46px;
-    background-color: var(--color-pino-100);
+/* Nombre: es el link al perfil, pero se lee como texto */
+.directorio-nombre {
+    padding: 0;
     border: none;
-    border-radius: var(--radius-md);
-    color: var(--color-text);
+    background: none;
+    font-weight: var(--weight-semibold);
     font-size: var(--text-base);
-    box-shadow: none;
-    transition: background-color .2s ease, box-shadow .2s ease;
+    color: var(--color-text);
+    text-align: left;
+    cursor: pointer;
 }
 
-.buscador-container .form-control::placeholder {
+.directorio-nombre:hover {
+    color: var(--color-pino-700);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+
+.directorio-secundario {
+    display: block;
+    font-size: var(--text-xs);
     color: var(--color-text-subtle);
 }
 
-.buscador-container .form-control:focus {
-    background-color: var(--color-pino-100);
-    box-shadow: var(--focus-ring);
+.directorio-sin-dato {
+    color: var(--color-text-subtle);
 }
+
+/* Círculo con las iniciales (en vez de la foto genérica) */
+.directorio-avatar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-pill);
+    font-size: var(--text-sm);
+    font-weight: var(--weight-semibold);
+}
+
+.directorio-avatar-pino {
+    color: var(--color-pino-800);
+    background: var(--color-pino-100);
+}
+
+.directorio-avatar-info {
+    color: var(--color-info);
+    background: var(--color-info-bg);
+}
+
+.directorio-avatar-accent {
+    color: var(--color-accent);
+    background: var(--color-accent-bg);
+}
+
+.directorio-avatar-warning {
+    color: var(--color-warning);
+    background: var(--color-warning-bg);
+}
+
+.directorio-acciones {
+    text-align: right;
+    white-space: nowrap;
+}
+
+.directorio-acciones .btn-link {
+    font-weight: var(--weight-semibold);
+    text-decoration: none;
+}
+
+/* ── Estados vacíos ── */
+
+.directorio-vacio {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-7) var(--space-4);
+    text-align: center;
+    color: var(--color-text-muted);
+}
+
+/* ── Celular: cada fila pasa a ser una tarjeta compacta ── */
 
 @media (max-width: 768px) {
-
-    .barra-busqueda {
-        flex-direction: column;
-        gap: 12px;
+    .directorio-buscador .form-control {
+        max-width: none;
     }
 
-    .barra-busqueda-accion {
-        position: static;
-        transform: none;
+    .directorio-tabla thead {
+        display: none;
     }
-}
 
-.btn-limpiar {
-    position: absolute;
-    align-self: center;
-    right: 12px;
-    background: none;
-    border: none;
-    font-size: var(--text-xl);
-    line-height: 1;
-    color: var(--btn-color);
-    cursor: pointer;
-    padding: 0;
-    transition: color 0.2s ease, transform 0.2s ease;
-    z-index: 5;
-}
+    .directorio-tabla tbody tr {
+        display: block;
+        padding: var(--space-3) var(--space-4);
+        border-bottom: 1px solid var(--color-border);
+    }
 
-.btn-limpiar:hover {
-    color: var(--color-pino-600);;
-    transform: scale(1.1);
-}
+    .directorio-tabla tbody tr:last-child {
+        border-bottom: none;
+    }
 
-.btn-limpiar:focus {
+    .directorio-tabla tbody tr:hover > td {
+        background: transparent;
+    }
 
+    .directorio-tabla td {
+        display: flex;
+        justify-content: space-between;
+        gap: var(--space-3);
+        padding: var(--space-1) 0;
+        border-bottom: none;
+    }
+
+    /* Cada dato con su nombre al costado */
+    .directorio-tabla td[data-label]::before {
+        content: attr(data-label);
+        color: var(--color-text-muted);
+        font-size: var(--text-xs);
+        font-weight: var(--weight-semibold);
+        text-transform: uppercase;
+        letter-spacing: var(--tracking-caps);
+    }
+
+    .directorio-tabla td:first-child {
+        padding-bottom: var(--space-2);
+    }
+
+    .directorio-acciones {
+        justify-content: flex-start;
+        gap: var(--space-2);
+        padding-top: var(--space-2);
+    }
+
+    .directorio-acciones .btn-outline-primary {
+        flex: 1;
+        min-height: 40px;
+    }
 }
