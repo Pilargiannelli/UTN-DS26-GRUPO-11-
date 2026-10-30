@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Alert, Button, Spinner } from "react-bootstrap";
 import { CalendarPlus, JournalPlus } from "react-bootstrap-icons";
 import { AvatarIniciales } from "../AvatarIniciales";
@@ -16,6 +16,8 @@ import "../../assets/styles/PanelPacienteMedico.css";
 interface PanelPacienteMedicoProps {
   usuario: Usuario;
   paciente: PacientePerfil;
+  // Llega desde "Registrar consulta" del listado: el formulario ya abierto
+  abrirConsulta?: boolean;
 }
 
 // "2026-05-14T00:00:00.000Z" -> "14/05/2026" (sin pasar por la zona horaria)
@@ -27,16 +29,21 @@ const FECHA_CONSULTA = new Intl.DateTimeFormat("es-AR", { day: "numeric", month:
 // vista, contacto, obra social); a la derecha sus turnos y la historia clínica.
 // Las consultas no se editan ni se borran (Ley 26.529: la historia clínica es
 // inalterable); si hay un error se registra una consulta nueva.
-export function PanelPacienteMedico({ usuario, paciente }: PanelPacienteMedicoProps) {
+export function PanelPacienteMedico({ usuario, paciente, abrirConsulta = false }: PanelPacienteMedicoProps) {
   const { historia, loading, error, agregarEntrada, actualizarListas } = useHistoriaClinica(paciente.id);
   const edad = useEdad(paciente.fechaNacimiento);
-  const [nuevaConsulta, setNuevaConsulta] = useState(false);
+  const [nuevaConsulta, setNuevaConsulta] = useState(abrirConsulta);
   const [agendar, setAgendar] = useState(false);
   const [turnosVersion, setTurnosVersion] = useState(0);
   const [aviso, setAviso] = useState<string | null>(null);
   const historiaRef = useRef<HTMLElement>(null);
 
   const cobertura = paciente.coberturas?.[0];
+
+  // Si llegó con el formulario abierto, lo muestra sin que haya que bajar
+  useEffect(() => {
+    if (abrirConsulta) historiaRef.current?.scrollIntoView?.({ behavior: "smooth", block: "start" });
+  }, [abrirConsulta]);
 
   const abrirNuevaConsulta = () => {
     setNuevaConsulta(true);

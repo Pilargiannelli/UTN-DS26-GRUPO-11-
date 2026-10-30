@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 import { Alert, Container, Spinner } from "react-bootstrap";
 import Layout from "../components/Layout/Layout.tsx";
 import { Migas } from "../components/Migas.tsx";
@@ -40,6 +40,7 @@ const aUsuario = (p: PacienteDetalle): Usuario => ({
 // clínica completa; la secretaria, los datos para administrar y dar turnos.
 function FichaPaciente() {
   const { id } = useParams();
+  const [params] = useSearchParams();
   const { tieneRol } = useAuth();
   const { data, loading, error } = useFetch<PacienteDetalle>(`/pacientes/${id}`);
   // Lo que guardó la secretaria pisa a lo que vino del GET
@@ -76,7 +77,11 @@ function FichaPaciente() {
       <Layout>
         <Container className="perfil perfil-medico">
           {migas}
-          <PanelPacienteMedico usuario={usuario} paciente={usuario.paciente!} />
+          <PanelPacienteMedico
+            usuario={usuario}
+            paciente={usuario.paciente!}
+            abrirConsulta={params.get("consulta") === "nueva"}
+          />
         </Container>
       </Layout>
     );

@@ -44,6 +44,8 @@ interface PacienteRegistro {
     sexo: string;
     telefono: string;
     coberturas?: CoberturaPaciente[];
+    // Solo viene para el médico: fecha de la última entrada de la historia
+    ultimaConsulta?: string | null;
     usuario: UsuarioBasico;
 }
 
@@ -68,6 +70,13 @@ function obraSocial(p: PacienteRegistro) {
     );
 }
 
+const FECHA_CONSULTA = new Intl.DateTimeFormat("es-AR", { day: "numeric", month: "short", year: "numeric" });
+
+function ultimaConsulta(p: PacienteRegistro) {
+    if (!p.ultimaConsulta) return <span className="directorio-sin-dato">Sin consultas</span>;
+    return FECHA_CONSULTA.format(new Date(p.ultimaConsulta));
+}
+
 // Directorio de pacientes o de médicos: encabezado, buscador y una fila por
 // persona con los datos que se usan en el consultorio
 export function ListarUsuarios({ rol }: ListarUsuariosProps) {
@@ -85,6 +94,8 @@ export function ListarUsuarios({ rol }: ListarUsuariosProps) {
 
     // Solo la secretaria registra pacientes (HU-001) y da turnos desde acá
     const esSecretaria = tieneRol("SECRETARIA");
+    // El médico entra a la historia clínica desde acá en cada consulta
+    const vistaMedico = esPaciente && tieneRol("MEDICO");
     const titulo = esPaciente ? "Pacientes" : "Médicos";
 
     if (loading) {
@@ -162,7 +173,10 @@ export function ListarUsuarios({ rol }: ListarUsuariosProps) {
     };
 
     const cantidad = listaRegistros.length;
-    const descripcion = `${cantidad} ${esPaciente ? (cantidad === 1 ? "paciente registrado" : "pacientes registrados") : (cantidad === 1 ? "médico en la cartilla" : "médicos en la cartilla")}`;
+    const total = `${cantidad} ${esPaciente ? (cantidad === 1 ? "paciente registrado" : "pacientes registrados") : (cantidad === 1 ? "médico en la cartilla" : "médicos en la cartilla")}`;
+    const descripcion = vistaMedico
+        ? `Elegí un paciente para ver su historia clínica o registrar una consulta. ${total}.`
+        : total;
 
     return (
         <section className="directorio">
@@ -228,6 +242,7 @@ export function ListarUsuarios({ rol }: ListarUsuariosProps) {
                                         <th scope="col">Edad</th>
                                         <th scope="col">Teléfono</th>
                                         <th scope="col">Obra social</th>
+                                        {vistaMedico && <th scope="col">Última consulta</th>}
                                     </>
                                 ) : (
                                     <>
@@ -263,6 +278,9 @@ export function ListarUsuarios({ rol }: ListarUsuariosProps) {
                                                 <td data-label="Edad"><Edad fechaNacimiento={paciente.fechaNacimiento} /></td>
                                                 <td data-label="Teléfono" className="directorio-numero">{paciente.telefono}</td>
                                                 <td data-label="Obra social">{obraSocial(paciente)}</td>
+                                                {vistaMedico && (
+                                                    <td data-label="Última consulta">{ultimaConsulta(paciente)}</td>
+                                                )}
                                             </>
                                         )}
                                         {medico && (
@@ -277,14 +295,35 @@ export function ListarUsuarios({ rol }: ListarUsuariosProps) {
                                                     Dar turno
                                                 </Button>
                                             )}
-                                            <Button
-                                                size="sm"
-                                                variant="link"
-                                                onClick={() => handleVerPerfil(item)}
-                                                aria-label={`Ver perfil de ${u.nombre} ${u.apellido}`}
-                                            >
-                                                Ver perfil ›
-                                            </Button>
+                                            {paciente && vistaMedico ? (
+                                                <>
+                                                    <Button
+                                                        size="sm"
+                                                        variant="outline-primary"
+                                                        onClick={() => navigate(`/pacientes/${paciente.id}?consulta=nueva`)}
+                                                        aria-label={`Registrar consulta de ${u.nombre} ${u.apellido}`}
+                                                    >
+                                                        Registrar consulta
+                                                    </Button>
+                                                    <Button
+                                                        size="sm"
+                                                        variant="link"
+                                                        onClick={() => handleVerPerfil(item)}
+                                                        aria-label={`Historia clínica de ${u.nombre} ${u.apellido}`}
+                                                    >
+                                                        Historia clínica ›
+                                                    </Button>
+                                                </>
+                                            ) : (
+                                                <Button
+                                                    size="sm"
+                                                    variant="link"
+                                                    onClick={() => handleVerPerfil(item)}
+                                                    aria-label={`Ver perfil de ${u.nombre} ${u.apellido}`}
+                                                >
+                                                    Ver perfil ›
+                                                </Button>
+                                            )}
                                         </td>
                                     </tr>
                                 );

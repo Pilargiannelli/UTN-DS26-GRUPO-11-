@@ -90,6 +90,28 @@ describe("Directorio de pacientes", () => {
     expect(screen.queryByRole("button", { name: "Dar turno" })).not.toBeInTheDocument();
   });
 
+  it("el médico llega a la historia clínica o registra la consulta desde la fila", () => {
+    datos["/pacientes"] = [
+      { ...pacientes[0], ultimaConsulta: "2026-10-20T13:00:00.000Z" },
+      { ...pacientes[1], ultimaConsulta: null },
+    ];
+    renderizar("paciente", "MEDICO");
+
+    expect(screen.getByText(/Elegí un paciente para ver su historia clínica/)).toBeInTheDocument();
+    expect(screen.getByRole("columnheader", { name: "Última consulta" })).toBeInTheDocument();
+    expect(screen.getByText("Sin consultas")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Registrar consulta de María Flores" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Historia clínica de María Flores" })).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /Ver perfil/ })).not.toBeInTheDocument();
+  });
+
+  it("la secretaria no ve la última consulta (dato clínico)", () => {
+    datos["/pacientes"] = pacientes;
+    renderizar("paciente", "SECRETARIA");
+    expect(screen.queryByRole("columnheader", { name: "Última consulta" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /Registrar consulta/ })).not.toBeInTheDocument();
+  });
+
   it("sin pacientes muestra el estado vacío con la acción", () => {
     datos["/pacientes"] = [];
     renderizar("paciente");
