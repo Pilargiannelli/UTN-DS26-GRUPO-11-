@@ -4,8 +4,7 @@ import Layout from "../components/Layout/Layout.tsx";
 import { BotonVolver } from "../components/BotonVolver.tsx";
 import { useFetch } from "../hooks/useFetch";
 import { apiFetch, ApiError } from "../services/api";
-import { useHorariosOcupados } from "../hooks/useHorariosOcupados";
-import { HORARIOS_CONSULTORIO, horarioNoDisponible as noDisponibleEn } from "../utils/horarios";
+import { SelectorTurno } from "../components/SelectorTurno";
 import type { MedicoTurno, Turno } from "../types/Turno";
 import "../assets/styles/PedirTurno.css";
 import "../assets/styles/PaginaPaciente.css";
@@ -28,14 +27,6 @@ export function PedirTurno() {
     const [recargarOcupados, setRecargarOcupados] = useState(0);
 
     const listaEspecialidades = especialidadesAPI ?? [];
-
-    // Fecha mínima del calendario: hoy, en hora local (YYYY-MM-DD)
-    const hoyISO = new Date().toLocaleDateString("en-CA");
-
-    // Un horario no se puede elegir si ya lo tomó otro paciente (RN-002) o si
-    // es de hoy y ya pasó (RN-008)
-    const ocupados = useHorariosOcupados(medicoId, fecha, recargarOcupados);
-    const horarioNoDisponible = (h: string) => noDisponibleEn(fecha, h, ocupados);
 
     // Filtrar médicos según la especialidad elegida
     const medicosFiltrados = (medicosAPI ?? []).filter(
@@ -105,6 +96,7 @@ export function PedirTurno() {
                         value={medicoId}
                         onChange={(e) => {
                             setMedicoId(e.target.value);
+                            setFecha("");
                             setHorario("");
                         }}
                         disabled={!especialidad}
@@ -119,47 +111,20 @@ export function PedirTurno() {
                         ))}
                     </select>
 
-                    {/* Fecha */}
-                    <label className="pedir-turno-label">Fecha</label>
-                    <input
-                        type="date"
-                        className="pedir-turno-select"
-                        min={hoyISO}
-                        value={fecha}
-                        onChange={(e) => {
-                            setFecha(e.target.value);
+                    {/* Día y horario: los días muestran cuántos horarios libres
+                        quedan; los ocupados (RN-002) y los ya pasados no se pueden elegir */}
+                    <label className="pedir-turno-label">Día y horario</label>
+                    <SelectorTurno
+                        medicoId={medicoId}
+                        fecha={fecha}
+                        hora={horario}
+                        onFecha={(f) => {
+                            setFecha(f);
                             setHorario("");
                         }}
+                        onHora={setHorario}
+                        recargar={recargarOcupados}
                     />
-
-                    {/* Horarios */}
-                    <label className="pedir-turno-label">Horarios disponibles</label>
-                    {!medicoId || !fecha ? (
-                        <p className="pedir-turno-ayuda">Elegí un profesional y una fecha para ver los horarios.</p>
-                    ) : (
-                        <>
-                            <div className="pedir-turno-horarios">
-                                {HORARIOS_CONSULTORIO.map((h) => {
-                                    const noDisponible = horarioNoDisponible(h);
-                                    return (
-                                        <button
-                                            key={h}
-                                            type="button"
-                                            className={`pedir-turno-chip ${horario === h ? "pedir-turno-chip-activo" : ""} ${noDisponible ? "pedir-turno-chip-ocupado" : ""}`}
-                                            onClick={() => setHorario(h)}
-                                            disabled={noDisponible}
-                                            aria-label={noDisponible ? `${h}, no disponible` : h}
-                                        >
-                                            {h}
-                                        </button>
-                                    );
-                                })}
-                            </div>
-                            {HORARIOS_CONSULTORIO.some(horarioNoDisponible) && (
-                                <p className="pedir-turno-ayuda">Los horarios tachados ya no están disponibles.</p>
-                            )}
-                        </>
-                    )}
 
                     {/* Botón de envío */}
                     <button

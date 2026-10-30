@@ -18,3 +18,31 @@ export const HORARIOS_CONSULTORIO: string[] = Array.from(
 export function horarioNoDisponible(fecha: string, hora: string, ocupados: Set<string>) {
   return ocupados.has(hora) || new Date(`${fecha}T${hora}:00`) <= new Date();
 }
+
+// Cuántos horarios le quedan libres a un día
+export function horariosLibres(fecha: string, ocupados: Set<string>) {
+  return HORARIOS_CONSULTORIO.filter((h) => !horarioNoDisponible(fecha, h, ocupados)).length;
+}
+
+// La clínica atiende de lunes a viernes (el back aplica la misma regla)
+export const esDiaHabil = (d: Date) => d.getDay() >= 1 && d.getDay() <= 5;
+
+// Fecha local como "YYYY-MM-DD" (la clave que usan el selector y la grilla)
+export const claveFecha = (d: Date) => d.toLocaleDateString("en-CA");
+
+// Los próximos `cantidad` días hábiles a partir de `desde` (incluido), saltando
+// los primeros `saltear` (para avanzar de a bloques en el selector)
+export function diasHabiles(desde: Date, cantidad: number, saltear = 0): Date[] {
+  const dias: Date[] = [];
+  const d = new Date(desde);
+  d.setHours(0, 0, 0, 0);
+  let salteados = 0;
+  while (dias.length < cantidad) {
+    if (esDiaHabil(d)) {
+      if (salteados < saltear) salteados++;
+      else dias.push(new Date(d));
+    }
+    d.setDate(d.getDate() + 1);
+  }
+  return dias;
+}

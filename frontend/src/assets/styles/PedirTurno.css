@@ -10,7 +10,8 @@
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
   padding: 1.5rem;
-  max-width: 480px;
+  /* Ancho para que la tira de días (5 por fila) se lea cómoda */
+  max-width: 560px;
   margin: 0 auto;
 }
 
@@ -32,47 +33,9 @@
   color: var(--color-text);
 }
 
-.pedir-turno-horarios {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-bottom: 1.5rem;
-}
-
-.pedir-turno-chip {
-  padding: 8px 14px;
-  border-radius: var(--radius-lg);
-  border: 1px solid var(--color-border);
-  background: var(--color-surface);
-  font-size: var(--text-sm);
-  color: var(--color-text-muted);
-  cursor: pointer;
-}
-
-.pedir-turno-chip-ocupado,
-.pedir-turno-chip:disabled {
-  border-style: dashed;
-  background: var(--color-bg);
-  color: var(--color-text-subtle);
-  text-decoration: line-through;
-  cursor: not-allowed;
-}
-
-.pedir-turno-ayuda {
-  font-size: var(--text-xs);
-  color: var(--color-text-muted);
-  margin: -0.75rem 0 1.25rem;
-}
-
-.pedir-turno-chip-activo {
-  background: var(--color-pino-600);
-  color: var(--color-on-primary);
-  border-color: var(--color-pino-600);
-  font-weight: 500;
-}
-
 .pedir-turno-btn-confirmar {
   width: 100%;
+  margin-top: var(--space-5);
   height: 42px;
   font-size: var(--text-sm);
   font-weight: 500;

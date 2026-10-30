@@ -2,7 +2,7 @@ import { describe, it, expect } from "vitest";
 import { turnoCreateSchema, turnoSolicitudSchema, turnoUpdateSchema, idParamSchema } from "./turno.validation";
 
 const turnoValido = {
-  fechaHora: "2030-11-03T10:30:00.000Z",
+  fechaHora: "2030-11-04T10:30:00.000Z",
   medicoId: 1,
   pacienteId: 2,
 };
@@ -13,7 +13,7 @@ describe("turnoCreateSchema", () => {
     expect(r.success).toBe(true);
     if (r.success) {
       expect(r.data.fechaHora).toBeInstanceOf(Date);
-      expect(r.data.fechaHora.toISOString()).toBe("2030-11-03T10:30:00.000Z");
+      expect(r.data.fechaHora.toISOString()).toBe("2030-11-04T10:30:00.000Z");
     }
   });
 
@@ -38,9 +38,11 @@ describe("turnoCreateSchema", () => {
 });
 
 describe("RN-008: turnos en el pasado (400)", () => {
-  // Ayer, redondeado a la grilla de 30 minutos para que solo falle por la fecha
+  // El último día hábil antes de hoy, a las 15 UTC (12 en Argentina) y en la
+  // grilla de 30 minutos, para que solo falle por estar en el pasado
   const ayer = new Date(Date.now() - 24 * 60 * 60 * 1000);
-  ayer.setUTCMinutes(0, 0, 0);
+  while ([0, 6].includes(ayer.getUTCDay())) ayer.setUTCDate(ayer.getUTCDate() - 1);
+  ayer.setUTCHours(15, 0, 0, 0);
   const AYER = ayer.toISOString();
 
   it("turnoCreateSchema rechaza una fecha pasada y marca fechaHora", () => {
@@ -82,16 +84,32 @@ describe("estado de un turno nuevo", () => {
   });
 });
 
+describe("días de atención (lunes a viernes)", () => {
+  it("rechaza un turno el sábado o el domingo", () => {
+    const sabado = turnoCreateSchema.safeParse({ ...turnoValido, fechaHora: "2030-11-09T13:00:00.000Z" });
+    const domingo = turnoCreateSchema.safeParse({ ...turnoValido, fechaHora: "2030-11-10T13:00:00.000Z" });
+    expect(sabado.success).toBe(false);
+    expect(domingo.success).toBe(false);
+    if (!sabado.success) expect(sabado.error.issues[0].message).toBe("La clínica atiende de lunes a viernes");
+  });
+
+  it("usa la hora de Argentina: el viernes 22:30 local sigue siendo viernes aunque en UTC ya sea sábado", () => {
+    // 2030-11-09T01:30Z = viernes 8 de noviembre 22:30 en Argentina
+    const r = turnoCreateSchema.safeParse({ ...turnoValido, fechaHora: "2030-11-09T01:30:00.000Z" });
+    expect(r.success).toBe(true);
+  });
+});
+
 describe("grilla de 30 minutos", () => {
   it("rechaza un turno a las y cuarto", () => {
-    const r = turnoCreateSchema.safeParse({ ...turnoValido, fechaHora: "2030-11-03T11:15:00.000Z" });
+    const r = turnoCreateSchema.safeParse({ ...turnoValido, fechaHora: "2030-11-04T11:15:00.000Z" });
     expect(r.success).toBe(false);
     if (!r.success) expect(r.error.issues[0].path).toEqual(["fechaHora"]);
   });
 
   it("acepta en punto y y media", () => {
-    expect(turnoCreateSchema.safeParse({ ...turnoValido, fechaHora: "2030-11-03T11:00:00.000Z" }).success).toBe(true);
-    expect(turnoCreateSchema.safeParse({ ...turnoValido, fechaHora: "2030-11-03T11:30:00.000Z" }).success).toBe(true);
+    expect(turnoCreateSchema.safeParse({ ...turnoValido, fechaHora: "2030-11-04T11:00:00.000Z" }).success).toBe(true);
+    expect(turnoCreateSchema.safeParse({ ...turnoValido, fechaHora: "2030-11-04T11:30:00.000Z" }).success).toBe(true);
   });
 });
 
