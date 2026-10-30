@@ -1,5 +1,5 @@
-/* Ficha del paciente para el médico: datos a la izquierda, turnos e historia
-   clínica a la derecha */
+/* Ficha del paciente para el médico: datos a la izquierda, historia clínica
+   y turnos a la derecha */
 
 .panel-medico {
   display: grid;
@@ -226,8 +226,84 @@
 
 /* ── Historia clínica: línea de tiempo ── */
 
+/* Llamado a registrar la consulta de hoy: resalta sobre el resto de la ficha */
+.panel-medico-cta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  margin-bottom: var(--space-5);
+  padding: var(--space-4) var(--space-5);
+  background: var(--color-pino-50);
+  border: 2px dashed var(--color-pino-200);
+  border-radius: var(--radius-md);
+}
+
+.panel-medico-cta-icono {
+  flex-shrink: 0;
+  width: var(--space-6);
+  height: var(--space-6);
+  padding: var(--space-2);
+  color: var(--color-on-primary);
+  background: var(--color-primary);
+  border-radius: var(--radius-sm);
+}
+
+.panel-medico-cta-texto {
+  flex: 1;
+  min-width: 0;
+}
+
+.panel-medico-cta-texto p {
+  margin: 0;
+}
+
+.panel-medico .panel-medico-cta-titulo {
+  font-size: var(--text-base);
+  font-weight: var(--weight-semibold);
+  color: var(--color-heading);
+}
+
+.panel-medico-cta-detalle {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+
+/* Formulario abierto: recuadro verde con los campos en blanco, bien separados */
 .panel-medico-nueva-consulta {
-  margin-bottom: var(--space-4);
+  margin-bottom: var(--space-5);
+}
+
+.panel-medico .histcli-form {
+  padding: var(--space-5);
+  background: var(--color-pino-50);
+  border: 1px solid var(--color-pino-200);
+  border-top: 4px solid var(--color-primary);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+}
+
+.panel-medico .histcli-form .histcli-subtitulo {
+  margin: 0 0 var(--space-4);
+  font-size: var(--text-lg);
+  font-weight: var(--weight-semibold);
+  color: var(--color-pino-900);
+}
+
+.panel-medico .histcli-form .form-label {
+  font-weight: var(--weight-semibold);
+  color: var(--color-heading);
+}
+
+.panel-medico .histcli-form .form-control {
+  padding: var(--space-3) var(--space-4);
+  line-height: 1.6;
+  background: var(--color-surface);
+  border-color: var(--color-border-input);
+}
+
+.panel-medico .histcli-form .form-control:focus {
+  border-color: var(--color-primary);
+  box-shadow: var(--focus-ring);
 }
 
 .panel-medico-historia {
@@ -303,5 +379,18 @@
 @media (max-width: 576px) {
   .panel-medico-acciones .btn {
     width: 100%;
+  }
+
+  .panel-medico-cta {
+    flex-wrap: wrap;
+    padding: var(--space-4);
+  }
+
+  .panel-medico-cta .btn {
+    width: 100%;
+  }
+
+  .panel-medico .histcli-form {
+    padding: var(--space-4);
   }
 }

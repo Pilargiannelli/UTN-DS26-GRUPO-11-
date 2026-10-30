@@ -127,30 +127,34 @@ export function PanelPacienteMedico({ usuario, paciente }: PanelPacienteMedicoPr
         </section>
       </aside>
 
-      {/* ── Columna derecha: turnos e historia clínica ── */}
+      {/* ── Columna derecha: historia clínica (lo que se usa en cada consulta) y turnos ── */}
       <div className="panel-medico-principal">
-        <section className="panel-medico-tarjeta">
-          <h2 className="panel-medico-titulo">Turnos</h2>
-          <TurnosDelPaciente key={turnosVersion} pacienteId={paciente.id} />
-        </section>
-
         <section className="panel-medico-tarjeta" ref={historiaRef}>
-          <div className="panel-medico-titulo-fila">
-            <h2 className="panel-medico-titulo">Historia clínica</h2>
-            {!nuevaConsulta && (
-              <Button variant="outline-primary" size="sm" onClick={() => setNuevaConsulta(true)}>
-                <JournalPlus aria-hidden="true" className="me-1" />Nueva consulta
-              </Button>
-            )}
-          </div>
+          <h2 className="panel-medico-titulo">Historia clínica</h2>
 
-          {nuevaConsulta && (
+          {/* Registrar la consulta de hoy: lo primero que se ve de la historia */}
+          {nuevaConsulta ? (
             <div className="panel-medico-nueva-consulta">
               <NuevaEntradaForm onGuardar={consultaGuardada} />
               <Button variant="link" size="sm" className="p-0 mt-2" onClick={() => setNuevaConsulta(false)}>
                 Cancelar
               </Button>
             </div>
+          ) : (
+            <div className="panel-medico-cta">
+              <JournalPlus aria-hidden="true" className="panel-medico-cta-icono" />
+              <div className="panel-medico-cta-texto">
+                <p className="panel-medico-cta-titulo">¿Atendiste a {usuario.nombre} hoy?</p>
+                <p className="panel-medico-cta-detalle">Registrá diagnóstico, evolución e indicaciones.</p>
+              </div>
+              <Button variant="primary" onClick={() => setNuevaConsulta(true)}>
+                Registrar consulta
+              </Button>
+            </div>
+          )}
+
+          {historia && historia.entradas.length > 0 && (
+            <h3 className="panel-medico-subtitulo">Consultas anteriores</h3>
           )}
 
           {historia && historia.entradas.length === 0 && (
@@ -179,6 +183,11 @@ export function PanelPacienteMedico({ usuario, paciente }: PanelPacienteMedicoPr
           <p className="panel-medico-nota">
             Las consultas registradas no se modifican: si hay que corregir algo, se agrega una consulta nueva.
           </p>
+        </section>
+
+        <section className="panel-medico-tarjeta">
+          <h2 className="panel-medico-titulo">Turnos</h2>
+          <TurnosDelPaciente key={turnosVersion} pacienteId={paciente.id} />
         </section>
       </div>
 

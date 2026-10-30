@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { cleanup, render, screen } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { AuthContext } from "../context/AuthContextBase";
 import type { AuthContextType } from "../context/AuthContextBase";
@@ -55,6 +55,16 @@ describe("Ficha del paciente (/pacientes/:id)", () => {
     expect(screen.getByRole("heading", { name: "Historia clínica" })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Turnos" })).toBeInTheDocument();
     expect(screen.getAllByRole("button", { name: /Nueva consulta/ }).length).toBeGreaterThan(0);
+  });
+
+  it("el médico tiene la historia clínica arriba de los turnos, con el llamado a registrar la consulta", () => {
+    renderizar("MEDICO");
+    const titulos = screen.getAllByRole("heading", { level: 2 }).map((h) => h.textContent);
+    expect(titulos.indexOf("Historia clínica")).toBeLessThan(titulos.indexOf("Turnos"));
+
+    expect(screen.getByText("¿Atendiste a María hoy?")).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Registrar consulta" }));
+    expect(screen.getByLabelText("Diagnóstico")).toBeInTheDocument();
   });
 
   it("la secretaria ve los datos para administrar y dar turno, sin historia clínica", () => {
