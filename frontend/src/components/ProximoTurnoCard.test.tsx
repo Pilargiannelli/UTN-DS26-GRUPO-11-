@@ -30,11 +30,11 @@ describe("ProximoTurnoCard", () => {
   it("un turno confirmado no muestra Cancelar (RN-006)", () => {
     renderizar(turno("Confirmado"));
     expect(screen.queryByRole("link", { name: "Cancelar" })).not.toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Ver más" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Ver detalle" })).toBeInTheDocument();
   });
 
   it("sin turno invita a agendar", () => {
     renderizar(null);
-    expect(screen.getByRole("link", { name: "Agendar una consulta" })).toHaveAttribute("href", "/pedir-turno");
+    expect(screen.getByRole("link", { name: "Pedir turno" })).toHaveAttribute("href", "/pedir-turno");
   });
 });

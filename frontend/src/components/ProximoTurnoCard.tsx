@@ -15,7 +15,7 @@ export function ProximoTurnoCard({ turno }: ProximoTurnoCardProps) {
         <p>No tenés consultas agendadas.</p>
         {/* Link con estilo de botón: un <button> dentro de un <a> es HTML inválido */}
         <Link to="/pedir-turno" className="proximo-turno-btn proximo-turno-btn-primario">
-          Agendar una consulta
+          Pedir turno
         </Link>
       </div>
     );
@@ -39,7 +39,7 @@ export function ProximoTurnoCard({ turno }: ProximoTurnoCardProps) {
       </div>
       <div className="proximo-turno-acciones">
         <Link to={`/turnos/${turno.id}`} className="proximo-turno-btn">
-          Ver más
+          Ver detalle
         </Link>
         {/* Un turno confirmado ya no se cancela desde la app (RN-006) */}
         {puedeCancelarPaciente(turno.estado, turno.fechaHora) && (
