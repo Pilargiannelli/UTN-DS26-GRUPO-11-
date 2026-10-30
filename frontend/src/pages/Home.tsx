@@ -7,20 +7,21 @@ import '../assets/styles/App.css';
 import { ToastMensaje } from "../components/NotifyToast.tsx";
 import { useToast } from "../hooks/useToast.ts";
 import GestionTurnos from "./GestionTurnos.tsx";
+import '../assets/styles/SecretariaHome.css';
 
 function Home() {
     const { showToast, setShowToast } = useToast("registroExitoso");
-    const { estaAutenticado } = useAuth();
+    const { estaAutenticado, usuario } = useAuth();
 
     // Distribución de vistas según la matriz de permisos
     const vistaPorRol = useRolView({
-        SECRETARIA: <GestionTurnos />,
+        SECRETARIA: <GestionTurnos recepcion />,
         MEDICO: <GestionTurnos />,
         PACIENTE: <HomePaciente />,
     });
 
     return (
-        <Layout>
+        <Layout className={usuario?.rol === "SECRETARIA" ? "imos-workspace imos-secretaria-home" : undefined}>
             <ToastMensaje 
                 mensaje="Cuenta creada correctamente" 
                 tipo="toast-good" 

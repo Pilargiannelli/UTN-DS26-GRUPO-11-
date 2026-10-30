@@ -1,4 +1,8 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
+import { Calendar3, People, PlusLg, Clock } from "react-bootstrap-icons";
+import { saludoSegunHora } from "../utils/saludo";
+import { formatearHora } from "../utils/fecha";
 import {
   Container,
   Spinner,
@@ -15,7 +19,7 @@ import { useFetch } from "../hooks/useFetch";
 
 import type { Turno } from "../types/Turno";
 
-function GestionTurnos() {
+function GestionTurnos({ recepcion = false }: { recepcion?: boolean }) {
 
   const [showModal, setShowModal] = useState(false);
 
@@ -144,17 +148,47 @@ function GestionTurnos() {
   return (
       <Container className="mt-3">
 
-        <HeroTurnos
+        {recepcion ? (
+          <header className="recepcion-bienvenida">
+            <div className="recepcion-intro">
+              <span className="recepcion-etiqueta">Recepción · Secretaría</span>
+              <h1>{saludoSegunHora()}, {nombreUsuario}</h1>
+              <p className="recepcion-fecha">{fechaActual}</p>
+              <p className="recepcion-resumen">
+                <strong>{turnosDeHoy}</strong> {turnosDeHoy === 1 ? "turno por atender hoy" : "turnos por atender hoy"}
+              </p>
+            </div>
+            <nav className="recepcion-accesos" aria-label="Acciones de recepción">
+              <button type="button" className="btn btn-success" onClick={() => setShowModal(true)}>
+                <PlusLg aria-hidden="true" /> Nuevo turno
+              </button>
+              <Link className="btn recepcion-acceso" to="/orden-del-dia"><Calendar3 aria-hidden="true" /> Agenda</Link>
+              <Link className="btn recepcion-acceso" to="/buscar-paciente"><People aria-hidden="true" /> Pacientes</Link>
+            </nav>
+            {proximoTurno && (
+              <div className="recepcion-siguiente">
+                <Clock aria-hidden="true" />
+                <span>Próxima atención</span>
+                <Link to={`/pacientes/${proximoTurno.pacienteId}`}>
+                  {proximoTurno.paciente.usuario.nombre} {proximoTurno.paciente.usuario.apellido}
+                </Link>
+                <span>{new Date(proximoTurno.fechaHora).toLocaleDateString("es-AR", { day: "numeric", month: "short" })} · {formatearHora(proximoTurno.fechaHora)} hs</span>
+                <span>{proximoTurno.medico.especialidad}</span>
+              </div>
+            )}
+          </header>
+        ) : <HeroTurnos
           rol={usuario?.rol ?? null}
           nombre={nombreUsuario}
           fecha={fechaActual}
           turnosDeHoy={turnosDeHoy}
           pendientes={pendientes}
           proximoTurno={proximoTurno ?? null}
-        />
+        />}
 
 
         <TurnosTable
+          recepcion={recepcion}
 
           turnos={proximos}
 

@@ -17,6 +17,7 @@ import { apiFetch } from "../../services/api";
 
 import "../../assets/styles/TurnosTable.css";
 import TurnosFilters from "./TurnosFilters";
+import { Calendar3 } from "react-bootstrap-icons";
 
 type Seccion = "pendientes" | "confirmados" | "cancelados";
 
@@ -52,7 +53,7 @@ function tituloDia(clave: string) {
 const nombreCompleto = (u: { nombre: string; apellido: string }) => `${u.nombre} ${u.apellido}`;
 
 function TurnosTable({
-  turnos, onNuevoTurno, onTurnoActualizado
+  turnos, onNuevoTurno, onTurnoActualizado, recepcion = false
 }: TurnosTableProps) {
   const { tieneRol } = useAuth();
   const [procesando, setProcesando] = useState<number | null>(null);
@@ -89,7 +90,16 @@ function TurnosTable({
     const columnas = 2 + (mostrarMedico ? 1 : 0) + (conAcciones ? 1 : 0);
 
     if (lista.length === 0) {
-      return <p className="agenda-vacia">{VACIO[s]}</p>;
+      return recepcion ? (
+        <div className="recepcion-vacio">
+          <Calendar3 aria-hidden="true" />
+          <div>
+            <h3>{s === "pendientes" ? "Todo al día" : "Sin turnos en este estado"}</h3>
+            <p>{VACIO[s]}</p>
+          </div>
+          {puedeCrear && <Button variant="outline-success" onClick={onNuevoTurno}>Nuevo turno</Button>}
+        </div>
+      ) : <p className="agenda-vacia">{VACIO[s]}</p>;
     }
 
     const porDia = lista.reduce<Record<string, Turno[]>>((grupos, t) => {
@@ -98,7 +108,7 @@ function TurnosTable({
     }, {});
 
     return (
-      <Table responsive className="agenda-table align-middle mb-0">
+      <Table responsive={!recepcion} className="agenda-table align-middle mb-0">
         <thead>
           <tr>
             <th scope="col">Hora</th>
@@ -114,8 +124,8 @@ function TurnosTable({
             </tr>
             {turnosDelDia.map((turno) => (
               <tr key={turno.id}>
-                <td className="hora">{formatearHora(turno.fechaHora)}</td>
-                <td>
+                <td className="hora" data-label="Hora">{formatearHora(turno.fechaHora)}</td>
+                <td data-label="Paciente">
                   {/* El nombre lleva a la ficha del paciente (datos, turnos e historia) */}
                   <Link to={`/pacientes/${turno.pacienteId}`} className="agenda-paciente">
                     {nombreCompleto(turno.paciente.usuario)}
@@ -123,13 +133,13 @@ function TurnosTable({
                   {turno.estado === "Reprogramado" && <span className="agenda-etiqueta">Reprogramado</span>}
                 </td>
                 {mostrarMedico && (
-                  <td>
+                  <td data-label="Médico">
                     {nombreCompleto(turno.medico.usuario)}
                     <span className="agenda-especialidad">{turno.medico.especialidad}</span>
                   </td>
                 )}
                 {conAcciones && (
-                  <td>
+                  <td data-label="Acciones">
                     <div className="acciones d-flex gap-2 justify-content-end">
                       {s === "pendientes" && (
                         <Button
@@ -171,10 +181,10 @@ function TurnosTable({
       <Card.Body>
         <div className="agenda-header">
           <div>
-            <h2>Próximos turnos</h2>
-            <p>Los turnos que ya pasaron se consultan en la Agenda.</p>
+            <h2>{recepcion ? "Gestión de turnos" : "Próximos turnos"}</h2>
+            <p>{recepcion ? "Revisá las solicitudes pendientes y organizá las próximas atenciones." : "Los turnos que ya pasaron se consultan en la Agenda."}</p>
           </div>
-          {puedeCrear && <TurnosFilters onNuevoTurno={onNuevoTurno} />}
+          {puedeCrear && !recepcion && <TurnosFilters onNuevoTurno={onNuevoTurno} />}
         </div>
 
         {errorAccion && (
