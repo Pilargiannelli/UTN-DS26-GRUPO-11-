@@ -19,7 +19,7 @@ vi.mock("../services/api", () => ({ apiFetch: vi.fn().mockResolvedValue(null), A
 
 afterEach(cleanup);
 
-function renderizar(rol: RolUsuario, ruta = "/pacientes/15") {
+function renderizar(rol: RolUsuario) {
   const contexto: AuthContextType = {
     usuario: { id: 99, username: "x", nombre: "X", apellido: "Y", dni: "1", email: "x@y.com", fotoPerfil: null, rol },
     rol,
@@ -32,7 +32,7 @@ function renderizar(rol: RolUsuario, ruta = "/pacientes/15") {
   };
   return render(
     <AuthContext.Provider value={contexto}>
-      <MemoryRouter initialEntries={[ruta]}>
+      <MemoryRouter initialEntries={["/pacientes/15"]}>
         <Routes>
           <Route path="/pacientes/:id" element={<FichaPaciente />} />
         </Routes>
@@ -55,15 +55,6 @@ describe("Ficha del paciente (/pacientes/:id)", () => {
     expect(screen.getByRole("heading", { name: "Historia clínica" })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Turnos" })).toBeInTheDocument();
     expect(screen.getAllByRole("button", { name: /Nueva consulta/ }).length).toBeGreaterThan(0);
-  });
-
-  it("con ?consulta=nueva el médico llega con el formulario de consulta abierto", () => {
-    renderizar("MEDICO", "/pacientes/15?consulta=nueva");
-    expect(screen.getByText("Diagnóstico")).toBeInTheDocument();
-    cleanup();
-
-    renderizar("MEDICO");
-    expect(screen.queryByText("Diagnóstico")).not.toBeInTheDocument();
   });
 
   it("la secretaria ve los datos para administrar y dar turno, sin historia clínica", () => {

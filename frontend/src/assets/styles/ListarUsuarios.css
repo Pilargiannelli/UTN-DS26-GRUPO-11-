@@ -124,6 +124,13 @@
     text-decoration: none;
 }
 
+/* Acceso del médico a la ficha: se distingue del resto de la fila */
+.directorio-acciones .directorio-historia {
+    display: inline-flex;
+    align-items: center;
+    font-weight: var(--weight-semibold);
+}
+
 /* ── Estados vacíos ── */
 
 .directorio-vacio {
@@ -189,7 +196,9 @@
         padding-top: var(--space-2);
     }
 
-    .directorio-acciones .btn-outline-primary {
+    .directorio-acciones .btn-outline-primary,
+    .directorio-acciones .directorio-historia {
+        justify-content: center;
         flex: 1;
         min-height: 40px;
     }

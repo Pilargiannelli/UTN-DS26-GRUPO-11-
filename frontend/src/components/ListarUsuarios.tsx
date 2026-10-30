@@ -1,4 +1,4 @@
-import { Search } from "react-bootstrap-icons";
+import { JournalMedical, Search } from "react-bootstrap-icons";
 import { useFetch } from "../hooks/useFetch";
 import { Button, Spinner, Form, Alert, Table } from "react-bootstrap";
 import '../assets/styles/ListarUsuarios.css';
@@ -175,7 +175,7 @@ export function ListarUsuarios({ rol }: ListarUsuariosProps) {
     const cantidad = listaRegistros.length;
     const total = `${cantidad} ${esPaciente ? (cantidad === 1 ? "paciente registrado" : "pacientes registrados") : (cantidad === 1 ? "médico en la cartilla" : "médicos en la cartilla")}`;
     const descripcion = vistaMedico
-        ? `Elegí un paciente para ver su historia clínica o registrar una consulta. ${total}.`
+        ? `Abrí la historia clínica de un paciente para ver sus consultas y registrar la de hoy. ${total}.`
         : total;
 
     return (
@@ -296,24 +296,18 @@ export function ListarUsuarios({ rol }: ListarUsuariosProps) {
                                                 </Button>
                                             )}
                                             {paciente && vistaMedico ? (
-                                                <>
-                                                    <Button
-                                                        size="sm"
-                                                        variant="outline-primary"
-                                                        onClick={() => navigate(`/pacientes/${paciente.id}?consulta=nueva`)}
-                                                        aria-label={`Registrar consulta de ${u.nombre} ${u.apellido}`}
-                                                    >
-                                                        Registrar consulta
-                                                    </Button>
-                                                    <Button
-                                                        size="sm"
-                                                        variant="link"
-                                                        onClick={() => handleVerPerfil(item)}
-                                                        aria-label={`Historia clínica de ${u.nombre} ${u.apellido}`}
-                                                    >
-                                                        Historia clínica ›
-                                                    </Button>
-                                                </>
+                                                // Un solo acceso, bien visible: en la ficha ve la
+                                                // historia y registra la consulta en el mismo lugar
+                                                <Button
+                                                    size="sm"
+                                                    variant="primary"
+                                                    className="directorio-historia"
+                                                    onClick={() => handleVerPerfil(item)}
+                                                    aria-label={`Historia clínica de ${u.nombre} ${u.apellido}`}
+                                                >
+                                                    <JournalMedical aria-hidden="true" className="me-2" />
+                                                    Historia clínica
+                                                </Button>
                                             ) : (
                                                 <Button
                                                     size="sm"
