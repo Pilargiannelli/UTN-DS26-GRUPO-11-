@@ -23,7 +23,7 @@ function crearUsuario(rol: RolUsuario): UsuarioSesion {
   };
 }
 
-function renderizarHeader(usuario: UsuarioSesion | null, logout = vi.fn()) {
+function renderizarHeader(usuario: UsuarioSesion | null, logout = vi.fn(), recepcion = false) {
   const contexto: AuthContextType = {
     usuario,
     rol: usuario?.rol ?? null,
@@ -38,7 +38,7 @@ function renderizarHeader(usuario: UsuarioSesion | null, logout = vi.fn()) {
   return render(
     <AuthContext.Provider value={contexto}>
       <MemoryRouter>
-        <Header />
+        <Header recepcion={recepcion} />
       </MemoryRouter>
     </AuthContext.Provider>
   );
@@ -148,5 +148,29 @@ describe("Header según el rol", () => {
 
     fireEvent.click(screen.getByRole("button", { name: "Cerrar sesión" }));
     expect(logout).toHaveBeenCalled();
+  });
+});
+
+
+describe("Header y navegación de recepción", () => {
+  it("traslada Mi cuenta y Cerrar sesión al perfil y conserva el logout", () => {
+    const logout = vi.fn();
+    renderizarHeader(crearUsuario("SECRETARIA"), logout, true);
+    fireEvent.click(screen.getByRole("button", { name: /Cuenta de Juan/ }));
+    expect(screen.getByRole("button", { name: /Cuenta de Juan/ })).toHaveAttribute("aria-expanded", "true");
+    expect(screen.getByRole("link", { name: "Mi cuenta" })).toHaveAttribute("href", "/mi-cuenta");
+    fireEvent.click(screen.getByRole("button", { name: "Cerrar sesión" }));
+    expect(logout).toHaveBeenCalledTimes(1);
+  });
+  it("el menú móvil mantiene las rutas existentes y no inventa secciones", () => {
+    renderizarHeader(crearUsuario("SECRETARIA"), vi.fn(), true);
+    abrirMenu();
+    expect(screen.getByRole("link", { name: "Inicio" })).toHaveAttribute("href", "/home");
+    expect(screen.getByRole("link", { name: "Turnos" })).toHaveAttribute("href", "/gestion-turnos");
+    expect(screen.getByRole("link", { name: "Agenda" })).toHaveAttribute("href", "/orden-del-dia");
+    expect(screen.getByRole("link", { name: "Profesionales" })).toHaveAttribute("href", "/buscar-medico");
+    expect(screen.queryByText("Consultorios")).not.toBeInTheDocument();
+    expect(screen.queryByText("Configuración")).not.toBeInTheDocument();
+    expect(screen.queryByText("Mi cuenta")).not.toBeInTheDocument();
   });
 });

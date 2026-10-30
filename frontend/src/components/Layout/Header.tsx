@@ -1,4 +1,4 @@
-import { Container, Navbar, Nav } from "react-bootstrap";
+import { Container, Navbar, Nav, Dropdown } from "react-bootstrap";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth.ts";
 import { Sidebar } from "./Sidebar.tsx";
@@ -7,9 +7,8 @@ import '../../assets/styles/Header.css';
 
 const NOMBRE_ROL = { SECRETARIA: "Secretaría", MEDICO: "Médico", PACIENTE: "Paciente" } as const;
 
-// Header: menú (☰) y logo. La cuenta (Mi cuenta, Cerrar sesión) vive al final
-// del menú, no acá arriba.
-function Header() {
+// Secretaría usa el perfil superior; los otros roles conservan la cuenta en el menú.
+function Header({ recepcion = false }: { recepcion?: boolean }) {
   const { usuario, logout, estaAutenticado } = useAuth();
   const navigate = useNavigate();
 
@@ -19,12 +18,13 @@ function Header() {
   };
 
   return (
-    <Navbar id="colorNav" as="header">
+    <Navbar id="colorNav" as="header" className={recepcion ? "reception-header" : undefined}>
       <Container className="header-container container-fluid">
         <Navbar.Brand className="nav-logo m-0 d-flex align-items-center gap-2">
           {estaAutenticado && usuario && (
             <Sidebar
               items={menuPorRol[usuario.rol]}
+              persistente={recepcion}
               cuenta={{
                 nombre: `${usuario.nombre} ${usuario.apellido}`,
                 rol: NOMBRE_ROL[usuario.rol],
@@ -37,6 +37,19 @@ function Header() {
           </Link>
         </Navbar.Brand>
 
+        {recepcion && usuario && (
+          <Dropdown align="end" className="reception-profile">
+            <Dropdown.Toggle id="reception-profile" variant="light" aria-label={`Cuenta de ${usuario.nombre} · ${NOMBRE_ROL[usuario.rol]}`}>
+              <span className="reception-avatar" aria-hidden="true">{usuario.nombre.slice(0, 1)}{usuario.apellido.slice(0, 1)}</span>
+              <span className="reception-profile-copy"><strong>{usuario.nombre}</strong><small>{NOMBRE_ROL[usuario.rol]}</small></span>
+            </Dropdown.Toggle>
+            <Dropdown.Menu>
+              <Dropdown.Item as={Link} to="/mi-cuenta">Mi cuenta</Dropdown.Item>
+              <Dropdown.Divider />
+              <Dropdown.Item as="button" onClick={manejarLogout}>Cerrar sesión</Dropdown.Item>
+            </Dropdown.Menu>
+          </Dropdown>
+        )}
         {!estaAutenticado && (
           <Nav className="ms-auto align-items-center">
             <Link className="btn btn-outline-success btn-sm" to="/">

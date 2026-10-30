@@ -1,0 +1,124 @@
+/* Un solo color para toda la estructura, incluido el menu movil en portal. */
+.imos-reception-shell,
+.reception-sidebar {
+  --reception-frame: #517463;
+  --reception-rail: 220px;
+  --reception-header: 72px;
+  --reception-font-ui: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  --reception-font-heading: "Palatino Linotype", "Book Antiqua", Palatino, Georgia, serif;
+  --font-sans: var(--reception-font-ui);
+  --reception-cream: #f8f6f1;
+  --reception-ink: #103f33;
+}
+.imos-reception-shell { min-height: 100dvh; font-family: var(--reception-font-ui); display: flex; flex: 1; flex-direction: column; background: var(--reception-cream); text-align: left; min-width: 0; }
+#colorNav.reception-header {
+  position: sticky;
+  top: 0;
+  z-index: 1030;
+  min-height: var(--reception-header);
+  flex: 0 0 auto;
+  background: var(--reception-frame);
+  border: 0;
+  box-shadow: none;
+}
+#colorNav.reception-header .header-container {
+  width: 100%;
+  max-width: none !important;
+  margin: 0;
+  padding: 9px 28px !important;
+  gap: 16px;
+  justify-content: space-between;
+}
+#colorNav.reception-header .nav-logo img { height: 36px !important; width: auto !important; filter: brightness(0) invert(1); }
+.reception-menu-toggle { display: none; }
+.reception-sidebar.offcanvas-lg {
+  background: var(--reception-frame) !important;
+  border: 0 !important;
+  box-shadow: none;
+  color: #f8fbf6;
+  width: var(--reception-rail);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 220 390'%3E%3Cellipse cx='5' cy='265' rx='155' ry='195' transform='rotate(-35 5 265)' fill='%23234f3f' fill-opacity='.17'/%3E%3C/svg%3E") !important;
+  background-position: left bottom !important;
+  background-repeat: no-repeat !important;
+  background-size: 220px 390px !important;
+  --bs-offcanvas-width: 260px;
+}
+.reception-sidebar .offcanvas-body.menu-cuerpo { padding: 12px 12px 24px; position: relative; isolation: isolate; }
+/* La curva queda en el fondo: no agranda el area desplazable del menu. */
+.reception-sidebar .offcanvas-body::after { content: none; }
+.reception-sidebar .offcanvas-body .nav-link {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 18px 16px;
+  margin-bottom: 7px;
+  border: 0;
+  border-radius: 11px;
+  color: #f6f8f4 !important;
+  font-size: 14px;
+  font-weight: 400;
+  transform: none;
+  min-height: 60px;
+  transition: background-color 150ms ease, color 150ms ease;
+}
+.reception-sidebar .offcanvas-body .nav-link svg { width: 23px; height: 23px; flex-shrink: 0; }
+.reception-sidebar .offcanvas-body .nav-link.active { color: var(--reception-ink) !important; background: #e9eee3; font-weight: 600; }
+.reception-sidebar .offcanvas-header { background: var(--reception-frame); height: auto; border-radius: 0; padding: 24px; }
+.reception-sidebar .offcanvas-title img { filter: brightness(0) invert(1); margin: 0; height: 36px; }
+.reception-profile { margin-left: auto; min-width: 0; }
+#reception-profile.dropdown-toggle {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 6px 15px 6px 7px;
+  border: 1px solid #dbe8d444;
+  border-radius: 40px;
+  background: #dce5d7;
+  color: var(--reception-ink);
+  box-shadow: none;
+  text-align: left;
+  min-height: 50px;
+}
+.reception-profile > .dropdown-toggle::after { margin-left: 14px; }
+.reception-avatar { display: grid; place-items: center; flex-shrink: 0; width: 34px; height: 34px; border-radius: 50%; background: #c5d5bf; font-size: 12px; font-weight: 700; }
+.reception-profile-copy { display: flex; flex-direction: column; max-width: 160px; min-width: 0; }
+.reception-profile-copy strong { font-size: 14px; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.reception-profile-copy small { font-size: 12px; color: #50635a; }
+.reception-profile .dropdown-menu { --desp-menu-font-color: #243b32; margin-top: 8px; }
+/* Neutraliza el right:-1rem global solo en este desplegable. */
+.reception-profile .dropdown-menu-end { right: 0 !important; max-width: calc(100vw - 24px); }
+.imos-reception-shell > main { min-width: 0; }
+.imos-reception-shell .footer { margin-left: var(--reception-rail); }
+.imos-reception-shell :is(a, button):focus-visible,
+.reception-sidebar :is(a, button):focus-visible { outline: 3px solid #c5a35d; outline-offset: 3px; }
+@media (min-width: 992px) {
+  .imos-reception-shell .reception-sidebar.offcanvas-lg { display: flex; position: fixed; top: var(--reception-header); bottom: 0; left: 0; z-index: 1020; height: auto; width: var(--reception-rail); overflow-y: auto; }
+  .reception-sidebar.offcanvas-lg .offcanvas-body { display: block; background: transparent !important; flex: 0 0 auto; min-width: 0; overflow: visible; }
+  .imos-reception-shell > main { padding-left: var(--reception-rail) !important; }
+}
+@media (max-width: 991.98px) {
+  .imos-reception-shell { --reception-header: 68px; }
+  #colorNav.reception-header .header-container { padding: 10px 18px !important; }
+  .reception-menu-toggle { display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 44px; border: 0; padding: 0; margin-right: 8px; color: white; background: transparent; }
+  .reception-menu-toggle svg { width: 25px; height: 25px; }
+  .reception-sidebar.offcanvas-lg { width: min(280px, 90vw); height: 100dvh; }
+  .imos-reception-shell .footer { margin-left: 0; }
+}
+@media (max-width: 480px) {
+  #colorNav.reception-header .header-container { padding-inline: 12px !important; gap: 8px; }
+  #colorNav.reception-header .nav-logo img { height: 31px !important; }
+  #reception-profile.dropdown-toggle { padding: 7px 10px; gap: 7px; min-height: 48px; }
+  .reception-profile-copy { max-width: 90px; }
+  .reception-profile-copy strong { font-size: 12px; }
+  .reception-profile-copy small { font-size: 10px; }
+  .reception-avatar { width: 28px; height: 28px; font-size: 10px; }
+  .reception-profile > .dropdown-toggle::after { margin-left: 4px; }
+}
+@media (hover: hover) and (pointer: fine) {
+  .reception-sidebar .offcanvas-body .nav-link:hover { background: #ffffff15; transform: none; }
+  .reception-sidebar .offcanvas-body .nav-link.active:hover { background: #e9eee3; }
+  .reception-profile > .dropdown-toggle:hover { background: #e7eddf; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .reception-sidebar .offcanvas-body .nav-link { transition: none; }
+}
