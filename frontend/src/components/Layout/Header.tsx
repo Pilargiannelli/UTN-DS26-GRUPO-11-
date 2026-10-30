@@ -1,16 +1,17 @@
-import { Container, Navbar, Nav, NavDropdown } from "react-bootstrap";
+import { Container, Navbar, Nav } from "react-bootstrap";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth.ts";
 import { Sidebar } from "./Sidebar.tsx";
-import { useFotoPerfil } from "../../hooks/useFotoPerfil.ts";
 import { menuPorRol } from "./menuPorRol.ts";
 import '../../assets/styles/Header.css';
 
+const NOMBRE_ROL = { SECRETARIA: "Secretaría", MEDICO: "Médico", PACIENTE: "Paciente" } as const;
+
+// Header: menú (☰) y logo. La cuenta (Mi cuenta, Cerrar sesión) vive al final
+// del menú, no acá arriba.
 function Header() {
   const { usuario, logout, estaAutenticado } = useAuth();
   const navigate = useNavigate();
-
-  const fotoPerfil = useFotoPerfil(usuario?.fotoPerfil ?? undefined);
 
   const manejarLogout = () => {
     logout();
@@ -21,36 +22,28 @@ function Header() {
     <Navbar id="colorNav" as="header">
       <Container className="header-container container-fluid">
         <Navbar.Brand className="nav-logo m-0 d-flex align-items-center gap-2">
-          {/* Menú desplegable (☰) con las pantallas del rol */}
-          {estaAutenticado && usuario && <Sidebar items={menuPorRol[usuario.rol]} />}
+          {estaAutenticado && usuario && (
+            <Sidebar
+              items={menuPorRol[usuario.rol]}
+              cuenta={{
+                nombre: `${usuario.nombre} ${usuario.apellido}`,
+                rol: NOMBRE_ROL[usuario.rol],
+                onCerrarSesion: manejarLogout,
+              }}
+            />
+          )}
           <Link to={estaAutenticado ? "/home" : "/"} aria-label="IMOS, ir al inicio">
             <img src="/IMOS_LOGO.png" width="180" height="180" alt="IMOS" />
           </Link>
         </Navbar.Brand>
 
-        {/* Control de Sesión */}
-        <Nav className="ms-auto align-items-center">
-          {estaAutenticado && usuario ? (
-            <div className="d-flex align-items-center gap-2">
-              <span className="header-saludo d-none d-sm-inline">
-                Hola, <strong>{usuario.nombre}</strong>
-              </span>
-              <NavDropdown title={<div {...fotoPerfil} aria-label="Menú de la cuenta" />} id="perfil-dropdown" align="end">
-                <NavDropdown.Item className="item" onClick={() => navigate("/mi-cuenta")}>
-                  Mi cuenta
-                </NavDropdown.Item>
-                <NavDropdown.Divider />
-                <NavDropdown.Item className="item" onClick={manejarLogout}>
-                  Cerrar sesión
-                </NavDropdown.Item>
-              </NavDropdown>
-            </div>
-          ) : (
+        {!estaAutenticado && (
+          <Nav className="ms-auto align-items-center">
             <Link className="btn btn-outline-success btn-sm" to="/">
               Ingresar
             </Link>
-          )}
-        </Nav>
+          </Nav>
+        )}
       </Container>
     </Navbar>
   );

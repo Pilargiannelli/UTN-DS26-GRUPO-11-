@@ -23,7 +23,7 @@ function crearUsuario(rol: RolUsuario): UsuarioSesion {
   };
 }
 
-function renderizarHeader(usuario: UsuarioSesion | null) {
+function renderizarHeader(usuario: UsuarioSesion | null, logout = vi.fn()) {
   const contexto: AuthContextType = {
     usuario,
     rol: usuario?.rol ?? null,
@@ -32,7 +32,7 @@ function renderizarHeader(usuario: UsuarioSesion | null) {
     setUsuario: vi.fn(),
     tieneRol: (rol) => usuario?.rol === rol,
     login: vi.fn(),
-    logout: vi.fn(),
+    logout,
   };
 
   return render(
@@ -123,10 +123,28 @@ describe("Header según el rol", () => {
     expect(screen.queryByRole("link", { name: "Pacientes" })).not.toBeInTheDocument();
   });
 
-  it("usuario autenticado: saluda por nombre y no muestra 'Ingresar'", () => {
+  it("el header solo tiene el menú y el logo: la cuenta no está arriba", () => {
     renderizarHeader(crearUsuario("MEDICO"));
 
-    expect(screen.getByText("Juan")).toBeInTheDocument();
     expect(screen.queryByRole("link", { name: "Ingresar" })).not.toBeInTheDocument();
+    expect(screen.queryByText("Mi cuenta")).not.toBeInTheDocument();
+    expect(screen.queryByText("Cerrar sesión")).not.toBeInTheDocument();
+  });
+
+  it("al final del menú: quién está logueado, Mi cuenta y Cerrar sesión", () => {
+    const logout = vi.fn();
+    renderizarHeader(crearUsuario("SECRETARIA"), logout);
+    abrirMenu();
+
+    expect(screen.getByText("Juan Perez")).toBeInTheDocument();
+    expect(screen.getByText("Secretaría")).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Mi cuenta" })).toHaveAttribute("href", "/mi-cuenta");
+
+    // Las secciones van antes que la cuenta
+    const enlaces = screen.getAllByRole("link").map((a) => a.textContent);
+    expect(enlaces.indexOf("Médicos")).toBeLessThan(enlaces.indexOf("Mi cuenta"));
+
+    fireEvent.click(screen.getByRole("button", { name: "Cerrar sesión" }));
+    expect(logout).toHaveBeenCalled();
   });
 });
