@@ -22,7 +22,7 @@ const turno = (id: number, fechaHora: string, estado: EstadoTurno, paciente: str
   paciente: { id, usuario: { nombre: paciente, apellido: "Test", email: `${id}@x.com` } },
 });
 
-function renderizar(turnos: Turno[], rol: RolUsuario = "SECRETARIA") {
+function renderizar(turnos: Turno[], rol: RolUsuario = "SECRETARIA", recepcion = false) {
   const contexto: AuthContextType = {
     usuario: null,
     rol,
@@ -36,7 +36,7 @@ function renderizar(turnos: Turno[], rol: RolUsuario = "SECRETARIA") {
   return render(
     <AuthContext.Provider value={contexto}>
       <MemoryRouter>
-        <TurnosTable turnos={turnos} onNuevoTurno={vi.fn()} onTurnoActualizado={vi.fn()} />
+        <TurnosTable recepcion={recepcion} turnos={turnos} onNuevoTurno={vi.fn()} onTurnoActualizado={vi.fn()} />
       </MemoryRouter>
     </AuthContext.Provider>
   );
@@ -98,5 +98,39 @@ describe("TurnosTable (próximos turnos por estado)", () => {
   it("el médico no ve la columna Médico (son todos suyos)", () => {
     renderizar(turnos, "MEDICO");
     expect(screen.queryByRole("columnheader", { name: "Médico" })).not.toBeInTheDocument();
+  });
+});
+
+
+describe("Filtros del dashboard de Secretaría", () => {
+  it("busca por paciente, ignora tildes y actualiza los contadores", () => {
+    renderizar(turnos, "SECRETARIA", true);
+    fireEvent.change(screen.getByRole("searchbox"), { target: { value: "CÁRLA" } });
+    expect(screen.getByText("Carla Test")).toBeInTheDocument();
+    expect(screen.queryByText("Ana Test")).not.toBeInTheDocument();
+    expect(screen.getByRole("tab", { name: /Pendientes/ })).toHaveTextContent("1");
+  });
+  it("busca por profesional y mantiene acceso a cada estado", () => {
+    renderizar(turnos, "SECRETARIA", true);
+    fireEvent.change(screen.getByRole("searchbox"), { target: { value: "gomez" } });
+    expect(screen.getByText("Ana Test")).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("tab", { name: /Confirmados/ }));
+    expect(screen.getByText("Beto Test")).toBeInTheDocument();
+  });
+  it("filtra una fecha local, distingue falta de coincidencias y permite limpiar", () => {
+    renderizar(turnos, "SECRETARIA", true);
+    fireEvent.change(screen.getByRole("combobox", { name: "Filtrar por fecha" }), { target: { value: "elegir" } });
+    fireEvent.change(screen.getByLabelText("Fecha del turno"), { target: { value: "2099-03-15" } });
+    expect(screen.queryByText("Ana Test")).not.toBeInTheDocument();
+    expect(screen.getByText("Carla Test")).toBeInTheDocument();
+    fireEvent.change(screen.getByRole("searchbox"), { target: { value: "inexistente" } });
+    expect(screen.getByText("Sin coincidencias")).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Limpiar filtros" }));
+    expect(screen.getByText("Ana Test")).toBeInTheDocument();
+    expect(screen.getByRole("searchbox")).toHaveValue("");
+  });
+  it("no agrega filtros a la presentación de Médico", () => {
+    renderizar(turnos, "MEDICO");
+    expect(screen.queryByRole("searchbox")).not.toBeInTheDocument();
   });
 });

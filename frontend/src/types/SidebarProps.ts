@@ -3,6 +3,7 @@ import type { MenuItem } from "./MenuItem";
 interface SidebarProps {
   // Secciones principales del rol (arriba del menú)
   items: MenuItem[];
+  persistente?: boolean;
   // Pie del menú: quién está logueado, Mi cuenta y Cerrar sesión
   cuenta?: {
     nombre: string;

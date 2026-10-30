@@ -1,5 +1,5 @@
 import { Button, Offcanvas, Nav } from 'react-bootstrap';
-import { BoxArrowRight, PersonCircle } from 'react-bootstrap-icons';
+import { BoxArrowRight, PersonCircle, HouseDoor, Calendar3, CalendarWeek, People, HeartPulse, List } from 'react-bootstrap-icons';
 import { NavLink } from 'react-router-dom';
 import type { SidebarProps } from '../../types/SidebarProps';
 import '../../assets/styles/Sidebar.css'
@@ -7,7 +7,7 @@ import { useState } from 'react';
 
 // Menú desplegable (☰): arriba las secciones del rol; abajo de todo, separado,
 // lo de la cuenta (quién está logueado, Mi cuenta y Cerrar sesión)
-export function Sidebar({ items, cuenta }: SidebarProps) {
+export function Sidebar({ items, cuenta, persistente = false }: SidebarProps) {
   const [show, setShow] = useState(false);
 
   const handleClose = () => setShow(false);
@@ -18,28 +18,34 @@ export function Sidebar({ items, cuenta }: SidebarProps) {
     cuenta?.onCerrarSesion();
   };
 
+  const enlaces = persistente
+    ? [{ label: "Inicio", href: "/home" }, { label: "Turnos", href: "/gestion-turnos" }, ...items.filter(item => item.href !== "/home").map(item => ({ ...item, label: item.href === "/buscar-medico" ? "Profesionales" : item.label }))]
+    : items;
+  const iconos: Record<string, typeof HouseDoor> = { "/home": HouseDoor, "/gestion-turnos": Calendar3, "/orden-del-dia": CalendarWeek, "/buscar-paciente": People, "/buscar-medico": HeartPulse };
+
   return (
     <>
       {/* Botón para abrir el menú */}
-      <Button variant="outline-light" onClick={handleShow} className={`menu-button ${show ? 'hidden' : ''}`} aria-label="Abrir menú">
-        ☰
+      <Button variant="outline-light" onClick={handleShow} className={`menu-button ${persistente ? 'reception-menu-toggle' : ''} ${show ? 'hidden' : ''}`} aria-label="Abrir menú">
+        <List aria-hidden="true" />
       </Button>
       {/* Menú lateral */}
-      <Offcanvas show={show} onHide={handleClose} placement="start" scroll={true} backdrop={false}>
-        <Offcanvas.Header closeButton closeLabel="Cerrar menú">
+      <Offcanvas show={show} onHide={handleClose} placement="start" scroll={!persistente} backdrop={persistente} responsive={persistente ? "lg" : undefined} className={persistente ? "reception-sidebar" : undefined}>
+        <Offcanvas.Header closeButton closeLabel="Cerrar menú" className={persistente ? "d-lg-none" : undefined}>
           <Offcanvas.Title><img src='/IMOS_LOGO.png' alt='IMOS'/></Offcanvas.Title>
         </Offcanvas.Header>
         <Offcanvas.Body className="menu-cuerpo">
           <Nav className="flex-column" aria-label="Menú principal">
             {/* NavLink (no href): navega sin recargar la página y marca el link activo */}
-            {items.map((item) => (
-              <Nav.Link key={item.href} as={NavLink} to={item.href} onClick={handleClose}>
+            {enlaces.map((item) => (
+              <Nav.Link key={item.href} as={NavLink} to={item.href} end={item.href === "/home"} onClick={handleClose}>
+                {persistente && (() => { const Icono = iconos[item.href] ?? Calendar3; return <Icono aria-hidden="true" />; })()}
                 {item.label}
               </Nav.Link>
             ))}
           </Nav>
 
-          {cuenta && (
+          {cuenta && !persistente && (
             <div className="menu-cuenta">
               <div className="menu-cuenta-usuario">
                 <PersonCircle className="menu-cuenta-icono" aria-hidden="true" />
