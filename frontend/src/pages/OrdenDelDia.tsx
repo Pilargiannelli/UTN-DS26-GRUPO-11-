@@ -1,8 +1,10 @@
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import { Link } from "react-router-dom";
-import { Alert, Button, ButtonGroup, Container, Spinner } from "react-bootstrap";
+import { Alert, Button, ButtonGroup, Container, Form, Spinner } from "react-bootstrap";
 import { CalendarWeek, ChevronLeft, ChevronRight } from "react-bootstrap-icons";
 import { useTurnosMedico } from "../hooks/useTurnosMedico";
+import { useFetch } from "../hooks/useFetch";
+import { useAuth } from "../hooks/useAuth";
 import VistaAgendaSemanal from "../components/VistaAgendaSemanal";
 import Layout from "../components/Layout/Layout";
 import { EncabezadoPagina } from "../components/EncabezadoPagina";
@@ -67,12 +69,65 @@ const hoyHabil = () => {
 
 const activo = (estado: EstadoTurno) => estado !== "Cancelado";
 
-// Agenda del médico: sus turnos por día o por semana, en una grilla horaria.
-// Cada turno lleva a la ficha del paciente.
+interface MedicoCartilla {
+  id: number;
+  especialidad: string;
+  usuario: { nombre: string; apellido: string };
+}
+
+// La secretaria elige de qué médico ver la agenda (arranca con el primero)
+function AgendaSecretaria() {
+  const { data, loading, error } = useFetch<MedicoCartilla[]>("/medicos");
+  const [elegido, setElegido] = useState<number | null>(null);
+  const medicos = [...(data ?? [])].sort((a, b) => a.usuario.apellido.localeCompare(b.usuario.apellido));
+  const medicoId = elegido ?? medicos[0]?.id;
+
+  if (loading || error || medicoId === undefined) {
+    return <Agenda deSecretaria cargandoMedicos={loading} errorMedicos={error?.message ?? (loading ? null : "No hay médicos cargados.")} />;
+  }
+
+  const selector = (
+    <Form.Select
+      size="sm"
+      className="agenda-selector-medico"
+      aria-label="Médico"
+      value={medicoId}
+      onChange={(e) => setElegido(Number(e.target.value))}
+    >
+      {medicos.map((m) => (
+        <option key={m.id} value={m.id}>
+          {m.usuario.nombre} {m.usuario.apellido} · {m.especialidad}
+        </option>
+      ))}
+    </Form.Select>
+  );
+
+  return <Agenda deSecretaria medicoId={medicoId} selector={selector} />;
+}
+
+// Agenda: el médico ve la suya; la secretaria, la de cada médico
 export default function OrdenDelDia() {
+  const { tieneRol } = useAuth();
+  return tieneRol("SECRETARIA") ? <AgendaSecretaria /> : <Agenda />;
+}
+
+interface AgendaProps {
+  deSecretaria?: boolean;
+  medicoId?: number;
+  selector?: ReactNode;
+  cargandoMedicos?: boolean;
+  errorMedicos?: string | null;
+}
+
+// Turnos por día o por semana, en una grilla horaria. Cada turno lleva a la
+// ficha del paciente.
+function Agenda({ deSecretaria = false, medicoId, selector, cargandoMedicos = false, errorMedicos = null }: AgendaProps) {
   const [fecha, setFecha] = useState(hoyHabil);
   const [vista, setVista] = useState<Vista>("dia");
-  const { misTurnos, turnosDelDia, loading, error } = useTurnosMedico();
+  const turnosMedico = useTurnosMedico(medicoId);
+  const { misTurnos, turnosDelDia } = turnosMedico;
+  const loading = turnosMedico.loading || cargandoMedicos;
+  const error = turnosMedico.error ?? (errorMedicos ? new Error(errorMedicos) : null);
 
   const ahora = new Date();
   const dias = semanaHabil(fecha);
@@ -111,16 +166,19 @@ export default function OrdenDelDia() {
       <Container className="agenda-medico">
         <EncabezadoPagina
           titulo="Agenda"
-          etiqueta="Mis turnos"
+          etiqueta={deSecretaria ? "Agenda del consultorio" : "Mis turnos"}
           icono={<CalendarWeek />}
-          descripcion="Tus turnos por horario. Tocá un turno para abrir la ficha y la historia clínica del paciente."
+          descripcion={deSecretaria
+            ? "Elegí un médico para ver sus turnos por horario. Tocá un turno para abrir la ficha del paciente."
+            : "Tus turnos por horario. Tocá un turno para abrir la ficha y la historia clínica del paciente."}
           datos={loading || error ? undefined : datos}
         />
 
         <div className="agenda-panel">
           {/* Barra: fecha a la izquierda, navegación y vista a la derecha */}
           <div className="agenda-barra">
-            <div>
+            <div className="agenda-barra-fecha">
+              {selector}
               <h2 className="agenda-barra-titulo">
                 {vista === "dia" ? tituloDia(fecha) : tituloSemana(dias)}
               </h2>

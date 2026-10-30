@@ -8,6 +8,7 @@ import type { RolUsuario } from "../../types/UsuarioSesion";
 export const menuPorRol: Record<RolUsuario, MenuItem[]> = {
   SECRETARIA: [
     { label: "Gestión de turnos", href: "/home" },
+    { label: "Agenda", href: "/orden-del-dia" },
     { label: "Pacientes", href: "/buscar-paciente" },
     { label: "Médicos", href: "/buscar-medico" },
   ],

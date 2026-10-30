@@ -27,7 +27,7 @@ espejo en el frontend, `RolUsuario` (`frontend/src/types/UsuarioSesion.ts:2`):
 |-----|-------------|--------------|
 | Invitado | Ausencia de token. No es un valor del enum | Ve el login, la cartilla de médicos y el autorregistro |
 | `PACIENTE` | `Rol.PACIENTE` | Vista de paciente en Home (`HomePaciente`), sidebar reducido, "Mis turnos" |
-| `SECRETARIA` | `Rol.SECRETARIA` | Sidebar administrativo, gestión de turnos y pacientes |
+| `SECRETARIA` | `Rol.SECRETARIA` | Sidebar administrativo, gestión de turnos y pacientes, agenda de cada médico (elige el médico) |
 | `MEDICO` | `Rol.MEDICO` | Igual que SECRETARIA + Historial clínico, Orden del día, alta de médicos |
 
 El rol se obtiene del token JWT decodificado (`TokenPayload.rol`,

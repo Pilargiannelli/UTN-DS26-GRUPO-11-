@@ -26,10 +26,23 @@
   border-bottom: 1px solid var(--color-border);
 }
 
-.agenda-barra > div:first-child {
+.agenda-barra-fecha {
   display: flex;
   align-items: center;
-  gap: var(--space-2);
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-4);
+  min-width: 0;
+}
+
+/* Secretaria: de qué médico es la agenda */
+.agenda-medico .agenda-selector-medico {
+  width: auto;
+  max-width: 100%;
+  min-height: 36px;
+  font-weight: var(--weight-semibold);
+  color: var(--color-heading);
+  border-color: var(--color-pino-200);
+  background-color: var(--color-pino-50);
 }
 
 .agenda-medico .agenda-barra-titulo {
@@ -333,6 +346,10 @@
 @media (max-width: 576px) {
   .agenda-barra {
     padding: var(--space-3) var(--space-4);
+  }
+
+  .agenda-medico .agenda-selector-medico {
+    width: 100%;
   }
 
   .agenda-barra-controles {

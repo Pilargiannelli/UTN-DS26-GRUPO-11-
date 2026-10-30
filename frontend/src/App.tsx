@@ -63,10 +63,10 @@ function App() {
       </Route>
 
       {/* ========================================== */}
-      {/* RUTAS EXCLUSIVAS MÉDICAS */}
-      {/* (Solo para el rol MEDICO) */}
+      {/* AGENDA */}
+      {/* El médico ve la suya; la secretaria, la de cada médico */}
       {/* ========================================== */}
-      <Route element={<PrivateRoute roles={["MEDICO"]} />}>
+      <Route element={<PrivateRoute roles={["MEDICO", "SECRETARIA"]} />}>
         <Route path="/orden-del-dia" element={<OrdenDelDia />} />
       </Route>
 

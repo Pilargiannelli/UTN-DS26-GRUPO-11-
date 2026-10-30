@@ -96,6 +96,7 @@ describe("Header según el rol", () => {
     abrirMenu();
 
     expect(screen.getByRole("link", { name: "Gestión de turnos" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Agenda" })).toHaveAttribute("href", "/orden-del-dia");
     expect(screen.getByRole("link", { name: "Pacientes" })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Médicos" })).toBeInTheDocument();
     expect(screen.queryByRole("link", { name: "Historia clínica" })).not.toBeInTheDocument();
