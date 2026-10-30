@@ -1,100 +1,74 @@
+import { Link } from "react-router-dom";
 import type { Turno } from "../types/Turno";
 import { formatearHora } from "../utils/fecha";
-
-const DIAS_NOMBRES = ["lun", "mar", "mié", "jue", "vie", "sáb", "dom"];
-const HORAS_INICIO = 8;
-const HORAS_FIN = 20;
-const ALTURA_HORA = 64;
-const ALTURA_EVENTO = 54;
-
-const horas = Array.from(
-  { length: HORAS_FIN - HORAS_INICIO },
-  (_, i) => HORAS_INICIO + i
-);
-
-function formatHora(h: number) {
-  return `${String(h).padStart(2, "0")}:00`;
-}
-
-function calcularTop(hora: string): number {
-  const [h, m] = hora.split(":").map(Number);
-  return (h - HORAS_INICIO + m / 60) * ALTURA_HORA;
-}
-
-function esMismaFecha(a: Date, b: Date) {
-  return (
-    a.getDate() === b.getDate() &&
-    a.getMonth() === b.getMonth() &&
-    a.getFullYear() === b.getFullYear()
-  );
-}
+import {
+  ALTURA_TOTAL, HORAS, esMismaFecha, estiloGrilla, etiquetaHora, ubicarTurnos,
+} from "../utils/agenda";
 
 interface Props {
   diasSemana: Date[];
   turnosDelDia: (fecha: Date) => Turno[];
 }
 
+const nombreDia = (d: Date) => d.toLocaleDateString("es-AR", { weekday: "short" }).replace(".", "");
+
+// Semana de lunes a viernes: una columna por día con sus turnos
 export default function VistaAgendaSemanal({ diasSemana, turnosDelDia }: Props) {
   const hoy = new Date();
-  const alturaTotal = (HORAS_FIN - HORAS_INICIO) * ALTURA_HORA;
 
   return (
-    <div className="agenda-scroll">
-      {/* Encabezado con nombres de día y números — sticky */}
+    <div className="agenda-scroll" style={estiloGrilla}>
+      {/* Encabezado con nombres de día y números — fijo al hacer scroll */}
       <div className="agenda-semana-header">
         <div className="agenda-col-horas" />
-        {diasSemana.map((dia, i) => {
+        {diasSemana.map((dia) => {
           const esHoy = esMismaFecha(dia, hoy);
+          const cantidad = turnosDelDia(dia).filter((t) => t.estado !== "Cancelado").length;
           return (
-            <div key={i} className="agenda-dia-header">
-              <span className="agenda-dia-nombre">{DIAS_NOMBRES[i]}</span>
-              <span className={`agenda-dia-numero${esHoy ? " agenda-dia-hoy" : ""}`}>
-                {dia.getDate()}
+            <div key={dia.toISOString()} className={`agenda-dia-header${esHoy ? " agenda-dia-header-hoy" : ""}`}>
+              <span className="agenda-dia-nombre">{nombreDia(dia)}</span>
+              <span className={`agenda-dia-numero${esHoy ? " agenda-dia-hoy" : ""}`}>{dia.getDate()}</span>
+              <span className="agenda-dia-cantidad">
+                {cantidad === 0 ? "Sin turnos" : `${cantidad} ${cantidad === 1 ? "turno" : "turnos"}`}
               </span>
             </div>
           );
         })}
       </div>
 
-      {/* Grid de horas + columnas por día */}
       <div className="agenda-grid">
-        {/* Columna de horas */}
         <div className="agenda-col-horas">
-          {horas.map((h) => (
-            <div key={h} className="agenda-hora-label">
-              {formatHora(h)}
-            </div>
+          {HORAS.map((h) => (
+            <div key={h} className="agenda-hora-label">{etiquetaHora(h)}</div>
           ))}
         </div>
 
-        {/* Una columna por día */}
-        {diasSemana.map((dia, i) => {
-          const turnos = turnosDelDia(dia);
-          return (
-            <div key={i} className="agenda-dia-col" style={{ height: alturaTotal }}>
-              {horas.map((h) => (
-                <div key={h} className="agenda-hora-fila" />
-              ))}
-              {turnos.map((turno) => {
-                const hora = formatearHora(turno.fechaHora);
-                const top = calcularTop(hora);
-                const estadoClass = `estado-${turno.estado.toLowerCase()}`;
-                return (
-                  <div
-                    key={turno.id}
-                    className={`agenda-evento agenda-evento-compact ${estadoClass}`}
-                    style={{ top, height: ALTURA_EVENTO }}
-                  >
-                    <p className="agenda-evento-hora">{hora}</p>
-                    <p className="agenda-evento-paciente">
-                      {turno.paciente.usuario.nombre} {turno.paciente.usuario.apellido}
-                    </p>
-                  </div>
-                );
-              })}
-            </div>
-          );
-        })}
+        {diasSemana.map((dia) => (
+          <div
+            key={dia.toISOString()}
+            className={`agenda-dia-col${esMismaFecha(dia, hoy) ? " agenda-dia-col-hoy" : ""}`}
+            style={{ height: ALTURA_TOTAL }}
+          >
+            {HORAS.map((h) => (
+              <div key={h} className="agenda-hora-fila" />
+            ))}
+            {ubicarTurnos(turnosDelDia(dia)).map(({ turno, estilo }) => {
+              const paciente = `${turno.paciente.usuario.nombre} ${turno.paciente.usuario.apellido}`;
+              return (
+                <Link
+                  key={turno.id}
+                  to={`/pacientes/${turno.pacienteId}`}
+                  className={`agenda-evento agenda-evento-compact estado-${turno.estado.toLowerCase()}`}
+                  style={estilo}
+                  title={`${formatearHora(turno.fechaHora)} · ${paciente} · ${turno.estado}`}
+                >
+                  <span className="agenda-evento-hora">{formatearHora(turno.fechaHora)}</span>
+                  <span className="agenda-evento-paciente">{paciente}</span>
+                </Link>
+              );
+            })}
+          </div>
+        ))}
       </div>
     </div>
   );

@@ -1,212 +1,263 @@
-.agenda-titulo {
-  font-family: var(--font-sans);
-  font-size: var(--text-xl);
-  color: var(--color-pino-900);
-  margin: 0;
+/* Agenda del médico: encabezado común, barra de fecha y grilla horaria.
+   La altura de una hora llega desde utils/agenda.ts (--agenda-alto-hora). */
+
+.agenda-medico {
+  padding-bottom: var(--space-6);
+  text-align: left;
 }
 
-.agenda-fecha-sub {
-  font-size: var(--text-xs);
-  color: var(--color-text-subtle);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  margin: 0;
-}
-
-.agenda-fecha-header {
-  font-size: var(--text-md);
-  font-weight: 500;
-  color: var(--color-pino-900);
-  text-transform: capitalize;
-  margin: 2px 0 0;
-}
-
-/* Botones de navegación */
-.agenda-nav-btn {
-  background: transparent;
+.agenda-panel {
+  background: var(--color-surface);
   border: 1px solid var(--color-border);
-  border-radius: var(--radius-sm);
-  color: var(--color-pino-900);
-  padding: 4px 14px;
-  cursor: pointer;
-  font-size: var(--text-md);
-  line-height: 1;
-  transition: background 0.15s;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
 }
 
-.agenda-nav-btn:hover {
-  background: var(--color-bg);
+/* ── Barra: fecha + controles ── */
+
+.agenda-barra {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-5);
+  border-bottom: 1px solid var(--color-border);
 }
 
-.agenda-hoy-btn {
-  background: var(--color-pino-600);
-  color: var(--color-on-primary);
-  border: none;
-  border-radius: var(--radius-sm);
-  padding: 4px 14px;
-  cursor: pointer;
-  font-size: var(--text-sm);
-  transition: background 0.15s;
+.agenda-barra > div:first-child {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
 }
 
-.agenda-hoy-btn:hover {
-  background: var(--color-pino-800);
+.agenda-medico .agenda-barra-titulo {
+  margin: 0;
+  font-size: var(--text-lg);
+  font-weight: var(--weight-semibold);
+  color: var(--color-heading);
 }
 
-/* Contenedor con scroll */
+.agenda-barra-hoy {
+  padding: 0 var(--space-2);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semibold);
+  color: var(--color-primary);
+  background: var(--color-primary-soft);
+  border-radius: var(--radius-pill);
+}
+
+.agenda-barra-controles {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.agenda-barra-controles .btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 36px;
+}
+
+/* ── Leyenda de estados ── */
+
+.agenda-leyenda {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  margin: 0;
+  padding: var(--space-2) var(--space-5);
+  list-style: none;
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  background: var(--color-surface-muted);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.agenda-leyenda-item {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.agenda-leyenda-item::before {
+  content: "";
+  width: var(--space-3);
+  height: var(--space-3);
+  border-radius: var(--radius-xs);
+  border-left: 3px solid var(--estado-borde);
+  background: var(--estado-fondo);
+}
+
+/* Colores por estado (los usan la leyenda y los turnos) */
+.estado-pendiente,
+.estado-reprogramado {
+  --estado-fondo: var(--color-warning-bg);
+  --estado-borde: var(--color-warning-solid);
+  --estado-texto: var(--color-warning);
+}
+
+.estado-confirmado {
+  --estado-fondo: var(--color-info-bg);
+  --estado-borde: var(--color-info);
+  --estado-texto: var(--color-info);
+}
+
+.estado-cancelado {
+  --estado-fondo: var(--color-danger-bg);
+  --estado-borde: var(--color-danger);
+  --estado-texto: var(--color-danger);
+}
+
+/* ── Grilla ── */
+
 .agenda-scroll {
   overflow-y: auto;
-  max-height: calc(100vh - 341px);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
+  max-height: calc(100vh - 360px);
+  min-height: calc(var(--space-8) * 6);
   background: var(--color-surface);
 }
 
-/* Grid principal */
 .agenda-grid {
   display: flex;
   position: relative;
   min-width: 0;
 }
 
-/* Columna de horas */
 .agenda-col-horas {
-  width: 60px;
+  width: calc(var(--space-8) + var(--space-1));
   flex-shrink: 0;
   border-right: 1px solid var(--color-border);
-  background: var(--color-surface-muted);
+  background: var(--color-surface);
 }
 
 .agenda-hora-label {
-  height: 64px;
-  display: flex;
-  align-items: flex-start;
-  justify-content: flex-end;
-  padding: 6px 10px 0 0;
+  height: var(--agenda-alto-hora);
+  padding: var(--space-1) var(--space-3) 0 0;
   font-size: var(--text-xs);
+  font-weight: var(--weight-medium);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
   color: var(--color-text-subtle);
-  box-sizing: border-box;
 }
 
-/* Columna de eventos */
 .agenda-col-eventos {
   flex: 1;
   position: relative;
 }
 
+/* Cada hora con una línea llena y la media hora punteada */
 .agenda-hora-fila {
-  height: 64px;
+  height: var(--agenda-alto-hora);
   border-top: 1px solid var(--color-border);
-  box-sizing: border-box;
+  background-image: linear-gradient(to right, var(--color-border) 50%, transparent 0);
+  background-size: var(--space-2) 1px;
+  background-repeat: repeat-x;
+  background-position: 0 50%;
 }
 
 .agenda-hora-fila:first-child {
   border-top: none;
 }
 
-/* Bloques de turno */
-.agenda-evento {
+/* Línea de la hora actual */
+.agenda-ahora {
   position: absolute;
-  left: 10px;
-  right: 10px;
-  border-radius: var(--radius-sm);
-  padding: 6px 10px;
-  font-size: var(--text-sm);
-  overflow: hidden;
-  cursor: default;
-  box-sizing: border-box;
-  border-left: 4px solid transparent;
-}
-
-.agenda-evento.estado-confirmado {
-  background: var(--color-pino-100);
-  border-left-color: var(--color-pino-600);
-  color: var(--color-pino-800);
-}
-
-.agenda-evento.estado-pendiente {
-  background: var(--color-warning-bg);
-  border-left-color: var(--color-warning-solid);
-  color: var(--color-warning);
-}
-
-.agenda-evento.estado-cancelado {
-  background: var(--color-danger-bg);
-  border-left-color: var(--color-danger);
-  color: var(--color-danger);
-  opacity: 0.7;
-}
-
-.agenda-evento-hora {
-  font-size: var(--text-xs);
-  font-weight: 600;
-  margin: 0;
-  line-height: 1.2;
-}
-
-.agenda-evento-paciente {
-  font-weight: 500;
-  margin: 0;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  line-height: 1.3;
-}
-
-.agenda-evento-especialidad {
-  font-size: var(--text-xs);
-  margin: 0;
-  opacity: 0.75;
-  line-height: 1.2;
-}
-
-/* Estado vacío */
-.agenda-sin-turnos {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  color: var(--color-text-subtle);
-  font-size: var(--text-sm);
-  text-align: center;
+  left: 0;
+  right: 0;
+  z-index: 1;
+  height: 2px;
+  background: var(--color-danger);
   pointer-events: none;
 }
 
-/* ── Toggle Día / Semana ── */
-.agenda-toggle {
-  display: flex;
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-sm);
-  overflow: hidden;
+.agenda-ahora::before {
+  content: "";
+  position: absolute;
+  left: calc(-1 * var(--space-1));
+  top: calc(-1 * var(--space-1) + 1px);
+  width: var(--space-2);
+  height: var(--space-2);
+  border-radius: var(--radius-pill);
+  background: var(--color-danger);
 }
 
-.agenda-toggle-btn {
-  background: transparent;
-  border: none;
-  padding: 5px 16px;
+/* ── Turnos ── */
+
+.agenda-medico .agenda-evento {
+  position: absolute;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: 0 var(--space-3);
+  overflow: hidden;
+  font-size: var(--text-sm);
+  text-decoration: none;
+  color: var(--estado-texto);
+  background: var(--estado-fondo);
+  border-left: 4px solid var(--estado-borde);
+  border-radius: var(--radius-sm);
+  transition: box-shadow var(--transition-fast);
+}
+
+.agenda-medico .agenda-evento:hover {
+  box-shadow: var(--shadow-md);
+}
+
+.agenda-evento-hora {
+  font-weight: var(--weight-semibold);
+  font-variant-numeric: tabular-nums;
+}
+
+.agenda-evento-paciente {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  font-weight: var(--weight-semibold);
+  color: var(--color-heading);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.agenda-evento-estado {
+  padding: 0 var(--space-2);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semibold);
+  background: var(--color-surface);
+  border-radius: var(--radius-pill);
+}
+
+.agenda-medico .agenda-evento.estado-cancelado .agenda-evento-paciente {
+  color: var(--color-text-muted);
+  text-decoration: line-through;
+}
+
+.agenda-sin-turnos {
+  position: absolute;
+  top: var(--space-7);
+  left: 50%;
+  transform: translateX(-50%);
+  padding: var(--space-2) var(--space-4);
   font-size: var(--text-sm);
   color: var(--color-text-muted);
-  cursor: pointer;
-  transition: background 0.15s, color 0.15s;
-}
-
-.agenda-toggle-btn.activo {
-  background: var(--color-pino-600);
-  color: var(--color-on-primary);
-}
-
-.agenda-toggle-btn:not(.activo):hover {
-  background: var(--color-bg);
+  background: var(--color-surface-muted);
+  border-radius: var(--radius-pill);
+  pointer-events: none;
 }
 
 /* ── Vista semanal ── */
+
 .agenda-semana-header {
-  display: flex;
-  border-bottom: 1px solid var(--color-border);
   position: sticky;
   top: 0;
+  z-index: 3;
+  display: flex;
   background: var(--color-surface);
-  z-index: 2;
+  border-bottom: 1px solid var(--color-border);
 }
 
 .agenda-dia-header {
@@ -214,55 +265,93 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 8px 0 6px;
+  gap: var(--space-1);
+  padding: var(--space-2) 0;
   border-left: 1px solid var(--color-border);
+}
+
+.agenda-dia-header-hoy {
+  background: var(--color-pino-50);
 }
 
 .agenda-dia-nombre {
   font-size: var(--text-xs);
-  color: var(--color-text-subtle);
+  font-weight: var(--weight-semibold);
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: var(--tracking-caps);
+  color: var(--color-text-muted);
 }
 
 .agenda-dia-numero {
-  font-size: var(--text-lg);
-  font-weight: 400;
-  color: var(--color-pino-900);
-  width: 36px;
-  height: 36px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 50%;
-  margin-top: 4px;
+  width: var(--space-7);
+  height: var(--space-7);
+  font-size: var(--text-lg);
+  font-weight: var(--weight-semibold);
+  color: var(--color-heading);
+  border-radius: var(--radius-pill);
 }
 
 .agenda-dia-hoy {
-  background: var(--color-pino-600);
-  color: var(--color-on-primary) !important;
-  font-weight: 600;
+  color: var(--color-on-primary);
+  background: var(--color-primary);
+}
+
+.agenda-dia-cantidad {
+  font-size: var(--text-xs);
+  color: var(--color-text-subtle);
 }
 
 .agenda-dia-col {
   flex: 1;
   position: relative;
-  border-left: 1px solid var(--color-border);
-  overflow: hidden;
   min-width: 0;
+  border-left: 1px solid var(--color-border);
 }
 
-/* Evento compacto para vista semanal */
-.agenda-evento-compact {
-  left: 3px;
-  right: 3px;
-  padding: 4px 6px;
+.agenda-dia-col-hoy {
+  background: var(--color-pino-50);
 }
 
-.agenda-evento-compact .agenda-evento-hora {
+/* En la semana el turno va en dos renglones: hora y paciente */
+.agenda-medico .agenda-evento-compact {
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 0;
+  padding: 0 var(--space-2);
   font-size: var(--text-xs);
+  line-height: 1.3;
 }
 
 .agenda-evento-compact .agenda-evento-paciente {
-  font-size: var(--text-xs);
+  width: 100%;
+}
+
+@media (max-width: 576px) {
+  .agenda-barra {
+    padding: var(--space-3) var(--space-4);
+  }
+
+  .agenda-barra-controles {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .agenda-leyenda {
+    padding: var(--space-2) var(--space-4);
+    gap: var(--space-3);
+  }
+
+  .agenda-evento-estado {
+    display: none;
+  }
+
+  .agenda-dia-numero {
+    width: var(--space-6);
+    height: var(--space-6);
+    font-size: var(--text-base);
+  }
 }
