@@ -71,6 +71,11 @@
 }
 
 .proximo-turno-btn {
+  /* Son links (<a>) con estilo de botón */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
   font-size: var(--text-sm);
   padding: 0 var(--space-4);
   height: 36px;
@@ -85,6 +90,7 @@
 
 .proximo-turno-btn:hover {
   background: var(--color-pino-100);
+  color: var(--color-pino-800);
 }
 
 .proximo-turno-btn-cancelar {

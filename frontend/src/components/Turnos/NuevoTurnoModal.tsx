@@ -44,11 +44,7 @@ function NuevoTurnoModal({
     medicoId: "",
     fecha: "",
     hora: "",
-    estado: "Pendiente" as
-      | "Pendiente"
-      | "Confirmado"
-      | "Cancelado"
-      | "Reprogramado",
+    estado: "Pendiente" as "Pendiente" | "Confirmado",
   });
 
   const [errores, setErrores] = useState<Record<string, string>>({});
@@ -375,14 +371,7 @@ function NuevoTurnoModal({
                 Confirmado
               </option>
 
-              <option value="Cancelado">
-                Cancelado
-              </option>
-
-              <option value="Reprogramado">
-                Reprogramado
-              </option>
-
+              {/* Un turno nuevo no nace Cancelado ni Reprogramado */}
             </Form.Select>
 
             <Form.Control.Feedback type="invalid">

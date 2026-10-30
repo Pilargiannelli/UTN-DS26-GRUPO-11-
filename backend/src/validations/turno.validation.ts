@@ -26,11 +26,14 @@ const turnoBaseSchema = z.object({
   secretariaId: z.number().int().positive("El id de la secretaria debe ser positivo").optional(),
 });
 
-// POST /api/turnos (secretaria y médico)
-export const turnoCreateSchema = turnoBaseSchema.refine((d) => fechaFutura(d.fechaHora), {
-  message: MENSAJE_PASADO,
-  path: ["fechaHora"],
-});
+// POST /api/turnos (secretaria y médico). Un turno nuevo nace Pendiente o
+// Confirmado: Cancelado y Reprogramado son cambios sobre uno que ya existe.
+export const turnoCreateSchema = turnoBaseSchema
+  .extend({ estado: z.enum(["Pendiente", "Confirmado"], { error: "Un turno nuevo solo puede ser Pendiente o Confirmado" }).optional() })
+  .refine((d) => fechaFutura(d.fechaHora), {
+    message: MENSAJE_PASADO,
+    path: ["fechaHora"],
+  });
 
 // POST /api/turnos como PACIENTE: solo elige médico y horario. pacienteId sale
 // del token y el estado es siempre Pendiente (lo que mande de más se descarta).

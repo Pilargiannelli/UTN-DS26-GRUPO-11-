@@ -5,4 +5,7 @@ export interface TurnosTableProps {
   onNuevoTurno: () => void;
   // El turno que devolvió el back después de confirmar o cancelar
   onTurnoActualizado: (turno: Turno) => void;
+  // false: de hoy en adelante; true: también los anteriores
+  verAnteriores: boolean;
+  onToggleAnteriores: () => void;
 }

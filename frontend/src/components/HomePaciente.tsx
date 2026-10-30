@@ -4,6 +4,14 @@ import { ProximoTurnoCard } from "./ProximoTurnoCard";
 import { AccesosRapidosPaciente } from "./AccesosRapidosPaciente";
 import "../assets/styles/PaginaPaciente.css";
 
+// Saludo según la hora del día
+function saludo() {
+  const hora = new Date().getHours();
+  if (hora >= 6 && hora < 13) return "Buenos días";
+  if (hora >= 13 && hora < 20) return "Buenas tardes";
+  return "Buenas noches";
+}
+
 function formatearFechaHoy() {
   const hoy = new Date();
   return hoy.toLocaleDateString("es-AR", { weekday: "long", day: "numeric", month: "long" });
@@ -17,7 +25,7 @@ export function HomePaciente() {
     <div className="home-paciente pagina-paciente">
       <div className="hero">
         <div className="home-paciente-saludo hero-left">
-          <h1>👋 Buenos días, {usuario?.nombre}</h1>
+          <h1>{saludo()}, {usuario?.nombre}</h1>
           <p>{formatearFechaHoy()}</p>
         </div>
         <div className="hero-right">

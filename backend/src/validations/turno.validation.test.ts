@@ -66,6 +66,22 @@ describe("RN-008: turnos en el pasado (400)", () => {
   });
 });
 
+describe("estado de un turno nuevo", () => {
+  it("no se puede crear un turno ya Cancelado", () => {
+    const r = turnoCreateSchema.safeParse({ ...turnoValido, estado: "Cancelado" });
+    expect(r.success).toBe(false);
+    if (!r.success) expect(r.error.issues[0].path).toEqual(["estado"]);
+  });
+
+  it("sí se puede crear Confirmado", () => {
+    expect(turnoCreateSchema.safeParse({ ...turnoValido, estado: "Confirmado" }).success).toBe(true);
+  });
+
+  it("al editar sí se puede pasar a Reprogramado", () => {
+    expect(turnoUpdateSchema.safeParse({ estado: "Reprogramado" }).success).toBe(true);
+  });
+});
+
 describe("grilla de 30 minutos", () => {
   it("rechaza un turno a las y cuarto", () => {
     const r = turnoCreateSchema.safeParse({ ...turnoValido, fechaHora: "2030-11-03T11:15:00.000Z" });
