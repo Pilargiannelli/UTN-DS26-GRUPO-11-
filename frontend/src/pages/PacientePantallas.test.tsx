@@ -7,6 +7,8 @@ import type { Turno } from "../types/Turno";
 import MisTurnos from "./MisTurnos";
 import PedirTurno from "./PedirTurno";
 import { HomePaciente } from "../components/HomePaciente";
+import DetalleTurno from "./DetalleTurno";
+import { Route, Routes } from "react-router-dom";
 
 // Un turno de hace unos días (con su consulta) y uno a futuro
 const haceDias = new Date();
@@ -21,6 +23,8 @@ const turno = (id: number, fecha: Date, estado: Turno["estado"]): Turno => ({
 
 const respuestas: Record<string, unknown> = {
   "/turnos": [turno(1, haceDias, "Confirmado"), turno(2, new Date(2099, 2, 16, 10), "Pendiente")],
+  "/turnos/1": turno(1, haceDias, "Confirmado"),
+  "/turnos/2": turno(2, new Date(2099, 2, 16, 10), "Pendiente"),
   "/especialidades": ["Cardiología", "Pediatría"],
   "/medicos": [
     { id: 1, especialidad: "Cardiología", matricula: "MP-1", usuario: { nombre: "Carlos", apellido: "Gómez" } },
@@ -111,5 +115,23 @@ describe("Inicio del paciente", () => {
     for (const nombre of [/^Pedir turno/, /^Mis turnos/, /^Médicos/]) {
       expect(screen.getByRole("link", { name: nombre })).toBeInTheDocument();
     }
+  });
+});
+
+describe("Detalle del turno", () => {
+  const detalle = (id: number) =>
+    renderizar(<Routes><Route path="/turnos/:id" element={<DetalleTurno />} /></Routes>, `/turnos/${id}`);
+
+  it("un turno atendido muestra las etapas completas y el resultado de la consulta", async () => {
+    detalle(1);
+    expect(await screen.findByText("Caminar 30 minutos por día")).toBeInTheDocument();
+    expect(screen.getByRole("list", { name: "Estado del turno" })).toHaveTextContent("SolicitadoConfirmadoAtendido");
+    expect(screen.getByRole("link", { name: "Pedir turno con Carlos" })).toHaveAttribute("href", "/pedir-turno?medico=1");
+  });
+
+  it("un turno por confirmar se puede cancelar", () => {
+    detalle(2);
+    expect(screen.getAllByText("Por confirmar").length).toBeGreaterThan(0);
+    expect(screen.getByRole("link", { name: "Cancelar turno" })).toHaveAttribute("href", "/turnos/2/cancelar");
   });
 });

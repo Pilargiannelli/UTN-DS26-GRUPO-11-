@@ -1,4 +1,5 @@
-import type { EstadoTurno } from "../types/Turno";
+import type { EstadoTurno, Turno } from "../types/Turno";
+import type { EntradaClinica } from "../types/HistoriaClinica";
 
 // Clase CSS del badge/barra de color de cada estado (MisTurnos, DetalleTurno).
 // Reprogramado espera confirmación igual que Pendiente: comparte su color.
@@ -21,4 +22,15 @@ export function yaPaso(fechaHora: string) {
 // mostrar el botón.
 export function puedeCancelarPaciente(estado: EstadoTurno, fechaHora: string) {
   return (estado === "Pendiente" || estado === "Reprogramado") && !yaPaso(fechaHora);
+}
+
+// Estado que ve el paciente: un turno que ya pasó se muestra como atendido
+// si el médico registró la consulta
+export function estadoVisible(turno: Turno, consulta?: EntradaClinica) {
+  if (turno.estado === "Cancelado") return { texto: "Cancelado", clase: "cancelado" };
+  if (yaPaso(turno.fechaHora)) {
+    return consulta ? { texto: "Atendido", clase: "atendido" } : { texto: "Finalizado", clase: "finalizado" };
+  }
+  if (turno.estado === "Confirmado") return { texto: "Confirmado", clase: "confirmado" };
+  return { texto: "Por confirmar", clase: "pendiente" };
 }

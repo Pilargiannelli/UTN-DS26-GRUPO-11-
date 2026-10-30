@@ -1,113 +1,282 @@
-.detalle-turno-card {
-  background: var(--color-pino-900);
-  border-radius: var(--radius-lg);
-  padding: 1.5rem;
-  max-width: 480px;
+/* Detalle de un turno del paciente. La fecha y el estado reutilizan las
+   clases de PacienteTurnos.css. */
+
+.detalle-turno {
+  padding-top: var(--space-4);
+  padding-bottom: var(--space-6);
+  text-align: left;
 }
 
-.detalle-turno-encabezado {
+.detalle-turno-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(260px, 320px);
+  gap: var(--space-5);
+  align-items: start;
+}
+
+.detalle-turno-principal {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  min-width: 0;
+}
+
+.detalle-turno-card {
+  padding: var(--space-5);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+.detalle-turno .detalle-turno-subtitulo {
   display: flex;
   align-items: center;
-  gap: 16px;
-  margin-bottom: 20px;
+  gap: var(--space-2);
+  margin: 0 0 var(--space-4);
+  font-size: var(--text-md);
+  font-weight: var(--weight-semibold);
+  color: var(--color-heading);
 }
 
-.detalle-turno-chip-fecha {
-  text-align: center;
-  background: rgba(255,255,255,0.12);
-  border-radius: var(--radius-md);
-  padding: 8px 16px;
-  flex-shrink: 0;
+/* ── Encabezado ── */
+
+.detalle-turno-cabecera {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  border-left: 4px solid var(--estado-turno, var(--color-border-strong));
 }
 
-.detalle-turno-chip-mes {
-  font-size: var(--text-xs);
-  color: var(--color-pino-200);
-  margin: 0;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.detalle-turno-chip-dia {
-  font-size: var(--text-xl);
-  color: var(--color-on-primary);
-  font-weight: 500;
-  margin: 0;
-  line-height: 1;
-}
-
-.detalle-turno-titulo-bloque {
+.detalle-turno-cabecera-texto {
   flex: 1;
+  min-width: 0;
 }
 
-.detalle-turno-titulo {
-  font-size: var(--text-base);
-  color: var(--color-on-primary);
-  font-weight: 500;
-  margin: 0;
-}
-
-.detalle-turno-hora {
-  font-size: var(--text-sm);
-  color: var(--color-pino-200);
-  margin: 2px 0 0;
-}
-
-.detalle-turno-badge {
+.detalle-turno .detalle-turno-etiqueta {
+  margin: 0 0 var(--space-1);
   font-size: var(--text-xs);
-  padding: 4px 10px;
+  font-weight: var(--weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-caps);
+  color: var(--color-pino-700);
+}
+
+.detalle-turno .detalle-turno-titulo {
+  margin: 0;
+  font-size: var(--text-xl);
+  font-weight: var(--weight-semibold);
+  color: var(--color-heading);
+}
+
+/* ── Etapas ── */
+
+.detalle-turno-pasos {
+  display: flex;
+  margin: 0;
+  padding: var(--space-4) var(--space-5);
+  list-style: none;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
-  font-weight: 500;
-  flex-shrink: 0;
-  background: rgba(255,255,255,0.15);
-  color: var(--color-pino-200);
 }
 
-.detalle-turno-badge.estado-pendiente { color: var(--color-warning-border); }
-.detalle-turno-badge.estado-cancelado { color: var(--color-danger-border); }
-
-.detalle-turno-grid {
-  border-top: 1px solid rgba(255,255,255,0.15);
-  padding-top: 16px;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
+.detalle-turno-paso {
+  position: relative;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
 }
 
-.detalle-turno-label {
-  font-size: var(--text-xs);
-  color: var(--color-pino-200);
-  margin: 0 0 4px;
+/* Línea que une una etapa con la siguiente */
+.detalle-turno-paso + .detalle-turno-paso::before {
+  content: "";
+  position: absolute;
+  top: calc(var(--space-6) / 2 - 1px);
+  right: calc(50% + var(--space-5));
+  left: calc(-50% + var(--space-5));
+  height: 2px;
+  background: var(--color-border);
 }
 
-.detalle-turno-valor {
+.detalle-turno-paso-hecho + .detalle-turno-paso-hecho::before {
+  background: var(--color-primary);
+}
+
+.detalle-turno-paso-marca {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--space-6);
+  height: var(--space-6);
   font-size: var(--text-sm);
+  color: var(--color-text-subtle);
+  background: var(--color-surface);
+  border: 2px solid var(--color-border-strong);
+  border-radius: var(--radius-pill);
+}
+
+.detalle-turno-paso-hecho .detalle-turno-paso-marca {
   color: var(--color-on-primary);
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+.detalle-turno-paso-error .detalle-turno-paso-marca {
+  background: var(--color-danger);
+  border-color: var(--color-danger);
+}
+
+.detalle-turno-paso-texto {
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  color: var(--color-text-muted);
+}
+
+.detalle-turno-paso-hecho .detalle-turno-paso-texto {
+  font-weight: var(--weight-semibold);
+  color: var(--color-heading);
+}
+
+/* ── Datos ── */
+
+.detalle-turno-profesional {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding-bottom: var(--space-4);
+  margin-bottom: var(--space-2);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.detalle-turno-profesional p {
   margin: 0;
 }
 
-.detalle-turno-acciones {
-  border-top: 1px solid rgba(255,255,255,0.15);
-  margin-top: 18px;
-  padding-top: 16px;
+.detalle-turno .detalle-turno-profesional-nombre {
+  font-size: var(--text-md);
+  font-weight: var(--weight-semibold);
+  color: var(--color-heading);
 }
 
-.detalle-turno-nota {
-  border-top: 1px solid rgba(255,255,255,0.15);
-  margin: 18px 0 0;
-  padding-top: 16px;
+.detalle-turno-profesional-detalle {
   font-size: var(--text-sm);
-  line-height: 1.5;
-  color: var(--color-border);
+  color: var(--color-text-muted);
 }
 
-.detalle-turno-btn-cancelar {
+.detalle-turno-datos {
+  margin: 0;
+}
+
+.detalle-turno-datos > div {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.detalle-turno-datos > div:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.detalle-turno-datos dt {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
   font-size: var(--text-sm);
-  padding: 0 14px;
-  height: 34px;
-  background: transparent;
-  border: 1px solid rgba(255,255,255,0.25);
-  color: var(--color-danger-border);
-  border-radius: var(--radius-sm);
-  cursor: pointer;
+  font-weight: var(--weight-regular);
+  color: var(--color-text-muted);
+}
+
+.detalle-turno-datos dt svg {
+  color: var(--color-primary);
+}
+
+.detalle-turno-datos dd {
+  margin: 0;
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  text-align: right;
+  color: var(--color-heading);
+}
+
+.detalle-turno .indicaciones-medico {
+  margin-top: 0;
+}
+
+/* ── Qué sigue ── */
+
+.detalle-turno-sigue {
+  position: sticky;
+  top: var(--space-4);
+  border-top: 4px solid var(--color-primary);
+}
+
+.detalle-turno-sigue-icono {
+  color: var(--color-primary);
+}
+
+.detalle-turno-sigue p {
+  margin: 0 0 var(--space-4);
+  font-size: var(--text-sm);
+  line-height: 1.6;
+  color: var(--color-text);
+}
+
+.detalle-turno-recordatorios {
+  margin: 0;
+  padding-left: var(--space-5);
+  font-size: var(--text-sm);
+  line-height: 1.6;
+  color: var(--color-text);
+}
+
+.detalle-turno-recordatorios li + li {
+  margin-top: var(--space-2);
+}
+
+.detalle-turno-volver {
+  display: block;
+  margin-top: var(--space-4);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  text-align: center;
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
+.detalle-turno-volver:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 992px) {
+  .detalle-turno-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .detalle-turno-sigue {
+    position: static;
+  }
+}
+
+@media (max-width: 576px) {
+  .detalle-turno-card {
+    padding: var(--space-4);
+  }
+
+  .detalle-turno-cabecera {
+    flex-wrap: wrap;
+  }
+
+  .detalle-turno .detalle-turno-titulo {
+    font-size: var(--text-lg);
+  }
+
+  .detalle-turno-pasos {
+    padding: var(--space-3);
+  }
 }

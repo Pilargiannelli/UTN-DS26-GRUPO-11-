@@ -3,7 +3,7 @@ import { ChevronRight, JournalMedical } from "react-bootstrap-icons";
 import type { Turno } from "../../types/Turno";
 import type { EntradaClinica } from "../../types/HistoriaClinica";
 import { formatearChipFecha, formatearHora } from "../../utils/fecha";
-import { puedeCancelarPaciente, yaPaso } from "../../utils/estadoTurno";
+import { estadoVisible, puedeCancelarPaciente } from "../../utils/estadoTurno";
 import { IndicacionesMedico } from "./IndicacionesMedico";
 import "../../assets/styles/PacienteTurnos.css";
 
@@ -11,17 +11,6 @@ interface TurnoPacienteCardProps {
   turno: Turno;
   // Lo que registró el médico en esa consulta (solo turnos pasados)
   consulta?: EntradaClinica;
-}
-
-// Estado que ve el paciente: un turno que ya pasó se muestra como atendido
-// si el médico registró la consulta
-function estadoVisible(turno: Turno, consulta?: EntradaClinica) {
-  if (turno.estado === "Cancelado") return { texto: "Cancelado", clase: "cancelado" };
-  if (yaPaso(turno.fechaHora)) {
-    return consulta ? { texto: "Atendido", clase: "atendido" } : { texto: "Finalizado", clase: "finalizado" };
-  }
-  if (turno.estado === "Confirmado") return { texto: "Confirmado", clase: "confirmado" };
-  return { texto: "Por confirmar", clase: "pendiente" };
 }
 
 export function TurnoPacienteCard({ turno, consulta }: TurnoPacienteCardProps) {
