@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { cleanup, render, screen, within } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen, within } from "@testing-library/react";
 import { AuthContext } from "../../context/AuthContextBase";
 import type { AuthContextType } from "../../context/AuthContextBase";
 import type { EstadoTurno, Turno } from "../../types/Turno";
@@ -34,13 +34,7 @@ function renderizar(turnos: Turno[], rol: RolUsuario = "SECRETARIA") {
   };
   return render(
     <AuthContext.Provider value={contexto}>
-      <TurnosTable
-        turnos={turnos}
-        onNuevoTurno={vi.fn()}
-        onTurnoActualizado={vi.fn()}
-        verAnteriores={false}
-        onToggleAnteriores={vi.fn()}
-      />
+      <TurnosTable turnos={turnos} onNuevoTurno={vi.fn()} onTurnoActualizado={vi.fn()} />
     </AuthContext.Provider>
   );
 }
@@ -48,25 +42,49 @@ function renderizar(turnos: Turno[], rol: RolUsuario = "SECRETARIA") {
 const turnos = [
   turno(1, "2099-03-14T13:00:00.000Z", "Pendiente", "Ana"),
   turno(2, "2099-03-14T14:00:00.000Z", "Confirmado", "Beto"),
-  turno(3, "2099-03-15T13:00:00.000Z", "Pendiente", "Carla"),
+  turno(3, "2099-03-15T13:00:00.000Z", "Reprogramado", "Carla"),
   turno(4, "2099-03-14T15:00:00.000Z", "Cancelado", "Dani"),
 ];
 
-describe("TurnosTable (agenda)", () => {
-  it("agrupa los turnos activos por día", () => {
+const panelActivo = () => screen.getByRole("tabpanel");
+
+describe("TurnosTable (próximos turnos por estado)", () => {
+  it("cada pestaña muestra cuántos turnos tiene", () => {
     renderizar(turnos);
-    // Dos días con turnos activos -> dos títulos de día
-    expect(screen.getAllByRole("columnheader").filter((th) => th.getAttribute("scope") === "colgroup")).toHaveLength(2);
+    expect(screen.getByRole("tab", { name: /Pendientes/ })).toHaveTextContent("2");
+    expect(screen.getByRole("tab", { name: /Confirmados/ })).toHaveTextContent("1");
+    expect(screen.getByRole("tab", { name: /Cancelados/ })).toHaveTextContent("1");
   });
 
-  it("los cancelados no aparecen en la agenda, sino en su propia sección", () => {
+  it("arranca en Pendientes (incluye Reprogramados) agrupados por día", () => {
     renderizar(turnos);
-    const agenda = screen.getAllByRole("table")[0];
-    expect(within(agenda).queryByText("Dani Test")).not.toBeInTheDocument();
+    const panel = panelActivo();
+    expect(within(panel).getByText("Ana Test")).toBeInTheDocument();
+    expect(within(panel).getByText("Carla Test")).toBeInTheDocument();
+    expect(within(panel).queryByText("Beto Test")).not.toBeInTheDocument();
+    // Ana y Carla son de días distintos: dos títulos de día
+    expect(within(panel).getAllByRole("columnheader").filter((th) => th.getAttribute("scope") === "colgroup")).toHaveLength(2);
+  });
 
-    expect(screen.getByText("Cancelados (1)")).toBeInTheDocument();
-    const seccionCancelados = screen.getAllByRole("table")[1];
-    expect(within(seccionCancelados).getByText("Dani Test")).toBeInTheDocument();
+  it("los cancelados están en su propia pestaña, sin acciones", () => {
+    renderizar(turnos);
+    fireEvent.click(screen.getByRole("tab", { name: /Cancelados/ }));
+    const panel = panelActivo();
+    expect(within(panel).getByText("Dani Test")).toBeInTheDocument();
+    expect(within(panel).queryByRole("button", { name: "Cancelar" })).not.toBeInTheDocument();
+  });
+
+  it("solo los pendientes se pueden confirmar", () => {
+    renderizar(turnos);
+    expect(within(panelActivo()).getAllByRole("button", { name: "Confirmar" })).toHaveLength(2);
+    fireEvent.click(screen.getByRole("tab", { name: /Confirmados/ }));
+    expect(within(panelActivo()).queryByRole("button", { name: "Confirmar" })).not.toBeInTheDocument();
+  });
+
+  it("una pestaña sin turnos lo dice", () => {
+    renderizar([turno(1, "2099-03-14T13:00:00.000Z", "Pendiente", "Ana")]);
+    fireEvent.click(screen.getByRole("tab", { name: /Cancelados/ }));
+    expect(within(panelActivo()).getByText("No hay turnos cancelados próximos.")).toBeInTheDocument();
   });
 
   it("el médico no ve la columna Médico (son todos suyos)", () => {

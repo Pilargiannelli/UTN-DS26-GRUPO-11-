@@ -43,9 +43,6 @@ function GestionTurnos() {
   // se suma a la lista el turno que devolvió el back (201).
   const [turnosNuevos, setTurnosNuevos] = useState<Turno[]>([]);
 
-  // Por defecto se ven los turnos de hoy en adelante; los anteriores, a pedido
-  const [verAnteriores, setVerAnteriores] = useState(false);
-
   const agregarTurno = (nuevoTurno: Turno) => {
     setTurnosNuevos((prev) => [...prev, nuevoTurno]);
   };
@@ -65,9 +62,8 @@ function GestionTurnos() {
   // ==========================================
 
   const ahora = new Date();
-  const inicioDeHoy = new Date(ahora);
-  inicioDeHoy.setHours(0, 0, 0, 0);
-  const finDeHoy = new Date(inicioDeHoy);
+  const finDeHoy = new Date(ahora);
+  finDeHoy.setHours(0, 0, 0, 0);
   finDeHoy.setDate(finDeHoy.getDate() + 1);
 
   const fechaActual = ahora.toLocaleDateString(
@@ -88,8 +84,9 @@ function GestionTurnos() {
     }
   );
 
-  const desdeHoy = todosLosTurnos.filter((t) => new Date(t.fechaHora) >= inicioDeHoy);
-  const turnosVisibles = verAnteriores ? todosLosTurnos : desdeHoy;
+  // El panel muestra solo los turnos que todavía no pasaron (los de días
+  // anteriores, y los de hoy que ya fueron, se consultan en la Agenda)
+  const proximos = todosLosTurnos.filter((t) => new Date(t.fechaHora) >= ahora);
 
   // ==========================================
   // Próximo turno: el primero que todavía no pasó y no está cancelado
@@ -100,19 +97,19 @@ function GestionTurnos() {
   );
 
   // ==========================================
-  // Dashboard: los turnos de hoy y, por estado, los de hoy en adelante
+  // Dashboard: los que quedan hoy y, por estado, todos los próximos
   // (el Médico ya recibe solo su agenda desde el back)
   // ==========================================
 
-  const turnosDeHoy = desdeHoy.filter(
+  const turnosDeHoy = proximos.filter(
     (t) => new Date(t.fechaHora) < finDeHoy && t.estado !== "Cancelado"
   ).length;
 
-  const pendientes = desdeHoy.filter((t) => t.estado === "Pendiente" || t.estado === "Reprogramado").length;
+  const pendientes = proximos.filter((t) => t.estado === "Pendiente" || t.estado === "Reprogramado").length;
 
-  const confirmados = desdeHoy.filter((t) => t.estado === "Confirmado").length;
+  const confirmados = proximos.filter((t) => t.estado === "Confirmado").length;
 
-  const cancelados = desdeHoy.filter((t) => t.estado === "Cancelado").length;
+  const cancelados = proximos.filter((t) => t.estado === "Cancelado").length;
 
     // ==========================================
   // Loading
@@ -197,17 +194,13 @@ function GestionTurnos() {
 
         <TurnosTable
 
-          turnos={turnosVisibles}
+          turnos={proximos}
 
           onNuevoTurno={() =>
             setShowModal(true)
           }
 
           onTurnoActualizado={actualizarTurno}
-
-          verAnteriores={verAnteriores}
-
-          onToggleAnteriores={() => setVerAnteriores((v) => !v)}
 
         />
 
