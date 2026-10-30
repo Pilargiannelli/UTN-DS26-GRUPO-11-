@@ -62,7 +62,7 @@ export function PacienteFormFields({ onSave, onCancel, usuario }: PacienteFormPr
         fechaNacimiento: stringToDateInput(paciente.fechaNacimiento.split("T")[0]),
     };
 
-    const { register, handleSubmit, setValue, setError, control, formState: { errors, isSubmitting } } = useForm<PacienteValidado>({
+    const { register, handleSubmit, setValue, setError, control, formState: { errors, isSubmitting, isDirty } } = useForm<PacienteValidado>({
         resolver: zodResolver(schema) as Resolver<PacienteValidado>,
         mode: "onBlur",
         defaultValues: initialValues,
@@ -193,9 +193,13 @@ export function PacienteFormFields({ onSave, onCancel, usuario }: PacienteFormPr
                         </Form.Group>
                     </Col>
                 </Row>
-                <div className="d-flex justify-content-end gap-2 mt-4 pt-2 border-t">
-                    <Button type="button" variant="secondary" size="sm" onClick={onCancel} disabled={isSubmitting}> Cancelar </Button>
-                    <Button type="submit" variant="primary" size="sm" disabled={isSubmitting}>
+                {/* El formulario se edita directo: Guardar se habilita cuando hay cambios
+                    y "Descartar cambios" vuelve a los datos guardados */}
+                <div className="perfil-form-acciones">
+                    {isDirty && (
+                        <Button type="button" variant="outline-secondary" onClick={onCancel} disabled={isSubmitting}>Descartar cambios</Button>
+                    )}
+                    <Button type="submit" variant="primary" disabled={isSubmitting || !isDirty}>
                         {isSubmitting ? <Spinner size="sm" animation="border" /> : "Guardar cambios"}
                     </Button>
                 </div>

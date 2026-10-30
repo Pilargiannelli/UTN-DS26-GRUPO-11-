@@ -14,6 +14,9 @@ router.get("/medicos", usuarioController.getMedicos);
 // GET /api/pacientes -> Exige token y rol SECRETARIA o MEDICO (sección 6)
 router.get("/pacientes", authenticate, authorize(Rol.SECRETARIA, Rol.MEDICO), usuarioController.getPacientes);
 
+// GET /api/pacientes/:id -> ficha de un paciente (sección 6)
+router.get("/pacientes/:id", authenticate, authorize(Rol.SECRETARIA, Rol.MEDICO), validateParams(idParamSchema), usuarioController.getPaciente);
+
 // POST /api/pacientes -> alta de paciente por la secretaria (HU-001: "como
 // personal administrativo"). Crea Usuario + Paciente; usuario y contraseña
 // inicial = DNI.

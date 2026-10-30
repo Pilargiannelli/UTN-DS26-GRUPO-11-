@@ -1,19 +1,246 @@
-.cont-perfil {
-    margin-bottom: 0;
+/* Perfil y Mi cuenta (VerUsuario): encabezado centrado en la persona,
+   pestañas tipo píldora y un panel por pestaña */
+
+.perfil {
+  max-width: 880px;
+  padding-top: var(--space-4);
+  padding-bottom: var(--space-7);
+  text-align: left;
 }
 
-.row-perfil {
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    margin-top: 1rem;
-    margin-bottom: 0;
-    gap: 2rem;
+/* ── Encabezado: avatar, nombre, contacto y rol ── */
+
+.perfil-encabezado {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1);
+  margin: var(--space-5) 0 var(--space-5);
+  text-align: center;
 }
 
-.col-perfil {
-    display: flex;
-    justify-content: center;
-    flex: 0 0 auto;
-    width: auto;
+.perfil .perfil-nombre {
+  margin: var(--space-3) 0 0;
+  font-size: var(--text-2xl);
+  font-weight: var(--weight-semibold);
+  color: var(--color-heading);
+}
+
+.perfil-subtitulo {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  overflow-wrap: anywhere;
+}
+
+/* Etiqueta del rol, con el color de cada uno */
+.perfil-rol {
+  margin-top: var(--space-1);
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-pill);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semibold);
+}
+
+.perfil-rol-paciente {
+  color: var(--color-pino-800);
+  background: var(--color-pino-100);
+}
+
+.perfil-rol-secretaria {
+  color: var(--color-info);
+  background: var(--color-info-bg);
+}
+
+.perfil-rol-medico {
+  color: var(--color-accent);
+  background: var(--color-accent-bg);
+}
+
+.perfil-accion {
+  margin-top: var(--space-3);
+}
+
+/* ── Pestañas tipo píldora ── */
+
+.perfil-tabs {
+  justify-content: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
+  border: none;
+}
+
+.perfil-tabs .nav-link {
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-pill);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  color: var(--color-text-muted);
+  background: transparent;
+  transition: background-color var(--transition-fast), color var(--transition-fast);
+}
+
+.perfil-tabs .nav-link:hover {
+  color: var(--color-pino-800);
+  background: var(--color-pino-50);
+}
+
+.perfil-tabs .nav-link.active {
+  color: var(--color-on-primary);
+  background: var(--color-primary);
+}
+
+/* ── Panel de cada pestaña ── */
+
+.perfil-panel {
+  padding: var(--space-5) var(--space-6);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+.perfil-panel-encabezado {
+  margin-bottom: var(--space-4);
+  padding-bottom: var(--space-3);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.perfil .perfil-panel-titulo {
+  margin: 0;
+  font-size: var(--text-lg);
+  font-weight: var(--weight-semibold);
+  color: var(--color-heading);
+}
+
+.perfil-panel-descripcion {
+  margin-top: var(--space-1);
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+
+/* ── Datos "Etiqueta  valor" (solo lectura) ── */
+
+.perfil-datos {
+  margin: 0;
+}
+
+.perfil-dato {
+  display: grid;
+  grid-template-columns: 160px minmax(0, 1fr);
+  gap: var(--space-3);
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.perfil-dato:last-child {
+  border-bottom: none;
+}
+
+.perfil-dato dt {
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  color: var(--color-text-muted);
+}
+
+.perfil-dato dd {
+  margin: 0;
+  font-size: var(--text-sm);
+  color: var(--color-text);
+  overflow-wrap: anywhere;
+  font-variant-numeric: tabular-nums;
+}
+
+.perfil-nota {
+  margin: var(--space-3) 0 0;
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+
+/* ── Formularios: acciones abajo a la derecha ── */
+
+.perfil-form-acciones {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-2);
+  margin-top: var(--space-5);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--color-border);
+}
+
+/* ── Próximos turnos del paciente ── */
+
+.perfil-turnos {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.perfil-turno {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.perfil-turno:last-child {
+  border-bottom: none;
+}
+
+.perfil-turno-fecha {
+  display: block;
+  font-weight: var(--weight-semibold);
+  font-variant-numeric: tabular-nums;
+}
+
+.perfil-turno-fecha::first-letter {
+  text-transform: uppercase;
+}
+
+.perfil-turno-medico {
+  display: block;
+  font-size: var(--text-xs);
+  color: var(--color-text-subtle);
+}
+
+/* ── Celular ── */
+
+@media (max-width: 576px) {
+  .perfil .perfil-nombre {
+    font-size: var(--text-xl);
+  }
+
+  .perfil-accion {
+    width: 100%;
+  }
+
+  /* Las pestañas se desplazan de costado si no entran */
+  .perfil-tabs {
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    overflow-x: auto;
+  }
+
+  .perfil-tabs .nav-link {
+    white-space: nowrap;
+  }
+
+  .perfil-panel {
+    padding: var(--space-4);
+  }
+
+  .perfil-dato {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+  }
+
+  .perfil-form-acciones .btn {
+    flex: 1;
+  }
+}
+
+/* La ficha clínica del médico usa todo el ancho (dos columnas) */
+.perfil.perfil-medico {
+  max-width: var(--content-max);
 }

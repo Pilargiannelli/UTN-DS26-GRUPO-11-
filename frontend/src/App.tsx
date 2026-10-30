@@ -1,7 +1,6 @@
 import { Routes, Route } from "react-router-dom";
 import Login from "./pages/Login";
 import Home from "./pages/Home.tsx";
-import RegistrarMedico from "./pages/RegistroDeMédico.tsx";
 import MisTurnos from "./pages/MisTurnos.tsx";
 import RegistroPaciente from "./pages/RegistroPaciente.tsx";
 import AutoregistroPaciente from "./pages/AutoregistroPaciente";
@@ -9,15 +8,13 @@ import BuscarPaciente from "./pages/BuscarPaciente";
 import PrivateRoute from "./components/PrivateRoute";
 import NoAutorizado from "./pages/NoAutorizado";
 import VerUsuario from "./pages/VerUsuario.tsx";
-import RegistroUsuario from "./pages/RegistroUsuario.tsx";
 import GestionTurnos from "./pages/GestionTurnos";
 import DetalleTurno from "./pages/DetalleTurno.tsx";
 import CancelarTurno from "./pages/CancelarTurno.tsx";
 import PedirTurno from "./pages/PedirTurno.tsx";
-import CambiarPassword from "./pages/CambiarPassword";
 import BuscarMedico from "./pages/BuscarMédico.tsx";
 import OrdenDelDia from "./pages/OrdenDelDia.tsx";
-import HistorialClinico from "./pages/HistorialClinico.tsx";
+import FichaPaciente from "./pages/FichaPaciente.tsx";
 import NoEncontrada from "./pages/NoEncontrada.tsx";
 import Layout from "./components/Layout/Layout.tsx";
 
@@ -39,7 +36,6 @@ function App() {
         <Route path="/buscar-medico" element={<BuscarMedico />} />
         <Route path="/ver-perfil" element={<VerUsuario />} />
         <Route path="/mi-cuenta" element={<VerUsuario propio />} />
-        <Route path="/cambiar-password" element={<CambiarPassword />} />
         <Route path="/mis-turnos" element={<MisTurnos />} />
         <Route path="/turnos/:id" element={<DetalleTurno />} />
         <Route path="/turnos/:id/cancelar" element={<CancelarTurno />} />
@@ -50,10 +46,8 @@ function App() {
       {/* RUTAS EXCLUSIVAS DE LA SECRETARIA */}
       {/* ========================================== */}
       <Route element={<PrivateRoute roles={["SECRETARIA"]} />}>
-        <Route path="/registrar-medico" element={<RegistrarMedico />} />
         {/* HU-001: el alta de pacientes es del personal administrativo */}
         <Route path="/registrar-paciente" element={<RegistroPaciente />} />
-        <Route path="/registrar-usuario" element={<RegistroUsuario />} />
       </Route>
 
       {/* ========================================== */}
@@ -61,17 +55,19 @@ function App() {
       {/* ========================================== */}
       <Route element={<PrivateRoute roles={["SECRETARIA", "MEDICO"]} />}>
         <Route path="/buscar-paciente" element={<BuscarPaciente />} />
+        {/* Ficha de cada paciente, con su propia dirección (datos, turnos e
+            historia clínica en un solo lugar) */}
+        <Route path="/pacientes/:id" element={<FichaPaciente />} />
         {/* GestionTurnos no trae Layout propio (Home lo usa adentro del suyo) */}
         <Route path="/gestion-turnos" element={<Layout><GestionTurnos /></Layout>} />
       </Route>
 
       {/* ========================================== */}
-      {/* RUTAS EXCLUSIVAS MÉDICAS */}
-      {/* (Solo para el rol MEDICO) */}
+      {/* AGENDA */}
+      {/* El médico ve la suya; la secretaria, la de cada médico */}
       {/* ========================================== */}
-      <Route element={<PrivateRoute roles={["MEDICO"]} />}>
+      <Route element={<PrivateRoute roles={["MEDICO", "SECRETARIA"]} />}>
         <Route path="/orden-del-dia" element={<OrdenDelDia />} />
-        <Route path="/historial" element={<HistorialClinico />} />
       </Route>
 
       {/* Cualquier otra URL: página 404 en vez de pantalla en blanco */}

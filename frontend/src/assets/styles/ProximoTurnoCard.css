@@ -1,6 +1,7 @@
 .proximo-turno-banner {
-  background: #ffffff;
-  border-radius: 14px;
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+  border-radius: var(--radius-lg);
   padding: 1.5rem;
   display: flex;
   align-items: center;
@@ -13,7 +14,9 @@
   flex-direction: column;
   gap: 14px;
   text-align: center;
-  color: #fff;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  color: var(--color-text-muted);
   padding: 2rem;
 }
 
@@ -27,39 +30,36 @@
 .proximo-turno-chip-fecha {
   text-align: center;
   background: rgba(255,255,255,0.12);
-  border-radius: 10px;
-  border-left: 1px solid #ececec;
-  border-right: 1px solid #ececec;
-  padding-right: 18px;
-  padding-left: 18px;
+  border-radius: var(--radius-md);
+  padding: var(--space-2) var(--space-4);
   flex-shrink: 0;
 }
 
-.proximo-turno-chip-mes {
-  font-size: 11px;
-  color: #9fd4bc;
+.proximo-turno-banner .proximo-turno-chip-mes {
+  font-size: var(--text-xs);
+  color: var(--color-pino-200);
   margin: 0;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 
-.proximo-turno-chip-dia {
-  font-size: 22px;
-  color: #fff;
+.proximo-turno-banner .proximo-turno-chip-dia {
+  font-size: var(--text-xl);
+  color: var(--color-on-primary);
   font-weight: 500;
   margin: 0;
   line-height: 1;
 }
 
-.proximo-turno-eyebrow {
-  font-size: 12px;
-  color: #9fd4bc;
+.proximo-turno-banner .proximo-turno-eyebrow {
+  font-size: var(--text-xs);
+  color: var(--color-pino-200);
   margin: 0 0 4px;
 }
 
-.proximo-turno-detalle {
-  font-size: 18px;
-  color: #fff;
+.proximo-turno-banner .proximo-turno-detalle {
+  font-size: var(--text-md);
+  color: var(--color-on-primary);
   font-weight: 500;
   margin: 0;
 }
@@ -71,22 +71,63 @@
 }
 
 .proximo-turno-btn {
-  font-size: 13px;
-  padding: 0 14px;
-  height: 34px;
-  background: linear-gradient(90deg, #17775a, #2e7d5b);
-  color: #fff;
-  border-radius: 8px;
+  /* Son links (<a>) con estilo de botón */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  font-size: var(--text-sm);
+  padding: 0 var(--space-4);
+  height: 36px;
+  background: var(--color-surface);
+  color: var(--color-pino-800);
+  border-radius: var(--radius-sm);
   cursor: pointer;
-  border: none;
-  font-weight: 500;
+  border: 1px solid transparent;
+  font-weight: var(--weight-semibold);
+  transition: background-color var(--transition-fast), border-color var(--transition-fast);
+}
+
+.proximo-turno-btn:hover {
+  background: var(--color-pino-100);
+  color: var(--color-pino-800);
 }
 
 .proximo-turno-btn-cancelar {
-  background: linear-gradient(90deg, #981e1e, #ad4040);
+  background: transparent;
+  color: var(--color-on-primary);
+  border-color: rgba(255, 255, 255, 0.45);
 }
 
-.proximo-turno-btn-primario {
-  border: none;
-  font-weight: 500;
+.proximo-turno-btn-cancelar:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+/* En la tarjeta vacía (fondo blanco) el botón vuelve a ser el primario */
+.proximo-turno-vacio .proximo-turno-btn-primario {
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+}
+
+.proximo-turno-vacio .proximo-turno-btn-primario:hover {
+  background: var(--color-primary-hover);
+}
+
+@media (max-width: 576px) {
+  .proximo-turno-banner {
+    flex-wrap: wrap;
+    padding: var(--space-4);
+  }
+
+  .proximo-turno-acciones {
+    width: 100%;
+  }
+
+  .proximo-turno-acciones > a {
+    flex: 1;
+  }
+
+  .proximo-turno-acciones .proximo-turno-btn {
+    width: 100%;
+  }
 }

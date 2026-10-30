@@ -4,6 +4,12 @@ import { z } from "zod";
 const fechaFutura = (fecha: Date) => fecha > new Date();
 const MENSAJE_PASADO = "No se pueden pedir turnos en el pasado";
 
+// La clínica atiende de lunes a viernes. El día se mira en la hora de la
+// clínica, no en la del servidor (que corre en UTC).
+const ZONA_HORARIA_CLINICA = "America/Argentina/Buenos_Aires";
+const diaDeSemana = new Intl.DateTimeFormat("en-US", { weekday: "short", timeZone: ZONA_HORARIA_CLINICA });
+const esDiaHabil = (fecha: Date) => !["Sat", "Sun"].includes(diaDeSemana.format(fecha));
+
 // Campos que el cliente puede mandar en POST/PUT. pagoValidado e idWhatsapp
 // no están (SEC-002): los va a escribir el flujo de pago/WhatsApp del back, no
 // el cliente. Lo que no se declara acá, z.object lo descarta.
@@ -17,7 +23,8 @@ const turnoBaseSchema = z.object({
     .date({ error: "La fecha y hora del turno son obligatorias" })
     .refine((f) => f.getUTCMinutes() % 30 === 0 && f.getUTCSeconds() === 0 && f.getUTCMilliseconds() === 0, {
       message: "Los turnos son cada 30 minutos (en punto o y media)",
-    }),
+    })
+    .refine(esDiaHabil, { message: "La clínica atiende de lunes a viernes" }),
   estado: z
     .enum(["Pendiente", "Confirmado", "Cancelado", "Reprogramado"])
     .optional(), // el default (Pendiente) lo pone Prisma
@@ -26,11 +33,14 @@ const turnoBaseSchema = z.object({
   secretariaId: z.number().int().positive("El id de la secretaria debe ser positivo").optional(),
 });
 
-// POST /api/turnos (secretaria y médico)
-export const turnoCreateSchema = turnoBaseSchema.refine((d) => fechaFutura(d.fechaHora), {
-  message: MENSAJE_PASADO,
-  path: ["fechaHora"],
-});
+// POST /api/turnos (secretaria y médico). Un turno nuevo nace Pendiente o
+// Confirmado: Cancelado y Reprogramado son cambios sobre uno que ya existe.
+export const turnoCreateSchema = turnoBaseSchema
+  .extend({ estado: z.enum(["Pendiente", "Confirmado"], { error: "Un turno nuevo solo puede ser Pendiente o Confirmado" }).optional() })
+  .refine((d) => fechaFutura(d.fechaHora), {
+    message: MENSAJE_PASADO,
+    path: ["fechaHora"],
+  });
 
 // POST /api/turnos como PACIENTE: solo elige médico y horario. pacienteId sale
 // del token y el estado es siempre Pendiente (lo que mande de más se descarta).

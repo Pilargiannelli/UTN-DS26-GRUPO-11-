@@ -4,32 +4,31 @@ import {
   Modal,
   Button,
   Form,
-  Row,
-  Col,
   Alert,
   Spinner,
 } from "react-bootstrap";
 
 import "../../assets/styles/ModalTurno.css";
-import "../../assets/styles/PedirTurno.css";
 
 import { turnoSchema } from "../../schemas/TurnoSchema";
 import { apiFetch, ApiError } from "../../services/api";
 import { useFetch } from "../../hooks/useFetch";
-import { useHorariosOcupados } from "../../hooks/useHorariosOcupados";
-import { HORARIOS_CONSULTORIO, horarioNoDisponible } from "../../utils/horarios";
+import { SelectorTurno } from "../SelectorTurno";
 import type { Turno, MedicoTurno, PacienteTurno } from "../../types/Turno";
 
 interface NuevoTurnoModalProps {
   show: boolean;
   onClose: () => void;
   onAgregar: (turno: Turno) => void;
+  // "Dar turno" desde el listado de pacientes: el modal abre con ese paciente
+  pacienteIdInicial?: number;
 }
 
 function NuevoTurnoModal({
   show,
   onClose,
   onAgregar,
+  pacienteIdInicial,
 }: NuevoTurnoModalProps) {
 
 
@@ -40,15 +39,11 @@ function NuevoTurnoModal({
   const { data: pacientes } = useFetch<PacienteTurno[]>("/pacientes");
 
   const [form, setForm] = useState({
-    pacienteId: "",
+    pacienteId: pacienteIdInicial ? String(pacienteIdInicial) : "",
     medicoId: "",
     fecha: "",
     hora: "",
-    estado: "Pendiente" as
-      | "Pendiente"
-      | "Confirmado"
-      | "Cancelado"
-      | "Reprogramado",
+    estado: "Pendiente" as "Pendiente" | "Confirmado",
   });
 
   const [errores, setErrores] = useState<Record<string, string>>({});
@@ -56,9 +51,10 @@ function NuevoTurnoModal({
   const [errorApi, setErrorApi] = useState<string | null>(null);
   const [recargarOcupados, setRecargarOcupados] = useState(0);
 
-  // Horarios que el médico ya tiene tomados ese día (se muestran tachados)
-  const ocupados = useHorariosOcupados(form.medicoId, form.fecha, recargarOcupados);
-  const hoyISO = new Date().toLocaleDateString("en-CA");
+  const elegirFecha = (fecha: string) => {
+    setForm((prev) => ({ ...prev, fecha, hora: "" }));
+    setErrores((prev) => ({ ...prev, fecha: "", hora: "" }));
+  };
 
   const elegirHora = (hora: string) => {
     setForm((prev) => ({ ...prev, hora }));
@@ -136,27 +132,8 @@ function NuevoTurnoModal({
 
     }
 
-    // ==========================
-    // Fecha no anterior a hoy
-    // ==========================
-
-    const hoy = new Date()
-      .toISOString()
-      .split("T")[0];
-
-    if (form.fecha < hoy) {
-
-      setErrores({
-        fecha:
-          "No es posible registrar turnos en fechas anteriores a hoy.",
-      });
-
-      return;
-
-    }
-
-    // El horario laboral (08:00 a 19:30, cada 30 minutos) ya lo garantiza la
-    // grilla HORARIOS_CONSULTORIO: no hay forma de elegir otro.
+    // Días hábiles, horario laboral y fecha futura ya los garantiza el
+    // SelectorTurno (no ofrece otra cosa), y el back los vuelve a validar.
 
     // ==========================
     // POST /api/turnos con el token (lo agrega apiFetch solo)
@@ -295,64 +272,24 @@ function NuevoTurnoModal({
 
           </Form.Group>
 
-          <Row>
-
-            <Col md={6}>
-
-              <Form.Group className="mb-3">
-
-                <Form.Label>Fecha</Form.Label>
-
-                <Form.Control
-                  type="date"
-                  name="fecha"
-                  min={hoyISO}
-                  value={form.fecha}
-                  onChange={handleChange}
-                  isInvalid={!!errores.fecha}
-                />
-
-                <Form.Control.Feedback type="invalid">
-                  {errores.fecha}
-                </Form.Control.Feedback>
-
-              </Form.Group>
-
-            </Col>
-
-          </Row>
-
-          {/* Horarios predefinidos: los ocupados del médico ese día salen tachados */}
+          {/* Día y horario: la tira muestra cuántos horarios libres le quedan a
+              cada día del médico; los ocupados y los ya pasados no se eligen */}
           <Form.Group className="mb-3">
 
-            <Form.Label>Horario</Form.Label>
+            <Form.Label>Día y horario</Form.Label>
 
-            {!form.medicoId || !form.fecha ? (
-              <p className="pedir-turno-ayuda mt-0">Elegí un médico y una fecha para ver los horarios disponibles.</p>
-            ) : (
-              <>
-                <div className="pedir-turno-horarios mb-2">
-                  {HORARIOS_CONSULTORIO.map((h) => {
-                    const noDisponible = horarioNoDisponible(form.fecha, h, ocupados);
-                    return (
-                      <button
-                        key={h}
-                        type="button"
-                        className={`pedir-turno-chip ${form.hora === h ? "pedir-turno-chip-activo" : ""} ${noDisponible ? "pedir-turno-chip-ocupado" : ""}`}
-                        onClick={() => elegirHora(h)}
-                        disabled={noDisponible}
-                        aria-label={noDisponible ? `${h}, no disponible` : h}
-                      >
-                        {h}
-                      </button>
-                    );
-                  })}
-                </div>
-                <p className="pedir-turno-ayuda mt-0">Los horarios tachados ya están ocupados o pasaron.</p>
-              </>
+            <SelectorTurno
+              medicoId={form.medicoId}
+              fecha={form.fecha}
+              hora={form.hora}
+              onFecha={elegirFecha}
+              onHora={elegirHora}
+              recargar={recargarOcupados}
+            />
+
+            {(errores.fecha || errores.hora) && (
+              <div className="text-danger small mt-1">{errores.fecha || errores.hora}</div>
             )}
-
-            {errores.hora && <div className="text-danger small">{errores.hora}</div>}
 
           </Form.Group>
 
@@ -375,14 +312,7 @@ function NuevoTurnoModal({
                 Confirmado
               </option>
 
-              <option value="Cancelado">
-                Cancelado
-              </option>
-
-              <option value="Reprogramado">
-                Reprogramado
-              </option>
-
+              {/* Un turno nuevo no nace Cancelado ni Reprogramado */}
             </Form.Select>
 
             <Form.Control.Feedback type="invalid">

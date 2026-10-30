@@ -1,13 +1,11 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Montserrat:wght@400;600;800&family=Poppins:wght@400;600;800&display=swap");
-
 :root {
-    --header-font: "Inter", sans-serif;
-    --header-title-font: "Monserrat", "Poppins", sans-serif;
-    --header-font-color: #ffffff;
+    --header-font: var(--font-sans);
+    --header-title-font: var(--font-sans);
+    --header-font-color: var(--color-on-primary);
     --header-user-foto-size: 50px;
     --header-user-foto-margin-bottom: 1rem;
     --header-font-weight: 600;
-    --desp-menu-font-color: #000000;
+    --desp-menu-font-color: var(--color-text);
 }
 
 #ColorNav, .navbar, .header-container .nav-logo {
@@ -15,8 +13,8 @@
 }
 
 .header-saludo {
-  color: #1f2933;
-  font-size: 15px;
+  color: var(--color-text);
+  font-size: var(--text-base);
 }
 
 .header-container {
@@ -82,10 +80,10 @@ a#perfil-dropdown.dropdown-toggle::after {
 }
 
 .dropdown-menu {
-  background-color: #ffffff !important;
-  border-radius: 8px;
+  background-color: var(--color-surface) !important;
+  border-radius: var(--radius-sm);
   padding: 0.5rem 0;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  box-shadow: var(--shadow-md);
 }
 
 .dropdown-menu.show {
@@ -119,4 +117,17 @@ a#perfil-dropdown.dropdown-toggle::after {
     background-size: cover;
     background-position: center;
     margin-top: 0.5rem;
+}
+/* Header: blanco con una franja verde pino arriba (el mismo detalle que las
+   tarjetas), borde abajo y sombra suave. Queda fijo arriba al hacer scroll.
+   La altura no depende de lo que tenga adentro (antes la daba el avatar). */
+#colorNav {
+    position: sticky;
+    top: 0;
+    z-index: 1020;
+    min-height: var(--header-height);
+    background-color: var(--color-surface);
+    border-top: 3px solid var(--color-primary);
+    border-bottom: 1px solid var(--color-border);
+    box-shadow: var(--shadow-sm);
 }

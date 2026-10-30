@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import type { Turno } from "../types/Turno";
 import { formatearChipFecha, formatearHora } from "../utils/fecha";
+import { puedeCancelarPaciente } from "../utils/estadoTurno";
 import "../assets/styles/ProximoTurnoCard.css";
 
 interface ProximoTurnoCardProps {
@@ -12,8 +13,9 @@ export function ProximoTurnoCard({ turno }: ProximoTurnoCardProps) {
     return (
       <div className="proximo-turno-banner proximo-turno-vacio">
         <p>No tenés consultas agendadas.</p>
-        <Link to="/pedir-turno">
-          <button className="proximo-turno-btn proximo-turno-btn-primario">Agendar una consulta</button>
+        {/* Link con estilo de botón: un <button> dentro de un <a> es HTML inválido */}
+        <Link to="/pedir-turno" className="proximo-turno-btn proximo-turno-btn-primario">
+          Pedir turno
         </Link>
       </div>
     );
@@ -36,12 +38,15 @@ export function ProximoTurnoCard({ turno }: ProximoTurnoCardProps) {
         </div>
       </div>
       <div className="proximo-turno-acciones">
-        <Link to={`/turnos/${turno.id}`}>
-          <button className="proximo-turno-btn">Ver más</button>
+        <Link to={`/turnos/${turno.id}`} className="proximo-turno-btn">
+          Ver detalle
         </Link>
-        <Link to={`/turnos/${turno.id}/cancelar`}>
-          <button className="proximo-turno-btn proximo-turno-btn-cancelar">Cancelar</button>
-        </Link>
+        {/* Un turno confirmado ya no se cancela desde la app (RN-006) */}
+        {puedeCancelarPaciente(turno.estado, turno.fechaHora) && (
+          <Link to={`/turnos/${turno.id}/cancelar`} className="proximo-turno-btn proximo-turno-btn-cancelar">
+            Cancelar
+          </Link>
+        )}
       </div>
     </div>
   );

@@ -1,0 +1,46 @@
+.avatar-iniciales {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border-radius: var(--radius-pill);
+  font-weight: var(--weight-semibold);
+}
+
+.avatar-iniciales-md {
+  width: 40px;
+  height: 40px;
+  font-size: var(--text-sm);
+}
+
+.avatar-iniciales-lg {
+  width: 64px;
+  height: 64px;
+  font-size: var(--text-xl);
+}
+
+.avatar-iniciales-pino {
+  color: var(--color-pino-800);
+  background: var(--color-pino-100);
+}
+
+.avatar-iniciales-info {
+  color: var(--color-info);
+  background: var(--color-info-bg);
+}
+
+.avatar-iniciales-accent {
+  color: var(--color-accent);
+  background: var(--color-accent-bg);
+}
+
+.avatar-iniciales-warning {
+  color: var(--color-warning);
+  background: var(--color-warning-bg);
+}
+
+.avatar-iniciales-xl {
+  width: 88px;
+  height: 88px;
+  font-size: var(--text-2xl);
+}

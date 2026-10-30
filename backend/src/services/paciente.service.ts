@@ -77,6 +77,14 @@ export async function crearPaciente(datos: PacienteCreate, credenciales?: { user
   return prisma.paciente.findUniqueOrThrow({ where: { usuarioId: usuario.id }, include: includePaciente });
 }
 
+// GET /api/pacientes/:id: la ficha de un paciente (secretaria y médico). Le da
+// a cada paciente su propia dirección en el front (/pacientes/:id).
+export async function buscarPorId(pacienteId: number) {
+  const paciente = await prisma.paciente.findUnique({ where: { id: pacienteId }, include: includePaciente });
+  if (!paciente) throw new ErrorNegocio(404, "Paciente no encontrado");
+  return paciente;
+}
+
 // PUT /api/pacientes/:id: reemplaza los datos del paciente. Sin cobertura en
 // el body = "Sin obra social" (se borran las que tenía). El PACIENTE solo
 // edita la suya: otra responde 404, igual que los turnos.

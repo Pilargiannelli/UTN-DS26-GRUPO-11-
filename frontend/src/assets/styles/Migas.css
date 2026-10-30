@@ -1,0 +1,39 @@
+.migas ol {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  margin: var(--space-4) 0 var(--space-2);
+  padding: 0;
+  list-style: none;
+  font-size: var(--text-sm);
+}
+
+.migas li {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--color-text-muted);
+}
+
+/* Separador entre niveles */
+.migas li + li::before {
+  content: "›";
+  color: var(--color-text-subtle);
+}
+
+.migas a {
+  color: var(--color-pino-600);
+  font-weight: var(--weight-medium);
+  text-decoration: none;
+}
+
+.migas a:hover {
+  color: var(--color-pino-800);
+  text-decoration: underline;
+}
+
+.migas [aria-current="page"] {
+  color: var(--color-text);
+  font-weight: var(--weight-semibold);
+}

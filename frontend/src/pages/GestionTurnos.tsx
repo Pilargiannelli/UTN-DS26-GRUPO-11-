@@ -6,7 +6,6 @@ import {
 } from "react-bootstrap";
 
 import HeroTurnos from "../components/Turnos/HeroTurnos";
-import DashboardCards from "../components/Turnos/DashboardCards";
 
 import TurnosTable from "../components/Turnos/TurnosTable";
 import NuevoTurnoModal from "../components/Turnos/NuevoTurnoModal";
@@ -39,17 +38,32 @@ function GestionTurnos() {
   // en el GET para no tener que volver a pedir toda la lista
   const [actualizados, setActualizados] = useState<Record<number, Turno>>({});
 
-  const turnos = (data ?? []).map((t) => actualizados[t.id] ?? t);
+  // Alta de turno: la crea NuevoTurnoModal contra POST /api/turnos. Acá solo
+  // se suma a la lista el turno que devolvió el back (201).
+  const [turnosNuevos, setTurnosNuevos] = useState<Turno[]>([]);
 
-  const turnosOrdenados = [...turnos].sort(
-    (a, b) => a.fechaHora.localeCompare(b.fechaHora)
-  );
+  const agregarTurno = (nuevoTurno: Turno) => {
+    setTurnosNuevos((prev) => [...prev, nuevoTurno]);
+  };
+
+  const actualizarTurno = (turno: Turno) => {
+    setActualizados((prev) => ({ ...prev, [turno.id]: turno }));
+  };
+
+  // Una sola lista (los del GET + los creados acá, con sus cambios): de ella
+  // salen la tabla, los contadores y el próximo paciente
+  const todosLosTurnos = [...(data ?? []), ...turnosNuevos]
+    .map((t) => actualizados[t.id] ?? t)
+    .sort((a, b) => a.fechaHora.localeCompare(b.fechaHora));
 
   // ==========================================
   // Fecha y hora actual
   // ==========================================
 
   const ahora = new Date();
+  const finDeHoy = new Date(ahora);
+  finDeHoy.setHours(0, 0, 0, 0);
+  finDeHoy.setDate(finDeHoy.getDate() + 1);
 
   const fechaActual = ahora.toLocaleDateString(
     "es-AR",
@@ -61,66 +75,28 @@ function GestionTurnos() {
     }
   );
 
-  const horaActual = ahora.toLocaleTimeString(
-    "es-AR",
-    {
-      hour: "2-digit",
-      minute: "2-digit",
-    }
+  // El panel muestra solo los turnos que todavía no pasaron (los de días
+  // anteriores, y los de hoy que ya fueron, se consultan en la Agenda)
+  const proximos = todosLosTurnos.filter((t) => new Date(t.fechaHora) >= ahora);
+
+  // ==========================================
+  // Próximo turno: el primero que todavía no pasó y no está cancelado
+  // ==========================================
+
+  const proximoTurno = todosLosTurnos.find(
+    (t) => t.estado !== "Cancelado" && new Date(t.fechaHora) >= ahora
   );
 
   // ==========================================
-  // Próximo turno
+  // Resumen del encabezado: los que quedan hoy y los pendientes de confirmar
+  // (el Médico ya recibe solo su agenda desde el back)
   // ==========================================
 
-  const proximoTurno = turnosOrdenados.find(
-    turno => turno.estado !== "Cancelado"
-  );
+  const turnosDeHoy = proximos.filter(
+    (t) => new Date(t.fechaHora) < finDeHoy && t.estado !== "Cancelado"
+  ).length;
 
-  // ==========================================
-  // Dashboard
-  // ==========================================
-
-  // El Médico ya recibe sólo su propia agenda desde el back; no hace falta
-  // volver a filtrar acá.
-  const totalTurnos = turnosOrdenados.length;
-
-  const pendientes =
-    turnosOrdenados.filter(
-      t => t.estado === "Pendiente"
-    ).length;
-
-  const confirmados =
-    turnosOrdenados.filter(
-      t => t.estado === "Confirmado"
-    ).length;
-
-  const cancelados =
-    turnosOrdenados.filter(
-      t => t.estado === "Cancelado"
-    ).length;
-
-  // ==========================================
-  // Alta de turno: la crea NuevoTurnoModal contra POST /api/turnos.
-  // Acá sólo refrescamos la tabla con el turno que devolvió el back (201).
-  // ==========================================
-
-  const [turnosNuevos, setTurnosNuevos] = useState<Turno[]>([]);
-
-  const agregarTurno = (nuevoTurno: Turno) => {
-    setTurnosNuevos((prev) => [...prev, nuevoTurno]);
-  };
-
-  const actualizarTurno = (turno: Turno) => {
-    setActualizados((prev) => ({ ...prev, [turno.id]: turno }));
-  };
-
-  const turnosFiltrados = [
-    ...turnosOrdenados,
-    ...turnosNuevos.map((t) => actualizados[t.id] ?? t),
-  ].sort(
-    (a, b) => a.fechaHora.localeCompare(b.fechaHora)
-  );
+  const pendientes = proximos.filter((t) => t.estado === "Pendiente" || t.estado === "Reprogramado").length;
 
     // ==========================================
   // Loading
@@ -169,43 +145,18 @@ function GestionTurnos() {
       <Container className="mt-3">
 
         <HeroTurnos
-
-          secretaria={nombreUsuario}
-
-          proximoPaciente={
-            proximoTurno
-              ? `${proximoTurno.paciente.usuario.nombre} ${proximoTurno.paciente.usuario.apellido}`
-              : "Sin turnos"
-          }
-
-          especialidad={
-            proximoTurno
-              ? proximoTurno.medico.especialidad
-              : "-"
-          }
-
+          rol={usuario?.rol ?? null}
+          nombre={nombreUsuario}
           fecha={fechaActual}
-
-          hora={horaActual}
-
-        />
-
-        <DashboardCards
-
-          total={totalTurnos}
-
+          turnosDeHoy={turnosDeHoy}
           pendientes={pendientes}
-
-          confirmados={confirmados}
-
-          cancelados={cancelados}
-
+          proximoTurno={proximoTurno ?? null}
         />
 
 
         <TurnosTable
 
-          turnos={turnosFiltrados}
+          turnos={proximos}
 
           onNuevoTurno={() =>
             setShowModal(true)

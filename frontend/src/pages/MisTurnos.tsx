@@ -1,55 +1,58 @@
-import { Link } from "react-router-dom";
-import { Spinner, Alert } from "react-bootstrap";
+import { useSearchParams, Link } from "react-router-dom";
+import { Alert, Container, Spinner, Tab, Tabs } from "react-bootstrap";
+import { CalendarCheck } from "react-bootstrap-icons";
 import Layout from "../components/Layout/Layout.tsx";
-import { BotonVolver } from "../components/BotonVolver.tsx";
+import { EncabezadoPagina } from "../components/EncabezadoPagina";
+import { TurnoPacienteCard } from "../components/Paciente/TurnoPacienteCard";
+import { IndicacionesMedico } from "../components/Paciente/IndicacionesMedico";
 import { useTurnosPaciente } from "../hooks/useTurnosPaciente";
-import { parseFechaHora, formatearChipFecha, formatearHora } from "../utils/fecha";
-import type { Turno } from "../types/Turno";
-import { obtenerClaseEstado } from "../utils/estadoTurno";
+import { consultaDelTurno, useMiHistoria } from "../hooks/useMiHistoria";
+import { parseFechaHora } from "../utils/fecha";
 import { useToast } from "../hooks/useToast";
 import { ToastMensaje } from "../components/NotifyToast";
-import "../assets/styles/MisTurnos.css";
-import "../assets/styles/PaginaPaciente.css";
+import type { EntradaClinica } from "../types/HistoriaClinica";
+import type { Turno } from "../types/Turno";
+import "../assets/styles/PacienteTurnos.css";
+
+type Seccion = "proximos" | "historial";
+
+const FECHA_CONSULTA = new Intl.DateTimeFormat("es-AR", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
+
+// En el historial van los turnos pasados (con lo que indicó el médico) y las
+// consultas que el médico registró sin turno de por medio
+type ItemHistorial =
+  | { tipo: "turno"; fecha: number; turno: Turno; consulta?: EntradaClinica }
+  | { tipo: "consulta"; fecha: number; consulta: EntradaClinica };
 
 function MisTurnos() {
   const { misTurnos, loading, error } = useTurnosPaciente();
+  const { historia } = useMiHistoria();
+  const [params, setParams] = useSearchParams();
+  const seccion: Seccion = params.get("ver") === "historial" ? "historial" : "proximos";
   // Vienen en el state de navigate() desde PedirTurno y CancelarTurno
   const creado = useToast("turnoCreado");
   const cancelado = useToast("turnoCancelado");
-  const hoy = new Date();
 
-  const proximas = misTurnos
-    .filter((t) => t.estado !== "Cancelado" && parseFechaHora(t.fechaHora) >= hoy)
-    .sort((a, b) => parseFechaHora(a.fechaHora).getTime() - parseFechaHora(b.fechaHora).getTime());
+  const ahora = new Date();
+  const entradas = historia?.entradas ?? [];
 
-  const pasadas = misTurnos
-    .filter((t) => t.estado === "Cancelado" || parseFechaHora(t.fechaHora) < hoy)
-    .sort((a, b) => parseFechaHora(b.fechaHora).getTime() - parseFechaHora(a.fechaHora).getTime());
+  const proximos = misTurnos
+    .filter((t) => t.estado !== "Cancelado" && parseFechaHora(t.fechaHora) >= ahora)
+    .sort((a, b) => a.fechaHora.localeCompare(b.fechaHora));
 
-  const renderTurno = (turno: Turno, apagado = false) => {
-    const { dia, mes } = formatearChipFecha(turno.fechaHora);
-    const clase = obtenerClaseEstado(turno.estado);
-    return (
-      <Link to={`/turnos/${turno.id}`} className={`turno-fila ${apagado ? "turno-fila-apagada" : ""}`} key={turno.id}>
-        <div className={`turno-fila-barra ${clase}`}></div>
-        <div className="turno-fila-card">
-          <div className="turno-fila-info">
-            <div className="turno-fila-fecha">
-              <p className="turno-fila-mes">{mes}</p>
-              <p className="turno-fila-dia">{dia}</p>
-            </div>
-            <div>
-              <p className="turno-fila-titulo">{turno.medico.especialidad}, {formatearHora(turno.fechaHora)}</p>
-              <p className="turno-fila-medico">Con {turno.medico.usuario.nombre} {turno.medico.usuario.apellido}</p>
-            </div>
-          </div>
-          <span className={`turno-fila-badge ${clase}`}>
-            {apagado && turno.estado !== "Cancelado" ? "Realizado" : turno.estado}
-          </span>
-        </div>
-      </Link>
-    );
-  };
+  const pasados = misTurnos.filter((t) => t.estado === "Cancelado" || parseFechaHora(t.fechaHora) < ahora);
+  const usadas = new Set<number>();
+  const historial: ItemHistorial[] = pasados.map((turno) => {
+    const consulta = consultaDelTurno(turno, entradas);
+    if (consulta) usadas.add(consulta.id);
+    return { tipo: "turno", fecha: parseFechaHora(turno.fechaHora).getTime(), turno, consulta };
+  });
+  entradas
+    .filter((e) => !usadas.has(e.id))
+    .forEach((consulta) => historial.push({ tipo: "consulta", fecha: new Date(consulta.fecha).getTime(), consulta }));
+  historial.sort((a, b) => b.fecha - a.fecha);
+
+  const porConfirmar = proximos.filter((t) => t.estado !== "Confirmado").length;
 
   return (
     <Layout>
@@ -65,42 +68,91 @@ function MisTurnos() {
         mostrar={cancelado.showToast}
         onClose={() => cancelado.setShowToast(false)}
       />
-      <div className="pagina-paciente">
-        <BotonVolver />
 
-        <div className="mis-turnos-header">
-          <p className="mis-turnos-titulo">Tu agenda</p>
-          <Link to="/pedir-turno">
-            <button className="mis-turnos-btn-agendar">+ Agendar</button>
-          </Link>
-        </div>
+      <Container className="mis-turnos-pagina">
+        <EncabezadoPagina
+          titulo="Mis turnos"
+          etiqueta="Mi salud"
+          icono={<CalendarCheck />}
+          descripcion="Tus próximos turnos y, en el historial, lo que te indicó el médico en cada consulta."
+          datos={loading || error ? undefined : [
+            { valor: proximos.length, texto: proximos.length === 1 ? "Próximo turno" : "Próximos turnos" },
+            { valor: porConfirmar, texto: "Por confirmar" },
+            { valor: entradas.length, texto: entradas.length === 1 ? "Consulta registrada" : "Consultas registradas" },
+          ]}
+          accion={<Link to="/pedir-turno" className="btn btn-primary">+ Pedir turno</Link>}
+        />
 
         {loading && (
-          <div className="text-center mb-4">
-            <Spinner animation="border" size="sm" />
+          <div className="text-center py-5">
+            <Spinner animation="border" role="status" aria-label="Cargando turnos" />
           </div>
         )}
-
         {error && <Alert variant="danger">{error.message}</Alert>}
 
         {!loading && !error && (
-          <>
-            <p className="mis-turnos-seccion">Próximas</p>
-            {proximas.length === 0 ? (
-              <p className="text-muted mb-4">No tenés consultas agendadas.</p>
-            ) : (
-              <div className="mb-4">{proximas.map((t) => renderTurno(t))}</div>
-            )}
+          <Tabs
+            activeKey={seccion}
+            onSelect={(k) => setParams(k === "historial" ? { ver: "historial" } : {}, { replace: true })}
+            className="mis-turnos-tabs"
+            id="mis-turnos-secciones"
+            mountOnEnter
+            unmountOnExit
+            transition={false}
+          >
+            <Tab eventKey="proximos" title={`Próximos (${proximos.length})`}>
+              {proximos.length === 0 ? (
+                <div className="mis-turnos-vacio">
+                  <p>No tenés turnos agendados.</p>
+                  <Link to="/pedir-turno" className="btn btn-primary">Pedir un turno</Link>
+                </div>
+              ) : (
+                proximos.map((t) => <TurnoPacienteCard key={t.id} turno={t} />)
+              )}
+            </Tab>
 
-            <p className="mis-turnos-seccion">Pasadas</p>
-            {pasadas.length === 0 ? (
-              <p className="text-muted">Todavía no tenés consultas anteriores.</p>
-            ) : (
-              <div>{pasadas.map((t) => renderTurno(t, true))}</div>
-            )}
-          </>
+            <Tab eventKey="historial" title={`Historial (${historial.length})`}>
+              {historia && historia.alergias.length > 0 && (
+                <div className="mis-turnos-alergias">
+                  <strong>Alergias registradas:</strong> {historia.alergias.join(", ")}
+                </div>
+              )}
+              {historial.length === 0 ? (
+                <div className="mis-turnos-vacio">
+                  <p>Todavía no tenés consultas anteriores.</p>
+                </div>
+              ) : (
+                historial.map((item) =>
+                  item.tipo === "turno" ? (
+                    <TurnoPacienteCard key={`t${item.turno.id}`} turno={item.turno} consulta={item.consulta} />
+                  ) : (
+                    <article key={`c${item.consulta.id}`} className="turno-paciente turno-paciente-atendido">
+                      <div className="turno-paciente-fila">
+                        <div className="turno-paciente-info">
+                          <h3 className="turno-paciente-titulo">
+                            Consulta del {FECHA_CONSULTA.format(new Date(item.consulta.fecha))}
+                          </h3>
+                          {historia?.medicoResponsable && (
+                            <p className="turno-paciente-medico">Con {historia.medicoResponsable}</p>
+                          )}
+                        </div>
+                        <span className="turno-paciente-estado turno-paciente-estado-atendido">Atendido</span>
+                      </div>
+                      <IndicacionesMedico consulta={item.consulta} />
+                    </article>
+                  )
+                )
+              )}
+            </Tab>
+          </Tabs>
         )}
-      </div>
+
+        {seccion === "proximos" && !loading && !error && porConfirmar > 0 && (
+          <p className="turno-paciente-nota mt-2">
+            Los turnos por confirmar se pueden cancelar desde acá. Una vez confirmados, si no podés ir avisá al consultorio.
+          </p>
+        )}
+      </Container>
     </Layout>
   );
 }

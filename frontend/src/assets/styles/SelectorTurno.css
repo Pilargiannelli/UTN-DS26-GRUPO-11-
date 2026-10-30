@@ -1,0 +1,199 @@
+/* Selector de turno: tira de días hábiles + grilla de horarios */
+
+.selector-turno {
+  text-align: left;
+}
+
+.selector-turno-ayuda {
+  margin: var(--space-2) 0 0;
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+
+.selector-turno-encabezado {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-2);
+}
+
+.selector-turno-rango {
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  color: var(--color-text-muted);
+}
+
+.selector-turno-flechas {
+  display: flex;
+  gap: var(--space-1);
+}
+
+.selector-turno-flecha {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  color: var(--color-pino-800);
+  transition: background-color var(--transition-fast);
+}
+
+.selector-turno-flecha:hover:not(:disabled) {
+  background: var(--color-pino-50);
+}
+
+.selector-turno-flecha:disabled {
+  color: var(--color-text-subtle);
+  opacity: 0.5;
+}
+
+/* ── Días: 5 por fila (una semana hábil) ── */
+
+.selector-turno-dias {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: var(--space-2);
+}
+
+.selector-turno-dia {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: var(--space-2) var(--space-1);
+  min-height: 72px;
+  border: 1px solid var(--color-border);
+  border-top-width: 3px;
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  color: var(--color-text);
+  transition: background-color var(--transition-fast), border-color var(--transition-fast);
+}
+
+.selector-turno-dia:hover:not(:disabled) {
+  background: var(--color-pino-50);
+}
+
+.selector-turno-dia-nombre {
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-caps);
+  color: var(--color-text-muted);
+}
+
+.selector-turno-dia-fecha {
+  font-size: var(--text-base);
+  font-weight: var(--weight-semibold);
+}
+
+.selector-turno-dia-libres {
+  font-size: var(--text-xs);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Disponibilidad: barra superior y texto del color del nivel */
+.selector-turno-dia-muchos {
+  border-top-color: var(--color-success);
+}
+
+.selector-turno-dia-muchos .selector-turno-dia-libres {
+  color: var(--color-success);
+}
+
+.selector-turno-dia-pocos {
+  border-top-color: var(--color-warning-solid);
+}
+
+.selector-turno-dia-pocos .selector-turno-dia-libres {
+  color: var(--color-warning);
+}
+
+.selector-turno-dia-completo {
+  background: var(--color-surface-muted);
+  color: var(--color-text-subtle);
+  cursor: not-allowed;
+}
+
+.selector-turno-dia-completo .selector-turno-dia-libres {
+  color: var(--color-text-subtle);
+}
+
+.selector-turno-dia-cargando .selector-turno-dia-libres {
+  color: var(--color-text-subtle);
+}
+
+.selector-turno-dia-elegido,
+.selector-turno-dia-elegido:hover:not(:disabled) {
+  background: var(--color-primary-soft);
+  border-color: var(--color-pino-800);
+  box-shadow: inset 0 0 0 1px var(--color-pino-800);
+}
+
+/* ── Horarios del día ── */
+
+.selector-turno-horarios-bloque {
+  margin-top: var(--space-4);
+}
+
+.selector-turno-dia-titulo {
+  margin: 0 0 var(--space-2);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  color: var(--color-heading);
+}
+
+.selector-turno-dia-titulo::first-letter {
+  text-transform: uppercase;
+}
+
+.selector-turno-horarios {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(72px, 1fr));
+  gap: var(--space-2);
+}
+
+.selector-turno-hora {
+  min-height: 40px;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-pill);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-size: var(--text-sm);
+  font-variant-numeric: tabular-nums;
+  transition: background-color var(--transition-fast), border-color var(--transition-fast);
+}
+
+.selector-turno-hora:hover:not(:disabled) {
+  background: var(--color-pino-50);
+  border-color: var(--color-pino-600);
+}
+
+.selector-turno-hora:disabled {
+  border-style: dashed;
+  background: var(--color-surface-muted);
+  color: var(--color-text-subtle);
+  text-decoration: line-through;
+  cursor: not-allowed;
+}
+
+.selector-turno-hora-elegida,
+.selector-turno-hora-elegida:hover:not(:disabled) {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: var(--color-on-primary);
+  font-weight: var(--weight-semibold);
+}
+
+@media (max-width: 576px) {
+  .selector-turno-dia {
+    min-height: 64px;
+  }
+
+  .selector-turno-dia-libres {
+    font-size: var(--text-xs);
+  }
+}

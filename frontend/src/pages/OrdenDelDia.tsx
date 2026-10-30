@@ -1,215 +1,280 @@
-import { useState } from "react";
-import { Alert, Container, Spinner } from "react-bootstrap";
+import { useState, type ReactNode } from "react";
+import { Link } from "react-router-dom";
+import { Alert, Button, ButtonGroup, Container, Form, Spinner } from "react-bootstrap";
+import { CalendarWeek, ChevronLeft, ChevronRight } from "react-bootstrap-icons";
 import { useTurnosMedico } from "../hooks/useTurnosMedico";
+import { useFetch } from "../hooks/useFetch";
+import { useAuth } from "../hooks/useAuth";
 import VistaAgendaSemanal from "../components/VistaAgendaSemanal";
 import Layout from "../components/Layout/Layout";
-import { formatearHora } from "../utils/fecha";
+import { EncabezadoPagina } from "../components/EncabezadoPagina";
+import { formatearHora, parseFechaHora } from "../utils/fecha";
+import { esDiaHabil } from "../utils/horarios";
+import {
+  ALTURA_TOTAL, HORAS, esMismaFecha, estiloGrilla, etiquetaHora, topAhora, ubicarTurnos,
+} from "../utils/agenda";
+import type { EstadoTurno } from "../types/Turno";
 import "../assets/styles/OrdenDelDia.css";
 
 type Vista = "dia" | "semana";
 
-const HORAS_INICIO = 8;
-const HORAS_FIN = 20;
-const ALTURA_HORA = 64;
-const ALTURA_EVENTO = 56;
-
-const DIAS_SEMANA = [
-  "domingo", "lunes", "martes", "miércoles", "jueves", "viernes", "sábado",
-];
-const MESES = [
-  "enero", "febrero", "marzo", "abril", "mayo", "junio",
-  "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre",
-];
-const MESES_CORTOS = [
-  "ene", "feb", "mar", "abr", "may", "jun",
-  "jul", "ago", "sep", "oct", "nov", "dic",
+const ESTADOS: { estado: EstadoTurno; texto: string }[] = [
+  { estado: "Pendiente", texto: "Pendiente" },
+  { estado: "Confirmado", texto: "Confirmado" },
+  { estado: "Reprogramado", texto: "Reprogramado" },
+  { estado: "Cancelado", texto: "Cancelado" },
 ];
 
-const horas = Array.from(
-  { length: HORAS_FIN - HORAS_INICIO },
-  (_, i) => HORAS_INICIO + i
-);
+const capitalizar = (texto: string) => texto.charAt(0).toUpperCase() + texto.slice(1);
 
-function formatHora(h: number) {
-  return `${String(h).padStart(2, "0")}:00`;
+// "Viernes 30 de octubre de 2026"
+const tituloDia = (d: Date) =>
+  capitalizar(d.toLocaleDateString("es-AR", { weekday: "long", day: "numeric", month: "long", year: "numeric" }));
+
+// "26 – 30 de octubre de 2026" o "29 de octubre – 2 de noviembre de 2026"
+function tituloSemana(dias: Date[]) {
+  const ini = dias[0];
+  const fin = dias[dias.length - 1];
+  const mes = (d: Date) => d.toLocaleDateString("es-AR", { month: "long" });
+  if (ini.getMonth() === fin.getMonth()) {
+    return `${ini.getDate()} – ${fin.getDate()} de ${mes(fin)} de ${fin.getFullYear()}`;
+  }
+  return `${ini.getDate()} de ${mes(ini)} – ${fin.getDate()} de ${mes(fin)} de ${fin.getFullYear()}`;
 }
 
-function calcularTop(hora: string): number {
-  const [h, m] = hora.split(":").map(Number);
-  return (h - HORAS_INICIO + m / 60) * ALTURA_HORA;
-}
-
-function esMismaFecha(a: Date, b: Date) {
-  return (
-    a.getDate() === b.getDate() &&
-    a.getMonth() === b.getMonth() &&
-    a.getFullYear() === b.getFullYear()
-  );
-}
-
-// Devuelve los 7 días de la semana (lun–dom) que contienen la fecha dada
-function obtenerSemana(fecha: Date): Date[] {
-  const d = new Date(fecha);
-  d.setHours(0, 0, 0, 0);
-  const dia = d.getDay(); // 0=Dom … 6=Sáb
-  const lunes = new Date(d);
-  lunes.setDate(d.getDate() - (dia === 0 ? 6 : dia - 1));
-  return Array.from({ length: 7 }, (_, i) => {
-    const day = new Date(lunes);
-    day.setDate(lunes.getDate() + i);
-    return day;
+// El consultorio atiende de lunes a viernes: la semana muestra esos 5 días
+function semanaHabil(fecha: Date): Date[] {
+  const lunes = new Date(fecha);
+  lunes.setHours(0, 0, 0, 0);
+  const dia = lunes.getDay();
+  lunes.setDate(lunes.getDate() - (dia === 0 ? 6 : dia - 1));
+  return Array.from({ length: 5 }, (_, i) => {
+    const d = new Date(lunes);
+    d.setDate(lunes.getDate() + i);
+    return d;
   });
 }
 
-function subtituloSemana(dias: Date[]): string {
-  const ini = dias[0];
-  const fin = dias[6];
-  const iniMes = MESES_CORTOS[ini.getMonth()];
-  const finMes = MESES_CORTOS[fin.getMonth()];
-  const año = fin.getFullYear();
-  if (ini.getMonth() === fin.getMonth()) {
-    return `${ini.getDate()} – ${fin.getDate()} de ${finMes} de ${año}`;
-  }
-  return `${ini.getDate()} ${iniMes} – ${fin.getDate()} ${finMes} de ${año}`;
+// Día hábil siguiente o anterior (saltea sábado y domingo)
+function moverDiaHabil(fecha: Date, paso: 1 | -1) {
+  const d = new Date(fecha);
+  do d.setDate(d.getDate() + paso); while (!esDiaHabil(d));
+  return d;
 }
 
+const hoyHabil = () => {
+  const hoy = new Date();
+  return esDiaHabil(hoy) ? hoy : moverDiaHabil(hoy, 1);
+};
+
+const activo = (estado: EstadoTurno) => estado !== "Cancelado";
+
+interface MedicoCartilla {
+  id: number;
+  especialidad: string;
+  usuario: { nombre: string; apellido: string };
+}
+
+// La secretaria elige de qué médico ver la agenda (arranca con el primero)
+function AgendaSecretaria() {
+  const { data, loading, error } = useFetch<MedicoCartilla[]>("/medicos");
+  const [elegido, setElegido] = useState<number | null>(null);
+  const medicos = [...(data ?? [])].sort((a, b) => a.usuario.apellido.localeCompare(b.usuario.apellido));
+  const medicoId = elegido ?? medicos[0]?.id;
+
+  if (loading || error || medicoId === undefined) {
+    return <Agenda deSecretaria cargandoMedicos={loading} errorMedicos={error?.message ?? (loading ? null : "No hay médicos cargados.")} />;
+  }
+
+  const selector = (
+    <Form.Select
+      size="sm"
+      className="agenda-selector-medico"
+      aria-label="Médico"
+      value={medicoId}
+      onChange={(e) => setElegido(Number(e.target.value))}
+    >
+      {medicos.map((m) => (
+        <option key={m.id} value={m.id}>
+          {m.usuario.nombre} {m.usuario.apellido} · {m.especialidad}
+        </option>
+      ))}
+    </Form.Select>
+  );
+
+  return <Agenda deSecretaria medicoId={medicoId} selector={selector} />;
+}
+
+// Agenda: el médico ve la suya; la secretaria, la de cada médico
 export default function OrdenDelDia() {
-  const [fechaSeleccionada, setFechaSeleccionada] = useState(new Date());
+  const { tieneRol } = useAuth();
+  return tieneRol("SECRETARIA") ? <AgendaSecretaria /> : <Agenda />;
+}
+
+interface AgendaProps {
+  deSecretaria?: boolean;
+  medicoId?: number;
+  selector?: ReactNode;
+  cargandoMedicos?: boolean;
+  errorMedicos?: string | null;
+}
+
+// Turnos por día o por semana, en una grilla horaria. Cada turno lleva a la
+// ficha del paciente.
+function Agenda({ deSecretaria = false, medicoId, selector, cargandoMedicos = false, errorMedicos = null }: AgendaProps) {
+  const [fecha, setFecha] = useState(hoyHabil);
   const [vista, setVista] = useState<Vista>("dia");
-  const { turnosDelDia, loading, error } = useTurnosMedico();
+  const turnosMedico = useTurnosMedico(medicoId);
+  const { misTurnos, turnosDelDia } = turnosMedico;
+  const loading = turnosMedico.loading || cargandoMedicos;
+  const error = turnosMedico.error ?? (errorMedicos ? new Error(errorMedicos) : null);
 
-  const turnos = turnosDelDia(fechaSeleccionada);
-  const esHoy = esMismaFecha(fechaSeleccionada, new Date());
-  const diasSemana = obtenerSemana(fechaSeleccionada);
+  const ahora = new Date();
+  const dias = semanaHabil(fecha);
+  const turnos = turnosDelDia(fecha);
+  const enHoy = vista === "dia" ? esMismaFecha(fecha, ahora) : dias.some((d) => esMismaFecha(d, ahora));
 
-  const irAtras = () => {
-    const d = new Date(fechaSeleccionada);
-    d.setDate(d.getDate() - (vista === "semana" ? 7 : 1));
-    setFechaSeleccionada(d);
+  const mover = (paso: 1 | -1) => {
+    if (vista === "dia") {
+      setFecha(moverDiaHabil(fecha, paso));
+    } else {
+      const d = new Date(fecha);
+      d.setDate(d.getDate() + 7 * paso);
+      setFecha(d);
+    }
   };
 
-  const irAdelante = () => {
-    const d = new Date(fechaSeleccionada);
-    d.setDate(d.getDate() + (vista === "semana" ? 7 : 1));
-    setFechaSeleccionada(d);
-  };
+  // Resumen del encabezado (sin contar cancelados)
+  const semanaActual = semanaHabil(ahora);
+  const datos = [
+    { valor: turnosDelDia(ahora).filter((t) => activo(t.estado)).length, texto: "Turnos hoy" },
+    {
+      valor: semanaActual.reduce((n, d) => n + turnosDelDia(d).filter((t) => activo(t.estado)).length, 0),
+      texto: "Esta semana",
+    },
+    {
+      valor: misTurnos.filter((t) => (t.estado === "Pendiente" || t.estado === "Reprogramado")
+        && parseFechaHora(t.fechaHora) >= ahora).length,
+      texto: "Por confirmar",
+    },
+  ];
 
-  const irAHoy = () => setFechaSeleccionada(new Date());
-
-  // En vista semana, "hoy" es cuando la semana contiene el día de hoy
-  const hoyEnSemana = diasSemana.some((d) => esMismaFecha(d, new Date()));
-  const mostrarBtnHoy = vista === "dia" ? !esHoy : !hoyEnSemana;
+  const lineaAhora = esMismaFecha(fecha, ahora) ? topAhora(ahora) : null;
 
   return (
     <Layout>
-    <Container className="pt-4">
-      {/* Encabezado: título + toggle + navegación */}
-      <div className="d-flex align-items-center justify-content-between mb-3">
-        <h2 className="agenda-titulo">Orden del día</h2>
-        <div className="d-flex align-items-center gap-3">
-          {/* Toggle Día / Semana */}
-          <div className="agenda-toggle">
-            <button
-              className={`agenda-toggle-btn${vista === "dia" ? " activo" : ""}`}
-              onClick={() => setVista("dia")}
-            >
-              Día
-            </button>
-            <button
-              className={`agenda-toggle-btn${vista === "semana" ? " activo" : ""}`}
-              onClick={() => setVista("semana")}
-            >
-              Semana
-            </button>
-          </div>
-          {/* Navegación prev / hoy / next */}
-          <div className="d-flex align-items-center gap-2">
-            <button className="agenda-nav-btn" onClick={irAtras} aria-label="Anterior">
-              ‹
-            </button>
-            {mostrarBtnHoy && (
-              <button className="agenda-hoy-btn" onClick={irAHoy}>
+      <Container className="agenda-medico">
+        <EncabezadoPagina
+          titulo="Agenda"
+          etiqueta={deSecretaria ? "Agenda del consultorio" : "Mis turnos"}
+          icono={<CalendarWeek />}
+          descripcion={deSecretaria
+            ? "Elegí un médico para ver sus turnos por horario. Tocá un turno para abrir la ficha del paciente."
+            : "Tus turnos por horario. Tocá un turno para abrir la ficha y la historia clínica del paciente."}
+          datos={loading || error ? undefined : datos}
+        />
+
+        <div className="agenda-panel">
+          {/* Barra: fecha a la izquierda, navegación y vista a la derecha */}
+          <div className="agenda-barra">
+            <div className="agenda-barra-fecha">
+              {selector}
+              <h2 className="agenda-barra-titulo">
+                {vista === "dia" ? tituloDia(fecha) : tituloSemana(dias)}
+              </h2>
+              {vista === "dia" && esMismaFecha(fecha, ahora) && <span className="agenda-barra-hoy">Hoy</span>}
+            </div>
+
+            <div className="agenda-barra-controles">
+              <Button variant="outline-secondary" size="sm" onClick={() => setFecha(hoyHabil())} disabled={enHoy}>
                 Hoy
-              </button>
-            )}
-            <button className="agenda-nav-btn" onClick={irAdelante} aria-label="Siguiente">
-              ›
-            </button>
+              </Button>
+              <ButtonGroup size="sm" aria-label="Cambiar de fecha">
+                <Button variant="outline-secondary" onClick={() => mover(-1)} aria-label={vista === "dia" ? "Día anterior" : "Semana anterior"}>
+                  <ChevronLeft aria-hidden="true" />
+                </Button>
+                <Button variant="outline-secondary" onClick={() => mover(1)} aria-label={vista === "dia" ? "Día siguiente" : "Semana siguiente"}>
+                  <ChevronRight aria-hidden="true" />
+                </Button>
+              </ButtonGroup>
+              <ButtonGroup size="sm" aria-label="Vista">
+                <Button
+                  variant={vista === "dia" ? "primary" : "outline-primary"}
+                  aria-pressed={vista === "dia"}
+                  onClick={() => setVista("dia")}
+                >
+                  Día
+                </Button>
+                <Button
+                  variant={vista === "semana" ? "primary" : "outline-primary"}
+                  aria-pressed={vista === "semana"}
+                  onClick={() => setVista("semana")}
+                >
+                  Semana
+                </Button>
+              </ButtonGroup>
+            </div>
           </div>
-        </div>
-      </div>
 
-      {/* Subtítulo de fecha */}
-      <div className="mb-3">
-        {vista === "dia" ? (
-          <>
-            <p className="agenda-fecha-sub">{DIAS_SEMANA[fechaSeleccionada.getDay()]}</p>
-            <p className="agenda-fecha-header">
-              {fechaSeleccionada.getDate()} de {MESES[fechaSeleccionada.getMonth()]} de{" "}
-              {fechaSeleccionada.getFullYear()}
-            </p>
-          </>
-        ) : (
-          <p className="agenda-fecha-header">{subtituloSemana(diasSemana)}</p>
-        )}
-      </div>
+          <ul className="agenda-leyenda" aria-label="Estados de turno">
+            {ESTADOS.map(({ estado, texto }) => (
+              <li key={estado} className={`agenda-leyenda-item estado-${estado.toLowerCase()}`}>{texto}</li>
+            ))}
+          </ul>
 
-      {loading && (
-        <div className="text-center py-4">
-          <Spinner animation="border" role="status" aria-label="Cargando agenda" />
-        </div>
-      )}
-      {error && <Alert variant="danger">No se pudo cargar la agenda: {error.message}</Alert>}
+          {loading && (
+            <div className="text-center py-5">
+              <Spinner animation="border" role="status" aria-label="Cargando agenda" />
+            </div>
+          )}
+          {error && <Alert variant="danger" className="m-3">No se pudo cargar la agenda: {error.message}</Alert>}
 
-      {/* ── Vista diaria ── */}
-      {!loading && !error && vista === "dia" && (
-        <div className="agenda-scroll">
-          <div className="agenda-grid">
-            <div className="agenda-col-horas">
-              {horas.map((h) => (
-                <div key={h} className="agenda-hora-label">
-                  {formatHora(h)}
+          {/* ── Vista diaria ── */}
+          {!loading && !error && vista === "dia" && (
+            <div className="agenda-scroll" style={estiloGrilla}>
+              <div className="agenda-grid">
+                <div className="agenda-col-horas">
+                  {HORAS.map((h) => (
+                    <div key={h} className="agenda-hora-label">{etiquetaHora(h)}</div>
+                  ))}
                 </div>
-              ))}
+                <div className="agenda-col-eventos" style={{ height: ALTURA_TOTAL }}>
+                  {HORAS.map((h) => (
+                    <div key={h} className="agenda-hora-fila" />
+                  ))}
+                  {turnos.length === 0 && (
+                    <div className="agenda-sin-turnos">No tenés turnos este día</div>
+                  )}
+                  {lineaAhora !== null && (
+                    <div className="agenda-ahora" style={{ top: lineaAhora }} aria-hidden="true" />
+                  )}
+                  {ubicarTurnos(turnos).map(({ turno, estilo }) => {
+                    const paciente = `${turno.paciente.usuario.nombre} ${turno.paciente.usuario.apellido}`;
+                    return (
+                      <Link
+                        key={turno.id}
+                        to={`/pacientes/${turno.pacienteId}`}
+                        className={`agenda-evento estado-${turno.estado.toLowerCase()}`}
+                        style={estilo}
+                        aria-label={`${formatearHora(turno.fechaHora)}, ${paciente}, ${turno.estado}`}
+                      >
+                        <span className="agenda-evento-hora">{formatearHora(turno.fechaHora)}</span>
+                        <span className="agenda-evento-paciente">{paciente}</span>
+                        <span className="agenda-evento-estado">{turno.estado}</span>
+                      </Link>
+                    );
+                  })}
+                </div>
+              </div>
             </div>
-            <div
-              className="agenda-col-eventos"
-              style={{ height: (HORAS_FIN - HORAS_INICIO) * ALTURA_HORA }}
-            >
-              {horas.map((h) => (
-                <div key={h} className="agenda-hora-fila" />
-              ))}
-              {turnos.length === 0 && (
-                <div className="agenda-sin-turnos">Sin turnos para este día</div>
-              )}
-              {turnos.map((turno) => {
-                const hora = formatearHora(turno.fechaHora);
-                const top = calcularTop(hora);
-                const estadoClass = `estado-${turno.estado.toLowerCase()}`;
-                return (
-                  <div
-                    key={turno.id}
-                    className={`agenda-evento ${estadoClass}`}
-                    style={{ top, height: ALTURA_EVENTO }}
-                  >
-                    <p className="agenda-evento-hora">{hora}</p>
-                    <p className="agenda-evento-paciente">
-                      {turno.paciente.usuario.nombre} {turno.paciente.usuario.apellido}
-                    </p>
-                    <p className="agenda-evento-especialidad">{turno.medico.especialidad}</p>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        </div>
-      )}
+          )}
 
-      {/* ── Vista semanal ── */}
-      {!loading && !error && vista === "semana" && (
-        <VistaAgendaSemanal diasSemana={diasSemana} turnosDelDia={turnosDelDia} />
-      )}
-    </Container>
+          {/* ── Vista semanal ── */}
+          {!loading && !error && vista === "semana" && (
+            <VistaAgendaSemanal diasSemana={dias} turnosDelDia={turnosDelDia} />
+          )}
+        </div>
+      </Container>
     </Layout>
   );
 }

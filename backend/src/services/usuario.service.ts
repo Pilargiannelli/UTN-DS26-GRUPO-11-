@@ -1,4 +1,5 @@
 import { prisma } from "../config/prisma";
+import { Rol } from "../generated/prisma/enums";
 
 export async function listarUsuarios() {
   return prisma.usuario.findMany({
@@ -27,9 +28,15 @@ export async function listarMedicos() {
   });
 }
 
-export async function listarPacientes() {
-  return prisma.paciente.findMany({
+// Para el MEDICO suma la fecha de la última consulta de cada paciente (el
+// listado le sirve para entrar a la historia clínica). La SECRETARIA no la
+// recibe: es un dato de la historia clínica (matriz de permisos §10).
+export async function listarPacientes(rol?: Rol) {
+  const pacientes = await prisma.paciente.findMany({
     include: {
+      historiaClinica: {
+        select: { entradas: { select: { fecha: true }, orderBy: { fecha: "desc" }, take: 1 } },
+      },
       usuario: {
         select: {
           nombre: true,
@@ -42,4 +49,9 @@ export async function listarPacientes() {
       coberturas: { include: { obraSocial: true } },
     },
   });
+
+  return pacientes.map(({ historiaClinica, ...paciente }) => ({
+    ...paciente,
+    ...(rol === Rol.MEDICO && { ultimaConsulta: historiaClinica?.entradas[0]?.fecha ?? null }),
+  }));
 }

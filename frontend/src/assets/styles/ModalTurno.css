@@ -1,18 +1,18 @@
 .modal-content{
     border:none;
-    border-radius:22px;
+    border-radius:var(--radius-lg);
     overflow:hidden;
-    box-shadow:0 30px 70px rgba(0,0,0,.15);
+    box-shadow:var(--shadow-lg);
 }
 
 .modal-header-turno{
-    background:#F5FAF7;
+    background:var(--color-pino-50);
     padding:24px 28px;
-    border-bottom:1px solid #E7ECEF;
+    border-bottom:1px solid var(--color-border);
 }
 
 .modal-header-turno h3{
-    color:#214738;
+    color:var(--color-pino-800);
 }
 
 .modal-body{
@@ -21,7 +21,7 @@
 
 .modal-body label{
     font-weight:600;
-    color:#3E4652;
+    color:var(--color-text);
     margin-bottom:8px;
 }
 
@@ -30,9 +30,9 @@
 
     min-height:50px;
 
-    border-radius:12px;
+    border-radius:var(--radius-md);
 
-    border:1px solid #D9E1E6;
+    border:1px solid var(--color-border);
 
     transition:.25s;
 
@@ -49,15 +49,15 @@
 .modal-body .form-control:focus,
 .modal-body .form-select:focus{
 
-    border-color:#2E5E4E;
+    border-color:var(--color-pino-600);
 
-    box-shadow:0 0 0 .18rem rgba(46,94,78,.15);
+    box-shadow:var(--shadow-sm);
 
 }
 
 .modal-footer .btn{
 
-    border-radius:10px;
+    border-radius:var(--radius-md);
 
     min-width:150px;
 
