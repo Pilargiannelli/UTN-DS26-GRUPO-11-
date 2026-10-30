@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import {
   Alert,
   Button,
@@ -115,7 +116,10 @@ function TurnosTable({
               <tr key={turno.id}>
                 <td className="hora">{formatearHora(turno.fechaHora)}</td>
                 <td>
-                  <span className="agenda-paciente">{nombreCompleto(turno.paciente.usuario)}</span>
+                  {/* El nombre lleva a la ficha del paciente (datos, turnos e historia) */}
+                  <Link to={`/pacientes/${turno.pacienteId}`} className="agenda-paciente">
+                    {nombreCompleto(turno.paciente.usuario)}
+                  </Link>
                   {turno.estado === "Reprogramado" && <span className="agenda-etiqueta">Reprogramado</span>}
                 </td>
                 {mostrarMedico && (

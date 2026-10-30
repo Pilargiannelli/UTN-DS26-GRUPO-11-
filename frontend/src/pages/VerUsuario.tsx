@@ -10,7 +10,6 @@ import { ProximosTurnosPaciente } from "../components/Perfil/ProximosTurnosPacie
 import { NewPasswordForm } from "../components/CambiarPasswordForm.tsx";
 import { PacienteFormFields } from "../components/PacienteFormFields.tsx";
 import { HistorialMedicoCard } from "../components/HistorialMedicoCard.tsx";
-import { PanelPacienteMedico } from "../components/Medico/PanelPacienteMedico.tsx";
 import NuevoTurnoModal from "../components/Turnos/NuevoTurnoModal.tsx";
 import { ToastMensaje } from "../components/NotifyToast.tsx";
 import { useUsuarioSeleccionado } from "../hooks/useUsuarioSeleccionado.ts";
@@ -22,8 +21,13 @@ import "../assets/styles/Perfil.css";
 
 interface VerUsuarioProps {
     // /mi-cuenta: siempre el usuario logueado, nunca el último perfil que se
-    // abrió desde Pacientes o Médicos (eso queda en /ver-perfil)
+    // abrió desde Médicos (eso queda en /ver-perfil)
     propio?: boolean;
+    // /pacientes/:id (FichaPaciente): el paciente viene de la URL, con su
+    // ruta de navegación, y al guardar se avisa a la ficha
+    perfilPaciente?: Usuario;
+    migas?: ReactNode;
+    onPerfilActualizado?: (actualizado: Usuario) => void;
 }
 
 const NOMBRE_ROL = { SECRETARIA: "Secretaría", MEDICO: "Médico", PACIENTE: "Paciente" } as const;
@@ -47,7 +51,7 @@ function Panel({ titulo, descripcion, children }: { titulo: string; descripcion?
 // Mi cuenta (/mi-cuenta) y perfil de un paciente o médico (/ver-perfil).
 // Arriba, quién es; abajo, una pestaña por tema con los datos editables
 // directo (sin "Editar" previo): "Guardar cambios" se habilita al cambiar algo.
-function VerUsuario({ propio = false }: VerUsuarioProps) {
+function VerUsuario({ propio = false, perfilPaciente, migas, onPerfilActualizado }: VerUsuarioProps) {
     const { usuario, setUsuario, tieneRol } = useAuth();
     const { usuarioSeleccionado, seleccionarUsuario } = useUsuarioSeleccionado();
     const [aviso, setAviso] = useState<string | null>(null);
@@ -57,7 +61,7 @@ function VerUsuario({ propio = false }: VerUsuarioProps) {
     const [turnosVersion, setTurnosVersion] = useState(0);
     const [fichaVersion, setFichaVersion] = useState(0);
 
-    const perfil = (propio ? usuario : usuarioSeleccionado || usuario) as Usuario | null;
+    const perfil = (perfilPaciente ?? (propio ? usuario : usuarioSeleccionado || usuario)) as Usuario | null;
     const paciente = perfil?.paciente ?? null;
     const edad = useEdad(paciente?.fechaNacimiento ?? "");
 
@@ -88,19 +92,6 @@ function VerUsuario({ propio = false }: VerUsuarioProps) {
         ["Obra social", cobertura ? `${cobertura.obraSocial.nombre} · Plan ${cobertura.plan} · Afiliado ${cobertura.nroAfiliado}` : "Sin obra social"],
     ] : [];
 
-    // El médico ve la ficha clínica completa del paciente: datos, alergias,
-    // turnos e historia clínica en una sola pantalla
-    if (tieneRol("MEDICO") && esPaciente && !esMiPerfil && paciente) {
-        return (
-            <Layout>
-                <Container className="perfil perfil-medico">
-                    <BotonVolver />
-                    <PanelPacienteMedico usuario={perfil} paciente={paciente} />
-                </Container>
-            </Layout>
-        );
-    }
-
     // Mi cuenta: PATCH /auth/yo devolvió el usuario actualizado
     const cuentaGuardada = (actualizado: UsuarioSesion) => {
         if (usuario) setUsuario({ ...usuario, ...actualizado });
@@ -109,7 +100,8 @@ function VerUsuario({ propio = false }: VerUsuarioProps) {
 
     // Datos del paciente: PUT /pacientes/:id (la hace la secretaria)
     const pacienteGuardado = (actualizado: Usuario) => {
-        seleccionarUsuario(actualizado);
+        if (onPerfilActualizado) onPerfilActualizado(actualizado);
+        else seleccionarUsuario(actualizado);
         setFichaVersion((v) => v + 1);
         setAviso("Datos del paciente actualizados");
     };
@@ -119,7 +111,7 @@ function VerUsuario({ propio = false }: VerUsuarioProps) {
             <ToastMensaje mensaje={aviso ?? ""} tipo="toast-good" mostrar={aviso !== null} onClose={() => setAviso(null)} />
 
             <Container className="perfil">
-                {!propio && <BotonVolver />}
+                {migas ?? (!propio && <BotonVolver />)}
 
                 {/* ── Quién es: avatar, nombre, contacto y rol ── */}
                 <header className="perfil-encabezado">

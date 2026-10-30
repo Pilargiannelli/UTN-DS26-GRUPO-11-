@@ -79,7 +79,7 @@ export function HistorialMedicoCard({ pacienteId }: HistorialMedicoCardProps) {
                     </div>
                     {esMedico && (
                       <div className="my-2">
-                        <Boton texto="Nueva consulta" onClick={() => navigate(`/historial?paciente=${pacienteId}`)}/>
+                        <Boton texto="Nueva consulta" onClick={() => navigate(`/pacientes/${pacienteId}`)}/>
                       </div>
                     )}
                 </>

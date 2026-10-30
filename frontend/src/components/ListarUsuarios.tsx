@@ -124,6 +124,13 @@ export function ListarUsuarios({ rol }: ListarUsuariosProps) {
     const handleVerPerfil = (item: RegistroUsuario) => {
         const isMedico = rol === "medico";
 
+        // Cada paciente tiene su ficha con dirección propia (datos, turnos e
+        // historia clínica): no hace falta guardarlo como "seleccionado"
+        if (!isMedico) {
+            navigate(`/pacientes/${item.id}`);
+            return;
+        }
+
         // Normalizamos asegurando que username sea string para cumplir con el tipo Usuario
         const usuarioNormalizado = {
             ...item.usuario,

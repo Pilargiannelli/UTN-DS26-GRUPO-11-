@@ -293,3 +293,14 @@
     text-align: center;
     color: var(--color-text-muted);
 }
+
+/* El nombre del paciente es un link a su ficha, pero se lee como texto */
+a.agenda-paciente {
+    text-decoration: none;
+}
+
+a.agenda-paciente:hover {
+    color: var(--color-pino-700);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}

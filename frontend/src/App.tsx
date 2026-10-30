@@ -14,7 +14,7 @@ import CancelarTurno from "./pages/CancelarTurno.tsx";
 import PedirTurno from "./pages/PedirTurno.tsx";
 import BuscarMedico from "./pages/BuscarMédico.tsx";
 import OrdenDelDia from "./pages/OrdenDelDia.tsx";
-import HistorialClinico from "./pages/HistorialClinico.tsx";
+import FichaPaciente from "./pages/FichaPaciente.tsx";
 import NoEncontrada from "./pages/NoEncontrada.tsx";
 import Layout from "./components/Layout/Layout.tsx";
 
@@ -55,6 +55,9 @@ function App() {
       {/* ========================================== */}
       <Route element={<PrivateRoute roles={["SECRETARIA", "MEDICO"]} />}>
         <Route path="/buscar-paciente" element={<BuscarPaciente />} />
+        {/* Ficha de cada paciente, con su propia dirección (datos, turnos e
+            historia clínica en un solo lugar) */}
+        <Route path="/pacientes/:id" element={<FichaPaciente />} />
         {/* GestionTurnos no trae Layout propio (Home lo usa adentro del suyo) */}
         <Route path="/gestion-turnos" element={<Layout><GestionTurnos /></Layout>} />
       </Route>
@@ -65,7 +68,6 @@ function App() {
       {/* ========================================== */}
       <Route element={<PrivateRoute roles={["MEDICO"]} />}>
         <Route path="/orden-del-dia" element={<OrdenDelDia />} />
-        <Route path="/historial" element={<HistorialClinico />} />
       </Route>
 
       {/* Cualquier otra URL: página 404 en vez de pantalla en blanco */}

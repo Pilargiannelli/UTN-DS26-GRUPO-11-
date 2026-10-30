@@ -15,7 +15,6 @@ export const menuPorRol: Record<RolUsuario, MenuItem[]> = {
     { label: "Gestión de turnos", href: "/home" },
     { label: "Agenda", href: "/orden-del-dia" },
     { label: "Pacientes", href: "/buscar-paciente" },
-    { label: "Historia clínica", href: "/historial" },
   ],
   PACIENTE: [
     { label: "Inicio", href: "/home" },

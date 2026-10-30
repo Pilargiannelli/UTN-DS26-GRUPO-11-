@@ -15,7 +15,6 @@ const secretaria: UsuarioSesion = {
   id: 3, username: "ana", nombre: "Ana", apellido: "Martínez", dni: "32111222",
   email: "ana@clinica.com", fotoPerfil: null, rol: "SECRETARIA",
 };
-const medico: UsuarioSesion = { ...secretaria, id: 4, nombre: "Carlos", apellido: "Gómez", rol: "MEDICO" };
 
 const pacienteMaria = {
   id: 10, username: "maria", nombre: "María", apellido: "Flores", dni: "35123456",
@@ -87,15 +86,6 @@ describe("Perfil de un paciente", () => {
     expect(screen.queryByRole("tab", { name: "Seguridad" })).not.toBeInTheDocument();
   });
 
-  it("el médico ve la ficha clínica: nueva consulta, agendar control e historia", () => {
-    renderizar(medico, false);
 
-    expect(screen.getAllByRole("button", { name: /Nueva consulta/ }).length).toBeGreaterThan(0);
-    expect(screen.getByRole("button", { name: /Agendar control/ })).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: "Historia clínica" })).toBeInTheDocument();
-    expect(screen.getByText("OSDE")).toBeInTheDocument();
-    expect(screen.queryByRole("button", { name: "Dar turno" })).not.toBeInTheDocument();
-    expect(screen.queryByRole("button", { name: "Guardar cambios" })).not.toBeInTheDocument();
-  });
 
 });

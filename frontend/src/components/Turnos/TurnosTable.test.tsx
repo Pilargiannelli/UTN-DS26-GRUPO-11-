@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { cleanup, fireEvent, render, screen, within } from "@testing-library/react";
+import { MemoryRouter } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContextBase";
 import type { AuthContextType } from "../../context/AuthContextBase";
 import type { EstadoTurno, Turno } from "../../types/Turno";
@@ -34,7 +35,9 @@ function renderizar(turnos: Turno[], rol: RolUsuario = "SECRETARIA") {
   };
   return render(
     <AuthContext.Provider value={contexto}>
-      <TurnosTable turnos={turnos} onNuevoTurno={vi.fn()} onTurnoActualizado={vi.fn()} />
+      <MemoryRouter>
+        <TurnosTable turnos={turnos} onNuevoTurno={vi.fn()} onTurnoActualizado={vi.fn()} />
+      </MemoryRouter>
     </AuthContext.Provider>
   );
 }
@@ -49,6 +52,11 @@ const turnos = [
 const panelActivo = () => screen.getByRole("tabpanel");
 
 describe("TurnosTable (próximos turnos por estado)", () => {
+  it("el nombre del paciente lleva a su ficha", () => {
+    renderizar(turnos);
+    expect(screen.getByRole("link", { name: "Ana Test" })).toHaveAttribute("href", "/pacientes/1");
+  });
+
   it("cada pestaña muestra cuántos turnos tiene", () => {
     renderizar(turnos);
     expect(screen.getByRole("tab", { name: /Pendientes/ })).toHaveTextContent("2");

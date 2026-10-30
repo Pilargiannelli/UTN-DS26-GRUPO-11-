@@ -101,13 +101,14 @@ describe("Header según el rol", () => {
     expect(screen.queryByRole("link", { name: "Historia clínica" })).not.toBeInTheDocument();
   });
 
-  it("MEDICO: menú con Agenda e Historia clínica, sin 'Médicos'", () => {
+  it("MEDICO: menú con Agenda y Pacientes (la historia clínica está en la ficha de cada paciente)", () => {
     renderizarHeader(crearUsuario("MEDICO"));
     abrirMenu();
 
     expect(screen.getByRole("link", { name: "Gestión de turnos" })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Agenda" })).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Historia clínica" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Pacientes" })).toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: "Historia clínica" })).not.toBeInTheDocument();
     expect(screen.queryByRole("link", { name: "Médicos" })).not.toBeInTheDocument();
   });
 
