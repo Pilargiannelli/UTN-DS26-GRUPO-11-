@@ -114,39 +114,6 @@
     color: var(--color-text-subtle);
 }
 
-/* Círculo con las iniciales (en vez de la foto genérica) */
-.directorio-avatar {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    width: 40px;
-    height: 40px;
-    border-radius: var(--radius-pill);
-    font-size: var(--text-sm);
-    font-weight: var(--weight-semibold);
-}
-
-.directorio-avatar-pino {
-    color: var(--color-pino-800);
-    background: var(--color-pino-100);
-}
-
-.directorio-avatar-info {
-    color: var(--color-info);
-    background: var(--color-info-bg);
-}
-
-.directorio-avatar-accent {
-    color: var(--color-accent);
-    background: var(--color-accent-bg);
-}
-
-.directorio-avatar-warning {
-    color: var(--color-warning);
-    background: var(--color-warning-bg);
-}
-
 .directorio-acciones {
     text-align: right;
     white-space: nowrap;

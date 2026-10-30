@@ -1,19 +1,198 @@
-.cont-perfil {
-    margin-bottom: 0;
+/* Perfil y Mi cuenta (VerUsuario): encabezado + secciones con su acción */
+
+.perfil {
+  max-width: var(--content-max);
+  padding-top: var(--space-4);
+  padding-bottom: var(--space-7);
+  text-align: left;
 }
 
-.row-perfil {
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    margin-top: 1rem;
-    margin-bottom: 0;
-    gap: 2rem;
+/* ── Encabezado ── */
+
+.perfil-encabezado {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  margin: var(--space-4) 0 var(--space-5);
 }
 
-.col-perfil {
-    display: flex;
-    justify-content: center;
-    flex: 0 0 auto;
-    width: auto;
+.perfil-encabezado-texto {
+  flex: 1;
+  min-width: 0;
+}
+
+.perfil .perfil-nombre {
+  margin: 0;
+  font-size: var(--text-2xl);
+  font-weight: var(--weight-semibold);
+  color: var(--color-heading);
+}
+
+.perfil-subtitulo {
+  margin-top: var(--space-1);
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  overflow-wrap: anywhere;
+}
+
+/* ── Columnas: datos a la izquierda, turnos e historia a la derecha ── */
+
+.perfil-grilla {
+  display: grid;
+  grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+  gap: var(--space-5);
+  align-items: start;
+}
+
+.perfil-grilla > .perfil-columna:only-child {
+  grid-column: 1 / -1;
+  max-width: 760px;
+}
+
+.perfil-columna {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  min-width: 0;
+}
+
+/* ── Sección (tarjeta) ── */
+
+.perfil-seccion {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+.perfil-seccion-encabezado {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-5);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.perfil .perfil-seccion-titulo {
+  margin: 0;
+  font-size: var(--text-md);
+  font-weight: var(--weight-semibold);
+  color: var(--color-heading);
+}
+
+.perfil-seccion-cuerpo {
+  padding: var(--space-4) var(--space-5) var(--space-5);
+}
+
+/* ── Datos "Etiqueta  valor" ── */
+
+.perfil-datos {
+  margin: 0;
+}
+
+.perfil-dato {
+  display: grid;
+  grid-template-columns: 140px minmax(0, 1fr);
+  gap: var(--space-3);
+  padding: var(--space-2) 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.perfil-dato:last-child {
+  border-bottom: none;
+}
+
+.perfil-dato dt {
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  color: var(--color-text-muted);
+}
+
+.perfil-dato dd {
+  margin: 0;
+  font-size: var(--text-sm);
+  color: var(--color-text);
+  overflow-wrap: anywhere;
+  font-variant-numeric: tabular-nums;
+}
+
+.perfil-nota {
+  margin: var(--space-3) 0 0;
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+
+/* ── Formularios dentro de una sección ── */
+
+.perfil-form-acciones {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-2);
+  margin-top: var(--space-4);
+}
+
+/* ── Próximos turnos del paciente ── */
+
+.perfil-turnos {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.perfil-turno {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.perfil-turno:last-child {
+  border-bottom: none;
+}
+
+.perfil-turno-fecha {
+  display: block;
+  font-weight: var(--weight-semibold);
+  font-variant-numeric: tabular-nums;
+}
+
+.perfil-turno-fecha::first-letter {
+  text-transform: uppercase;
+}
+
+.perfil-turno-medico {
+  display: block;
+  font-size: var(--text-xs);
+  color: var(--color-text-subtle);
+}
+
+/* ── Celular: una columna, botones a todo el ancho ── */
+
+@media (max-width: 992px) {
+  .perfil-grilla {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 576px) {
+  .perfil .perfil-nombre {
+    font-size: var(--text-xl);
+  }
+
+  .perfil-encabezado > .btn {
+    width: 100%;
+  }
+
+  .perfil-dato {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+  }
+
+  .perfil-form-acciones .btn {
+    flex: 1;
+  }
 }

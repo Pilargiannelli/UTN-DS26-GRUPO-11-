@@ -12,7 +12,6 @@ import GestionTurnos from "./pages/GestionTurnos";
 import DetalleTurno from "./pages/DetalleTurno.tsx";
 import CancelarTurno from "./pages/CancelarTurno.tsx";
 import PedirTurno from "./pages/PedirTurno.tsx";
-import CambiarPassword from "./pages/CambiarPassword";
 import BuscarMedico from "./pages/BuscarMédico.tsx";
 import OrdenDelDia from "./pages/OrdenDelDia.tsx";
 import HistorialClinico from "./pages/HistorialClinico.tsx";
@@ -37,7 +36,6 @@ function App() {
         <Route path="/buscar-medico" element={<BuscarMedico />} />
         <Route path="/ver-perfil" element={<VerUsuario />} />
         <Route path="/mi-cuenta" element={<VerUsuario propio />} />
-        <Route path="/cambiar-password" element={<CambiarPassword />} />
         <Route path="/mis-turnos" element={<MisTurnos />} />
         <Route path="/turnos/:id" element={<DetalleTurno />} />
         <Route path="/turnos/:id/cancelar" element={<CancelarTurno />} />

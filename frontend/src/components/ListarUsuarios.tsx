@@ -10,6 +10,7 @@ import type { Turno } from "../types/Turno";
 import { useAuth } from "../hooks/useAuth";
 import { useEdad } from "../hooks/useEdad";
 import { EncabezadoPagina } from "./EncabezadoPagina";
+import { AvatarIniciales } from "./AvatarIniciales";
 import NuevoTurnoModal from "./Turnos/NuevoTurnoModal";
 import { ToastMensaje } from "./NotifyToast";
 import { formatearHora } from "../utils/fecha";
@@ -50,20 +51,6 @@ type RegistroUsuario = MedicoRegistro | PacienteRegistro;
 
 const sinAcentos = (texto: string) =>
     texto.normalize("NFD").replace(/[̀-ͯ]/g, "");
-
-const iniciales = (u: UsuarioBasico) => `${u.nombre[0] ?? ""}${u.apellido[0] ?? ""}`.toUpperCase();
-
-// Color del círculo de iniciales: siempre el mismo para la misma persona
-const TONOS_AVATAR = ["pino", "info", "accent", "warning"] as const;
-const tonoAvatar = (id: number) => TONOS_AVATAR[id % TONOS_AVATAR.length];
-
-function Avatar({ usuario, id }: { usuario: UsuarioBasico; id: number }) {
-    return (
-        <span className={`directorio-avatar directorio-avatar-${tonoAvatar(id)}`} aria-hidden="true">
-            {iniciales(usuario)}
-        </span>
-    );
-}
 
 function Edad({ fechaNacimiento }: { fechaNacimiento: string }) {
     const edad = useEdad(fechaNacimiento);
@@ -254,7 +241,7 @@ export function ListarUsuarios({ rol }: ListarUsuariosProps) {
                                     <tr key={item.id}>
                                         <td>
                                             <div className="directorio-persona">
-                                                <Avatar usuario={u} id={item.id} />
+                                                <AvatarIniciales nombre={u.nombre} apellido={u.apellido} id={item.id} />
                                                 <div>
                                                     <button type="button" className="directorio-nombre" onClick={() => handleVerPerfil(item)}>
                                                         {u.nombre} {u.apellido}
