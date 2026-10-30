@@ -93,7 +93,7 @@
 
   /* ---------- Layout ---------- */
   --content-max: 1200px;
-  --header-height: 66px;
+  --header-height: 72px;
 
   /* Alias de componentes (perfil, consultas, editor de alergias). Estaban en
      ListarUsuarios.css y esas pantallas solo los veían si antes se había

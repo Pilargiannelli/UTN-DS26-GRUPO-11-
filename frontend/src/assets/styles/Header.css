@@ -118,3 +118,8 @@ a#perfil-dropdown.dropdown-toggle::after {
     background-position: center;
     margin-top: 0.5rem;
 }
+/* Altura fija del header: no depende de lo que tenga adentro (antes la daba
+   el avatar, que ya no está) */
+#colorNav {
+    min-height: var(--header-height);
+}
