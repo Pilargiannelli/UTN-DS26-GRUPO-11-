@@ -53,7 +53,9 @@ describe("Directorio de pacientes", () => {
     renderizar("paciente");
 
     expect(screen.getByRole("heading", { name: "Pacientes" })).toBeInTheDocument();
-    expect(screen.getByText("2 pacientes registrados")).toBeInTheDocument();
+    // Resumen del encabezado: 2 pacientes, 1 con obra social
+    expect(screen.getByText("Con obra social").nextSibling).toHaveTextContent("1");
+    expect(screen.getByText("Pacientes", { selector: "dt" }).nextSibling).toHaveTextContent("2");
     expect(screen.getByRole("button", { name: "María Flores" })).toBeInTheDocument();
     expect(screen.getByText("OSDE")).toBeInTheDocument();
     expect(screen.getByText("Sin obra social")).toBeInTheDocument();
@@ -92,12 +94,13 @@ describe("Directorio de pacientes", () => {
 
   it("el médico tiene un acceso directo a la historia clínica de cada paciente", () => {
     datos["/pacientes"] = [
-      { ...pacientes[0], ultimaConsulta: "2026-10-20T13:00:00.000Z" },
+      { ...pacientes[0], ultimaConsulta: new Date().toISOString() },
       { ...pacientes[1], ultimaConsulta: null },
     ];
     renderizar("paciente", "MEDICO");
 
     expect(screen.getByText(/Abrí la historia clínica de un paciente/)).toBeInTheDocument();
+    expect(screen.getByText("Atendidos este mes").nextSibling).toHaveTextContent("1");
     expect(screen.getByRole("columnheader", { name: "Última consulta" })).toBeInTheDocument();
     expect(screen.getByText("Sin consultas")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Historia clínica de María Flores" })).toBeInTheDocument();

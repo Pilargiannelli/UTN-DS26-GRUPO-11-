@@ -1,4 +1,4 @@
-import { JournalMedical, Search } from "react-bootstrap-icons";
+import { HeartPulseFill, JournalMedical, PeopleFill, Search } from "react-bootstrap-icons";
 import { useFetch } from "../hooks/useFetch";
 import { Button, Spinner, Form, Alert, Table } from "react-bootstrap";
 import '../assets/styles/ListarUsuarios.css';
@@ -173,10 +173,36 @@ export function ListarUsuarios({ rol }: ListarUsuariosProps) {
     };
 
     const cantidad = listaRegistros.length;
-    const total = `${cantidad} ${esPaciente ? (cantidad === 1 ? "paciente registrado" : "pacientes registrados") : (cantidad === 1 ? "médico en la cartilla" : "médicos en la cartilla")}`;
     const descripcion = vistaMedico
-        ? `Abrí la historia clínica de un paciente para ver sus consultas y registrar la de hoy. ${total}.`
-        : total;
+        ? "Abrí la historia clínica de un paciente para ver sus consultas y registrar la de hoy."
+        : esPaciente
+            ? "Buscá un paciente por nombre o DNI para darle turno o ver sus datos."
+            : "Profesionales del consultorio, con su especialidad y matrícula.";
+
+    // Resumen en números del encabezado
+    const pacientesLista = esPaciente ? (listaRegistros as PacienteRegistro[]) : [];
+    const hoy = new Date();
+    const datos = !esPaciente
+        ? [
+            { valor: cantidad, texto: cantidad === 1 ? "Médico" : "Médicos" },
+            { valor: new Set((listaRegistros as MedicoRegistro[]).map((m) => m.especialidad)).size, texto: "Especialidades" },
+        ]
+        : vistaMedico
+            ? [
+                { valor: cantidad, texto: cantidad === 1 ? "Paciente" : "Pacientes" },
+                {
+                    valor: pacientesLista.filter((p) => {
+                        if (!p.ultimaConsulta) return false;
+                        const f = new Date(p.ultimaConsulta);
+                        return f.getMonth() === hoy.getMonth() && f.getFullYear() === hoy.getFullYear();
+                    }).length,
+                    texto: "Atendidos este mes",
+                },
+            ]
+            : [
+                { valor: cantidad, texto: cantidad === 1 ? "Paciente" : "Pacientes" },
+                { valor: pacientesLista.filter((p) => p.coberturas?.length).length, texto: "Con obra social" },
+            ];
 
     return (
         <section className="directorio">
@@ -189,7 +215,10 @@ export function ListarUsuarios({ rol }: ListarUsuariosProps) {
 
             <EncabezadoPagina
                 titulo={titulo}
+                etiqueta={esPaciente ? "Directorio clínico" : "Cartilla médica"}
+                icono={esPaciente ? <PeopleFill /> : <HeartPulseFill />}
                 descripcion={descripcion}
+                datos={datos}
                 accion={esPaciente && esSecretaria && (
                     <Button variant="primary" onClick={() => navigate("/registrar-paciente")}>
                         + Registrar paciente
