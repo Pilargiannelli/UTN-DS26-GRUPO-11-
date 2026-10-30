@@ -140,3 +140,16 @@ describe("POST /api/auth/registro (autoregistro)", () => {
     expect(turnos.status).toBe(200);
   });
 });
+
+describe("GET /api/pacientes/:id", () => {
+  it("devuelve la ficha con usuario y obra social; uno inexistente da 404", async () => {
+    const paciente = await prisma.paciente.findFirstOrThrow({ where: { usuario: { dni: DNIS_PRUEBA[0] } } });
+    const res = await request(app).get(`/api/pacientes/${paciente.id}`).set("Authorization", `Bearer ${tokenSecretaria}`);
+    expect(res.status).toBe(200);
+    expect(res.body.usuario).toMatchObject({ dni: DNIS_PRUEBA[0] });
+    expect(res.body.usuario).not.toHaveProperty("passwordHash");
+
+    const noExiste = await request(app).get("/api/pacientes/999999").set("Authorization", `Bearer ${tokenSecretaria}`);
+    expect(noExiste.status).toBe(404);
+  });
+});

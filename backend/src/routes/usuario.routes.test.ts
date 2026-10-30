@@ -12,6 +12,7 @@ vi.mock("../controllers/usuario.controller", () => ({
   getUsuarios: (req: any, res: any) => res.status(200).json([]),
   createPaciente: (req: any, res: any) => res.status(201).json(req.body),
   updatePaciente: (req: any, res: any) => res.status(200).json(req.body),
+  getPaciente: (_req: any, res: any) => res.status(200).json({ id: 1 }),
 }));
 
 const tokenDe = (rol: Rol) => jwt.sign({ sub: 1, rol }, JWT_SECRET, { expiresIn: "1h" });
@@ -119,5 +120,18 @@ describe("Usuario Routes - Matriz sin DB", () => {
       expect(response.status).toBe(404);
       expect(response.body).toEqual({ error: "Ruta no encontrada" });
     });
+  });
+});
+describe("GET /api/pacientes/:id - Matriz sin DB", () => {
+  it("401 sin token, 403 para PACIENTE y 200 para SECRETARIA y MEDICO", async () => {
+    expect((await request(app).get("/api/pacientes/1")).status).toBe(401);
+    expect((await request(app).get("/api/pacientes/1").set("Authorization", `Bearer ${tokenDe(Rol.PACIENTE)}`)).status).toBe(403);
+    expect((await request(app).get("/api/pacientes/1").set("Authorization", `Bearer ${tokenDe(Rol.SECRETARIA)}`)).status).toBe(200);
+    expect((await request(app).get("/api/pacientes/1").set("Authorization", `Bearer ${tokenDe(Rol.MEDICO)}`)).status).toBe(200);
+  });
+
+  it("un id no numérico responde 400", async () => {
+    const res = await request(app).get("/api/pacientes/abc").set("Authorization", `Bearer ${tokenDe(Rol.MEDICO)}`);
+    expect(res.status).toBe(400);
   });
 });
