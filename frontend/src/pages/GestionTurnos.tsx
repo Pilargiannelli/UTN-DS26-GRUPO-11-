@@ -1,8 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Calendar3, People, PlusLg, Clock } from "react-bootstrap-icons";
+import { Calendar3, CalendarPlus, PersonPlus, ChevronRight } from "react-bootstrap-icons";
 import { saludoSegunHora } from "../utils/saludo";
-import { formatearHora } from "../utils/fecha";
 import {
   Container,
   Spinner,
@@ -154,28 +153,28 @@ function GestionTurnos({ recepcion = false }: { recepcion?: boolean }) {
               <span className="recepcion-etiqueta">Recepción · Secretaría</span>
               <h1>{saludoSegunHora()}, {nombreUsuario}</h1>
               <p className="recepcion-fecha">{fechaActual}</p>
-              <p className="recepcion-resumen">
-                <strong>{turnosDeHoy}</strong> {turnosDeHoy === 1 ? "turno por atender hoy" : "turnos por atender hoy"}
-              </p>
+              <Link to="/orden-del-dia" className="recepcion-resumen">
+                <Calendar3 aria-hidden="true" />
+                <strong>{turnosDeHoy}</strong> {turnosDeHoy === 1 ? "turno por atender hoy" : "turnos por atender hoy"}<ChevronRight aria-hidden="true" />
+              </Link>
             </div>
             <nav className="recepcion-accesos" aria-label="Acciones de recepción">
-              <button type="button" className="btn btn-success" onClick={() => setShowModal(true)}>
-                <PlusLg aria-hidden="true" /> Nuevo turno
+              <button type="button" className="recepcion-atajo recepcion-atajo-principal" onClick={() => setShowModal(true)}>
+                <span className="atajo-icono"><CalendarPlus aria-hidden="true" /></span>
+                <strong>Agendar turno</strong><span>Cargá un nuevo turno<br />en el sistema.</span>
+                <ChevronRight className="atajo-flecha" aria-hidden="true" />
               </button>
-              <Link className="btn recepcion-acceso" to="/orden-del-dia"><Calendar3 aria-hidden="true" /> Agenda</Link>
-              <Link className="btn recepcion-acceso" to="/buscar-paciente"><People aria-hidden="true" /> Pacientes</Link>
+              <Link className="recepcion-atajo" to="/orden-del-dia">
+                <span className="atajo-icono"><Calendar3 aria-hidden="true" /></span>
+                <strong>Ver agenda</strong><span>Consultá la agenda<br />de profesionales.</span>
+                <ChevronRight className="atajo-flecha" aria-hidden="true" />
+              </Link>
+              <Link className="recepcion-atajo recepcion-atajo-paciente" to="/registrar-paciente">
+                <span className="atajo-icono"><PersonPlus aria-hidden="true" /></span>
+                <strong>Registrar paciente</strong><span>Cargá un nuevo paciente<br />en el sistema.</span>
+                <ChevronRight className="atajo-flecha" aria-hidden="true" />
+              </Link>
             </nav>
-            {proximoTurno && (
-              <div className="recepcion-siguiente">
-                <Clock aria-hidden="true" />
-                <span>Próxima atención</span>
-                <Link to={`/pacientes/${proximoTurno.pacienteId}`}>
-                  {proximoTurno.paciente.usuario.nombre} {proximoTurno.paciente.usuario.apellido}
-                </Link>
-                <span>{new Date(proximoTurno.fechaHora).toLocaleDateString("es-AR", { day: "numeric", month: "short" })} · {formatearHora(proximoTurno.fechaHora)} hs</span>
-                <span>{proximoTurno.medico.especialidad}</span>
-              </div>
-            )}
           </header>
         ) : <HeroTurnos
           rol={usuario?.rol ?? null}

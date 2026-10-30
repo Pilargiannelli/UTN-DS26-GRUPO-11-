@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen, within } from "@testing-library/react";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { AuthContext } from "../context/AuthContextBase";
 import type { AuthContextType } from "../context/AuthContextBase";
@@ -46,7 +46,7 @@ describe("Ficha del paciente (/pacientes/:id)", () => {
     renderizar("SECRETARIA");
     const ruta = screen.getByRole("navigation", { name: "Ruta de navegación" });
     expect(ruta).toHaveTextContent("Pacientes");
-    expect(screen.getByRole("link", { name: "Pacientes" })).toHaveAttribute("href", "/buscar-paciente");
+    expect(within(ruta).getByRole("link", { name: "Pacientes" })).toHaveAttribute("href", "/buscar-paciente");
     expect(screen.getAllByText("María Flores").length).toBeGreaterThan(0);
   });
 
