@@ -6,7 +6,6 @@ import {
 } from "react-bootstrap";
 
 import HeroTurnos from "../components/Turnos/HeroTurnos";
-import DashboardCards from "../components/Turnos/DashboardCards";
 
 import TurnosTable from "../components/Turnos/TurnosTable";
 import NuevoTurnoModal from "../components/Turnos/NuevoTurnoModal";
@@ -76,14 +75,6 @@ function GestionTurnos() {
     }
   );
 
-  const horaActual = ahora.toLocaleTimeString(
-    "es-AR",
-    {
-      hour: "2-digit",
-      minute: "2-digit",
-    }
-  );
-
   // El panel muestra solo los turnos que todavía no pasaron (los de días
   // anteriores, y los de hoy que ya fueron, se consultan en la Agenda)
   const proximos = todosLosTurnos.filter((t) => new Date(t.fechaHora) >= ahora);
@@ -97,7 +88,7 @@ function GestionTurnos() {
   );
 
   // ==========================================
-  // Dashboard: los que quedan hoy y, por estado, todos los próximos
+  // Resumen del encabezado: los que quedan hoy y los pendientes de confirmar
   // (el Médico ya recibe solo su agenda desde el back)
   // ==========================================
 
@@ -106,10 +97,6 @@ function GestionTurnos() {
   ).length;
 
   const pendientes = proximos.filter((t) => t.estado === "Pendiente" || t.estado === "Reprogramado").length;
-
-  const confirmados = proximos.filter((t) => t.estado === "Confirmado").length;
-
-  const cancelados = proximos.filter((t) => t.estado === "Cancelado").length;
 
     // ==========================================
   // Loading
@@ -158,37 +145,12 @@ function GestionTurnos() {
       <Container className="mt-3">
 
         <HeroTurnos
-
-          secretaria={nombreUsuario}
-
-          proximoPaciente={
-            proximoTurno
-              ? `${proximoTurno.paciente.usuario.nombre} ${proximoTurno.paciente.usuario.apellido}`
-              : "Sin turnos"
-          }
-
-          especialidad={
-            proximoTurno
-              ? proximoTurno.medico.especialidad
-              : "-"
-          }
-
+          rol={usuario?.rol ?? null}
+          nombre={nombreUsuario}
           fecha={fechaActual}
-
-          hora={horaActual}
-
-        />
-
-        <DashboardCards
-
-          total={turnosDeHoy}
-
+          turnosDeHoy={turnosDeHoy}
           pendientes={pendientes}
-
-          confirmados={confirmados}
-
-          cancelados={cancelados}
-
+          proximoTurno={proximoTurno ?? null}
         />
 
 

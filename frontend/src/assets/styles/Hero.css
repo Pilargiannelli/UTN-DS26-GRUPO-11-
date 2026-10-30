@@ -125,3 +125,30 @@
         grid-column: 1 / -1;
     }
 }
+
+/* ── Resumen del día (reemplaza las tarjetas de contadores) ── */
+
+.hero-left .hero-fecha {
+    margin-top: 0;
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+}
+
+.hero-left .hero-fecha::first-letter {
+    text-transform: uppercase;
+}
+
+.hero-left .hero-resumen {
+    margin-top: var(--space-3);
+    font-size: var(--text-base);
+    color: var(--color-text);
+}
+
+.hero-resumen-pendientes {
+    display: inline-block;
+    padding: 0 var(--space-2);
+    border-radius: var(--radius-pill);
+    font-weight: var(--weight-semibold);
+    color: var(--color-warning);
+    background: var(--color-warning-bg);
+}

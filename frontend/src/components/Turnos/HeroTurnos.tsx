@@ -1,29 +1,50 @@
 import "../../assets/styles/Hero.css";
 import type { HeroTurnosProps } from "../../types/HeroTurnosProps";
+import { formatearHora } from "../../utils/fecha";
+import { saludoSegunHora } from "../../utils/saludo";
 
+const plural = (n: number, singular: string, varios: string) => `${n} ${n === 1 ? singular : varios}`;
+
+// Encabezado del panel de turnos (secretaria y médico): el resumen del día en
+// una línea, en vez de tarjetas que repetían los contadores de las pestañas
 function HeroTurnos({
-  secretaria,
-  proximoPaciente,
-  especialidad,
+  rol,
+  nombre,
   fecha,
-  hora,
+  turnosDeHoy,
+  pendientes,
+  proximoTurno,
 }: HeroTurnosProps) {
+  const fechaProximo = proximoTurno
+    ? new Date(proximoTurno.fechaHora).toLocaleDateString("es-AR", { weekday: "short", day: "numeric", month: "short" })
+    : null;
+
   return (
     <div className="hero">
 
       <div className="hero-left">
 
         <span className="hero-role">
-          SECRETARÍA MÉDICA
+          {rol === "MEDICO" ? "Consultorio" : "Secretaría"}
         </span>
 
         <h1>
-          👋 Buenos días, {secretaria}
+          {saludoSegunHora()}, {nombre}
         </h1>
 
-        <p>
-          Administrá la agenda médica, confirmaciones,
-          cancelaciones y reprogramaciones desde un único panel.
+        <p className="hero-fecha">{fecha}</p>
+
+        {/* Lo que pide acción (pendientes) va resaltado */}
+        <p className="hero-resumen">
+          Hoy: <strong>{plural(turnosDeHoy, "turno", "turnos")}</strong>
+          {" · "}
+          {pendientes > 0 ? (
+            <span className="hero-resumen-pendientes">
+              {plural(pendientes, "pendiente", "pendientes")} de confirmar
+            </span>
+          ) : (
+            "sin pendientes de confirmar"
+          )}
         </p>
 
       </div>
@@ -32,35 +53,20 @@ function HeroTurnos({
 
         <div className="hero-item">
 
-          <span>👤 Próximo turno</span>
+          <span>Próximo turno</span>
 
-          <strong>{proximoPaciente}</strong>
-
-          <small>
-            {hora} hs · {especialidad}
-          </small>
-
-        </div>
-
-        <div className="hero-item">
-
-          <span>📅 Hoy</span>
-
-          <strong>{fecha}</strong>
-
-          <small>2026</small>
-
-        </div>
-
-        <div className="hero-item">
-
-          <span>🕒 Hora</span>
-
-          <strong>{hora}</strong>
-
-          <small className="status">
-            ● Sistema activo
-          </small>
+          {proximoTurno ? (
+            <>
+              <strong>
+                {proximoTurno.paciente.usuario.nombre} {proximoTurno.paciente.usuario.apellido}
+              </strong>
+              <small>
+                {fechaProximo} · {formatearHora(proximoTurno.fechaHora)} hs · {proximoTurno.medico.especialidad}
+              </small>
+            </>
+          ) : (
+            <strong>Sin turnos próximos</strong>
+          )}
 
         </div>
 
