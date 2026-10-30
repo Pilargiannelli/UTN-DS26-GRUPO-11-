@@ -3,6 +3,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Button, Form, Spinner } from "react-bootstrap";
+import "../assets/styles/HistorialClinico.css";
 
 // Mismas reglas que historiaClinica.validation.ts del back
 const entradaSchema = z.object({

@@ -87,14 +87,15 @@ describe("Perfil de un paciente", () => {
     expect(screen.queryByRole("tab", { name: "Seguridad" })).not.toBeInTheDocument();
   });
 
-  it("el médico ve los datos en solo lectura y la historia clínica", () => {
+  it("el médico ve la ficha clínica: nueva consulta, agendar control e historia", () => {
     renderizar(medico, false);
 
-    expect(screen.getByText("OSDE · Plan 210 · Afiliado OS-1")).toBeInTheDocument();
-    expect(screen.queryByRole("button", { name: "Guardar cambios" })).not.toBeInTheDocument();
+    expect(screen.getAllByRole("button", { name: /Nueva consulta/ }).length).toBeGreaterThan(0);
+    expect(screen.getByRole("button", { name: /Agendar control/ })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Historia clínica" })).toBeInTheDocument();
+    expect(screen.getByText("OSDE")).toBeInTheDocument();
     expect(screen.queryByRole("button", { name: "Dar turno" })).not.toBeInTheDocument();
-
-    fireEvent.click(screen.getByRole("tab", { name: "Historia clínica" }));
-    expect(screen.getByText("Historia clínica de prueba")).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Guardar cambios" })).not.toBeInTheDocument();
   });
+
 });

@@ -239,3 +239,8 @@
     flex: 1;
   }
 }
+
+/* La ficha clínica del médico usa todo el ancho (dos columnas) */
+.perfil.perfil-medico {
+  max-width: var(--content-max);
+}

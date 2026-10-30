@@ -10,6 +10,7 @@ import { ProximosTurnosPaciente } from "../components/Perfil/ProximosTurnosPacie
 import { NewPasswordForm } from "../components/CambiarPasswordForm.tsx";
 import { PacienteFormFields } from "../components/PacienteFormFields.tsx";
 import { HistorialMedicoCard } from "../components/HistorialMedicoCard.tsx";
+import { PanelPacienteMedico } from "../components/Medico/PanelPacienteMedico.tsx";
 import NuevoTurnoModal from "../components/Turnos/NuevoTurnoModal.tsx";
 import { ToastMensaje } from "../components/NotifyToast.tsx";
 import { useUsuarioSeleccionado } from "../hooks/useUsuarioSeleccionado.ts";
@@ -86,6 +87,19 @@ function VerUsuario({ propio = false }: VerUsuarioProps) {
         ["Nacimiento", `${fechaCorta(paciente.fechaNacimiento)}${edad !== null ? ` (${edad} años)` : ""}`],
         ["Obra social", cobertura ? `${cobertura.obraSocial.nombre} · Plan ${cobertura.plan} · Afiliado ${cobertura.nroAfiliado}` : "Sin obra social"],
     ] : [];
+
+    // El médico ve la ficha clínica completa del paciente: datos, alergias,
+    // turnos e historia clínica en una sola pantalla
+    if (tieneRol("MEDICO") && esPaciente && !esMiPerfil && paciente) {
+        return (
+            <Layout>
+                <Container className="perfil perfil-medico">
+                    <BotonVolver />
+                    <PanelPacienteMedico usuario={perfil} paciente={paciente} />
+                </Container>
+            </Layout>
+        );
+    }
 
     // Mi cuenta: PATCH /auth/yo devolvió el usuario actualizado
     const cuentaGuardada = (actualizado: UsuarioSesion) => {
