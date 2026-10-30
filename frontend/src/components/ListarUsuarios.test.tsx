@@ -134,4 +134,17 @@ describe("Cartilla de médicos", () => {
     expect(screen.getByText("MP-123")).toBeInTheDocument();
     expect(screen.queryByRole("columnheader", { name: "Obra social" })).not.toBeInTheDocument();
   });
+
+  it("el paciente pide turno con el médico desde la cartilla", () => {
+    datos["/medicos"] = [
+      { id: 1, usuarioId: 20, especialidad: "Traumatología", matricula: "MP-123", usuario: { id: 20, nombre: "Carlos", apellido: "Gómez", email: "c@x.com" } },
+    ];
+    renderizar("medico", "PACIENTE");
+    expect(screen.getByRole("button", { name: "Pedir turno con Carlos Gómez" })).toBeInTheDocument();
+    expect(screen.getByRole("columnheader", { name: "Atención" })).toBeInTheDocument();
+    cleanup();
+
+    renderizar("medico", "SECRETARIA");
+    expect(screen.queryByRole("button", { name: /Pedir turno/ })).not.toBeInTheDocument();
+  });
 });

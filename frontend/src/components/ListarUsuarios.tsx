@@ -1,4 +1,4 @@
-import { HeartPulseFill, JournalMedical, PeopleFill, Search } from "react-bootstrap-icons";
+import { CalendarPlus, HeartPulseFill, JournalMedical, PeopleFill, Search } from "react-bootstrap-icons";
 import { useFetch } from "../hooks/useFetch";
 import { Button, Spinner, Form, Alert, Table } from "react-bootstrap";
 import '../assets/styles/ListarUsuarios.css';
@@ -96,6 +96,8 @@ export function ListarUsuarios({ rol }: ListarUsuariosProps) {
     const esSecretaria = tieneRol("SECRETARIA");
     // El médico entra a la historia clínica desde acá en cada consulta
     const vistaMedico = esPaciente && tieneRol("MEDICO");
+    // El paciente usa la cartilla para elegir con quién atenderse
+    const cartillaPaciente = !esPaciente && tieneRol("PACIENTE");
     const titulo = esPaciente ? "Pacientes" : "Médicos";
 
     if (loading) {
@@ -177,7 +179,9 @@ export function ListarUsuarios({ rol }: ListarUsuariosProps) {
         ? "Abrí la historia clínica de un paciente para ver sus consultas y registrar la de hoy."
         : esPaciente
             ? "Buscá un paciente por nombre o DNI para darle turno o ver sus datos."
-            : "Profesionales del consultorio, con su especialidad y matrícula.";
+            : cartillaPaciente
+                ? "Conocé a los profesionales del consultorio y pedí turno directamente con quien elijas."
+                : "Profesionales del consultorio, con su especialidad y matrícula.";
 
     // Resumen en números del encabezado
     const pacientesLista = esPaciente ? (listaRegistros as PacienteRegistro[]) : [];
@@ -277,6 +281,7 @@ export function ListarUsuarios({ rol }: ListarUsuariosProps) {
                                     <>
                                         <th scope="col">Especialidad</th>
                                         <th scope="col">Matrícula</th>
+                                        {cartillaPaciente && <th scope="col">Atención</th>}
                                     </>
                                 )}
                                 <th scope="col"><span className="visually-hidden">Acciones</span></th>
@@ -316,12 +321,30 @@ export function ListarUsuarios({ rol }: ListarUsuariosProps) {
                                             <>
                                                 <td data-label="Especialidad">{medico.especialidad}</td>
                                                 <td data-label="Matrícula" className="directorio-numero">{medico.matricula}</td>
+                                                {cartillaPaciente && (
+                                                    <td data-label="Atención">
+                                                        Lunes a viernes
+                                                        <span className="directorio-secundario">8 a 20 h</span>
+                                                    </td>
+                                                )}
                                             </>
                                         )}
                                         <td className="directorio-acciones">
                                             {paciente && esSecretaria && (
                                                 <Button size="sm" variant="outline-primary" onClick={() => setPacienteTurno(paciente)}>
                                                     Dar turno
+                                                </Button>
+                                            )}
+                                            {medico && cartillaPaciente && (
+                                                <Button
+                                                    size="sm"
+                                                    variant="primary"
+                                                    className="directorio-historia"
+                                                    onClick={() => navigate(`/pedir-turno?medico=${medico.id}`)}
+                                                    aria-label={`Pedir turno con ${u.nombre} ${u.apellido}`}
+                                                >
+                                                    <CalendarPlus aria-hidden="true" className="me-2" />
+                                                    Pedir turno
                                                 </Button>
                                             )}
                                             {paciente && vistaMedico ? (
