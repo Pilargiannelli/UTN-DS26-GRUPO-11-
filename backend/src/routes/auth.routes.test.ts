@@ -11,6 +11,7 @@ vi.mock("../controllers/auth.controller", () => ({
   login: (req: any, res: any) => res.status(200).json({ token: "fake-token" }),
   yo: (req: any, res: any) => res.status(200).json({ id: req.usuario.sub, rol: req.usuario.rol }),
   cambiarPassword: (_req: any, res: any) => res.status(204).send(),
+  actualizarPerfil: (req: any, res: any) => res.status(200).json(req.body),
 }));
 
 describe("Auth Routes - Matriz sin DB", () => {
@@ -50,5 +51,31 @@ describe("Auth Routes - Matriz sin DB", () => {
       expect(response.status).toBe(200);
       expect(response.body).toEqual({ id: 1, rol: Rol.PACIENTE });
     });
+  });
+});
+describe("PATCH /api/auth/yo (Mi cuenta) - sin DB", () => {
+  const token = () => jwt.sign({ sub: 1, rol: Rol.SECRETARIA }, JWT_SECRET, { expiresIn: "1h" });
+
+  it("sin token responde 401", async () => {
+    const res = await request(app).patch("/api/auth/yo").send({ nombre: "Ana", apellido: "M", email: "a@b.com" });
+    expect(res.status).toBe(401);
+  });
+
+  it("un email inválido responde 400 con el campo", async () => {
+    const res = await request(app)
+      .patch("/api/auth/yo")
+      .set("Authorization", `Bearer ${token()}`)
+      .send({ nombre: "Ana", apellido: "Martínez", email: "no-es-email" });
+    expect(res.status).toBe(400);
+    expect(res.body.detalles[0].campo).toBe("email");
+  });
+
+  it("descarta el DNI y el rol del body (no se cambian desde Mi cuenta)", async () => {
+    const res = await request(app)
+      .patch("/api/auth/yo")
+      .set("Authorization", `Bearer ${token()}`)
+      .send({ nombre: "Ana", apellido: "Martínez", email: " Ana@Clinica.com ", dni: "1", rol: "MEDICO" });
+    expect(res.status).toBe(200);
+    expect(res.body).toEqual({ nombre: "Ana", apellido: "Martínez", email: "ana@clinica.com" });
   });
 });

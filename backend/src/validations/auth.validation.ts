@@ -40,6 +40,15 @@ export const cambioPasswordSchema = z
     path: ["passwordNueva"],
   });
 
+// PATCH /api/auth/yo: cada usuario corrige su nombre y su email desde "Mi
+// cuenta". El DNI y el rol no se cambian acá (lo que no se declara se descarta).
+export const perfilUpdateSchema = z.object({
+  nombre: z.string().trim().min(1, "El nombre es obligatorio"),
+  apellido: z.string().trim().min(1, "El apellido es obligatorio"),
+  email: z.string().trim().toLowerCase().pipe(z.email("El email no es válido")),
+});
+
 export type RegistroInput = z.infer<typeof registroSchema>;
+export type PerfilUpdateInput = z.infer<typeof perfilUpdateSchema>;
 export type CambioPasswordInput = z.infer<typeof cambioPasswordSchema>;
 export type LoginInput = z.infer<typeof loginSchema>;

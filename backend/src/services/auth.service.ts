@@ -2,7 +2,7 @@ import bcrypt from "bcrypt";
 import jwt, { SignOptions } from "jsonwebtoken";
 import { prisma } from "../config/prisma";
 import { JWT_SECRET, JWT_EXPIRES_IN, SALT_ROUNDS } from "../config/env";
-import { RegistroInput, LoginInput, CambioPasswordInput } from "../validations/auth.validation";
+import { RegistroInput, LoginInput, CambioPasswordInput, PerfilUpdateInput } from "../validations/auth.validation";
 import { crearPaciente } from "./paciente.service";
 import { ErrorNegocio } from "../errors/ErrorNegocio";
 
@@ -59,6 +59,19 @@ export async function cambiarPassword(usuarioId: number, datos: CambioPasswordIn
     where: { id: usuarioId },
     data: { passwordHash: await bcrypt.hash(datos.passwordNueva, SALT_ROUNDS) },
   });
+}
+
+// Mi cuenta: nombre, apellido y email del propio usuario (cualquier rol).
+// Un email que ya usa otra cuenta responde 409 con el mensaje del campo.
+export async function actualizarPerfil(usuarioId: number, datos: PerfilUpdateInput) {
+  const enUso = await prisma.usuario.findFirst({
+    where: { email: datos.email, NOT: { id: usuarioId } },
+    select: { id: true },
+  });
+  if (enUso) throw new ErrorNegocio(409, "El email ya se encuentra registrado");
+
+  await prisma.usuario.update({ where: { id: usuarioId }, data: datos });
+  return obtenerPerfil(usuarioId);
 }
 
 export async function obtenerPerfil(id: number) {

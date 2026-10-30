@@ -65,3 +65,25 @@ describe("PATCH /api/auth/password", () => {
     expect(conVieja.status).toBe(401);
   });
 });
+
+describe("PATCH /api/auth/yo (Mi cuenta)", () => {
+  it("el usuario corrige su nombre y su email", async () => {
+    const res = await request(app)
+      .patch("/api/auth/yo")
+      .set("Authorization", `Bearer ${token}`)
+      .send({ nombre: "Cambiado", apellido: "Password", email: "otro.email.cambio@test.local" });
+
+    expect(res.status).toBe(200);
+    expect(res.body).toMatchObject({ nombre: "Cambiado", email: "otro.email.cambio@test.local", dni: DNI });
+  });
+
+  it("no puede usar el email de otra cuenta: 409", async () => {
+    const res = await request(app)
+      .patch("/api/auth/yo")
+      .set("Authorization", `Bearer ${token}`)
+      .send({ nombre: "Cambiado", apellido: "Password", email: "maria.flores@gmail.com" });
+
+    expect(res.status).toBe(409);
+    expect(res.body).toEqual({ error: "El email ya se encuentra registrado" });
+  });
+});

@@ -3,7 +3,7 @@ import rateLimit from "express-rate-limit";
 import * as authController from "../controllers/auth.controller";
 import { authenticate } from "../middlewares/auth.middleware";
 import { validate } from "../middlewares/validate.middleware";
-import { registroSchema, loginSchema, cambioPasswordSchema } from "../validations/auth.validation";
+import { registroSchema, loginSchema, cambioPasswordSchema, perfilUpdateSchema } from "../validations/auth.validation";
 
 const router = Router();
 
@@ -22,6 +22,8 @@ const limiteLogin = rateLimit({
 
 router.post("/login", limiteLogin, validate(loginSchema), authController.login);
 router.get("/yo", authenticate, authController.yo);
+// Mi cuenta: cada usuario corrige su nombre y email (el id sale del token)
+router.patch("/yo", authenticate, validate(perfilUpdateSchema), authController.actualizarPerfil);
 // Cada usuario cambia su propia contraseña (el id sale del token)
 router.patch("/password", authenticate, validate(cambioPasswordSchema), authController.cambiarPassword);
 

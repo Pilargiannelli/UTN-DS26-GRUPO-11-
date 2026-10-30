@@ -25,6 +25,14 @@ export async function login(req: Request, res: Response, next: NextFunction) {
   }
 }
 
+export async function actualizarPerfil(req: Request, res: Response, next: NextFunction) {
+  try {
+    res.json(await authService.actualizarPerfil(req.usuario!.sub, req.body));
+  } catch (error) {
+    next(error);
+  }
+}
+
 export async function cambiarPassword(req: Request, res: Response, next: NextFunction) {
   try {
     await authService.cambiarPassword(req.usuario!.sub, req.body);
