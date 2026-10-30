@@ -1,52 +1,243 @@
-.pedir-turno-titulo {
-  font-family: var(--font-sans);
-  font-size: var(--text-xl);
-  color: var(--color-pino-900);
-  margin: 0 0 1.25rem;
+/* Pedir turno: pasos a la izquierda, resumen fijo a la derecha */
+
+.pedir-turno {
+  padding-bottom: var(--space-6);
+  text-align: left;
 }
 
-.pedir-turno-card {
+.pedir-turno-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 340px);
+  gap: var(--space-5);
+  align-items: start;
+}
+
+.pedir-turno-pasos {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  min-width: 0;
+}
+
+/* ── Paso ── */
+
+.pedir-paso {
+  padding: var(--space-5);
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
-  padding: 1.5rem;
-  /* Ancho para que la tira de días (5 por fila) se lea cómoda */
-  max-width: 560px;
-  margin: 0 auto;
+  box-shadow: var(--shadow-sm);
 }
 
-.pedir-turno-label {
-  font-size: var(--text-xs);
-  color: var(--color-text-subtle);
-  display: block;
-  margin-bottom: 6px;
+.pedir-turno .pedir-paso-titulo {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin: 0 0 var(--space-4);
+  font-size: var(--text-md);
+  font-weight: var(--weight-semibold);
+  color: var(--color-heading);
 }
 
-.pedir-turno-select {
-  width: 100%;
-  height: 40px;
-  padding: 0 10px;
-  border-radius: var(--radius-sm);
-  border: 1px solid var(--color-border);
-  margin-bottom: 16px;
-  background: var(--color-surface);
-  color: var(--color-text);
-}
-
-.pedir-turno-btn-confirmar {
-  width: 100%;
-  margin-top: var(--space-5);
-  height: 42px;
+.pedir-paso-numero {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: var(--space-6);
+  height: var(--space-6);
   font-size: var(--text-sm);
-  font-weight: 500;
-  background: var(--color-pino-900);
-  color: var(--color-on-primary);
-  border: none;
-  border-radius: var(--radius-sm);
-  cursor: pointer;
+  font-weight: var(--weight-semibold);
+  color: var(--color-primary);
+  background: var(--color-primary-soft);
+  border-radius: var(--radius-pill);
 }
 
-.pedir-turno-btn-confirmar:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
+.pedir-paso-listo .pedir-paso-numero {
+  font-size: var(--text-lg);
+  color: var(--color-primary);
+  background: transparent;
+}
+
+.pedir-ayuda {
+  margin: 0;
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+
+/* ── Especialidades ── */
+
+.pedir-opciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.pedir-opcion {
+  min-height: 40px;
+  padding: var(--space-2) var(--space-4);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  color: var(--color-text);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-pill);
+  transition: background var(--transition-fast), border-color var(--transition-fast);
+}
+
+.pedir-opcion:hover {
+  border-color: var(--color-primary);
+  background: var(--color-pino-50);
+}
+
+.pedir-opcion-elegida,
+.pedir-opcion-elegida:hover {
+  color: var(--color-on-primary);
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+/* ── Profesionales ── */
+
+.pedir-medicos {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: var(--space-3);
+}
+
+.pedir-medico {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  text-align: left;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-md);
+  transition: background var(--transition-fast), border-color var(--transition-fast);
+}
+
+.pedir-medico:hover {
+  border-color: var(--color-primary);
+  background: var(--color-pino-50);
+}
+
+.pedir-medico-elegido,
+.pedir-medico-elegido:hover {
+  background: var(--color-pino-50);
+  border: 2px solid var(--color-primary);
+}
+
+.pedir-medico-datos {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+
+.pedir-medico-nombre {
+  font-weight: var(--weight-semibold);
+  color: var(--color-heading);
+}
+
+.pedir-medico-detalle {
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+}
+
+.pedir-medico-check {
+  flex-shrink: 0;
+  font-size: var(--text-lg);
+  color: var(--color-primary);
+}
+
+/* ── Resumen ── */
+
+.pedir-resumen {
+  position: sticky;
+  top: var(--space-4);
+  padding: var(--space-5);
+  background: var(--color-surface);
+  border: 1px solid var(--color-pino-200);
+  border-top: 4px solid var(--color-primary);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+}
+
+.pedir-turno .pedir-resumen-titulo {
+  margin: 0 0 var(--space-4);
+  font-size: var(--text-lg);
+  font-weight: var(--weight-semibold);
+  color: var(--color-heading);
+}
+
+.pedir-resumen-lista {
+  margin: 0 0 var(--space-5);
+}
+
+.pedir-resumen-lista > div {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-2) 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.pedir-resumen-lista dt {
+  font-size: var(--text-sm);
+  font-weight: var(--weight-regular);
+  color: var(--color-text-muted);
+}
+
+.pedir-resumen-lista dd {
+  margin: 0;
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  text-align: right;
+  color: var(--color-heading);
+}
+
+.pedir-resumen-capital::first-letter {
+  text-transform: uppercase;
+}
+
+.pedir-resumen-falta {
+  font-weight: var(--weight-regular);
+  color: var(--color-text-subtle);
+}
+
+.pedir-resumen-nota {
+  display: flex;
+  gap: var(--space-2);
+  margin: var(--space-4) 0 0;
+  font-size: var(--text-xs);
+  line-height: 1.5;
+  color: var(--color-text-muted);
+}
+
+.pedir-resumen-nota svg {
+  flex-shrink: 0;
+  margin-top: 2px;
+  color: var(--color-info);
+}
+
+@media (max-width: 992px) {
+  .pedir-turno-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .pedir-resumen {
+    position: static;
+  }
+}
+
+@media (max-width: 576px) {
+  .pedir-paso,
+  .pedir-resumen {
+    padding: var(--space-4);
+  }
+
+  .pedir-medicos {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }
