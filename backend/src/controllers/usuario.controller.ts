@@ -20,9 +20,9 @@ export async function getMedicos(_req: Request, res: Response, next: NextFunctio
   }
 }
 
-export async function getPacientes(_req: Request, res: Response, next: NextFunction) {
+export async function getPacientes(req: Request, res: Response, next: NextFunction) {
   try {
-    const pacientes = await usuarioService.listarPacientes();
+    const pacientes = await usuarioService.listarPacientes(req.usuario?.rol);
     return res.json(pacientes);
   } catch (error) {
     return next(error);

@@ -93,3 +93,17 @@ describe("Historia clínica con DB", () => {
     expect(res.status).toBe(404);
   });
 });
+
+describe("GET /api/pacientes con la última consulta", () => {
+  it("el médico recibe la fecha de la última consulta; la secretaria no", async () => {
+    const secretaria = await prisma.usuario.findUniqueOrThrow({ where: { email: "ana.martinez@clinica.com" } });
+    const tokenSecretaria = tokenDe(secretaria.id, Rol.SECRETARIA);
+
+    const comoMedico = await request(app).get("/api/pacientes").set("Authorization", `Bearer ${tokenMedico}`);
+    const comoSecretaria = await request(app).get("/api/pacientes").set("Authorization", `Bearer ${tokenSecretaria}`);
+
+    const maria = comoMedico.body.find((p: { id: number }) => p.id === pacienteMariaId);
+    expect(maria).toHaveProperty("ultimaConsulta");
+    expect(comoSecretaria.body.every((p: object) => !("ultimaConsulta" in p) && !("historiaClinica" in p))).toBe(true);
+  });
+});
