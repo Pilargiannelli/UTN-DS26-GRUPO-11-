@@ -5,10 +5,11 @@ import { Footer } from "./Footer.tsx";
 
 interface LayoutProps {
   children: ReactNode;
+  className?: string;
 }
 
-function Layout({ children }: LayoutProps) {
-  return (
+function Layout({ children, className }: LayoutProps) {
+  const content = (
     <>
       <Header />
       <Container fluid as="main" className="m-0 p-0 d-flex flex-grow-1">
@@ -17,6 +18,8 @@ function Layout({ children }: LayoutProps) {
       <Footer />
     </>
   );
+
+  return className ? <div className={className}>{content}</div> : content;
 }
 
 export default Layout;
