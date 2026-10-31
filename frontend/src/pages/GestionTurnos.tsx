@@ -8,6 +8,7 @@ import {
   Alert,
 } from "react-bootstrap";
 
+import { EncabezadoPagina } from "../components/EncabezadoPagina";
 import HeroTurnos from "../components/Turnos/HeroTurnos";
 
 import TurnosTable from "../components/Turnos/TurnosTable";
@@ -145,7 +146,7 @@ function GestionTurnos({ recepcion = false }: { recepcion?: boolean }) {
   // ==========================================
 
   return (
-      <Container className="mt-3">
+      <Container className={`mt-3 ${recepcion ? "" : "gestion-turnos-page"}`}>
 
         {recepcion ? (
           <header className="recepcion-bienvenida">
@@ -176,6 +177,9 @@ function GestionTurnos({ recepcion = false }: { recepcion?: boolean }) {
               </Link>
             </nav>
           </header>
+        ) : usuario?.rol === "SECRETARIA" ? (
+          <EncabezadoPagina titulo="Turnos" etiqueta="Gestión del consultorio" icono={<Calendar3 />} descripcion="Organizá las próximas atenciones y revisá el estado de cada turno."
+            datos={[{ valor: turnosDeHoy, texto: "Por atender hoy" }, { valor: pendientes, texto: "Por confirmar" }]} />
         ) : <HeroTurnos
           rol={usuario?.rol ?? null}
           nombre={nombreUsuario}

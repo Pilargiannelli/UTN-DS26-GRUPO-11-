@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { CalendarPlus } from "react-bootstrap-icons";
 
 import {
   Modal,
@@ -196,7 +197,7 @@ function NuevoTurnoModal({
         <div>
 
           <h3 className="m-0 fw-bold">
-            🗓️ Nuevo Turno
+            <CalendarPlus aria-hidden="true" className="me-2" />Nuevo Turno
           </h3>
 
           <small className="text-muted">
