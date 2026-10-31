@@ -1,0 +1,93 @@
+/* Paciente: lenguaje compartido, sin informacion ni acciones del personal. */
+.imos-reception-shell[data-rol="PACIENTE"] :is(.inicio-paciente, .mis-turnos-pagina, .pedir-turno, .detalle-turno, .pagina-paciente) { padding: 0; margin: 0; min-width: 0; }
+.imos-reception-shell[data-rol="PACIENTE"] .inicio-paciente { gap: 24px; }
+.imos-reception-shell[data-rol="PACIENTE"] .inicio-hero { padding: 0; border: 0; border-radius: 0; background: transparent; box-shadow: none; gap: 28px; }
+.imos-reception-shell[data-rol="PACIENTE"] .inicio-paciente .inicio-hero-titulo { font-family: var(--reception-font-heading); font-size: clamp(30px, 2.6vw, 42px); font-weight: 700; letter-spacing: -.035em; margin: 12px 0; overflow-wrap: anywhere; }
+.imos-reception-shell[data-rol="PACIENTE"] .inicio-paciente .inicio-hero-fecha { font-size: 11px; color: var(--workspace-green); letter-spacing: .07em; }
+.imos-reception-shell[data-rol="PACIENTE"] :is(.inicio-tarjeta, .inicio-resumen-item, .inicio-acceso, .turno-paciente, .pedir-paso, .pedir-resumen, .detalle-turno-card, .cancelar-turno-card) { background: var(--workspace-surface); border: 1px solid var(--workspace-line); border-radius: 16px; box-shadow: var(--shadow-sm); }
+.imos-reception-shell[data-rol="PACIENTE"] .inicio-resumen { gap: 16px; }
+.imos-reception-shell[data-rol="PACIENTE"] .inicio-resumen-item { padding: 18px 20px; }
+.imos-reception-shell[data-rol="PACIENTE"] .inicio-resumen-item dd { font-size: 25px; font-weight: 500; color: var(--workspace-ink); }
+.imos-reception-shell[data-rol="PACIENTE"] .inicio-resumen-item .inicio-resumen-texto { font-size: 16px; }
+.imos-reception-shell[data-rol="PACIENTE"] .inicio-paciente .inicio-tarjeta-titulo { font-family: var(--reception-font-heading); font-size: 24px; font-weight: 700; line-height: 1.25; }
+.imos-reception-shell[data-rol="PACIENTE"] .inicio-columnas { gap: 24px; }
+.imos-reception-shell[data-rol="PACIENTE"] .inicio-tarjeta { padding: 22px 24px; }
+.imos-reception-shell[data-rol="PACIENTE"] :is(.inicio-tarjeta-encabezado, .inicio-datos > div) { flex-wrap: wrap; }
+.imos-reception-shell[data-rol="PACIENTE"] .inicio-acceso { padding: 18px; min-width: 0; transition: background-color 180ms ease, color 180ms ease, border-color 180ms ease; }
+.imos-reception-shell[data-rol="PACIENTE"] .inicio-acceso :is(.inicio-acceso-titulo, .inicio-acceso-desc) { overflow-wrap: anywhere; }
+.imos-reception-shell[data-rol="PACIENTE"] .inicio-acceso-icono { border-radius: 12px; background: var(--workspace-tint); color: var(--workspace-green); }
+.imos-reception-shell[data-rol="PACIENTE"] .inicio-acceso:focus-visible { background: var(--workspace-green); color: white; }
+.imos-reception-shell[data-rol="PACIENTE"] .inicio-acceso:focus-visible :is(.inicio-acceso-titulo, .inicio-acceso-desc, .inicio-acceso-flecha) { color: white; }
+.imos-reception-shell[data-rol="PACIENTE"] .mis-turnos-tabs { gap: 8px; border-color: var(--workspace-line); flex-wrap: wrap; }
+.imos-reception-shell[data-rol="PACIENTE"] .mis-turnos-tabs .nav-link { min-height: 44px; padding: 12px 16px; border-radius: 0; border: 0; border-bottom: 2px solid transparent; font-size: 14px; color: var(--workspace-muted); }
+.imos-reception-shell[data-rol="PACIENTE"] .mis-turnos-tabs .nav-link.active { color: var(--workspace-green); border-bottom-color: var(--workspace-green); background: transparent; }
+.imos-reception-shell[data-rol="PACIENTE"] .turno-paciente { padding: 22px 24px; border-left: 4px solid var(--estado-turno, var(--workspace-line)); }
+.imos-reception-shell[data-rol="PACIENTE"] .turno-paciente .turno-paciente-titulo { font-family: var(--reception-font-ui); font-size: 17px; font-weight: 600; line-height: 1.4; }
+.imos-reception-shell[data-rol="PACIENTE"] .turno-paciente-fecha { background: var(--workspace-tint); border: 0; padding-block: 12px; }
+.imos-reception-shell[data-rol="PACIENTE"] .turno-paciente :is(.turno-paciente-medico, .turno-paciente-nota) { line-height: 1.6; overflow-wrap: anywhere; }
+.imos-reception-shell[data-rol="PACIENTE"] .turno-paciente-link { min-height: 44px; padding-block: 10px; }
+.imos-reception-shell[data-rol="PACIENTE"] .indicaciones-medico { background: var(--workspace-paper); border-color: var(--workspace-line); border-radius: 10px; padding: 18px; }
+.imos-reception-shell[data-rol="PACIENTE"] .indicaciones-medico-lista dd { overflow-wrap: anywhere; }
+.imos-reception-shell[data-rol="PACIENTE"] .mis-turnos-vacio { background: var(--workspace-surface); border-color: var(--workspace-line); padding: 40px 20px; }
+.imos-reception-shell[data-rol="PACIENTE"] .pedir-turno-layout { grid-template-columns: minmax(0, 1fr) minmax(250px, 310px); gap: 24px; }
+.imos-reception-shell[data-rol="PACIENTE"] .pedir-resumen { position: sticky; top: calc(var(--reception-header) + 20px); border-top: 3px solid var(--workspace-green); }
+.imos-reception-shell[data-rol="PACIENTE"] .pedir-turno :is(.pedir-paso-titulo, .pedir-resumen-titulo) { font-family: var(--reception-font-heading); font-size: 24px; font-weight: 700; line-height: 1.3; }
+.imos-reception-shell[data-rol="PACIENTE"] .pedir-paso { padding: 24px; }
+.imos-reception-shell[data-rol="PACIENTE"] .pedir-medicos { grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 1fr)); }
+.imos-reception-shell[data-rol="PACIENTE"] :is(.pedir-opcion, .pedir-medico, .selector-turno-hora, .selector-turno-dia) { font-family: var(--reception-font-ui); min-height: 44px; border-radius: 9px; touch-action: manipulation; }
+.imos-reception-shell[data-rol="PACIENTE"] .pedir-resumen-lista :is(dt, dd) { overflow-wrap: anywhere; }
+.imos-reception-shell[data-rol="PACIENTE"] .detalle-turno-layout { gap: 24px; grid-template-columns: minmax(0, 1fr) minmax(250px, 310px); }
+.imos-reception-shell[data-rol="PACIENTE"] .detalle-turno-card { padding: 24px; }
+.imos-reception-shell[data-rol="PACIENTE"] .detalle-turno .detalle-turno-titulo { font-family: var(--reception-font-heading); font-size: clamp(26px, 2vw, 34px); font-weight: 700; line-height: 1.25; overflow-wrap: anywhere; }
+.imos-reception-shell[data-rol="PACIENTE"] .detalle-turno .detalle-turno-subtitulo { font-family: var(--reception-font-heading); font-size: 24px; font-weight: 700; }
+.imos-reception-shell[data-rol="PACIENTE"] .detalle-turno-sigue { top: calc(var(--reception-header) + 20px); }
+.imos-reception-shell[data-rol="PACIENTE"] .detalle-turno-datos :is(dt, dd) { overflow-wrap: anywhere; }
+.imos-reception-shell[data-rol="PACIENTE"] .cancelar-turno-card { max-width: 560px; padding: 28px; }
+.imos-reception-shell[data-rol="PACIENTE"] .cancelar-turno-encabezado { flex-wrap: wrap; }
+.imos-reception-shell[data-rol="PACIENTE"] .cancelar-turno-titulo { font-family: var(--reception-font-heading); font-size: 30px; }
+.imos-reception-shell[data-rol="PACIENTE"] .cancelar-turno-acciones { flex-wrap: wrap; }
+.imos-reception-shell[data-rol="PACIENTE"] .cancelar-turno-acciones button { min-height: 44px; height: auto; padding: 10px 16px; font-family: var(--reception-font-ui); border-radius: 8px; }
+.imos-reception-shell[data-rol="PACIENTE"] .historial-card { width: 100%; height: auto; min-height: 280px; overflow: visible; padding: 24px; border-color: var(--workspace-line); }
+.imos-reception-shell[data-rol="PACIENTE"] .historial-card::before,
+.imos-reception-shell[data-rol="PACIENTE"] .historial-card h4::after { content: none; }
+.imos-reception-shell[data-rol="PACIENTE"] .historial-card h4 { margin: 0 0 20px; font-family: var(--reception-font-heading); color: var(--workspace-ink); font-size: 25px; text-transform: none; line-height: 1.3; letter-spacing: -.02em; }
+.imos-reception-shell[data-rol="PACIENTE"] .consultas-scroll { max-height: none; overflow-y: visible !important; margin-top: 20px; padding: 0; }
+.imos-reception-shell[data-rol="PACIENTE"] .historial-card :is(.tabs-container, .tabs-content-wrapper) { height: auto; }
+.imos-reception-shell[data-rol="PACIENTE"] .historial-card .tab-content-pane { height: auto; }
+@media (hover: hover) and (pointer: fine) {
+  .imos-reception-shell[data-rol="PACIENTE"] .inicio-acceso:hover { background: var(--workspace-green); color: #fffefa; border-color: var(--workspace-green); }
+  .imos-reception-shell[data-rol="PACIENTE"] .inicio-acceso:hover :is(.inicio-acceso-titulo, .inicio-acceso-desc, .inicio-acceso-flecha) { color: #fffefa; }
+  .imos-reception-shell[data-rol="PACIENTE"] .inicio-acceso:hover .inicio-acceso-icono { background: #fffefa; color: var(--workspace-green); }
+}
+@media (max-width: 1199.98px) {
+  .imos-reception-shell[data-rol="PACIENTE"] :is(.pedir-turno-layout, .detalle-turno-layout) { grid-template-columns: minmax(0, 1fr); }
+  .imos-reception-shell[data-rol="PACIENTE"] :is(.pedir-resumen, .detalle-turno-sigue) { position: static; }
+  .imos-reception-shell[data-rol="PACIENTE"] .inicio-hero { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 700px) {
+  .imos-reception-shell[data-rol="PACIENTE"] .inicio-columnas { grid-template-columns: minmax(0, 1fr); }
+  .imos-reception-shell[data-rol="PACIENTE"] .inicio-resumen-item { padding: 16px; }
+  .imos-reception-shell[data-rol="PACIENTE"] :is(.inicio-tarjeta, .turno-paciente, .pedir-paso, .pedir-resumen, .detalle-turno-card, .cancelar-turno-card, .historial-card) { padding: 20px 16px; }
+  .imos-reception-shell[data-rol="PACIENTE"] .inicio-paciente .inicio-hero-titulo { font-size: 32px; }
+  .imos-reception-shell[data-rol="PACIENTE"] .detalle-turno-layout { gap: 18px; }
+  .imos-reception-shell[data-rol="PACIENTE"] .detalle-turno-pasos { flex-wrap: wrap; }
+  .imos-reception-shell[data-rol="PACIENTE"] .detalle-turno .detalle-turno-titulo { font-size: 26px; }
+  .imos-reception-shell[data-rol="PACIENTE"] .cancelar-turno-acciones button { flex: 1 1 140px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .imos-reception-shell[data-rol="PACIENTE"] .inicio-acceso { transition: none; }
+}
+
+.imos-reception-shell[data-rol="PACIENTE"] .proximo-turno-banner { background: var(--workspace-tint); border: 1px solid var(--workspace-line); border-radius: 16px; padding: 20px; gap: 18px; min-width: 0; }
+.imos-reception-shell[data-rol="PACIENTE"] .proximo-turno-izquierda { min-width: 0; }
+.imos-reception-shell[data-rol="PACIENTE"] .proximo-turno-detalle { overflow-wrap: anywhere; }
+.imos-reception-shell[data-rol="PACIENTE"] .proximo-turno-btn { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 10px 14px; border-radius: 8px; font-family: var(--reception-font-ui); }
+.imos-reception-shell[data-rol="PACIENTE"] .consulta-item { border-color: var(--workspace-line); border-radius: 12px; background: var(--workspace-surface); }
+@media (max-width: 700px) {
+  .imos-reception-shell[data-rol="PACIENTE"] .proximo-turno-banner { flex-wrap: wrap; padding: 18px 16px; }
+  .imos-reception-shell[data-rol="PACIENTE"] .proximo-turno-acciones { flex-wrap: wrap; }
+}
+
+.imos-reception-shell[data-rol="PACIENTE"] .proximo-turno-banner :is(.proximo-turno-chip-dia, .proximo-turno-detalle) { color: var(--workspace-ink); }
+.imos-reception-shell[data-rol="PACIENTE"] .proximo-turno-banner :is(.proximo-turno-chip-mes, .proximo-turno-eyebrow) { color: var(--workspace-green); }
+.imos-reception-shell[data-rol="PACIENTE"] .proximo-turno-chip-fecha { background: var(--workspace-surface); }
