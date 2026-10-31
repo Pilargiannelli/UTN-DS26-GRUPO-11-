@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Calendar3, CalendarPlus, PersonPlus, ChevronRight } from "react-bootstrap-icons";
+import { Calendar3, CalendarEvent, CalendarPlus, CheckCircle, PersonPlus, ChevronRight } from "react-bootstrap-icons";
 import { saludoSegunHora } from "../utils/saludo";
 import {
   Container,
@@ -18,6 +18,7 @@ import { useAuth } from "../hooks/useAuth";
 import { useFetch } from "../hooks/useFetch";
 
 import "../assets/styles/MedicoTheme.css";
+import "../assets/styles/SecretariaTurnos.css";
 import type { Turno } from "../types/Turno";
 
 function GestionTurnos({ recepcion = false }: { recepcion?: boolean }) {
@@ -153,8 +154,8 @@ function GestionTurnos({ recepcion = false }: { recepcion?: boolean }) {
           <header className="recepcion-bienvenida">
             <div className="recepcion-intro">
               <span className="recepcion-etiqueta">Recepción · Secretaría</span>
-              <h1>{saludoSegunHora()}, {nombreUsuario}</h1>
-              <p className="recepcion-fecha">{fechaActual}</p>
+              <h1>{saludoSegunHora()}, <span className="recepcion-nombre">{nombreUsuario}</span></h1>
+              <p className="recepcion-fecha"><CalendarEvent aria-hidden="true" /><span>{fechaActual}</span></p>
               <Link to="/orden-del-dia" className="recepcion-resumen">
                 <Calendar3 aria-hidden="true" />
                 <strong>{turnosDeHoy}</strong> {turnosDeHoy === 1 ? "turno por atender hoy" : "turnos por atender hoy"}<ChevronRight aria-hidden="true" />
@@ -180,7 +181,7 @@ function GestionTurnos({ recepcion = false }: { recepcion?: boolean }) {
           </header>
         ) : usuario?.rol === "SECRETARIA" ? (
           <EncabezadoPagina titulo="Turnos" etiqueta="Gestión del consultorio" icono={<Calendar3 />} descripcion="Organizá las próximas atenciones y revisá el estado de cada turno."
-            datos={[{ valor: turnosDeHoy, texto: "Por atender hoy" }, { valor: pendientes, texto: "Por confirmar" }]} />
+            datos={[{ valor: turnosDeHoy, texto: "Por atender hoy", icono: <CalendarEvent /> }, { valor: pendientes, texto: "Por confirmar", icono: <CheckCircle /> }]} />
         ) : <HeroTurnos
           rol={usuario?.rol ?? null}
           nombre={nombreUsuario}
