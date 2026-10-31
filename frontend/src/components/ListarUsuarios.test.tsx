@@ -129,7 +129,7 @@ describe("Cartilla de médicos", () => {
     ];
     renderizar("medico");
 
-    expect(screen.getByRole("heading", { name: "Médicos" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Profesionales" })).toBeInTheDocument();
     expect(screen.getByText("Traumatología")).toBeInTheDocument();
     expect(screen.getByText("MP-123")).toBeInTheDocument();
     expect(screen.queryByRole("columnheader", { name: "Obra social" })).not.toBeInTheDocument();
