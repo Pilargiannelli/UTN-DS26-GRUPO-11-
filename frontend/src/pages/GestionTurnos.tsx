@@ -17,6 +17,7 @@ import NuevoTurnoModal from "../components/Turnos/NuevoTurnoModal";
 import { useAuth } from "../hooks/useAuth";
 import { useFetch } from "../hooks/useFetch";
 
+import "../assets/styles/MedicoTheme.css";
 import type { Turno } from "../types/Turno";
 
 function GestionTurnos({ recepcion = false }: { recepcion?: boolean }) {
