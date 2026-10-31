@@ -1,0 +1,38 @@
+/* Interacciones compartidas. No se animan dimensiones ni se ocultan controles. */
+.imos-reception-shell main :is(h1, h2, .perfil-nombre),
+body:has(.imos-reception-shell) .modal-title { text-wrap: balance; }
+body:has(.imos-reception-shell) .modal-title { font-family: var(--font-display); font-weight: 400; line-height: 1.2; }
+.imos-reception-shell main :is(.form-control, .form-select),
+body:has(.imos-reception-shell) .modal :is(.form-control, .form-select) { transition: border-color var(--motion-fast) ease, box-shadow var(--motion-base) ease, background-color var(--motion-fast) ease; }
+.imos-reception-shell main .btn,
+body:has(.imos-reception-shell) .modal .btn { transition: background-color var(--motion-fast) ease, border-color var(--motion-fast) ease, box-shadow var(--motion-base) ease, transform var(--motion-fast) var(--motion-ease); }
+.reception-sidebar .offcanvas-body .nav-link { transition: background-color var(--motion-fast) ease, color var(--motion-fast) ease, box-shadow var(--motion-base) ease; }
+.reception-sidebar .offcanvas-body .nav-link.active { box-shadow: inset 3px 0 0 #b4cbb5; }
+.imos-reception-shell .reception-profile .dropdown-toggle { transition: background-color var(--motion-fast) ease, box-shadow var(--motion-base) ease; }
+.imos-reception-shell main :is(.directorio-card, .inicio-acceso, .recepcion-atajo) { transition: background-color var(--motion-base) ease, color var(--motion-fast) ease, border-color var(--motion-fast) ease, box-shadow var(--motion-base) ease, transform var(--motion-base) var(--motion-ease); }
+body:has(.imos-reception-shell) .modal.fade .modal-dialog { transform: translateY(12px); transition: transform var(--motion-base) var(--motion-ease); }
+body:has(.imos-reception-shell) .modal.show .modal-dialog { transform: none; }
+body:has(.imos-reception-shell) .modal.fade { transition: opacity var(--motion-fast) ease; }
+.imos-reception-shell main :is(a, button):focus-visible,
+.reception-sidebar .nav-link:focus-visible { outline: 3px solid var(--imos-action); outline-offset: 3px; }
+.reception-sidebar .nav-link:focus-visible { outline-color: #dce8d7; }
+@media (hover: hover) and (pointer: fine) {
+  .imos-reception-shell main .btn:hover:not(:disabled):not(.disabled),
+  body:has(.imos-reception-shell) .modal .btn:hover:not(:disabled):not(.disabled) { transform: translateY(-1px); }
+  .imos-reception-shell main :is(.directorio-card, .inicio-acceso, .recepcion-atajo):hover { box-shadow: 0 8px 24px #183f3210; }
+  .imos-reception-shell .reception-profile .dropdown-toggle:hover { box-shadow: 0 0 0 3px #ffffff16; }
+}
+/* Mantiene visibles las cargas existentes sin pulsos ni parpadeos adicionales. */
+.imos-reception-shell .spinner-border,
+body:has(.imos-reception-shell) .modal .spinner-border { color: var(--imos-action); }
+.imos-reception-shell .btn .spinner-border,
+.login-button .spinner-border { color: currentColor; }
+@media (prefers-reduced-motion: reduce) {
+  .imos-reception-shell *, .imos-reception-shell *::before, .imos-reception-shell *::after,
+  .reception-sidebar *, body:has(.imos-reception-shell) .modal *,
+  body:has(.imos-reception-shell) .modal, body:has(.imos-reception-shell) .modal-backdrop, .login-page .spinner-border { animation: none !important; transition: none !important; }
+  .imos-reception-shell main .btn:hover:not(:disabled):not(.disabled),
+  body:has(.imos-reception-shell) .modal .btn:hover:not(:disabled):not(.disabled) { transform: none; }
+  /* Anillo estatico: sigue indicando carga sin girar. */
+  .imos-reception-shell .spinner-border, .login-page .spinner-border { border-right-color: currentColor; opacity: .6; }
+}
