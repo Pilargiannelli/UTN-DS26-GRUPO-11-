@@ -24,3 +24,20 @@ export const menuPorRol: Record<RolUsuario, MenuItem[]> = {
     { label: "Médicos", href: "/buscar-medico" },
   ],
 };
+
+
+// Presentación lateral: conserva los destinos disponibles para cada rol.
+// No interviene en PrivateRoute ni en los permisos de la API.
+export const menuLateralPorRol: Record<RolUsuario, MenuItem[]> = {
+  SECRETARIA: [
+    { label: "Inicio", href: "/home" },
+    { label: "Turnos", href: "/gestion-turnos" },
+    ...menuPorRol.SECRETARIA.filter(item => item.href !== "/home").map(item => ({ ...item, label: item.href === "/buscar-medico" ? "Profesionales" : item.label })),
+  ],
+  MEDICO: [
+    { label: "Inicio", href: "/home" },
+    { label: "Turnos", href: "/gestion-turnos" },
+    ...menuPorRol.MEDICO.filter(item => item.href !== "/home"),
+  ],
+  PACIENTE: menuPorRol.PACIENTE.map(item => ({ ...item, label: item.href === "/buscar-medico" ? "Profesionales" : item.label })),
+};
