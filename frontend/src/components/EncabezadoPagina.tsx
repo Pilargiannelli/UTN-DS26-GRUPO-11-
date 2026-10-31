@@ -4,6 +4,7 @@ import "../assets/styles/EncabezadoPagina.css";
 export interface DatoEncabezado {
   valor: number | string;
   texto: string;
+  icono?: ReactNode;
 }
 
 interface EncabezadoPaginaProps {
@@ -38,6 +39,7 @@ export function EncabezadoPagina({ titulo, descripcion, icono, etiqueta, datos, 
             <dl className="encabezado-pagina-datos">
               {datos.map((d) => (
                 <div key={d.texto} className="encabezado-pagina-dato">
+                  {d.icono && <span className="encabezado-pagina-dato-icono" aria-hidden="true">{d.icono}</span>}
                   <dt>{d.texto}</dt>
                   <dd>{d.valor}</dd>
                 </div>

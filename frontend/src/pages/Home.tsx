@@ -8,6 +8,7 @@ import { ToastMensaje } from "../components/NotifyToast.tsx";
 import { useToast } from "../hooks/useToast.ts";
 import GestionTurnos from "./GestionTurnos.tsx";
 import '../assets/styles/SecretariaHome.css';
+import '../assets/styles/SecretariaInicio.css';
 
 function Home() {
     const { showToast, setShowToast } = useToast("registroExitoso");

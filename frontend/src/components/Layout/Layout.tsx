@@ -6,6 +6,7 @@ import { Footer } from "./Footer.tsx";
 import { useAuth } from "../../hooks/useAuth";
 import "../../assets/styles/ReceptionLayout.css";
 import "../../assets/styles/ReceptionTheme.css";
+import "../../assets/styles/ReceptionSecretaria.css";
 
 interface LayoutProps {
   children: ReactNode;

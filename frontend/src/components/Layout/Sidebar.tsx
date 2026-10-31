@@ -1,6 +1,6 @@
-import { Button, Offcanvas, Nav } from 'react-bootstrap';
-import { BoxArrowRight, PersonCircle, HouseDoor, Calendar3, CalendarWeek, People, HeartPulse, List, CalendarCheck, CalendarPlus } from 'react-bootstrap-icons';
-import { NavLink, useLocation } from 'react-router-dom';
+import { Button, Offcanvas, Nav, Dropdown } from 'react-bootstrap';
+import { BoxArrowRight, ChevronUp, Person, PersonCircle, HouseDoor, Calendar3, CalendarWeek, People, HeartPulse, List, CalendarCheck, CalendarPlus } from 'react-bootstrap-icons';
+import { Link, NavLink, useLocation } from 'react-router-dom';
 import type { SidebarProps } from '../../types/SidebarProps';
 import '../../assets/styles/Sidebar.css'
 import { useState } from 'react';
@@ -34,6 +34,12 @@ export function Sidebar({ items, cuenta, persistente = false }: SidebarProps) {
           <Offcanvas.Title><img src='/IMOS_LOGO.png' alt='IMOS'/></Offcanvas.Title>
         </Offcanvas.Header>
         <Offcanvas.Body className="menu-cuerpo">
+          {persistente && (
+            <div className="reception-sidebar-brand" aria-hidden="true">
+              <svg viewBox="0 0 40 40" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinejoin="round"><path d="M15 4h10v11h11v10H25v11H15V25H4V15h11z" /></svg>
+              <span>IMOS</span>
+            </div>
+          )}
           <Nav className="flex-column" aria-label="Menú principal">
             {/* NavLink (no href): navega sin recargar la página y marca el link activo */}
             {enlaces.map((item) => (
@@ -62,6 +68,19 @@ export function Sidebar({ items, cuenta, persistente = false }: SidebarProps) {
                 </button>
               </Nav>
             </div>
+          )}
+          {cuenta && persistente && (
+            <Dropdown drop="up" className="reception-sidebar-cuenta">
+              <Dropdown.Toggle as="button" type="button" id="reception-sidebar-cuenta" aria-label={`Opciones de cuenta de ${cuenta.nombre}`}>
+                <span className="reception-sidebar-avatar" aria-hidden="true">{cuenta.nombre.split(" ").filter(Boolean).map((p, i, a) => (i === 0 || i === a.length - 1) ? p[0] : "").join("").toUpperCase()}</span>
+                <span className="reception-sidebar-cuenta-datos"><strong>{cuenta.nombre}</strong><small>{cuenta.rol}</small></span>
+                <ChevronUp className="reception-sidebar-cuenta-flecha" aria-hidden="true" />
+              </Dropdown.Toggle>
+              <Dropdown.Menu popperConfig={{ strategy: "fixed" }}>
+                <Dropdown.Item as={Link} to="/mi-cuenta" onClick={handleClose}><Person aria-hidden="true" /> Mi cuenta</Dropdown.Item>
+                <Dropdown.Item as="button" className="reception-sidebar-salir" onClick={cerrarSesion}><BoxArrowRight aria-hidden="true" /> Cerrar sesión</Dropdown.Item>
+              </Dropdown.Menu>
+            </Dropdown>
           )}
         </Offcanvas.Body>
       </Offcanvas>
