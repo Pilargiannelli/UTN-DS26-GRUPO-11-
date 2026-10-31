@@ -7,6 +7,7 @@ import App from './App.tsx'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './assets/styles/theme.css'
 import './assets/styles/App.css'
+import './assets/styles/InteractionMotion.css'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
