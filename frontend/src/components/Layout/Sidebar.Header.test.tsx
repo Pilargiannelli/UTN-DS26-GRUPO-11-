@@ -1,10 +1,11 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen, within } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContextBase";
 import type { AuthContextType } from "../../context/AuthContextBase";
 import type { RolUsuario, UsuarioSesion } from "../../types/UsuarioSesion";
 import Header from "./Header";
+import Layout from "./Layout";
 import { Sidebar } from "./Sidebar";
 import { menuPorRol } from "./menuPorRol";
 
@@ -23,7 +24,7 @@ function crearUsuario(rol: RolUsuario): UsuarioSesion {
   };
 }
 
-function renderizarHeader(usuario: UsuarioSesion | null, logout = vi.fn(), recepcion = false) {
+function renderizarHeader(usuario: UsuarioSesion | null, logout = vi.fn(), recepcion = false, layout = false) {
   const contexto: AuthContextType = {
     usuario,
     rol: usuario?.rol ?? null,
@@ -38,7 +39,7 @@ function renderizarHeader(usuario: UsuarioSesion | null, logout = vi.fn(), recep
   return render(
     <AuthContext.Provider value={contexto}>
       <MemoryRouter>
-        <Header recepcion={recepcion} />
+        {layout ? <Layout><p>Contenido de prueba</p></Layout> : <Header recepcion={recepcion} />}
       </MemoryRouter>
     </AuthContext.Provider>
   );
@@ -162,9 +163,8 @@ describe("Header y navegación de recepción", () => {
     fireEvent.click(screen.getByRole("button", { name: "Cerrar sesión" }));
     expect(logout).toHaveBeenCalledTimes(1);
   });
-  it("el menú móvil mantiene las rutas existentes y no inventa secciones", () => {
+  it("el menú lateral mantiene las rutas existentes y no inventa secciones", () => {
     renderizarHeader(crearUsuario("SECRETARIA"), vi.fn(), true);
-    abrirMenu();
     expect(screen.getByRole("link", { name: "Inicio" })).toHaveAttribute("href", "/home");
     expect(screen.getByRole("link", { name: "Turnos" })).toHaveAttribute("href", "/gestion-turnos");
     expect(screen.getByRole("link", { name: "Agenda" })).toHaveAttribute("href", "/orden-del-dia");
@@ -172,5 +172,33 @@ describe("Header y navegación de recepción", () => {
     expect(screen.queryByText("Consultorios")).not.toBeInTheDocument();
     expect(screen.queryByText("Configuración")).not.toBeInTheDocument();
     expect(screen.queryByText("Mi cuenta")).not.toBeInTheDocument();
+  });
+});
+
+
+describe("Navegación lateral compartida por rol", () => {
+  const casos: { rol: RolUsuario; destinos: string[] }[] = [
+    { rol: "SECRETARIA", destinos: ["/home", "/gestion-turnos", "/orden-del-dia", "/buscar-paciente", "/buscar-medico"] },
+    { rol: "MEDICO", destinos: ["/home", "/gestion-turnos", "/orden-del-dia", "/buscar-paciente"] },
+    { rol: "PACIENTE", destinos: ["/home", "/mis-turnos", "/pedir-turno", "/buscar-medico"] },
+  ];
+  it.each(casos)("$rol conserva sus destinos sin recibir los de otro rol", ({ rol, destinos }) => {
+    renderizarHeader(crearUsuario(rol), vi.fn(), true);
+    const enlaces = within(screen.getByLabelText("Menú principal")).getAllByRole("link");
+    expect(enlaces.map(enlace => enlace.getAttribute("href"))).toEqual(destinos);
+    expect(screen.queryByRole("link", { name: "Mi cuenta" })).not.toBeInTheDocument();
+  });
+  it.each(casos)("$rol usa el marco compartido sin footer", ({ rol }) => {
+    const { container } = renderizarHeader(crearUsuario(rol), vi.fn(), true, true);
+    expect(screen.queryByRole("contentinfo")).not.toBeInTheDocument();
+    expect(container.querySelector(`[data-rol="${rol}"].imos-reception-shell`)).toBeInTheDocument();
+  });
+  it.each(casos)("$rol mantiene Mi cuenta y Cerrar sesión en el perfil", ({ rol }) => {
+    const logout = vi.fn();
+    renderizarHeader(crearUsuario(rol), logout, true);
+    fireEvent.click(screen.getByRole("button", { name: /Cuenta de Juan/ }));
+    expect(screen.getByRole("link", { name: "Mi cuenta" })).toHaveAttribute("href", "/mi-cuenta");
+    fireEvent.click(screen.getByRole("button", { name: "Cerrar sesión" }));
+    expect(logout).toHaveBeenCalledTimes(1);
   });
 });

@@ -1,7 +1,7 @@
 /* Un solo color para toda la estructura, incluido el menu movil en portal. */
 .imos-reception-shell,
 .reception-sidebar {
-  --reception-frame: #517463;
+  --reception-frame: #426756;
   --reception-rail: 220px;
   --reception-header: 72px;
   --reception-font-ui: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
@@ -40,7 +40,7 @@
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 220 390'%3E%3Cellipse cx='5' cy='265' rx='155' ry='195' transform='rotate(-35 5 265)' fill='%23234f3f' fill-opacity='.17'/%3E%3C/svg%3E") !important;
   background-position: left bottom !important;
   background-repeat: no-repeat !important;
-  background-size: 220px 390px !important;
+  background-size: 220px clamp(0px, calc(100dvh - var(--reception-header) - 360px), 390px) !important;
   --bs-offcanvas-width: 260px;
 }
 .reception-sidebar .offcanvas-body.menu-cuerpo { padding: 12px 12px 24px; position: relative; isolation: isolate; }

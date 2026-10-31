@@ -11,6 +11,7 @@ import { IndicacionesMedico } from "./Paciente/IndicacionesMedico";
 import { parseFechaHora } from "../utils/fecha";
 import { saludoSegunHora } from "../utils/saludo";
 import "../assets/styles/InicioPaciente.css";
+import "../assets/styles/PacienteTheme.css";
 
 const FECHA_HOY = new Intl.DateTimeFormat("es-AR", { weekday: "long", day: "numeric", month: "long" });
 const FECHA_CONSULTA = new Intl.DateTimeFormat("es-AR", { day: "numeric", month: "long", year: "numeric" });

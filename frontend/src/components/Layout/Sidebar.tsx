@@ -1,5 +1,5 @@
 import { Button, Offcanvas, Nav } from 'react-bootstrap';
-import { BoxArrowRight, PersonCircle, HouseDoor, Calendar3, CalendarWeek, People, HeartPulse, List } from 'react-bootstrap-icons';
+import { BoxArrowRight, PersonCircle, HouseDoor, Calendar3, CalendarWeek, People, HeartPulse, List, CalendarCheck, CalendarPlus } from 'react-bootstrap-icons';
 import { NavLink, useLocation } from 'react-router-dom';
 import type { SidebarProps } from '../../types/SidebarProps';
 import '../../assets/styles/Sidebar.css'
@@ -19,10 +19,8 @@ export function Sidebar({ items, cuenta, persistente = false }: SidebarProps) {
     cuenta?.onCerrarSesion();
   };
 
-  const enlaces = persistente
-    ? [{ label: "Inicio", href: "/home" }, { label: "Turnos", href: "/gestion-turnos" }, ...items.filter(item => item.href !== "/home").map(item => ({ ...item, label: item.href === "/buscar-medico" ? "Profesionales" : item.label }))]
-    : items;
-  const iconos: Record<string, typeof HouseDoor> = { "/home": HouseDoor, "/gestion-turnos": Calendar3, "/orden-del-dia": CalendarWeek, "/buscar-paciente": People, "/buscar-medico": HeartPulse };
+  const enlaces = items;
+  const iconos: Record<string, typeof HouseDoor> = { "/home": HouseDoor, "/gestion-turnos": Calendar3, "/orden-del-dia": CalendarWeek, "/buscar-paciente": People, "/buscar-medico": HeartPulse, "/mis-turnos": CalendarCheck, "/pedir-turno": CalendarPlus };
 
   return (
     <>
@@ -39,7 +37,7 @@ export function Sidebar({ items, cuenta, persistente = false }: SidebarProps) {
           <Nav className="flex-column" aria-label="Menú principal">
             {/* NavLink (no href): navega sin recargar la página y marca el link activo */}
             {enlaces.map((item) => (
-              <Nav.Link key={item.href} as={NavLink} to={item.href} className={persistente && ((item.href === "/buscar-paciente" && (pathname.startsWith("/pacientes/") || pathname === "/registrar-paciente")) || (item.href === "/buscar-medico" && pathname === "/ver-perfil")) ? "active" : undefined} end={item.href === "/home"} onClick={handleClose}>
+              <Nav.Link key={item.href} as={NavLink} to={item.href} className={persistente && ((item.href === "/buscar-paciente" && (pathname.startsWith("/pacientes/") || pathname === "/registrar-paciente")) || (item.href === "/buscar-medico" && pathname === "/ver-perfil") || (item.href === "/mis-turnos" && pathname.startsWith("/turnos/"))) ? "active" : undefined} end={item.href === "/home"} onClick={handleClose}>
                 {persistente && (() => { const Icono = iconos[item.href] ?? Calendar3; return <Icono aria-hidden="true" />; })()}
                 {item.label}
               </Nav.Link>

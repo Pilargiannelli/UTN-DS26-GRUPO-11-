@@ -2,12 +2,12 @@ import { Container, Navbar, Nav, Dropdown } from "react-bootstrap";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth.ts";
 import { Sidebar } from "./Sidebar.tsx";
-import { menuPorRol } from "./menuPorRol.ts";
+import { menuPorRol, menuLateralPorRol } from "./menuPorRol.ts";
 import '../../assets/styles/Header.css';
 
 const NOMBRE_ROL = { SECRETARIA: "Secretaría", MEDICO: "Médico", PACIENTE: "Paciente" } as const;
 
-// Secretaría usa el perfil superior; los otros roles conservan la cuenta en el menú.
+// El layout autenticado comparte el perfil superior y selecciona el menú de su rol.
 function Header({ recepcion = false }: { recepcion?: boolean }) {
   const { usuario, logout, estaAutenticado } = useAuth();
   const navigate = useNavigate();
@@ -23,7 +23,7 @@ function Header({ recepcion = false }: { recepcion?: boolean }) {
         <Navbar.Brand className="nav-logo m-0 d-flex align-items-center gap-2">
           {estaAutenticado && usuario && (
             <Sidebar
-              items={menuPorRol[usuario.rol]}
+              items={(recepcion ? menuLateralPorRol : menuPorRol)[usuario.rol]}
               persistente={recepcion}
               cuenta={{
                 nombre: `${usuario.nombre} ${usuario.apellido}`,

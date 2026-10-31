@@ -1,5 +1,5 @@
-/* Tema compartido de Secretaria. Los modales de Bootstrap se montan en body.
-   Ninguna regla se aplica a las sesiones de Medico o Paciente. */
+/* Tema compartido de las tres sesiones autenticadas.
+   Los modales de Bootstrap se montan en body. */
 .imos-reception-shell,
 body:has(.imos-reception-shell) .modal {
   --workspace-paper: #f8f6f1;
@@ -251,3 +251,10 @@ body:has(.imos-reception-shell) .modal .form-select { padding-right: 36px; }
 
 /* Reserva del icono: debe prevalecer sobre el padding de los campos comunes. */
 .imos-reception-shell main .recepcion-busqueda .form-control { padding-left: 40px; }
+
+/* El encabezado de turno conserva fecha, estado y titulo en telefonos estrechos. */
+@media (max-width: 576px) {
+  .imos-reception-shell .detalle-turno-cabecera { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 16px; }
+  .imos-reception-shell .detalle-turno-cabecera-texto { grid-column: 1 / -1; grid-row: 2; overflow-wrap: anywhere; }
+  .imos-reception-shell .detalle-turno-cabecera .turno-paciente-estado { justify-self: end; }
+}
