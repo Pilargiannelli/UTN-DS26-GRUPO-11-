@@ -18,7 +18,7 @@ import { apiFetch } from "../../services/api";
 
 import "../../assets/styles/TurnosTable.css";
 import TurnosFilters from "./TurnosFilters";
-import { Search } from "react-bootstrap-icons";
+import { Calendar3, CalendarPlus, Search } from "react-bootstrap-icons";
 
 type Seccion = "pendientes" | "confirmados" | "cancelados";
 
@@ -29,6 +29,16 @@ const ESTADOS_POR_SECCION: Record<Seccion, EstadoTurno[]> = {
   confirmados: ["Confirmado"],
   cancelados: ["Cancelado"],
 };
+
+// Ilustración de las listas vacías (solo presentación)
+const CalendarioVacio = ({ className }: { className: string }) => (
+  <svg className={className} viewBox="0 0 220 140" aria-hidden="true">
+    <path d="M32 80C21 41 62 17 94 29C128 3 176 26 177 61C217 65 220 111 186 119C161 136 140 117 116 123C78 139 62 112 38 118C5 121 4 86 32 80Z" fill="#e6ece2" />
+    <g fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="73" y="42" width="77" height="73" rx="10" fill="#fffefa" /><path d="M74 63H149M92 34V48M130 34V48M113 91L122 99L138 82M178 52L187 42M182 65L196 61" />
+    </g>
+  </svg>
+);
 
 const VACIO: Record<Seccion, string> = {
   pendientes: "No hay turnos pendientes de confirmar.",
@@ -107,19 +117,19 @@ function TurnosTable({
     if (lista.length === 0) {
       return recepcion ? (
         <div className="recepcion-vacio">
-          <svg className="recepcion-calendario" viewBox="0 0 220 140" aria-hidden="true">
-            <path d="M32 80C21 41 62 17 94 29C128 3 176 26 177 61C217 65 220 111 186 119C161 136 140 117 116 123C78 139 62 112 38 118C5 121 4 86 32 80Z" fill="#e6ece2" />
-            <g fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round">
-              <rect x="73" y="42" width="77" height="73" rx="10" fill="#fffefa" /><path d="M74 63H149M92 34V48M130 34V48M113 91L122 99L138 82M178 52L187 42M182 65L196 61" />
-            </g>
-          </svg>
+          <CalendarioVacio className="recepcion-calendario" />
           <div>
             <h3>{hayFiltros ? "Sin coincidencias" : s === "pendientes" ? "Todo al día" : "Sin turnos en este estado"}</h3>
             <p>{hayFiltros ? "No hay turnos que coincidan con la búsqueda y la fecha seleccionadas." : VACIO[s]}</p>
           </div>
           {hayFiltros && <Button variant="outline-success" onClick={() => { setBusqueda(""); setFechaFiltro("todas"); setFechaElegida(""); }}>Limpiar filtros</Button>}
         </div>
-      ) : <p className="agenda-vacia">{VACIO[s]}</p>;
+      ) : (
+        <div className="agenda-vacio">
+          <CalendarioVacio className="agenda-vacio-ilustracion" />
+          <p className="agenda-vacia">{VACIO[s]}</p>
+        </div>
+      );
     }
 
     const porDia = lista.reduce<Record<string, Turno[]>>((grupos, t) => {
@@ -200,9 +210,12 @@ function TurnosTable({
     <Card className="agenda-card">
       <Card.Body>
         <div className="agenda-header">
-          <div>
-            <h2>{recepcion ? "Gestión de turnos" : "Próximos turnos"}</h2>
-            <p>{recepcion ? "Revisá las solicitudes pendientes y organizá las próximas atenciones." : "Los turnos que ya pasaron se consultan en la Agenda."}</p>
+          <div className="agenda-header-titulo">
+            <span className="agenda-header-icono" aria-hidden="true">{recepcion ? <CalendarPlus /> : <Calendar3 />}</span>
+            <div>
+              <h2>{recepcion ? "Gestión de turnos" : "Próximos turnos"}</h2>
+              <p>{recepcion ? "Revisá las solicitudes pendientes y organizá las próximas atenciones." : "Los turnos que ya pasaron se consultan en la Agenda."}</p>
+            </div>
           </div>
           {recepcion ? (
             <div className="recepcion-filtros" role="search" aria-label="Filtrar turnos">
