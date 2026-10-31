@@ -7,10 +7,10 @@ body:has(.imos-reception-shell) .modal {
   --workspace-ink: #103f33;
   --workspace-muted: #606e7c;
   --workspace-line: #e4e3dc;
-  --workspace-green: #245d48;
+  --workspace-green: var(--imos-action);
   --workspace-tint: #e9eddf;
-  --reception-font-ui: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
-  --reception-font-heading: "Palatino Linotype", "Book Antiqua", Palatino, Georgia, serif;
+  --reception-font-ui: var(--font-ui);
+  --reception-font-heading: var(--font-display);
   --font-sans: var(--reception-font-ui);
   --color-bg: var(--workspace-paper);
   --color-surface: var(--workspace-surface);
@@ -34,14 +34,14 @@ body:has(.imos-reception-shell) .modal {
 }
 .imos-reception-shell > main > .container { min-width: 0; width: 100%; padding: 24px 32px 32px; }
 .imos-reception-shell main :is(.directorio, .agenda-medico, .gestion-turnos-page) { min-width: 0; padding: 0; margin: 0 !important; }
-.imos-reception-shell main :is(h1, .perfil-nombre) { font-family: var(--reception-font-heading); font-size: clamp(30px, 2.6vw, 40px); font-weight: 700; color: var(--workspace-ink); line-height: 1.15; letter-spacing: -.035em; }
-.imos-reception-shell main h2 { font-family: var(--reception-font-heading); color: var(--workspace-ink); }
+.imos-reception-shell main :is(h1, .perfil-nombre) { font-family: var(--reception-font-heading); font-size: clamp(30px, 2.6vw, 40px); font-weight: 400; color: var(--workspace-ink); line-height: 1.15; letter-spacing: -.015em; }
+.imos-reception-shell main h2 { font-family: var(--reception-font-heading); font-weight: 400; color: var(--workspace-ink); }
 .imos-reception-shell :is(.btn, input, select, textarea),
 body:has(.imos-reception-shell) .modal :is(.btn, input, select, textarea) { font-family: var(--reception-font-ui); }
 .imos-reception-shell main .btn,
 body:has(.imos-reception-shell) .modal .btn { min-height: 44px; border-radius: 8px; font-size: 14px; padding: 10px 16px; touch-action: manipulation; transition: background-color 150ms ease, border-color 150ms ease, transform 120ms ease-out; }
 .imos-reception-shell main :is(.btn-primary, .btn-success),
-body:has(.imos-reception-shell) .modal :is(.btn-primary, .btn-success) { --bs-btn-bg: var(--workspace-green); --bs-btn-border-color: var(--workspace-green); --bs-btn-hover-bg: #194b38; --bs-btn-hover-border-color: #194b38; }
+body:has(.imos-reception-shell) .modal :is(.btn-primary, .btn-success) { --bs-btn-bg: var(--workspace-green); --bs-btn-border-color: var(--workspace-green); --bs-btn-hover-bg: var(--imos-action-hover); --bs-btn-hover-border-color: var(--imos-action-hover); }
 .imos-reception-shell main .btn:active:not(:disabled),
 body:has(.imos-reception-shell) .modal .btn:active:not(:disabled) { transform: scale(.98); }
 .imos-reception-shell main :is(.form-control, .form-select, .form-group input, .form-group select),
@@ -64,7 +64,7 @@ body:has(.imos-reception-shell) .modal :is(.alert, .badge) { border-radius: 8px;
 .imos-reception-shell .encabezado-pagina-identidad { align-items: flex-start; gap: 16px; flex: 1 1 340px; }
 .imos-reception-shell .encabezado-pagina-icono { width: 48px; height: 48px; margin-top: 5px; border-radius: 13px; background: var(--workspace-tint); color: var(--workspace-green); box-shadow: none; font-size: 24px; }
 .imos-reception-shell .encabezado-pagina .encabezado-pagina-etiqueta { font: 600 11px/1.5 var(--reception-font-ui); letter-spacing: .07em; margin-bottom: 7px; }
-.imos-reception-shell .encabezado-pagina .encabezado-pagina-titulo { font-family: var(--reception-font-heading); font-size: clamp(30px, 2.6vw, 40px); font-weight: 700; letter-spacing: -.035em; }
+.imos-reception-shell .encabezado-pagina .encabezado-pagina-titulo { font-family: var(--reception-font-heading); font-size: clamp(30px, 2.6vw, 40px); font-weight: 400; letter-spacing: -.015em; }
 .imos-reception-shell .encabezado-pagina .encabezado-pagina-descripcion { max-width: 65ch; margin-top: 8px; font-size: 14px; line-height: 1.6; }
 .imos-reception-shell .encabezado-pagina-lateral { gap: 18px; }
 .imos-reception-shell .encabezado-pagina-datos { flex-wrap: wrap; gap: 0; }
@@ -96,7 +96,7 @@ body:has(.imos-reception-shell) .modal :is(.alert, .badge) { border-radius: 8px;
 .imos-reception-shell .agenda-card { padding: 0; }
 .imos-reception-shell .agenda-card > .card-body { padding: 24px; min-width: 0; }
 .imos-reception-shell .agenda-header { flex-wrap: wrap; gap: 18px; text-align: left; }
-.imos-reception-shell .agenda-header h2 { font-family: var(--reception-font-heading); font-size: 28px; letter-spacing: -.035em; }
+.imos-reception-shell .agenda-header h2 { font-family: var(--reception-font-heading); font-weight: 400; font-size: 28px; letter-spacing: -.015em; }
 .imos-reception-shell .agenda-header > .row { margin: 0 !important; }
 .imos-reception-shell .agenda-header > .row > .col-auto { padding: 0; }
 .imos-reception-shell .agenda-table { min-width: 0; width: 100%; table-layout: fixed; text-align: left; }
@@ -135,7 +135,7 @@ body:has(.imos-reception-shell) .modal :is(.alert, .badge) { border-radius: 8px;
 .imos-reception-shell .perfil-tabs { justify-content: flex-start; flex-wrap: wrap; overflow: visible; margin: 0 0 20px; gap: 8px; }
 .imos-reception-shell .perfil-tabs .nav-link { min-height: 44px; border-radius: 8px; font-size: 14px; }
 .imos-reception-shell .perfil-panel { padding: 24px; }
-.imos-reception-shell .perfil .perfil-panel-titulo { font-family: var(--reception-font-heading); font-size: 24px; }
+.imos-reception-shell .perfil .perfil-panel-titulo { font-family: var(--reception-font-heading); font-weight: 400; font-size: 24px; }
 .imos-reception-shell .perfil-panel-descripcion { margin-top: 6px; }
 .imos-reception-shell .perfil-turno { flex-wrap: wrap; padding-block: 18px; }
 .imos-reception-shell .perfil .form-container { max-width: none !important; padding: 0; }
@@ -153,7 +153,7 @@ body:has(.imos-reception-shell) .modal :is(.alert, .badge) { border-radius: 8px;
 /* Los portales usan las mismas medidas, fuentes y colores. */
 body:has(.imos-reception-shell) .modal-content { border: 1px solid var(--workspace-line); border-radius: 16px; background: var(--workspace-surface); box-shadow: 0 24px 72px #103f3326; }
 body:has(.imos-reception-shell) .modal-header { padding: 20px 24px; background: var(--workspace-paper); border-bottom: 1px solid var(--workspace-line); }
-body:has(.imos-reception-shell) .modal-header :is(h3, .modal-title) { color: var(--workspace-ink); font-family: var(--reception-font-heading); font-size: 26px; font-weight: 700; }
+body:has(.imos-reception-shell) .modal-header :is(h3, .modal-title) { color: var(--workspace-ink); font-family: var(--reception-font-heading); font-size: 26px; font-weight: 400 !important; }
 body:has(.imos-reception-shell) .modal-header .btn-close { --btn-img: var(--bs-btn-close-bg); align-self: center; background-image: var(--bs-btn-close-bg); background-size: 14px !important; padding: 12px; }
 body:has(.imos-reception-shell) .modal-body { padding: 24px; }
 body:has(.imos-reception-shell) .modal-footer { padding: 16px 24px; gap: 8px; }

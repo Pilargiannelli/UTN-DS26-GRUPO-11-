@@ -1,11 +1,11 @@
 /* Un solo color para toda la estructura, incluido el menu movil en portal. */
 .imos-reception-shell,
 .reception-sidebar {
-  --reception-frame: #426756;
+  --reception-frame: var(--imos-forest);
   --reception-rail: 220px;
   --reception-header: 72px;
-  --reception-font-ui: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
-  --reception-font-heading: "Palatino Linotype", "Book Antiqua", Palatino, Georgia, serif;
+  --reception-font-ui: var(--font-ui);
+  --reception-font-heading: var(--font-display);
   --font-sans: var(--reception-font-ui);
   --reception-cream: #f8f6f1;
   --reception-ink: #103f33;
