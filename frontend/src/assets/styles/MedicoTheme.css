@@ -12,7 +12,7 @@
   background: transparent;
   box-shadow: none;
 }
-.imos-reception-shell[data-rol="MEDICO"] .hero-left h1 { margin: 10px 0; font-family: var(--reception-font-heading); font-size: clamp(30px, 2.7vw, 42px); font-weight: 700; letter-spacing: -.035em; overflow-wrap: anywhere; }
+.imos-reception-shell[data-rol="MEDICO"] .hero-left h1 { margin: 10px 0; font-family: var(--reception-font-heading); font-size: clamp(30px, 2.7vw, 42px); font-weight: 400; letter-spacing: -.015em; overflow-wrap: anywhere; }
 .imos-reception-shell[data-rol="MEDICO"] .hero-role { color: var(--workspace-green); font-size: 11px; letter-spacing: .07em; }
 .imos-reception-shell[data-rol="MEDICO"] .hero-left .hero-resumen { font-size: 14px; margin-top: 14px; }
 .imos-reception-shell[data-rol="MEDICO"] .hero-right { display: block; padding: 18px 22px; border-radius: 12px; background: var(--workspace-tint); }
@@ -22,8 +22,8 @@
 .imos-reception-shell[data-rol="MEDICO"] .panel-medico { grid-template-columns: minmax(250px, .7fr) minmax(0, 1.7fr); gap: 24px; align-items: start; }
 .imos-reception-shell[data-rol="MEDICO"] :is(.panel-medico-lateral, .panel-medico-principal) { min-width: 0; }
 .imos-reception-shell[data-rol="MEDICO"] .panel-medico-tarjeta { padding: 22px; border: 1px solid var(--workspace-line); border-radius: 16px; background: var(--workspace-surface); box-shadow: var(--shadow-sm); }
-.imos-reception-shell[data-rol="MEDICO"] .panel-medico .panel-medico-nombre { font-family: var(--reception-font-heading); font-size: 29px; line-height: 1.2; color: var(--workspace-ink); text-align: left; overflow-wrap: anywhere; }
-.imos-reception-shell[data-rol="MEDICO"] .panel-medico .panel-medico-titulo { font-family: var(--reception-font-heading); font-size: 25px; color: var(--workspace-ink); text-align: left; }
+.imos-reception-shell[data-rol="MEDICO"] .panel-medico .panel-medico-nombre { font-family: var(--reception-font-heading); font-weight: 400; font-size: 29px; line-height: 1.2; color: var(--workspace-ink); text-align: left; overflow-wrap: anywhere; }
+.imos-reception-shell[data-rol="MEDICO"] .panel-medico .panel-medico-titulo { font-family: var(--reception-font-heading); font-weight: 400; font-size: 25px; color: var(--workspace-ink); text-align: left; }
 .imos-reception-shell[data-rol="MEDICO"] .panel-medico-acciones { flex-wrap: wrap; gap: 8px; }
 .imos-reception-shell[data-rol="MEDICO"] .panel-medico-acciones .btn { min-width: 0; flex: 1 1 140px; }
 .imos-reception-shell[data-rol="MEDICO"] .panel-medico-cta { flex-wrap: wrap; padding: 18px; border-radius: 12px; background: var(--workspace-tint); border-color: var(--workspace-line); }
