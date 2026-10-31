@@ -98,7 +98,7 @@ export function ListarUsuarios({ rol }: ListarUsuariosProps) {
     const vistaMedico = esPaciente && tieneRol("MEDICO");
     // El paciente usa la cartilla para elegir con quién atenderse
     const cartillaPaciente = !esPaciente && tieneRol("PACIENTE");
-    const titulo = esPaciente ? "Pacientes" : "Médicos";
+    const titulo = esPaciente ? "Pacientes" : esSecretaria ? "Profesionales" : "Médicos";
 
     if (loading) {
         return (

@@ -5,6 +5,7 @@ import { Footer } from "./Footer.tsx";
 import { useAuth } from "../../hooks/useAuth";
 import { useLocation } from "react-router-dom";
 import "../../assets/styles/ReceptionLayout.css";
+import "../../assets/styles/ReceptionTheme.css";
 
 interface LayoutProps {
   children: ReactNode;
@@ -22,7 +23,7 @@ function Layout({ children, className }: LayoutProps) {
       <Container fluid as="main" className="m-0 p-0 d-flex flex-grow-1">
         <Container>{children}</Container>
       </Container>
-      {!(recepcion && pathname === "/home") && <Footer />}
+      {!(recepcion && pathname.replace(/\/+$/, "") === "/home") && <Footer />}
     </>
   );
 
