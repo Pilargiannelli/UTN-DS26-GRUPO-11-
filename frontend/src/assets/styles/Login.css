@@ -10,7 +10,7 @@ body:has(.login-page) .navbar {
 }
 
 .login-page {
-  min-height: 100vh;
+  min-height: 100dvh;
   width: 100%;
   display: flex;
   align-items: stretch;
@@ -21,7 +21,7 @@ body:has(.login-page) .navbar {
 
 .login-card {
   width: 100%;
-  min-height: 100vh;
+  min-height: 100dvh;
   display: flex;
   overflow: hidden;
   background: var(--color-surface);
@@ -32,14 +32,14 @@ body:has(.login-page) .navbar {
 .login-brand {
   position: relative;
   width: 48%;
-  height: 100%;
+  align-self: stretch;
   flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;
   background:
     radial-gradient(circle at 35% 42%, rgba(255, 255, 255, 0.08), transparent 28%),
-    linear-gradient(150deg, var(--color-pino-800) 0%, var(--color-pino-900) 100%);
+    linear-gradient(150deg, var(--imos-forest-light) 0%, var(--imos-forest) 65%, var(--color-pino-900) 100%);
   padding: 3rem 3rem 3rem 3rem;
   clip-path: ellipse(100% 90% at 0% 50%);
 }
@@ -65,10 +65,14 @@ body:has(.login-page) .navbar {
 }
 
 .login-title {
-  margin-bottom: 6px;
-  color: var(--color-text);
+  margin-bottom: 8px;
+  color: var(--imos-forest);
+  font-family: var(--font-display);
   font-size: var(--text-3xl);
-  font-weight: var(--weight-bold);
+  font-weight: 400;
+  line-height: 1.15;
+  letter-spacing: -.015em;
+  text-wrap: balance;
   text-align: center;
 }
 
@@ -128,7 +132,7 @@ body:has(.login-page) .navbar {
   padding: 14px 18px !important;
   border: none !important;
   border-radius: var(--radius-md) !important;
-  background: var(--color-pino-800) !important;
+  background: var(--imos-forest) !important;
   color: var(--color-on-primary) !important;
   font-size: var(--text-base) !important;
   font-weight: var(--weight-bold) !important;
@@ -137,9 +141,9 @@ body:has(.login-page) .navbar {
   box-shadow: var(--shadow-lg) !important;
 }
 
-.login-button:hover, .login-button:active
-.login-button-success, .login-button-success:hover {
-  background: var(--color-pino-600) !important;
+.login-button:active:not(:disabled) {
+  background: var(--imos-action-hover) !important;
+  transform: translateY(0);
 }
 
 .login-button:disabled {
@@ -209,4 +213,35 @@ body:has(.login-page) .navbar {
     width: 100%;
     padding: 2.4rem 1.5rem 3rem;
   }
+}
+/* El fondo se desplaza lentamente; el logo conserva su archivo original. */
+.login-brand { background-size: 140% 140%; animation: login-ambiente 24s ease-in-out infinite alternate; }
+.login-logo-img { animation: login-iluminacion 1200ms ease-out both; }
+.login-form-panel { min-width: 0; }
+.login-form-panel :is(.login-title, .login-subtitle, .login-field, .login-button) { animation: login-entrada 320ms var(--motion-ease) backwards; }
+.login-subtitle { animation-delay: 40ms !important; }
+.login-field:nth-child(1) { animation-delay: 80ms !important; }
+.login-field:nth-child(2) { animation-delay: 130ms !important; }
+.login-button { animation-delay: 180ms !important; transition: transform var(--motion-fast) var(--motion-ease), background-color var(--motion-fast) ease, box-shadow var(--motion-base) ease; }
+.login-input { transition: border-color var(--motion-fast) ease, box-shadow var(--motion-base) ease, background-color var(--motion-fast) ease; }
+.login-button:focus-visible { outline: 3px solid var(--imos-action); outline-offset: 4px; }
+.login-button:disabled { transform: none; }
+@media (hover: hover) and (pointer: fine) {
+  .login-button:hover:not(:disabled) { background: var(--imos-action-hover) !important; transform: translateY(-2px); box-shadow: 0 10px 24px #183f3226 !important; }
+}
+@keyframes login-ambiente { from { background-position: 15% 30%; } to { background-position: 80% 70%; } }
+@keyframes login-iluminacion {
+  0% { filter: brightness(.95) drop-shadow(0 18px 28px #00000038); }
+  45% { filter: brightness(1.12) drop-shadow(0 12px 30px #ffffff18); }
+  100% { filter: brightness(1) drop-shadow(0 18px 28px #00000038); }
+}
+@keyframes login-entrada { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+@media (max-width: 800px) {
+  .login-brand { min-height: 30svh; border-radius: 0 0 50% 8% / 0 0 12% 3%; }
+  .login-title { font-size: clamp(30px, 7vw, 36px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .login-brand, .login-logo-img, .login-form-panel :is(.login-title, .login-subtitle, .login-field, .login-button) { animation: none; }
+  .login-page :is(.login-button, .login-input) { transition: none; }
+  .login-button:hover:not(:disabled) { transform: none; }
 }
