@@ -1,0 +1,253 @@
+/* Tema compartido de Secretaria. Los modales de Bootstrap se montan en body.
+   Ninguna regla se aplica a las sesiones de Medico o Paciente. */
+.imos-reception-shell,
+body:has(.imos-reception-shell) .modal {
+  --workspace-paper: #f8f6f1;
+  --workspace-surface: #fffefa;
+  --workspace-ink: #103f33;
+  --workspace-muted: #606e7c;
+  --workspace-line: #e4e3dc;
+  --workspace-green: #245d48;
+  --workspace-tint: #e9eddf;
+  --reception-font-ui: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  --reception-font-heading: "Palatino Linotype", "Book Antiqua", Palatino, Georgia, serif;
+  --font-sans: var(--reception-font-ui);
+  --color-bg: var(--workspace-paper);
+  --color-surface: var(--workspace-surface);
+  --color-surface-muted: #f1f1e9;
+  --color-border: var(--workspace-line);
+  --color-text: #243b32;
+  --color-text-muted: var(--workspace-muted);
+  --color-heading: var(--workspace-ink);
+  --color-primary: var(--workspace-green);
+  --color-primary-soft: var(--workspace-tint);
+  --color-info: #1160c0;
+  --color-info-bg: #deebff;
+  --color-warning: #8a5300;
+  --color-warning-bg: #fdf0d4;
+  --color-danger: #b42318;
+  --color-danger-bg: #fde4e4;
+  --shadow-sm: 0 5px 24px #294f3d04;
+  --focus-ring: 0 0 0 3px #245d4826;
+  font-family: var(--reception-font-ui);
+  color: var(--color-text);
+}
+.imos-reception-shell > main > .container { min-width: 0; width: 100%; padding: 24px 32px 32px; }
+.imos-reception-shell main :is(.directorio, .agenda-medico, .gestion-turnos-page) { min-width: 0; padding: 0; margin: 0 !important; }
+.imos-reception-shell main :is(h1, .perfil-nombre) { font-family: var(--reception-font-heading); font-size: clamp(30px, 2.6vw, 40px); font-weight: 700; color: var(--workspace-ink); line-height: 1.15; letter-spacing: -.035em; }
+.imos-reception-shell main h2 { font-family: var(--reception-font-heading); color: var(--workspace-ink); }
+.imos-reception-shell :is(.btn, input, select, textarea),
+body:has(.imos-reception-shell) .modal :is(.btn, input, select, textarea) { font-family: var(--reception-font-ui); }
+.imos-reception-shell main .btn,
+body:has(.imos-reception-shell) .modal .btn { min-height: 44px; border-radius: 8px; font-size: 14px; padding: 10px 16px; touch-action: manipulation; transition: background-color 150ms ease, border-color 150ms ease, transform 120ms ease-out; }
+.imos-reception-shell main :is(.btn-primary, .btn-success),
+body:has(.imos-reception-shell) .modal :is(.btn-primary, .btn-success) { --bs-btn-bg: var(--workspace-green); --bs-btn-border-color: var(--workspace-green); --bs-btn-hover-bg: #194b38; --bs-btn-hover-border-color: #194b38; }
+.imos-reception-shell main .btn:active:not(:disabled),
+body:has(.imos-reception-shell) .modal .btn:active:not(:disabled) { transform: scale(.98); }
+.imos-reception-shell main :is(.form-control, .form-select, .form-group input, .form-group select),
+body:has(.imos-reception-shell) .modal :is(.form-control, .form-select) { min-width: 0; min-height: 44px; height: auto; padding: 10px 12px; border: 1px solid var(--workspace-line); border-radius: 8px; background-color: #fdfbf7; color: var(--color-text); font-size: 14px; box-shadow: none; }
+.imos-reception-shell main :is(.form-control, .form-select):focus,
+body:has(.imos-reception-shell) .modal :is(.form-control, .form-select):focus { border-color: var(--workspace-green); box-shadow: var(--focus-ring); }
+.imos-reception-shell main :is(.form-control, .form-select):disabled,
+body:has(.imos-reception-shell) .modal :is(.form-control, .form-select):disabled { background-color: #eeeee7; color: var(--workspace-muted); }
+.imos-reception-shell main .form-label,
+body:has(.imos-reception-shell) .modal .form-label { font-size: 13px; font-weight: 600; color: var(--workspace-ink); }
+.imos-reception-shell main :is(.form-control, .form-select).is-invalid,
+body:has(.imos-reception-shell) .modal :is(.form-control, .form-select).is-invalid { border-color: var(--color-danger); }
+.imos-reception-shell main :is(.alert, .badge),
+body:has(.imos-reception-shell) .modal :is(.alert, .badge) { border-radius: 8px; }
+.imos-reception-shell main :is(.directorio-card, .agenda-panel, .perfil-panel, .agenda-card) { border: 1px solid var(--workspace-line); border-radius: 16px; background: var(--workspace-surface); box-shadow: var(--shadow-sm); }
+
+/* Mismo comienzo de pagina: titulo abierto, resumen discreto y accion unica. */
+.imos-reception-shell .encabezado-pagina { padding: 0; margin: 0 0 24px; overflow: visible; border: 0; border-radius: 0; background: transparent; box-shadow: none; gap: 20px; }
+.imos-reception-shell .encabezado-pagina::before { content: none; }
+.imos-reception-shell .encabezado-pagina-identidad { align-items: flex-start; gap: 16px; flex: 1 1 340px; }
+.imos-reception-shell .encabezado-pagina-icono { width: 48px; height: 48px; margin-top: 5px; border-radius: 13px; background: var(--workspace-tint); color: var(--workspace-green); box-shadow: none; font-size: 24px; }
+.imos-reception-shell .encabezado-pagina .encabezado-pagina-etiqueta { font: 600 11px/1.5 var(--reception-font-ui); letter-spacing: .07em; margin-bottom: 7px; }
+.imos-reception-shell .encabezado-pagina .encabezado-pagina-titulo { font-family: var(--reception-font-heading); font-size: clamp(30px, 2.6vw, 40px); font-weight: 700; letter-spacing: -.035em; }
+.imos-reception-shell .encabezado-pagina .encabezado-pagina-descripcion { max-width: 65ch; margin-top: 8px; font-size: 14px; line-height: 1.6; }
+.imos-reception-shell .encabezado-pagina-lateral { gap: 18px; }
+.imos-reception-shell .encabezado-pagina-datos { flex-wrap: wrap; gap: 0; }
+.imos-reception-shell .encabezado-pagina-dato { min-width: 94px; padding: 4px 16px; border: 0; border-left: 1px solid #d3dacd; border-radius: 0; background: transparent; }
+.imos-reception-shell .encabezado-pagina-dato dd { font-size: 24px; font-weight: 500; }
+.imos-reception-shell .encabezado-pagina-dato dt { margin-top: 4px; font-size: 12px; }
+
+/* Directorios de pacientes y profesionales. */
+.imos-reception-shell .directorio-card { overflow: visible; }
+.imos-reception-shell .directorio-buscador { padding: 18px 20px; gap: 16px; flex-wrap: wrap; }
+.imos-reception-shell .directorio-buscador .form-control { max-width: 480px; padding-left: 42px; }
+.imos-reception-shell .directorio-buscador-icono { left: 34px; top: 32px; }
+.imos-reception-shell .directorio-tabla { width: 100%; table-layout: fixed; }
+.imos-reception-shell .directorio-tabla thead th { background: var(--workspace-paper); color: var(--workspace-muted); font-size: 10px; letter-spacing: .08em; padding: 12px; white-space: normal; }
+.imos-reception-shell .directorio-tabla thead th:first-child { width: 27%; }
+.imos-reception-shell .directorio-tabla thead th:last-child { width: 22%; }
+.imos-reception-shell .directorio-tabla td { background: transparent; padding: 18px 12px; font-size: 13px; overflow-wrap: anywhere; }
+.imos-reception-shell .directorio-persona { gap: 12px; align-items: flex-start; }
+.imos-reception-shell .directorio-persona > div { min-width: 0; }
+.imos-reception-shell .directorio-nombre { font-size: 15px; font-weight: 600; overflow-wrap: anywhere; }
+.imos-reception-shell .directorio-secundario { margin-top: 4px; line-height: 1.5; overflow-wrap: anywhere; }
+.imos-reception-shell .directorio-numero { white-space: normal; }
+.imos-reception-shell .directorio-acciones { white-space: normal; }
+.imos-reception-shell .directorio-acciones .btn { min-height: 40px; padding: 8px 10px; font-size: 12px; }
+.imos-reception-shell .directorio-vacio { padding: 48px 24px; color: var(--workspace-muted); }
+.imos-reception-shell .avatar-iniciales { box-shadow: none; }
+
+/* Gestion de turnos: la misma superficie y estados que Inicio. */
+.imos-reception-shell .agenda-card { padding: 0; }
+.imos-reception-shell .agenda-card > .card-body { padding: 24px; min-width: 0; }
+.imos-reception-shell .agenda-header { flex-wrap: wrap; gap: 18px; text-align: left; }
+.imos-reception-shell .agenda-header h2 { font-family: var(--reception-font-heading); font-size: 28px; letter-spacing: -.035em; }
+.imos-reception-shell .agenda-header > .row { margin: 0 !important; }
+.imos-reception-shell .agenda-header > .row > .col-auto { padding: 0; }
+.imos-reception-shell .agenda-table { min-width: 0; width: 100%; table-layout: fixed; text-align: left; }
+.imos-reception-shell .agenda-table :is(th, td) { overflow-wrap: anywhere; }
+.imos-reception-shell .agenda-table thead th { background: var(--workspace-paper); padding: 12px; font-size: 10px; letter-spacing: .08em; }
+.imos-reception-shell .agenda-table td { padding: 16px 12px; background: var(--workspace-surface); }
+.imos-reception-shell .agenda-table thead th:first-child { width: 13%; }
+.imos-reception-shell .agenda-table thead th:last-child { width: 30%; }
+.imos-reception-shell .acciones { flex-wrap: wrap; }
+.imos-reception-shell .acciones .btn { padding: 8px 10px; font-size: 12px; }
+.imos-reception-shell .agenda-tabs .nav-link { min-height: 44px; padding: 10px 14px; font-size: 14px; }
+.imos-reception-shell .agenda-tabs .nav-link.active { color: var(--workspace-green); border-color: var(--workspace-green); }
+.imos-reception-shell .agenda-contador-confirmados { color: var(--color-info); background: var(--color-info-bg); }
+.imos-reception-shell .agenda-vacia { margin: 16px 0 0; padding: 48px 20px; border-radius: 10px; background: var(--workspace-paper); font-size: 14px; }
+
+/* Agenda: se conserva el desplazamiento funcional de la grilla horaria. */
+.imos-reception-shell .agenda-panel { overflow: clip; }
+.imos-reception-shell .agenda-barra { padding: 18px 20px; gap: 16px; }
+.imos-reception-shell .agenda-barra-fecha { flex: 1 1 300px; }
+.imos-reception-shell .agenda-medico .agenda-barra-titulo { font-family: var(--reception-font-ui); font-size: 17px; line-height: 1.5; font-weight: 600; }
+.imos-reception-shell .agenda-medico .agenda-selector-medico { width: min(420px, 100%); font-size: 13px; font-weight: 500; }
+.imos-reception-shell .agenda-barra-controles .btn { min-height: 40px; padding: 8px 12px; font-size: 13px; }
+.imos-reception-shell .agenda-leyenda { background: var(--workspace-paper); padding: 12px 20px; gap: 12px 22px; }
+.imos-reception-shell .agenda-scroll { max-height: clamp(340px, calc(100dvh - 360px), 760px); min-height: 280px; overscroll-behavior: contain; }
+.imos-reception-shell .agenda-dia-header { padding-block: 12px; }
+.imos-reception-shell .estado-confirmado { --estado-fondo: var(--color-info-bg); --estado-borde: var(--color-info); --estado-texto: var(--color-info); }
+
+/* Fichas, perfiles y formularios de pacientes. */
+.imos-reception-shell .perfil { max-width: 1080px !important; margin: 0 auto; padding: 0; }
+.imos-reception-shell .perfil-encabezado { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 5px 20px; text-align: left; align-items: center; margin: 20px 0 24px; }
+.imos-reception-shell .perfil-encabezado > .avatar-iniciales { grid-row: 1 / 4; }
+.imos-reception-shell .perfil .perfil-nombre { grid-column: 2; margin: 0; font-size: clamp(28px, 2.6vw, 38px); }
+.imos-reception-shell .perfil-subtitulo { grid-column: 2; margin: 0; }
+.imos-reception-shell .perfil-rol { grid-column: 2; justify-self: start; margin-top: 4px; }
+.imos-reception-shell .perfil-accion { grid-column: 3; grid-row: 1 / 4; margin: 0; }
+.imos-reception-shell .perfil-tabs { justify-content: flex-start; flex-wrap: wrap; overflow: visible; margin: 0 0 20px; gap: 8px; }
+.imos-reception-shell .perfil-tabs .nav-link { min-height: 44px; border-radius: 8px; font-size: 14px; }
+.imos-reception-shell .perfil-panel { padding: 24px; }
+.imos-reception-shell .perfil .perfil-panel-titulo { font-family: var(--reception-font-heading); font-size: 24px; }
+.imos-reception-shell .perfil-panel-descripcion { margin-top: 6px; }
+.imos-reception-shell .perfil-turno { flex-wrap: wrap; padding-block: 18px; }
+.imos-reception-shell .perfil .form-container { max-width: none !important; padding: 0; }
+.imos-reception-shell .form-container { width: 100%; max-width: 1080px !important; padding: 0; margin-inline: auto; text-align: left; }
+.imos-reception-shell .form-container form.container.my-5 { width: 100% !important; padding: 28px; overflow: visible; border: 1px solid var(--workspace-line); background: var(--workspace-surface); border-radius: 16px; box-shadow: var(--shadow-sm); }
+.imos-reception-shell .form-container form.container.my-5::before { content: none; }
+.imos-reception-shell .form-container .invalid-feedback { position: static; margin-top: 5px; line-height: 1.45; }
+.imos-reception-shell .form-container :is(.form-group, .mb-3) { min-width: 0; }
+.imos-reception-shell .form-container .form-label { text-align: left; }
+.imos-reception-shell .form-container form > .form-label { display: block; padding-bottom: 12px; margin-bottom: 18px !important; border-bottom: 1px solid var(--workspace-line); font-size: 15px; }
+.imos-reception-shell .perfil-form-acciones { flex-wrap: wrap; }
+.imos-reception-shell .perfil-datos { margin: 0; }
+.imos-reception-shell .left-btn { margin: 0 0 18px; text-align: left; }
+
+/* Los portales usan las mismas medidas, fuentes y colores. */
+body:has(.imos-reception-shell) .modal-content { border: 1px solid var(--workspace-line); border-radius: 16px; background: var(--workspace-surface); box-shadow: 0 24px 72px #103f3326; }
+body:has(.imos-reception-shell) .modal-header { padding: 20px 24px; background: var(--workspace-paper); border-bottom: 1px solid var(--workspace-line); }
+body:has(.imos-reception-shell) .modal-header :is(h3, .modal-title) { color: var(--workspace-ink); font-family: var(--reception-font-heading); font-size: 26px; font-weight: 700; }
+body:has(.imos-reception-shell) .modal-header .btn-close { --btn-img: var(--bs-btn-close-bg); align-self: center; background-image: var(--bs-btn-close-bg); background-size: 14px !important; padding: 12px; }
+body:has(.imos-reception-shell) .modal-body { padding: 24px; }
+body:has(.imos-reception-shell) .modal-footer { padding: 16px 24px; gap: 8px; }
+body:has(.imos-reception-shell) .modal-footer .btn { min-width: 120px; }
+body:has(.imos-reception-shell) .selector-turno-dia,
+body:has(.imos-reception-shell) .selector-turno-hora { font-family: var(--reception-font-ui); border-radius: 8px; }
+.imos-reception-shell .badge.bg-info { background: var(--color-info-bg) !important; color: var(--color-info); }
+.imos-reception-shell .badge.bg-warning { background: var(--color-warning-bg) !important; color: var(--color-warning); }
+
+@media (max-width: 1100px) {
+  .imos-reception-shell .directorio-tabla,
+  .imos-reception-shell .directorio-tabla tbody { display: block; }
+  .imos-reception-shell .directorio-tabla thead { position: absolute; width: 1px; height: 1px; clip-path: inset(50%); white-space: nowrap; }
+  .imos-reception-shell .directorio-tabla tr { display: grid; padding: 16px; border-bottom: 1px solid var(--workspace-line); }
+  .imos-reception-shell .directorio-tabla td { display: flex; justify-content: space-between; gap: 12px; padding: 5px 0; border: 0; }
+  .imos-reception-shell .directorio-tabla td[data-label]::before { content: attr(data-label); flex-shrink: 0; color: var(--workspace-muted); font-size: 12px; }
+  .imos-reception-shell .directorio-persona { width: 100%; }
+  .imos-reception-shell .directorio-acciones { justify-content: flex-start; flex-wrap: wrap; padding-top: 12px !important; }
+}
+@media (max-width: 700px) {
+  .imos-reception-shell > main > .container { padding: 24px 16px 32px; }
+  .imos-reception-shell .encabezado-pagina { gap: 18px; }
+  .imos-reception-shell .encabezado-pagina-identidad { flex-basis: 100%; gap: 12px; }
+  .imos-reception-shell .encabezado-pagina-icono { width: 42px; height: 42px; }
+  .imos-reception-shell .encabezado-pagina-lateral { width: 100%; }
+  .imos-reception-shell .encabezado-pagina-datos { flex: 1; }
+  .imos-reception-shell .encabezado-pagina-dato { min-width: 0; flex: 1; padding-inline: 12px; }
+  .imos-reception-shell .encabezado-pagina-accion,
+  .imos-reception-shell .encabezado-pagina-accion .btn { width: 100%; }
+  .imos-reception-shell .directorio-buscador { padding: 16px; }
+  .imos-reception-shell .directorio-buscador-icono { left: 30px; top: 30px; }
+  .imos-reception-shell .directorio-buscador .form-control { max-width: none; }
+  .imos-reception-shell .agenda-card > .card-body { padding: 20px 14px; }
+  .imos-reception-shell .agenda-header > .row,
+  .imos-reception-shell .agenda-header > .row > .col-auto,
+  .imos-reception-shell .btn-nuevo-turno { width: 100%; }
+  .imos-reception-shell .table-responsive { overflow: visible; }
+  .imos-reception-shell .agenda-table,
+  .imos-reception-shell .agenda-table tbody { display: block; }
+  .imos-reception-shell .agenda-table thead { position: absolute; width: 1px; height: 1px; clip-path: inset(50%); white-space: nowrap; }
+  .imos-reception-shell .agenda-table tr { display: grid; padding-block: 10px; border-bottom: 1px solid var(--workspace-line); }
+  .imos-reception-shell .agenda-table td { display: grid; grid-template-columns: 74px minmax(0, 1fr); gap: 4px 10px; padding: 6px 4px; width: auto; border: 0; font-size: 13px; }
+  .imos-reception-shell .agenda-table td::before { content: attr(data-label); color: var(--workspace-muted); font-size: 11px; }
+  .imos-reception-shell .agenda-table .agenda-dia { border: 0; padding: 0; }
+  .imos-reception-shell .agenda-table .agenda-dia th { padding: 16px 4px 8px; }
+  .imos-reception-shell .agenda-especialidad,
+  .imos-reception-shell .agenda-etiqueta { grid-column: 2; }
+  .imos-reception-shell .acciones { justify-content: flex-start !important; }
+  .imos-reception-shell .agenda-tabs { gap: 0; flex-wrap: wrap; }
+  .imos-reception-shell .agenda-tabs .nav-link { padding-inline: 8px; font-size: 12px; }
+  .imos-reception-shell .agenda-barra { padding: 16px; }
+  .imos-reception-shell .agenda-medico .agenda-selector-medico { width: 100%; }
+  .imos-reception-shell .agenda-barra-fecha { flex-basis: 100%; }
+  .imos-reception-shell .agenda-scroll { max-height: 65dvh; min-height: 260px; }
+  .imos-reception-shell .agenda-scroll:has(.agenda-semana-header) { overflow-x: auto; }
+  .imos-reception-shell .agenda-scroll:has(.agenda-semana-header) > :is(.agenda-semana-header, .agenda-grid) { min-width: 660px; }
+  .imos-reception-shell .perfil-encabezado { grid-template-columns: auto minmax(0, 1fr); gap: 8px 14px; }
+  .imos-reception-shell .perfil .perfil-nombre { font-size: 28px; }
+  .imos-reception-shell .perfil-accion { grid-column: 1 / -1; grid-row: auto; width: 100%; margin-top: 12px; }
+  .imos-reception-shell .perfil-panel { padding: 20px 16px; }
+  .imos-reception-shell .form-container form.container.my-5 { padding: 20px 16px; }
+  .imos-reception-shell main :is(.form-control, .form-select),
+  body:has(.imos-reception-shell) .modal :is(.form-control, .form-select) { font-size: 16px; }
+  body:has(.imos-reception-shell) .modal-body { padding: 20px 16px; }
+  body:has(.imos-reception-shell) .modal-header { padding: 18px 16px; }
+  body:has(.imos-reception-shell) .modal-footer .btn { min-width: 0; flex: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .imos-reception-shell main .btn,
+  body:has(.imos-reception-shell) .modal .btn { transition: none; }
+}
+
+.imos-reception-shell .agenda-table .agenda-dia th { padding: 18px 12px 10px; background: var(--workspace-surface); color: var(--workspace-green); border-color: var(--workspace-line); font-size: 12px; }
+.imos-reception-shell .agenda-table .hora { font-size: 16px; font-weight: 500; color: var(--workspace-green); }
+.imos-reception-shell .agenda-paciente { color: var(--workspace-ink); }
+.imos-reception-shell .agenda-especialidad { margin-top: 4px; color: var(--workspace-muted); }
+@media (hover: hover) and (pointer: fine) {
+  .imos-reception-shell .agenda-table tbody tr:hover > td,
+  .imos-reception-shell .directorio-tabla tbody tr:hover > td { background: #f3f6ef; }
+}
+@media (max-width: 700px) {
+  .imos-reception-shell .agenda-table .agenda-dia th { padding: 16px 4px 8px; }
+  .imos-reception-shell .agenda-table td::before { font-weight: 400; }
+  .imos-reception-shell .agenda-etiqueta { margin-left: 0; justify-self: start; }
+}
+
+/* Algunos estilos antiguos de formularios centraban todos los h1/h2 del body. */
+.imos-reception-shell main :is(.perfil-nombre, .perfil-panel-titulo, .encabezado-pagina-titulo) { text-align: left; }
+.imos-reception-shell .form-container .mb-3 { margin-bottom: 16px !important; }
+.imos-reception-shell main .form-select,
+body:has(.imos-reception-shell) .modal .form-select { padding-right: 36px; }
+@media (min-width: 992px) {
+  .imos-reception-shell .agenda-scroll { max-height: clamp(240px, calc(100dvh - 480px), 680px); min-height: 240px; }
+}
+
+/* Reserva del icono: debe prevalecer sobre el padding de los campos comunes. */
+.imos-reception-shell main .recepcion-busqueda .form-control { padding-left: 40px; }
