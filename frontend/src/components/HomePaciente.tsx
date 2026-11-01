@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { Container } from "react-bootstrap";
 import {
-  Calendar3, CalendarCheck, CalendarEvent, CalendarPlus, ChevronRight, Clock, CreditCard2Front, PersonVcard,
+  Calendar3, CalendarEvent, ChevronRight, Clock, CreditCard2Front,
 } from "react-bootstrap-icons";
 import { useAuth } from "../hooks/useAuth";
 import { useTurnosPaciente } from "../hooks/useTurnosPaciente";
@@ -15,13 +15,6 @@ import "../assets/styles/PacienteTheme.css";
 
 const FECHA_HOY = new Intl.DateTimeFormat("es-AR", { weekday: "long", day: "numeric", month: "long" });
 const FECHA_CONSULTA = new Intl.DateTimeFormat("es-AR", { day: "numeric", month: "long", year: "numeric" });
-
-// Los mismos nombres que el menú, para que se reconozcan
-const ACCESOS = [
-  { to: "/pedir-turno", titulo: "Pedir turno", desc: "Elegí especialidad, profesional y horario", icono: <CalendarPlus /> },
-  { to: "/mis-turnos", titulo: "Mis turnos", desc: "Próximos turnos e indicaciones de cada consulta", icono: <CalendarCheck /> },
-  { to: "/buscar-medico", titulo: "Médicos", desc: "Profesionales del consultorio", icono: <PersonVcard /> },
-];
 
 // Inicio del paciente: su próximo turno, un resumen, lo último que le indicó
 // el médico, su cobertura y los datos del consultorio
@@ -127,20 +120,6 @@ export function HomePaciente() {
           </section>
         </div>
       </div>
-
-      {/* ── Accesos ── */}
-      <nav className="inicio-accesos" aria-label="Accesos rápidos">
-        {ACCESOS.map((a) => (
-          <Link key={a.to} to={a.to} className="inicio-acceso">
-            <span className="inicio-acceso-icono" aria-hidden="true">{a.icono}</span>
-            <span className="inicio-acceso-texto">
-              <span className="inicio-acceso-titulo">{a.titulo}</span>
-              <span className="inicio-acceso-desc">{a.desc}</span>
-            </span>
-            <ChevronRight aria-hidden="true" className="inicio-acceso-flecha" />
-          </Link>
-        ))}
-      </nav>
     </Container>
   );
 }
