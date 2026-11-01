@@ -16,7 +16,7 @@ function NoEncontrada() {
         <p className="no-encontrada-texto">
           Puede que el enlace esté mal escrito o que la página ya no exista.
         </p>
-        <Link className="no-encontrada-btn" to={estaAutenticado ? "/home" : "/"}>
+        <Link className="no-encontrada-btn" to={estaAutenticado ? "/home" : "/login"}>
           {estaAutenticado ? "Volver al inicio" : "Ir a ingresar"}
         </Link>
       </section>

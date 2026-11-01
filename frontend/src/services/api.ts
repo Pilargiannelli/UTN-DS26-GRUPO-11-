@@ -52,9 +52,9 @@ export async function apiFetch<T>(
       // Notificamos al AuthContext/App
       window.dispatchEvent(new Event("sesion-expirada"));
 
-      // El login vive en "/" (App.tsx); "/login" no existe
-      if (window.location.pathname !== "/") {
-        window.location.href = "/?expired=true";
+      // El login vive en "/login" (App.tsx); "/" es la landing
+      if (window.location.pathname !== "/login") {
+        window.location.href = "/login?expired=true";
       }
     }
 

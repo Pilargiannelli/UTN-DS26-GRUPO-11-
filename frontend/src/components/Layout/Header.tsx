@@ -51,7 +51,7 @@ function Header({ recepcion = false }: { recepcion?: boolean }) {
         )}
         {!estaAutenticado && (
           <Nav className="ms-auto align-items-center">
-            <Link className="btn btn-outline-success btn-sm" to="/">
+            <Link className="btn btn-outline-success btn-sm" to="/login">
               Ingresar
             </Link>
           </Nav>

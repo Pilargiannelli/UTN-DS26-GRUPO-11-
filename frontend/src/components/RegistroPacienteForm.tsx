@@ -88,7 +88,7 @@ export function RegistroPacienteForm({ modo }: RegistroPacienteFormProps) {
             });
 
             // El toast lo muestra la pantalla de destino (Login o BuscarPaciente)
-            if (esAutoregistro) navigate("/", { state: { registroExitoso: true } });
+            if (esAutoregistro) navigate("/login", { state: { registroExitoso: true } });
             else navigate("/buscar-paciente", { state: { pacienteCreado: true } });
         } catch (err) {
             // 400 de Zod: marcamos cada campo. 409 (DNI repetido...): arriba del form
