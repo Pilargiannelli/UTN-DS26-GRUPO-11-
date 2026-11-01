@@ -15,6 +15,7 @@ import type { EstadoTurno, Turno } from "../../types/Turno";
 import { formatearHora } from "../../utils/fecha";
 import { useAuth } from "../../hooks/useAuth";
 import { apiFetch } from "../../services/api";
+import { ModalConfirmacion } from "../ModalConfirmacion";
 
 import "../../assets/styles/TurnosTable.css";
 import TurnosFilters from "./TurnosFilters";
@@ -70,6 +71,8 @@ function TurnosTable({
   const [procesando, setProcesando] = useState<number | null>(null);
   const [errorAccion, setErrorAccion] = useState<string | null>(null);
   const [seccion, setSeccion] = useState<Seccion>("pendientes");
+  // Confirmar y cancelar piden una confirmacion antes de tocar el turno
+  const [porConfirmar, setPorConfirmar] = useState<{ turno: Turno; accion: "confirmar" | "cancelar" } | null>(null);
 
   const [busqueda, setBusqueda] = useState("");
   const [fechaFiltro, setFechaFiltro] = useState("todas");
@@ -176,7 +179,7 @@ function TurnosTable({
                           size="sm"
                           variant="success"
                           disabled={procesando === turno.id}
-                          onClick={() => ejecutarAccion(turno, "confirmar")}
+                          onClick={() => setPorConfirmar({ turno, accion: "confirmar" })}
                         >
                           Confirmar
                         </Button>
@@ -185,7 +188,7 @@ function TurnosTable({
                         size="sm"
                         variant="outline-danger"
                         disabled={procesando === turno.id}
-                        onClick={() => ejecutarAccion(turno, "cancelar")}
+                        onClick={() => setPorConfirmar({ turno, accion: "cancelar" })}
                       >
                         Cancelar
                       </Button>
@@ -247,17 +250,25 @@ function TurnosTable({
           unmountOnExit
           transition={false}
         >
-          <Tab eventKey="pendientes" title={titulo("Pendientes", "pendientes")}>
-            {renderLista("pendientes")}
-          </Tab>
-          <Tab eventKey="confirmados" title={titulo("Confirmados", "confirmados")}>
-            {renderLista("confirmados")}
-          </Tab>
+          {(tieneRol("SECRETARIA") ? ["confirmados", "pendientes"] : ["pendientes", "confirmados"]).map((s) => (
+            <Tab key={s} eventKey={s} title={titulo(s === "pendientes" ? "Pendientes" : "Confirmados", s as Seccion)}>
+              {renderLista(s as Seccion)}
+            </Tab>
+          ))}
           <Tab eventKey="cancelados" title={titulo("Cancelados", "cancelados")}>
             {renderLista("cancelados")}
           </Tab>
         </Tabs>
       </Card.Body>
+      <ModalConfirmacion
+        isOpen={porConfirmar !== null}
+        mensaje={porConfirmar ? `¿Estás seguro de ${porConfirmar.accion} el turno de ${nombreCompleto(porConfirmar.turno.paciente.usuario)} (${formatearHora(porConfirmar.turno.fechaHora)} hs)?` : ""}
+        onCancelar={() => setPorConfirmar(null)}
+        onAceptar={() => {
+          if (porConfirmar) ejecutarAccion(porConfirmar.turno, porConfirmar.accion);
+          setPorConfirmar(null);
+        }}
+      />
     </Card>
   );
 }

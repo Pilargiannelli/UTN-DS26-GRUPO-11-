@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { CalendarPlus } from "react-bootstrap-icons";
+import { CalendarEvent, CalendarPlus, Flag, HeartPulse, Person } from "react-bootstrap-icons";
 
 import {
   Modal,
@@ -10,11 +10,13 @@ import {
 } from "react-bootstrap";
 
 import "../../assets/styles/ModalTurno.css";
+import "../../assets/styles/NuevoTurnoModal.css";
 
 import { turnoSchema } from "../../schemas/TurnoSchema";
 import { apiFetch, ApiError } from "../../services/api";
 import { useFetch } from "../../hooks/useFetch";
 import { SelectorTurno } from "../SelectorTurno";
+import { BuscadorSelect } from "./BuscadorSelect";
 import type { Turno, MedicoTurno, PacienteTurno } from "../../types/Turno";
 
 interface NuevoTurnoModalProps {
@@ -88,6 +90,16 @@ function NuevoTurnoModal({
 
     }
 
+  };
+
+  const elegirOpcion = (name: "pacienteId" | "medicoId", value: string) => {
+    setForm((prev) => ({
+      ...prev,
+      [name]: value,
+      // Otro médico: el horario elegido puede no estar libre
+      ...(name === "medicoId" && { hora: "" }),
+    }));
+    setErrores((prev) => ({ ...prev, [name]: "" }));
   };
 
   const limpiarFormulario = () => {
@@ -181,24 +193,26 @@ function NuevoTurnoModal({
   };
 
   return (
-        <Modal
+    <Modal
       show={show}
       onHide={onClose}
       centered
       scrollable
       size="lg"
+      dialogClassName="modal-nuevo-turno"
     >
 
       <Modal.Header
         closeButton
+        closeLabel="Cerrar"
         className="modal-header-turno"
       >
 
+        <span className="nt-icono" aria-hidden="true"><CalendarPlus /></span>
+
         <div>
 
-          <h3 className="m-0 fw-bold">
-            <CalendarPlus aria-hidden="true" className="me-2" />Nuevo Turno
-          </h3>
+          <h3 className="m-0 fw-bold">Nuevo Turno</h3>
 
           <small className="text-muted">
             Programá una nueva consulta médica
@@ -214,70 +228,57 @@ function NuevoTurnoModal({
 
         <Form>
 
-          <Form.Group className="mb-3">
+          <div className="nt-fila">
 
-            <Form.Label>Paciente</Form.Label>
+            <Form.Group className="nt-seccion">
 
-            <Form.Select
-              name="pacienteId"
-              value={form.pacienteId}
-              onChange={handleChange}
-              isInvalid={!!errores.pacienteId}
-            >
+              <Form.Label className="nt-titulo"><Person aria-hidden="true" />Paciente</Form.Label>
 
-              <option value="">
-                {pacientes ? "Seleccione un paciente" : "Cargando pacientes..."}
-              </option>
+              <BuscadorSelect
+                ariaLabel="Paciente"
+                placeholder="Buscar paciente por nombre o DNI"
+                value={form.pacienteId}
+                onChange={(v) => elegirOpcion("pacienteId", v)}
+                invalido={!!errores.pacienteId}
+                opciones={pacientes?.map((p) => ({
+                  value: String(p.id),
+                  etiqueta: `${p.usuario.nombre} ${p.usuario.apellido}`,
+                  detalle: p.usuario.dni ? `DNI ${p.usuario.dni}` : undefined,
+                }))}
+              />
 
-              {(pacientes ?? []).map((p) => (
-                <option key={p.id} value={p.id}>
-                  {p.usuario.nombre} {p.usuario.apellido}
-                  {p.usuario.dni ? ` (DNI ${p.usuario.dni})` : ""}
-                </option>
-              ))}
+              {errores.pacienteId && <div className="nt-error">{errores.pacienteId}</div>}
 
-            </Form.Select>
+            </Form.Group>
 
-            <Form.Control.Feedback type="invalid">
-              {errores.pacienteId}
-            </Form.Control.Feedback>
+            <Form.Group className="nt-seccion">
 
-          </Form.Group>
+              <Form.Label className="nt-titulo"><HeartPulse aria-hidden="true" />Médico</Form.Label>
 
-          <Form.Group className="mb-3">
+              <BuscadorSelect
+                ariaLabel="Médico"
+                placeholder="Buscar médico o especialidad"
+                value={form.medicoId}
+                onChange={(v) => elegirOpcion("medicoId", v)}
+                invalido={!!errores.medicoId}
+                opciones={medicos?.map((m) => ({
+                  value: String(m.id),
+                  etiqueta: `Dr./Dra. ${m.usuario.nombre} ${m.usuario.apellido}`,
+                  detalle: m.especialidad,
+                }))}
+              />
 
-            <Form.Label>Médico</Form.Label>
+              {errores.medicoId && <div className="nt-error">{errores.medicoId}</div>}
 
-            <Form.Select
-              name="medicoId"
-              value={form.medicoId}
-              onChange={handleChange}
-              isInvalid={!!errores.medicoId}
-            >
+            </Form.Group>
 
-              <option value="">
-                {medicos ? "Seleccione un médico" : "Cargando médicos..."}
-              </option>
-
-              {(medicos ?? []).map((m) => (
-                <option key={m.id} value={m.id}>
-                  Dr./Dra. {m.usuario.nombre} {m.usuario.apellido} — {m.especialidad}
-                </option>
-              ))}
-
-            </Form.Select>
-
-            <Form.Control.Feedback type="invalid">
-              {errores.medicoId}
-            </Form.Control.Feedback>
-
-          </Form.Group>
+          </div>
 
           {/* Día y horario: la tira muestra cuántos horarios libres le quedan a
               cada día del médico; los ocupados y los ya pasados no se eligen */}
-          <Form.Group className="mb-3">
+          <Form.Group className="nt-seccion">
 
-            <Form.Label>Día y horario</Form.Label>
+            <Form.Label className="nt-titulo"><CalendarEvent aria-hidden="true" />Día y horario</Form.Label>
 
             <SelectorTurno
               medicoId={form.medicoId}
@@ -289,14 +290,14 @@ function NuevoTurnoModal({
             />
 
             {(errores.fecha || errores.hora) && (
-              <div className="text-danger small mt-1">{errores.fecha || errores.hora}</div>
+              <div className="nt-error">{errores.fecha || errores.hora}</div>
             )}
 
           </Form.Group>
 
-          <Form.Group className="mb-4">
+          <Form.Group className="nt-seccion">
 
-            <Form.Label>Estado</Form.Label>
+            <Form.Label className="nt-titulo"><Flag aria-hidden="true" />Estado</Form.Label>
 
             <Form.Select
               name="estado"
@@ -330,6 +331,7 @@ function NuevoTurnoModal({
 
         <Button
           variant="outline-secondary"
+          className="nt-cancelar"
           onClick={onClose}
           disabled={enviando}
         >
@@ -338,6 +340,7 @@ function NuevoTurnoModal({
 
         <Button
           variant="success"
+          className="nt-guardar"
           onClick={guardarTurno}
           disabled={enviando}
         >

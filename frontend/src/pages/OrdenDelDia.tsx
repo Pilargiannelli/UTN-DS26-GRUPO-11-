@@ -1,26 +1,28 @@
-import { useState, type ReactNode } from "react";
+import { useRef, useState, type ReactNode } from "react";
 import { Link } from "react-router-dom";
-import { Alert, Button, ButtonGroup, Container, Form, Spinner } from "react-bootstrap";
-import { CalendarWeek, ChevronLeft, ChevronRight } from "react-bootstrap-icons";
+import { Alert, Button, ButtonGroup, Container, Spinner } from "react-bootstrap";
+import { CalendarEvent, CalendarWeek, CheckSquare, ChevronLeft, ChevronRight, Clock } from "react-bootstrap-icons";
 import { useTurnosMedico } from "../hooks/useTurnosMedico";
 import { useFetch } from "../hooks/useFetch";
 import { useAuth } from "../hooks/useAuth";
 import VistaAgendaSemanal from "../components/VistaAgendaSemanal";
+import { BuscadorSelect } from "../components/Turnos/BuscadorSelect";
 import Layout from "../components/Layout/Layout";
 import { EncabezadoPagina } from "../components/EncabezadoPagina";
 import { formatearHora, parseFechaHora } from "../utils/fecha";
-import { esDiaHabil } from "../utils/horarios";
+import { claveFecha, esDiaHabil } from "../utils/horarios";
 import {
   ALTURA_TOTAL, HORAS, esMismaFecha, estiloGrilla, etiquetaHora, topAhora, ubicarTurnos,
 } from "../utils/agenda";
 import type { EstadoTurno } from "../types/Turno";
 import "../assets/styles/OrdenDelDia.css";
+import "../assets/styles/SecretariaAgenda.css";
 
 type Vista = "dia" | "semana";
 
 const ESTADOS: { estado: EstadoTurno; texto: string }[] = [
-  { estado: "Pendiente", texto: "Pendiente" },
   { estado: "Confirmado", texto: "Confirmado" },
+  { estado: "Pendiente", texto: "Pendiente" },
   { estado: "Reprogramado", texto: "Reprogramado" },
   { estado: "Cancelado", texto: "Cancelado" },
 ];
@@ -78,31 +80,32 @@ interface MedicoCartilla {
 // La secretaria elige de qué médico ver la agenda (arranca con el primero)
 function AgendaSecretaria() {
   const { data, loading, error } = useFetch<MedicoCartilla[]>("/medicos");
-  const [elegido, setElegido] = useState<number | null>(null);
+  // null: arranca con el primero; "ninguno": la cruz quitó la selección
+  const [elegido, setElegido] = useState<number | "ninguno" | null>(null);
   const medicos = [...(data ?? [])].sort((a, b) => a.usuario.apellido.localeCompare(b.usuario.apellido));
-  const medicoId = elegido ?? medicos[0]?.id;
+  const sinMedico = elegido === "ninguno";
+  const medicoId = sinMedico ? undefined : elegido ?? medicos[0]?.id;
 
-  if (loading || error || medicoId === undefined) {
+  if (loading || error || (medicoId === undefined && !sinMedico)) {
     return <Agenda deSecretaria cargandoMedicos={loading} errorMedicos={error?.message ?? (loading ? null : "No hay médicos cargados.")} />;
   }
 
   const selector = (
-    <Form.Select
-      size="sm"
-      className="agenda-selector-medico"
-      aria-label="Médico"
-      value={medicoId}
-      onChange={(e) => setElegido(Number(e.target.value))}
-    >
-      {medicos.map((m) => (
-        <option key={m.id} value={m.id}>
-          {m.usuario.nombre} {m.usuario.apellido} · {m.especialidad}
-        </option>
-      ))}
-    </Form.Select>
+    <BuscadorSelect
+      ariaLabel="Médico"
+      placeholder="Buscar médico o especialidad"
+      value={medicoId === undefined ? "" : String(medicoId)}
+      onChange={(v) => setElegido(v ? Number(v) : "ninguno")}
+      detalleFijo
+      opciones={medicos.map((m) => ({
+        value: String(m.id),
+        etiqueta: `${m.usuario.nombre} ${m.usuario.apellido}`,
+        detalle: m.especialidad,
+      }))}
+    />
   );
 
-  return <Agenda deSecretaria medicoId={medicoId} selector={selector} />;
+  return <Agenda deSecretaria medicoId={medicoId} selector={selector} sinMedico={sinMedico} />;
 }
 
 // Agenda: el médico ve la suya; la secretaria, la de cada médico
@@ -117,13 +120,16 @@ interface AgendaProps {
   selector?: ReactNode;
   cargandoMedicos?: boolean;
   errorMedicos?: string | null;
+  // La secretaria quitó el médico: no hay agenda para mostrar
+  sinMedico?: boolean;
 }
 
 // Turnos por día o por semana, en una grilla horaria. Cada turno lleva a la
 // ficha del paciente.
-function Agenda({ deSecretaria = false, medicoId, selector, cargandoMedicos = false, errorMedicos = null }: AgendaProps) {
+function Agenda({ deSecretaria = false, medicoId, selector, cargandoMedicos = false, errorMedicos = null, sinMedico = false }: AgendaProps) {
   const [fecha, setFecha] = useState(hoyHabil);
   const [vista, setVista] = useState<Vista>("dia");
+  const selectorFecha = useRef<HTMLInputElement>(null);
   const turnosMedico = useTurnosMedico(medicoId);
   const { misTurnos, turnosDelDia } = turnosMedico;
   const loading = turnosMedico.loading || cargandoMedicos;
@@ -133,6 +139,21 @@ function Agenda({ deSecretaria = false, medicoId, selector, cargandoMedicos = fa
   const dias = semanaHabil(fecha);
   const turnos = turnosDelDia(fecha);
   const enHoy = vista === "dia" ? esMismaFecha(fecha, ahora) : dias.some((d) => esMismaFecha(d, ahora));
+
+  // El consultorio atiende de lunes a viernes: un fin de semana pasa al lunes
+  const elegirFecha = (valor: string) => {
+    if (!valor) return;
+    const [anio, mes, dia] = valor.split("-").map(Number);
+    const elegida = new Date(anio, mes - 1, dia);
+    setFecha(esDiaHabil(elegida) ? elegida : moverDiaHabil(elegida, 1));
+  };
+
+  const abrirCalendario = () => {
+    const entrada = selectorFecha.current;
+    if (!entrada) return;
+    if (typeof entrada.showPicker === "function") entrada.showPicker();
+    else entrada.click();
+  };
 
   const mover = (paso: 1 | -1) => {
     if (vista === "dia") {
@@ -147,15 +168,17 @@ function Agenda({ deSecretaria = false, medicoId, selector, cargandoMedicos = fa
   // Resumen del encabezado (sin contar cancelados)
   const semanaActual = semanaHabil(ahora);
   const datos = [
-    { valor: turnosDelDia(ahora).filter((t) => activo(t.estado)).length, texto: "Turnos hoy" },
+    { valor: turnosDelDia(ahora).filter((t) => activo(t.estado)).length, texto: "Turnos hoy", icono: <CalendarEvent /> },
     {
       valor: semanaActual.reduce((n, d) => n + turnosDelDia(d).filter((t) => activo(t.estado)).length, 0),
       texto: "Esta semana",
+      icono: <CalendarWeek />,
     },
     {
       valor: misTurnos.filter((t) => (t.estado === "Pendiente" || t.estado === "Reprogramado")
         && parseFechaHora(t.fechaHora) >= ahora).length,
       texto: "Por confirmar",
+      icono: <CheckSquare />,
     },
   ];
 
@@ -171,33 +194,41 @@ function Agenda({ deSecretaria = false, medicoId, selector, cargandoMedicos = fa
           descripcion={deSecretaria
             ? "Elegí un médico para ver sus turnos por horario. Tocá un turno para abrir la ficha del paciente."
             : "Tus turnos por horario. Tocá un turno para abrir la ficha y la historia clínica del paciente."}
-          datos={loading || error ? undefined : datos}
+          datos={loading || error || sinMedico ? undefined : datos}
         />
 
         <div className="agenda-panel">
           {/* Barra: fecha a la izquierda, navegación y vista a la derecha */}
           <div className="agenda-barra">
-            <div className="agenda-barra-fecha">
-              {selector}
-              <h2 className="agenda-barra-titulo">
-                {vista === "dia" ? tituloDia(fecha) : tituloSemana(dias)}
-              </h2>
-              {vista === "dia" && esMismaFecha(fecha, ahora) && <span className="agenda-barra-hoy">Hoy</span>}
-            </div>
+            <div className="agenda-barra-fecha">{selector}</div>
 
             <div className="agenda-barra-controles">
-              <Button variant="outline-secondary" size="sm" onClick={() => setFecha(hoyHabil())} disabled={enHoy}>
+              <Button variant="outline-secondary" size="sm" className="agenda-btn-hoy" onClick={() => setFecha(hoyHabil())} disabled={enHoy}>
                 Hoy
               </Button>
-              <ButtonGroup size="sm" aria-label="Cambiar de fecha">
-                <Button variant="outline-secondary" onClick={() => mover(-1)} aria-label={vista === "dia" ? "Día anterior" : "Semana anterior"}>
-                  <ChevronLeft aria-hidden="true" />
-                </Button>
-                <Button variant="outline-secondary" onClick={() => mover(1)} aria-label={vista === "dia" ? "Día siguiente" : "Semana siguiente"}>
-                  <ChevronRight aria-hidden="true" />
-                </Button>
-              </ButtonGroup>
-              <ButtonGroup size="sm" aria-label="Vista">
+              <Button variant="outline-secondary" size="sm" className="agenda-btn-nav" onClick={() => mover(-1)} aria-label={vista === "dia" ? "Día anterior" : "Semana anterior"}>
+                <ChevronLeft aria-hidden="true" />
+              </Button>
+              <h2 className="agenda-barra-titulo">
+                <button type="button" className="agenda-fecha-boton" onClick={abrirCalendario} aria-label="Elegir una fecha en el calendario">
+                  <span>{vista === "dia" ? tituloDia(fecha) : tituloSemana(dias)}</span>
+                  <CalendarEvent aria-hidden="true" />
+                </button>
+                <input
+                  ref={selectorFecha}
+                  type="date"
+                  className="agenda-fecha-entrada"
+                  tabIndex={-1}
+                  aria-hidden="true"
+                  value={claveFecha(fecha)}
+                  onChange={(e) => elegirFecha(e.target.value)}
+                />
+              </h2>
+              {vista === "dia" && esMismaFecha(fecha, ahora) && <span className="agenda-barra-hoy">Hoy</span>}
+              <Button variant="outline-secondary" size="sm" className="agenda-btn-nav" onClick={() => mover(1)} aria-label={vista === "dia" ? "Día siguiente" : "Semana siguiente"}>
+                <ChevronRight aria-hidden="true" />
+              </Button>
+              <ButtonGroup size="sm" className="agenda-vista" aria-label="Vista">
                 <Button
                   variant={vista === "dia" ? "primary" : "outline-primary"}
                   aria-pressed={vista === "dia"}
@@ -230,7 +261,13 @@ function Agenda({ deSecretaria = false, medicoId, selector, cargandoMedicos = fa
           {error && <Alert variant="danger" className="m-3">No se pudo cargar la agenda: {error.message}</Alert>}
 
           {/* ── Vista diaria ── */}
-          {!loading && !error && vista === "dia" && (
+          {!loading && !error && sinMedico && (
+            <div className="agenda-scroll agenda-sin-medico">
+              <p>Buscá y elegí un médico para ver su agenda.</p>
+            </div>
+          )}
+
+          {!loading && !error && !sinMedico && vista === "dia" && (
             <div className="agenda-scroll" style={estiloGrilla}>
               <div className="agenda-grid">
                 <div className="agenda-col-horas">
@@ -258,7 +295,7 @@ function Agenda({ deSecretaria = false, medicoId, selector, cargandoMedicos = fa
                         style={estilo}
                         aria-label={`${formatearHora(turno.fechaHora)}, ${paciente}, ${turno.estado}`}
                       >
-                        <span className="agenda-evento-hora">{formatearHora(turno.fechaHora)}</span>
+                        <span className="agenda-evento-hora"><Clock className="agenda-evento-reloj" aria-hidden="true" />{formatearHora(turno.fechaHora)}</span>
                         <span className="agenda-evento-paciente">{paciente}</span>
                         <span className="agenda-evento-estado">{turno.estado}</span>
                       </Link>
@@ -270,7 +307,7 @@ function Agenda({ deSecretaria = false, medicoId, selector, cargandoMedicos = fa
           )}
 
           {/* ── Vista semanal ── */}
-          {!loading && !error && vista === "semana" && (
+          {!loading && !error && !sinMedico && vista === "semana" && (
             <VistaAgendaSemanal diasSemana={dias} turnosDelDia={turnosDelDia} />
           )}
         </div>
