@@ -168,7 +168,14 @@ export default function Landing() {
           </div>
         </section>
 
-        <section id="servicios" className="landing-seccion">
+        {/* Onda SVG de transición hero → servicios */}
+        <div className="landing-onda" aria-hidden="true">
+          <svg viewBox="0 0 1440 56" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M0,32 C360,56 1080,0 1440,32 L1440,56 L0,56 Z" fill="var(--color-surface)" />
+          </svg>
+        </div>
+
+        <section id="servicios" className="landing-seccion landing-seccion-servicios">
           <h2>Qué podés hacer</h2>
           <p className="landing-seccion-sub">
             Todo lo que necesitás para tu atención, sin trámites ni esperas.
@@ -202,7 +209,7 @@ export default function Landing() {
           </div>
         </section>
 
-        <section id="perfiles" className="landing-seccion">
+        <section id="perfiles" className="landing-seccion landing-seccion-perfiles">
           <h2>Un sistema para todo el equipo</h2>
           <p className="landing-seccion-sub">
             Cada persona ve solo las herramientas que necesita.
@@ -221,7 +228,7 @@ export default function Landing() {
           </div>
         </section>
 
-        <section id="preguntas" className="landing-seccion landing-seccion-suave">
+        <section id="preguntas" className="landing-seccion landing-seccion-faq">
           <h2>Preguntas frecuentes</h2>
           <div className="landing-faq">
             {PREGUNTAS.map((q) => (

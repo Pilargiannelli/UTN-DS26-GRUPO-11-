@@ -201,12 +201,115 @@ body:has(.landing-page) nav.navbar { display: none !important; }
 .landing-stat strong { font-size: var(--text-2xl); font-weight: var(--weight-bold); line-height: 1; }
 .landing-stat span { font-size: var(--text-xs); color: rgba(255,255,255,.75); text-transform: uppercase; letter-spacing: .8px; }
 
-/* ---------- Secciones ---------- */
+/* ---------- Separador onda entre hero y secciones ---------- */
+.landing-onda {
+  display: block;
+  width: 100%;
+  overflow: hidden;
+  line-height: 0;
+  margin-bottom: -2px; /* evita gap de subpíxel */
+}
+.landing-onda svg { display: block; width: 100%; }
+
+/* ---------- Secciones (alternancia blanco / verde rol) ---------- */
 .landing-seccion {
+  position: relative;
   padding: clamp(40px, 6vw, 72px) clamp(20px, 4vw, 48px);
   scroll-margin-top: 64px;
+  overflow: hidden;
 }
-.landing-seccion-suave { background: var(--color-surface-muted); }
+
+/* ── SERVICIOS (blanco + elipses verdes) ─────────────────────────────────────
+   Mismo patrón SVG que "Cómo funciona" pero sobre blanco y con fill verde.  */
+.landing-seccion-servicios {
+  background-color: #eef4f0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 900 600'%3E%3Cellipse cx='820' cy='520' rx='520' ry='420' transform='rotate(-30 820 520)' fill='%23183f32' fill-opacity='.06'/%3E%3Cellipse cx='80' cy='80' rx='260' ry='180' transform='rotate(-30 80 80)' fill='%23183f32' fill-opacity='.05'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+/* ── CÓMO FUNCIONA (verde navbar — #183f32) ──────────────────────────────────
+   Mismo verde que --imos-forest, el color del navbar de todos los roles.
+   Patrón: elipses del sidebar, ahora en blanco muy tenue.                   */
+.landing-seccion-suave {
+  background-color: #183f32;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 900 600'%3E%3Cellipse cx='820' cy='520' rx='520' ry='420' transform='rotate(-30 820 520)' fill='%23ffffff' fill-opacity='.04'/%3E%3Cellipse cx='80' cy='80' rx='260' ry='180' transform='rotate(-30 80 80)' fill='%23ffffff' fill-opacity='.03'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+/* Títulos y subtítulos sobre fondo verde oscuro */
+.landing-seccion-suave h2 { color: #fff !important; }
+.landing-seccion-suave .landing-seccion-sub { color: rgba(255,255,255,.7) !important; }
+/* Cards sobre verde: superficie semitransparente clara */
+.landing-seccion-suave .landing-card {
+  background: rgba(255,255,255,.08);
+  border-color: rgba(255,255,255,.15);
+  box-shadow: none;
+}
+.landing-seccion-suave .landing-card h3 { color: #fff; }
+.landing-seccion-suave .landing-card p  { color: rgba(255,255,255,.75); }
+/* Número del paso: blanco con borde */
+.landing-seccion-suave .landing-paso-num {
+  background: rgba(255,255,255,.15);
+  border: 2px solid rgba(255,255,255,.4);
+  color: #fff;
+}
+/* Botón "Empezar ahora" sobre verde */
+.landing-seccion-suave .landing-btn-primary {
+  background: #fff !important;
+  color: #183f32 !important;
+  box-shadow: var(--shadow-lg) !important;
+}
+.landing-seccion-suave .landing-btn-primary:hover {
+  background: var(--color-pino-100) !important;
+  color: #183f32 !important;
+}
+
+/* ── PERFILES (blanco) ───────────────────────────────────────────────────────
+   Patrón: blobs circulares como los ::before de .recepcion-atajo (secretaría).
+   Tres círculos difusos en las esquinas, usando workspace-tint #e9eddf.     */
+.landing-seccion-perfiles {
+  background-color: #fffefa;
+}
+.landing-seccion-perfiles::before,
+.landing-seccion-perfiles::after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+}
+.landing-seccion-perfiles::before {
+  width: 420px;
+  height: 320px;
+  top: -120px;
+  right: -100px;
+  background: #e9eddf;
+  opacity: .55;
+  transform: rotate(20deg);
+}
+.landing-seccion-perfiles::after {
+  width: 300px;
+  height: 220px;
+  bottom: -80px;
+  left: -80px;
+  background: #dfe8dc;
+  opacity: .45;
+  transform: rotate(-15deg);
+}
+
+/* ── PREGUNTAS (verde — workspace-tint) ──────────────────────────────────────
+   Color: #e9eddf (tint de los botones y banners de paciente).
+   Patrón: líneas diagonales muy sutiles como las del Sidebar.               */
+.landing-seccion-faq {
+  background-color: #e9eddf;
+  background-image: repeating-linear-gradient(
+    -45deg,
+    transparent,
+    transparent 20px,
+    rgba(35, 79, 63, 0.05) 20px,
+    rgba(35, 79, 63, 0.05) 21px
+  );
+}
 .landing-seccion h2,
 .landing-cta h2 {
   margin: 0 0 var(--space-2);
@@ -261,12 +364,36 @@ body:has(.landing-page) nav.navbar { display: none !important; }
 
 /* ---------- Cierre y pie ---------- */
 .landing-cta {
+  position: relative;
   padding: clamp(40px, 6vw, 72px) clamp(20px, 4vw, 48px);
   background: linear-gradient(150deg, var(--imos-forest-light) 0%, var(--imos-forest) 65%, var(--color-pino-900) 100%);
   color: var(--color-pino-100);
   text-align: center;
   scroll-margin-top: 64px;
+  overflow: hidden;
 }
+/* Watermark logo en el CTA */
+.landing-cta::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: url("/IMOS_LOGO.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: clamp(260px, 50%, 520px);
+  opacity: 0.06;
+  mix-blend-mode: screen;
+  pointer-events: none;
+}
+/* Textura de ruido sobre el gradiente */
+.landing-cta::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+  pointer-events: none;
+}
+.landing-cta > * { position: relative; z-index: 1; }
 .landing-cta h2 { color: #fff; }
 .landing-cta p { max-width: 560px; margin: 0 auto var(--space-5); }
 .landing-footer {
