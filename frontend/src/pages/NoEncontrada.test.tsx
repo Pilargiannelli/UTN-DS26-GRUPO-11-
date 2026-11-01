@@ -49,6 +49,6 @@ describe("Ruta inexistente", () => {
 
   it("sin sesión, el botón lleva al login", () => {
     renderizar("/cualquiera", false);
-    expect(screen.getByRole("link", { name: "Ir a ingresar" })).toHaveAttribute("href", "/");
+    expect(screen.getByRole("link", { name: "Ir a ingresar" })).toHaveAttribute("href", "/login");
   });
 });

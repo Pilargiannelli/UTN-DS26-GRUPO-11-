@@ -6,7 +6,7 @@ function AutoregistroPaciente() {
         <>
             <h1 className="mt-5 text-center">Crear cuenta</h1>
             <p className="text-center text-muted mb-0">
-                ¿Ya tenés cuenta? <Link to="/">Ingresá</Link>
+                ¿Ya tenés cuenta? <Link to="/login">Ingresá</Link>
             </p>
 
             <RegistroPacienteForm modo="autoregistro" />

@@ -1,4 +1,5 @@
 import { Routes, Route } from "react-router-dom";
+import Landing from "./pages/Landing";
 import Login from "./pages/Login";
 import Home from "./pages/Home.tsx";
 import MisTurnos from "./pages/MisTurnos.tsx";
@@ -24,7 +25,8 @@ function App() {
       {/* ========================================== */}
       {/* RUTAS PÚBLICAS */}
       {/* ========================================== */}
-      <Route path="/" element={<Login />} />
+      <Route path="/" element={<Landing />} />
+      <Route path="/login" element={<Login />} />
       <Route path="/crear-cuenta" element={<AutoregistroPaciente />} />
       <Route path="/no-autorizado" element={<NoAutorizado />} />
 

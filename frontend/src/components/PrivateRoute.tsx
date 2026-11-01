@@ -22,7 +22,7 @@ function PrivateRoute({ roles }: PrivateRouteProps) {
 
   // 2. ¿sos alguien? (401)
   if (!usuario) {
-    return <Navigate to="/" replace />;
+    return <Navigate to="/login" replace />;
   }
 
   // 3. ¿podés? (403)

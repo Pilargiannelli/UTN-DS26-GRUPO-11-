@@ -44,7 +44,7 @@ function renderizarRuta(usuario: UsuarioSesion | null) {
     <AuthContext.Provider value={contexto}>
       <MemoryRouter initialEntries={["/medicos"]}>
         <Routes>
-          <Route path="/" element={<p>Página de inicio</p>} />
+          <Route path="/login" element={<p>Página de inicio</p>} />
           <Route
             path="/no-autorizado"
             element={<p>Acceso denegado</p>}
