@@ -224,7 +224,7 @@ function TurnosTable({
             <div className="recepcion-filtros" role="search" aria-label="Filtrar turnos">
               <div className="recepcion-busqueda">
                 <Search aria-hidden="true" />
-                <Form.Control type="search" aria-label="Buscar paciente o profesional" placeholder="Buscar paciente o profesional…" value={busqueda} onChange={e => setBusqueda(e.target.value)} />
+                <Form.Control type="search" aria-label={mostrarMedico ? "Buscar paciente o profesional" : "Buscar paciente"} placeholder={mostrarMedico ? "Buscar paciente o profesional…" : "Buscar paciente…"} value={busqueda} onChange={e => setBusqueda(e.target.value)} />
               </div>
               <Form.Select aria-label="Filtrar por fecha" value={fechaFiltro} onChange={e => setFechaFiltro(e.target.value)}>
                 <option value="todas">Todas las fechas</option><option value="hoy">Hoy</option><option value="manana">Mañana</option><option value="elegir">Elegir fecha</option>
