@@ -55,13 +55,41 @@ describe("Agenda", () => {
     renderizar("SECRETARIA");
     const selector = screen.getByRole("combobox", { name: "Médico" });
     // Arranca con el primero por apellido (Gómez)
-    expect(selector).toHaveValue("1");
+    expect(selector).toHaveValue("Carlos Gómez");
+    expect(screen.getByText("Cardiología")).toBeInTheDocument();
     if (!esHabil) return;
     expect(screen.getByText("Ana Test")).toBeInTheDocument();
     expect(screen.queryByText("Beto Test")).not.toBeInTheDocument();
 
-    fireEvent.change(selector, { target: { value: "2" } });
+    fireEvent.focus(selector);
+    fireEvent.change(selector, { target: { value: "sosa" } });
+    fireEvent.click(screen.getByRole("option", { name: /Laura Sosa/ }));
+    expect(selector).toHaveValue("Laura Sosa");
     expect(screen.getByText("Beto Test")).toBeInTheDocument();
+    expect(screen.queryByText("Ana Test")).not.toBeInTheDocument();
+  });
+
+  it("al borrar el nombre del médico, la especialidad queda", () => {
+    renderizar("SECRETARIA");
+    const selector = screen.getByRole("combobox", { name: "Médico" });
+
+    fireEvent.focus(selector);
+    fireEvent.change(selector, { target: { value: "" } });
+
+    expect(selector).toHaveValue("");
+    expect(screen.getAllByText("Cardiología").length).toBeGreaterThan(0);
+    // Sin elegir otro, sigue seleccionado el mismo médico (con su cruz para quitarlo)
+    expect(screen.getByRole("button", { name: "Quitar médico" })).toBeInTheDocument();
+  });
+
+  it("la cruz quita el médico y la agenda no muestra turnos", () => {
+    if (!esHabil) return;
+    renderizar("SECRETARIA");
+    fireEvent.click(screen.getByRole("button", { name: "Quitar médico" }));
+
+    expect(screen.getByRole("combobox", { name: "Médico" })).toHaveValue("");
+    expect(screen.queryByText("Cardiología")).not.toBeInTheDocument();
+    expect(screen.getByText("Buscá y elegí un médico para ver su agenda.")).toBeInTheDocument();
     expect(screen.queryByText("Ana Test")).not.toBeInTheDocument();
   });
 

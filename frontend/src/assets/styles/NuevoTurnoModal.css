@@ -1,0 +1,165 @@
+/* Modal "Nuevo Turno": encabezado con ola, secciones en tarjetas y botones redondeados.
+   No define tipografias: usa las del resto de la aplicacion. */
+.modal-nuevo-turno .modal-content {
+  overflow: hidden;
+  border: 0;
+  border-radius: 28px;
+  background: #fff;
+  box-shadow: 0 28px 70px #0f2a2166;
+}
+
+.modal-nuevo-turno .modal-header-turno {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 24px 28px 20px;
+  overflow: hidden;
+  border-bottom: 0;
+  background: #f5faf7;
+}
+
+.modal-nuevo-turno .modal-header-turno::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  top: -90px;
+  right: -60px;
+  width: 440px;
+  height: 190px;
+  border-radius: 50%;
+  background: #e1efe5;
+  transform: rotate(-9deg);
+}
+
+.modal-nuevo-turno .nt-icono {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 54px;
+  height: 54px;
+  border-radius: 16px;
+  background: #d9ecd0;
+  color: #1c5a3f;
+  box-shadow: 0 4px 12px #183f3220;
+}
+
+.modal-nuevo-turno .nt-icono svg {
+  width: 26px;
+  height: 26px;
+}
+
+.modal-nuevo-turno .modal-header-turno .btn-close {
+  margin: 0 0 0 auto;
+  padding: 10px;
+  opacity: .8;
+}
+
+.modal-nuevo-turno .modal-body {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 16px 28px 8px;
+}
+
+.modal-nuevo-turno .modal-body form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.modal-nuevo-turno .nt-fila {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.modal-nuevo-turno .nt-seccion {
+  margin: 0;
+  padding: 16px 18px 18px;
+  border-radius: 20px;
+  background: #f1f6f3;
+}
+
+.modal-nuevo-turno .nt-titulo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+  color: #103f33;
+  font-weight: 700;
+}
+
+.modal-nuevo-turno .nt-titulo svg {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+.modal-nuevo-turno .nt-error {
+  margin-top: 6px;
+  color: var(--color-danger, #c0392b);
+  font-size: .85em;
+}
+
+.modal-nuevo-turno .nt-seccion .form-control,
+.modal-nuevo-turno .nt-seccion .form-select {
+  min-height: 48px;
+  border: 1px solid #e1e8e3;
+  border-radius: 14px;
+  background-color: #fdfefd;
+  box-shadow: 0 2px 6px #183f3210;
+}
+
+.modal-nuevo-turno .modal-footer {
+  gap: 12px;
+  margin: 8px 28px 0;
+  padding: 18px 0 24px;
+  border-top: 1px solid #dfe7e2;
+}
+
+.modal-nuevo-turno .modal-footer .btn {
+  min-height: 48px;
+  padding: 0 28px;
+  border-radius: 14px;
+  font-weight: 700;
+}
+
+.modal-nuevo-turno .nt-cancelar {
+  border: 1px solid #d6ddd8;
+  background: #f1f4f2;
+  color: #4b5a52;
+}
+
+.modal-nuevo-turno .nt-cancelar:hover {
+  background: #e6ebe8;
+  color: #2f3d36;
+}
+
+.modal-nuevo-turno .nt-guardar {
+  border: 0;
+  background: linear-gradient(180deg, #2a7a5a 0%, #1b5a43 100%);
+  color: #fff;
+  box-shadow: 0 6px 16px #1b5a4350;
+}
+
+.modal-nuevo-turno .nt-guardar:hover,
+.modal-nuevo-turno .nt-guardar:focus-visible {
+  background: linear-gradient(180deg, #318a67 0%, #206a4e 100%);
+}
+
+@media (max-width: 575.98px) {
+  .modal-nuevo-turno .nt-fila {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .modal-nuevo-turno .modal-header-turno,
+  .modal-nuevo-turno .modal-body {
+    padding-inline: 18px;
+  }
+
+  .modal-nuevo-turno .modal-footer {
+    margin-inline: 18px;
+  }
+}

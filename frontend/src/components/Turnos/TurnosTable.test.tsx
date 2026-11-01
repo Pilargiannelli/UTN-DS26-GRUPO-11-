@@ -6,8 +6,11 @@ import type { AuthContextType } from "../../context/AuthContextBase";
 import type { EstadoTurno, Turno } from "../../types/Turno";
 import type { RolUsuario } from "../../types/UsuarioSesion";
 import TurnosTable from "./TurnosTable";
+import { apiFetch } from "../../services/api";
 
-afterEach(cleanup);
+vi.mock("../../services/api", () => ({ apiFetch: vi.fn() }));
+
+afterEach(() => { cleanup(); vi.clearAllMocks(); });
 
 const turno = (id: number, fechaHora: string, estado: EstadoTurno, paciente: string): Turno => ({
   id,
@@ -132,5 +135,33 @@ describe("Filtros del dashboard de Secretaría", () => {
   it("no agrega filtros a la presentación de Médico", () => {
     renderizar(turnos, "MEDICO");
     expect(screen.queryByRole("searchbox")).not.toBeInTheDocument();
+  });
+});
+
+describe("TurnosTable (confirmación previa de las acciones)", () => {
+  const modal = () => within(document.querySelector(".modal-box") as HTMLElement);
+
+  it("pide confirmación antes de confirmar y no actúa si se cancela", () => {
+    renderizar(turnos);
+    fireEvent.click(within(panelActivo()).getAllByRole("button", { name: "Confirmar" })[0]);
+
+    expect(modal().getByText(/¿Estás seguro de confirmar el turno de Ana Test/)).toBeInTheDocument();
+    expect(apiFetch).not.toHaveBeenCalled();
+
+    fireEvent.click(modal().getByRole("button", { name: "Cancelar" }));
+    expect(document.querySelector(".modal-box")).toBeNull();
+    expect(apiFetch).not.toHaveBeenCalled();
+  });
+
+  it("realiza el cambio solo al aceptar", () => {
+    vi.mocked(apiFetch).mockResolvedValue(turnos[0]);
+    renderizar(turnos);
+    fireEvent.click(within(panelActivo()).getAllByRole("button", { name: "Cancelar" })[0]);
+
+    expect(modal().getByText(/¿Estás seguro de cancelar el turno de Ana Test/)).toBeInTheDocument();
+    expect(apiFetch).not.toHaveBeenCalled();
+
+    fireEvent.click(modal().getByRole("button", { name: "Aceptar" }));
+    expect(apiFetch).toHaveBeenCalledWith("/turnos/1/cancelar", { method: "PATCH" });
   });
 });
