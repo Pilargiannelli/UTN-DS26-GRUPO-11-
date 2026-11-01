@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { useEffect } from "react";
 import { useAuth } from "../hooks/useAuth";
 import imosLogo from "../assets/img/IMOS_LOGO.png";
 import "../assets/styles/Landing.css";
@@ -110,6 +111,28 @@ const PREGUNTAS = [
 export default function Landing() {
   const { estaAutenticado } = useAuth();
 
+  useEffect(() => {
+    const cards = Array.from(
+      document.querySelectorAll<HTMLElement>(".landing-stack-card")
+    );
+
+    const onScroll = () => {
+      cards.forEach((card, i) => {
+        const next = cards[i + 1];
+        if (!next) return;
+        const nextTop = next.getBoundingClientRect().top;
+        const progress = Math.max(0, Math.min(1, (window.innerHeight - nextTop) / window.innerHeight));
+        const scale = 1 - progress * 0.05;
+        card.style.transform = `scale(${scale})`;
+        card.style.opacity = String(1 - progress * 0.15);
+      });
+    };
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
   return (
     <div className="landing-page">
       <header className="landing-nav">
@@ -161,100 +184,100 @@ export default function Landing() {
               >
                 {estaAutenticado ? "Pedir turno" : "Crear cuenta"}
               </Link>
-              <a className="landing-btn landing-btn-contorno-claro landing-btn-lg" href="#como-funciona">
-                Cómo funciona
-              </a>
             </div>
           </div>
         </section>
 
-        {/* Onda SVG de transición hero → servicios */}
-        <div className="landing-onda" aria-hidden="true">
-          <svg viewBox="0 0 1440 56" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M0,32 C360,56 1080,0 1440,32 L1440,56 L0,56 Z" fill="var(--color-surface)" />
-          </svg>
+        <div className="landing-stack-card" style={{ zIndex: 1 }}>
+          <section id="servicios" className="landing-seccion landing-seccion-servicios">
+            <h2>Qué podés hacer</h2>
+            <p className="landing-seccion-sub">
+              Todo lo que necesitás para tu atención, sin trámites ni esperas.
+            </p>
+            <div className="landing-grid landing-grid-3">
+              {SERVICIOS.map((s) => (
+                <article key={s.titulo} className="landing-card">
+                  <h3>{s.titulo}</h3>
+                  <p>{s.texto}</p>
+                </article>
+              ))}
+            </div>
+          </section>
         </div>
 
-        <section id="servicios" className="landing-seccion landing-seccion-servicios">
-          <h2>Qué podés hacer</h2>
-          <p className="landing-seccion-sub">
-            Todo lo que necesitás para tu atención, sin trámites ni esperas.
-          </p>
-          <div className="landing-grid landing-grid-3">
-            {SERVICIOS.map((s) => (
-              <article key={s.titulo} className="landing-card">
-                <h3>{s.titulo}</h3>
-                <p>{s.texto}</p>
-              </article>
-            ))}
-          </div>
-        </section>
+        <div className="landing-stack-card" style={{ zIndex: 2 }}>
+          <section id="como-funciona" className="landing-seccion landing-seccion-suave">
+            <h2>Cómo funciona</h2>
+            <p className="landing-seccion-sub">Tres pasos para reservar tu consulta.</p>
+            <ol className="landing-pasos">
+              {PASOS.map((paso, i) => (
+                <li key={paso.titulo} className="landing-card landing-paso">
+                  <span className="landing-paso-num">{i + 1}</span>
+                  <h3>{paso.titulo}</h3>
+                  <p>{paso.texto}</p>
+                </li>
+              ))}
+            </ol>
+            <div className="landing-centro">
+              <Link className="landing-btn landing-btn-primary landing-btn-lg" to="/crear-cuenta">
+                Empezar ahora
+              </Link>
+            </div>
+          </section>
+        </div>
 
-        <section id="como-funciona" className="landing-seccion landing-seccion-suave">
-          <h2>Cómo funciona</h2>
-          <p className="landing-seccion-sub">Tres pasos para reservar tu consulta.</p>
-          <ol className="landing-pasos">
-            {PASOS.map((paso, i) => (
-              <li key={paso.titulo} className="landing-card landing-paso">
-                <span className="landing-paso-num">{i + 1}</span>
-                <h3>{paso.titulo}</h3>
-                <p>{paso.texto}</p>
-              </li>
-            ))}
-          </ol>
-          <div className="landing-centro">
-            <Link className="landing-btn landing-btn-primary landing-btn-lg" to="/crear-cuenta">
-              Empezar ahora
-            </Link>
-          </div>
-        </section>
+        <div className="landing-stack-card" style={{ zIndex: 3 }}>
+          <section id="perfiles" className="landing-seccion landing-seccion-perfiles">
+            <h2>Un sistema para todo el equipo</h2>
+            <p className="landing-seccion-sub">
+              Cada persona ve solo las herramientas que necesita.
+            </p>
+            <div className="landing-grid landing-grid-3">
+              {PERFILES.map((perfil) => (
+                <article key={perfil.rol} className="landing-card">
+                  <h3>{perfil.rol}</h3>
+                  <ul className="landing-lista">
+                    {perfil.items.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                </article>
+              ))}
+            </div>
+          </section>
+        </div>
 
-        <section id="perfiles" className="landing-seccion landing-seccion-perfiles">
-          <h2>Un sistema para todo el equipo</h2>
-          <p className="landing-seccion-sub">
-            Cada persona ve solo las herramientas que necesita.
-          </p>
-          <div className="landing-grid landing-grid-3">
-            {PERFILES.map((perfil) => (
-              <article key={perfil.rol} className="landing-card">
-                <h3>{perfil.rol}</h3>
-                <ul className="landing-lista">
-                  {perfil.items.map((item) => (
-                    <li key={item}>{item}</li>
-                  ))}
-                </ul>
-              </article>
-            ))}
-          </div>
-        </section>
+        <div className="landing-stack-card" style={{ zIndex: 4 }}>
+          <section id="preguntas" className="landing-seccion landing-seccion-faq">
+            <h2>Preguntas frecuentes</h2>
+            <div className="landing-faq">
+              {PREGUNTAS.map((q) => (
+                <details key={q.p} className="landing-card">
+                  <summary>{q.p}</summary>
+                  <p>{q.r}</p>
+                </details>
+              ))}
+            </div>
+          </section>
+        </div>
 
-        <section id="preguntas" className="landing-seccion landing-seccion-faq">
-          <h2>Preguntas frecuentes</h2>
-          <div className="landing-faq">
-            {PREGUNTAS.map((q) => (
-              <details key={q.p} className="landing-card">
-                <summary>{q.p}</summary>
-                <p>{q.r}</p>
-              </details>
-            ))}
-          </div>
-        </section>
-
-        <section id="contacto" className="landing-cta">
-          <h2>¿Listo para sacar tu turno?</h2>
-          <p>
-            Ingresá a tu cuenta o creá una nueva. Si necesitás ayuda, comunicate con la
-            secretaría de la clínica.
-          </p>
-          <div className="landing-hero-acciones landing-centro">
-            <Link className="landing-btn landing-btn-light landing-btn-lg" to="/login">
-              Ingresar
-            </Link>
-            <Link className="landing-btn landing-btn-contorno-claro landing-btn-lg" to="/crear-cuenta">
-              Crear cuenta
-            </Link>
-          </div>
-        </section>
+        <div className="landing-stack-card" style={{ zIndex: 5 }}>
+          <section id="contacto" className="landing-cta">
+            <h2>¿Listo para sacar tu turno?</h2>
+            <p>
+              Ingresá a tu cuenta o creá una nueva. Si necesitás ayuda, comunicate con la
+              secretaría de la clínica.
+            </p>
+            <div className="landing-hero-acciones landing-centro">
+              <Link className="landing-btn landing-btn-light landing-btn-lg" to="/login">
+                Ingresar
+              </Link>
+              <Link className="landing-btn landing-btn-contorno-claro landing-btn-lg" to="/crear-cuenta">
+                Crear cuenta
+              </Link>
+            </div>
+          </section>
+        </div>
       </main>
 
       <footer className="landing-footer">
