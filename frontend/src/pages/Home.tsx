@@ -22,7 +22,7 @@ function Home() {
     });
 
     return (
-        <Layout className={usuario?.rol === "SECRETARIA" || usuario?.rol === "MEDICO" ? "imos-workspace imos-secretaria-home" : undefined}>
+        <Layout className={usuario ? "imos-workspace imos-secretaria-home" : undefined}>
             <ToastMensaje 
                 mensaje="Cuenta creada correctamente" 
                 tipo="toast-good" 
