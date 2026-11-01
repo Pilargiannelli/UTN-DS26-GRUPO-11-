@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { Container } from "react-bootstrap";
 import {
-  ChevronRight, Clock, CreditCard2Front,
+  Calendar3, CalendarEvent, ChevronRight, Clock, CreditCard2Front,
 } from "react-bootstrap-icons";
 import { useAuth } from "../hooks/useAuth";
 import { useTurnosPaciente } from "../hooks/useTurnosPaciente";
@@ -29,23 +29,23 @@ export function HomePaciente() {
   const ultimaConsulta = historia?.entradas[0];
   const cobertura = usuario?.paciente?.coberturas?.[0];
 
-  const capital = (t: string) => t.charAt(0).toUpperCase() + t.slice(1);
-
   return (
     <Container className="inicio-paciente">
       {/* ── Saludo y próximo turno ── */}
-      <section className="inicio-hero">
-        <div className="inicio-hero-saludo">
-          <p className="inicio-hero-fecha">{capital(FECHA_HOY.format(ahora))}</p>
-          <h1 className="inicio-hero-titulo">{saludoSegunHora()}, {usuario?.nombre}</h1>
-          <p className="inicio-hero-texto">
-            {proximoTurno ? "Este es tu próximo turno." : "No tenés turnos agendados por ahora."}
-          </p>
+      <header className="recepcion-bienvenida">
+        <div className="recepcion-intro">
+          <span className="recepcion-etiqueta">Paciente · Inicio</span>
+          <h1>{saludoSegunHora()}, <span className="recepcion-nombre">{usuario?.nombre}</span></h1>
+          <p className="recepcion-fecha"><CalendarEvent aria-hidden="true" /><span>{FECHA_HOY.format(ahora)}</span></p>
+          <Link to="/mis-turnos" className="recepcion-resumen">
+            <Calendar3 aria-hidden="true" />
+            <strong>{proximos.length}</strong> {proximos.length === 1 ? "turno próximo" : "turnos próximos"}<ChevronRight aria-hidden="true" />
+          </Link>
         </div>
-        <div className="inicio-hero-turno">
+        <div className="recepcion-accesos inicio-hero-turno">
           <ProximoTurnoCard turno={proximoTurno} />
         </div>
-      </section>
+      </header>
 
       {/* ── Resumen ── */}
       <dl className="inicio-resumen">
