@@ -108,13 +108,11 @@ describe("Pedir turno", () => {
 });
 
 describe("Inicio del paciente", () => {
-  it("muestra su última consulta, la cobertura y los accesos con los nombres del menú", async () => {
+  it("muestra su última consulta, la cobertura y no repite los accesos del menú", async () => {
     renderizar(<HomePaciente />);
     expect(await screen.findByText("Caminar 30 minutos por día")).toBeInTheDocument();
     expect(screen.getByText("OSDE")).toBeInTheDocument();
-    for (const nombre of [/^Pedir turno/, /^Mis turnos/, /^Médicos/]) {
-      expect(screen.getByRole("link", { name: nombre })).toBeInTheDocument();
-    }
+    expect(screen.queryByRole("navigation", { name: "Accesos rápidos" })).not.toBeInTheDocument();
   });
 });
 
