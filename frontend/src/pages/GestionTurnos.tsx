@@ -9,7 +9,6 @@ import {
 } from "react-bootstrap";
 
 import { EncabezadoPagina } from "../components/EncabezadoPagina";
-import HeroTurnos from "../components/Turnos/HeroTurnos";
 
 import TurnosTable from "../components/Turnos/TurnosTable";
 import NuevoTurnoModal from "../components/Turnos/NuevoTurnoModal";
@@ -86,14 +85,6 @@ function GestionTurnos({ recepcion = false }: { recepcion?: boolean }) {
   // El panel muestra solo los turnos que todavía no pasaron (los de días
   // anteriores, y los de hoy que ya fueron, se consultan en la Agenda)
   const proximos = todosLosTurnos.filter((t) => new Date(t.fechaHora) >= ahora);
-
-  // ==========================================
-  // Próximo turno: el primero que todavía no pasó y no está cancelado
-  // ==========================================
-
-  const proximoTurno = todosLosTurnos.find(
-    (t) => t.estado !== "Cancelado" && new Date(t.fechaHora) >= ahora
-  );
 
   // ==========================================
   // Resumen del encabezado: los que quedan hoy y los pendientes de confirmar
@@ -189,17 +180,10 @@ function GestionTurnos({ recepcion = false }: { recepcion?: boolean }) {
               )}
             </nav>
           </header>
-        ) : usuario?.rol === "SECRETARIA" ? (
+        ) : (
           <EncabezadoPagina titulo="Turnos" etiqueta="Gestión del consultorio" icono={<Calendar3 />} descripcion="Organizá las próximas atenciones y revisá el estado de cada turno."
             datos={[{ valor: turnosDeHoy, texto: "Por atender hoy", icono: <CalendarEvent /> }, { valor: pendientes, texto: "Por confirmar", icono: <CheckCircle /> }]} />
-        ) : <HeroTurnos
-          rol={usuario?.rol ?? null}
-          nombre={nombreUsuario}
-          fecha={fechaActual}
-          turnosDeHoy={turnosDeHoy}
-          pendientes={pendientes}
-          proximoTurno={proximoTurno ?? null}
-        />}
+        )}
 
 
         <TurnosTable
