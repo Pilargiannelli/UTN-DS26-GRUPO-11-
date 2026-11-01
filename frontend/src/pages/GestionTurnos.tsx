@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Calendar3, CalendarEvent, CalendarPlus, CheckCircle, PersonPlus, ChevronRight } from "react-bootstrap-icons";
+import { Calendar3, CalendarEvent, CalendarPlus, CheckCircle, PersonPlus, Search, ChevronRight } from "react-bootstrap-icons";
 import { saludoSegunHora } from "../utils/saludo";
 import {
   Container,
@@ -27,8 +27,10 @@ function GestionTurnos({ recepcion = false }: { recepcion?: boolean }) {
 
   const { usuario } = useAuth();
 
+  const esMedico = usuario?.rol === "MEDICO";
+
   const nombreUsuario =
-    usuario?.rol === "MEDICO"
+    esMedico
       ? `Dr. ${usuario.apellido}`
       : usuario?.nombre ?? "Secretaría";
 
@@ -153,7 +155,7 @@ function GestionTurnos({ recepcion = false }: { recepcion?: boolean }) {
         {recepcion ? (
           <header className="recepcion-bienvenida">
             <div className="recepcion-intro">
-              <span className="recepcion-etiqueta">Recepción · Secretaría</span>
+              <span className="recepcion-etiqueta">{esMedico ? "Consultorio · Médico" : "Recepción · Secretaría"}</span>
               <h1>{saludoSegunHora()}, <span className="recepcion-nombre">{nombreUsuario}</span></h1>
               <p className="recepcion-fecha"><CalendarEvent aria-hidden="true" /><span>{fechaActual}</span></p>
               <Link to="/orden-del-dia" className="recepcion-resumen">
@@ -172,11 +174,19 @@ function GestionTurnos({ recepcion = false }: { recepcion?: boolean }) {
                 <strong>Ver agenda</strong><span>Consultá la agenda<br />de profesionales.</span>
                 <ChevronRight className="atajo-flecha" aria-hidden="true" />
               </Link>
+              {esMedico ? (
+                <Link className="recepcion-atajo recepcion-atajo-paciente" to="/buscar-paciente">
+                  <span className="atajo-icono"><Search aria-hidden="true" /></span>
+                  <strong>Buscar paciente</strong><span>Consultá la ficha y la<br />historia clínica.</span>
+                  <ChevronRight className="atajo-flecha" aria-hidden="true" />
+                </Link>
+              ) : (
               <Link className="recepcion-atajo recepcion-atajo-paciente" to="/registrar-paciente">
-                <span className="atajo-icono"><PersonPlus aria-hidden="true" /></span>
-                <strong>Registrar paciente</strong><span>Cargá un nuevo paciente<br />en el sistema.</span>
-                <ChevronRight className="atajo-flecha" aria-hidden="true" />
-              </Link>
+                  <span className="atajo-icono"><PersonPlus aria-hidden="true" /></span>
+                  <strong>Registrar paciente</strong><span>Cargá un nuevo paciente<br />en el sistema.</span>
+                  <ChevronRight className="atajo-flecha" aria-hidden="true" />
+                </Link>
+              )}
             </nav>
           </header>
         ) : usuario?.rol === "SECRETARIA" ? (

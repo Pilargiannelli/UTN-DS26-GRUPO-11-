@@ -17,12 +17,12 @@ function Home() {
     // Distribución de vistas según la matriz de permisos
     const vistaPorRol = useRolView({
         SECRETARIA: <GestionTurnos recepcion />,
-        MEDICO: <GestionTurnos />,
+        MEDICO: <GestionTurnos recepcion />,
         PACIENTE: <HomePaciente />,
     });
 
     return (
-        <Layout className={usuario?.rol === "SECRETARIA" ? "imos-workspace imos-secretaria-home" : undefined}>
+        <Layout className={usuario?.rol === "SECRETARIA" || usuario?.rol === "MEDICO" ? "imos-workspace imos-secretaria-home" : undefined}>
             <ToastMensaje 
                 mensaje="Cuenta creada correctamente" 
                 tipo="toast-good" 
