@@ -117,16 +117,16 @@ function HistorialConsultas() {
             ) : (
               <ol className="consultas-lista">
                 {visibles.map((e) => (
-                  <li key={e.id} className="consulta-item">
-                    <p className="consulta-item-fecha">
+                  <li key={e.id} className="hist-consulta">
+                    <p className="hist-consulta-fecha">
                       {FECHA_LARGA.format(new Date(e.fecha))}
                       {historia.medicoResponsable && <> · {historia.medicoResponsable}</>}
                     </p>
-                    <div className="consulta-item-cuerpo">
-                      <div className="consulta-item-texto">
-                        <p className="consulta-item-titulo">{e.diagnostico}</p>
-                        <p className="consulta-item-linea"><strong>Evolución:</strong> {e.evolucion}</p>
-                        {e.observaciones && <p className="consulta-item-linea"><strong>Observaciones:</strong> {e.observaciones}</p>}
+                    <div className="hist-consulta-cuerpo">
+                      <div className="hist-consulta-texto">
+                        <p className="hist-consulta-titulo">{e.diagnostico}</p>
+                        <p className="hist-consulta-linea"><strong>Evolución:</strong> {e.evolucion}</p>
+                        {e.observaciones && <p className="hist-consulta-linea"><strong>Observaciones:</strong> {e.observaciones}</p>}
                       </div>
                       <Button variant="outline-primary" size="sm" onClick={() => setAbierta(e)} aria-label={`Ver la consulta del ${FECHA_LARGA.format(new Date(e.fecha))}`}>
                         <Eye aria-hidden="true" />Ver

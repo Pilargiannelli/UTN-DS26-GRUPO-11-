@@ -205,14 +205,17 @@
 }
 
 /* ── Pacientes y médicos: 5 por página, tabla de alto fijo ── */
-.directorio-paginado .directorio-tabla-fija { min-height: 368px; }
-.directorio-paginado .directorio-tabla thead th { height: 46px; padding-block: 0; }
-.directorio-paginado .directorio-tabla tbody tr { height: 64px; }
-.directorio-paginado .directorio-tabla td { padding-block: 6px; }
+/* Alto fijo solo donde es tabla; en celular cada fila es una tarjeta */
+@media (min-width: 769px) {
+    .directorio-paginado .directorio-tabla-fija { min-height: 368px; }
+    .directorio-paginado .directorio-tabla thead th { height: 46px; padding-block: 0; }
+    .directorio-paginado .directorio-tabla tbody tr { height: 64px; }
+    .directorio-paginado .directorio-tabla td { padding-block: 6px; }
+}
 .directorio-paginador { padding: 12px var(--space-4); border-top: 1px solid var(--color-border); }
 
 /* En escritorio la pantalla no se desplaza; si no entra, se desplaza solo la tabla */
-@media (min-width: 992px) {
+@media (min-width: 992px) and (min-height: 780px) {
     html:has(.directorio-paginado), body:has(.directorio-paginado) { overflow: hidden; }
     .imos-reception-shell:has(.directorio-paginado) { height: 100dvh; min-height: 0; overflow: hidden; }
     .imos-reception-shell:has(.directorio-paginado) > main { min-height: 0; overflow: hidden; }
