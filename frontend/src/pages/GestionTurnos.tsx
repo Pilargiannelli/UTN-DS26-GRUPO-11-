@@ -11,6 +11,7 @@ import {
 import { EncabezadoPagina } from "../components/EncabezadoPagina";
 
 import TurnosTable from "../components/Turnos/TurnosTable";
+import { TurnosDeHoy } from "../components/Medico/TurnosDeHoy";
 import NuevoTurnoModal from "../components/Turnos/NuevoTurnoModal";
 
 import { useAuth } from "../hooks/useAuth";
@@ -186,18 +187,22 @@ function GestionTurnos({ recepcion = false }: { recepcion?: boolean }) {
         )}
 
 
-        <TurnosTable
-          recepcion={recepcion}
+        {recepcion && esMedico ? (
+          <TurnosDeHoy turnos={todosLosTurnos} onAgendar={() => setShowModal(true)} />
+        ) : (
+          <TurnosTable
+            recepcion={recepcion}
 
-          turnos={proximos}
+            turnos={proximos}
 
-          onNuevoTurno={() =>
-            setShowModal(true)
-          }
+            onNuevoTurno={() =>
+              setShowModal(true)
+            }
 
-          onTurnoActualizado={actualizarTurno}
+            onTurnoActualizado={actualizarTurno}
 
-        />
+          />
+        )}
 
         <NuevoTurnoModal
 
