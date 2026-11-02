@@ -3,6 +3,7 @@ import { useForm, type Path } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Button, Col, Form, Row, Spinner } from "react-bootstrap";
+import { Check2, InfoCircle } from "react-bootstrap-icons";
 import { apiFetch, ApiError } from "../../services/api";
 import type { UsuarioSesion } from "../../types/UsuarioSesion";
 
@@ -64,27 +65,30 @@ export function DatosCuentaForm({ usuario, onGuardado }: DatosCuentaFormProps) {
             <Form.Control.Feedback type="invalid">{errors.apellido?.message}</Form.Control.Feedback>
           </Form.Group>
         </Col>
-        <Col md={6}>
+        <Col md={usuario.rol === "SECRETARIA" ? 12 : 6}>
           <Form.Group controlId="cuenta-email">
             <Form.Label>Email</Form.Label>
             <Form.Control type="email" {...register("email")} isInvalid={!!errors.email} />
             <Form.Control.Feedback type="invalid">{errors.email?.message}</Form.Control.Feedback>
           </Form.Group>
         </Col>
-        <Col md={6}>
-          <Form.Group controlId="cuenta-dni">
-            <Form.Label>DNI</Form.Label>
-            <Form.Control value={usuario.dni} disabled readOnly />
-            <Form.Text>Para corregirlo, comunicate con la secretaría.</Form.Text>
-          </Form.Group>
-        </Col>
+        {/* El DNI lo corrige la secretaría: para su propia cuenta no tiene sentido mostrarlo */}
+        {usuario.rol !== "SECRETARIA" && (
+          <Col md={6}>
+            <Form.Group controlId="cuenta-dni">
+              <Form.Label>DNI</Form.Label>
+              <Form.Control value={usuario.dni} disabled readOnly />
+              <p className="perfil-ayuda"><InfoCircle aria-hidden="true" />Para corregirlo, comunicate con la secretaría.</p>
+            </Form.Group>
+          </Col>
+        )}
       </Row>
       <div className="perfil-form-acciones">
         {isDirty && (
           <Button variant="outline-secondary" onClick={() => reset()} disabled={isSubmitting}>Descartar cambios</Button>
         )}
         <Button type="submit" variant="primary" disabled={isSubmitting || !isDirty}>
-          {isSubmitting ? <Spinner size="sm" animation="border" /> : "Guardar cambios"}
+          {isSubmitting ? <Spinner size="sm" animation="border" /> : <><Check2 aria-hidden="true" />Guardar cambios</>}
         </Button>
       </div>
     </Form>

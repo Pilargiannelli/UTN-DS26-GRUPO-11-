@@ -65,4 +65,14 @@ describe("BuscadorSelect", () => {
     fireEvent.keyDown(entrada, { key: "Enter" });
     expect(onChange).toHaveBeenLastCalledWith("2");
   });
+
+  it("bloqueado: muestra lo elegido pero no se puede cambiar ni quitar", () => {
+    render(
+      <BuscadorSelect ariaLabel="Paciente" placeholder="Buscar" opciones={opciones} value="2" onChange={vi.fn()} bloqueado />
+    );
+    const entrada = screen.getByRole("combobox", { name: "Paciente" });
+    expect(entrada).toHaveValue("Beto Gómez");
+    expect(entrada).toBeDisabled();
+    expect(screen.queryByRole("button", { name: "Quitar paciente" })).not.toBeInTheDocument();
+  });
 });

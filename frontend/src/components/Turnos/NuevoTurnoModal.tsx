@@ -23,7 +23,7 @@ interface NuevoTurnoModalProps {
   show: boolean;
   onClose: () => void;
   onAgregar: (turno: Turno) => void;
-  // "Dar turno" desde el listado de pacientes: el modal abre con ese paciente
+  // "Dar turno" desde el listado o el perfil de un paciente: el modal abre con ese paciente y no se puede cambiar
   pacienteIdInicial?: number;
 }
 
@@ -240,6 +240,7 @@ function NuevoTurnoModal({
                 value={form.pacienteId}
                 onChange={(v) => elegirOpcion("pacienteId", v)}
                 invalido={!!errores.pacienteId}
+                bloqueado={pacienteIdInicial !== undefined}
                 opciones={pacientes?.map((p) => ({
                   value: String(p.id),
                   etiqueta: `${p.usuario.nombre} ${p.usuario.apellido}`,

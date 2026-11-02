@@ -14,6 +14,7 @@ import type { ObraSocial } from "../types/Paciente";
 import { apiFetch, ApiError } from "../services/api";
 import { useAuth } from "../hooks/useAuth";
 import { AgregarObraSocial } from "./AgregarObraSocial";
+import { Check2 } from "react-bootstrap-icons";
 
 // Respuesta de PUT /api/pacientes/:id (paciente.service.ts)
 interface PacienteActualizado extends PacientePerfil {
@@ -200,7 +201,7 @@ export function PacienteFormFields({ onSave, onCancel, usuario }: PacienteFormPr
                         <Button type="button" variant="outline-secondary" onClick={onCancel} disabled={isSubmitting}>Descartar cambios</Button>
                     )}
                     <Button type="submit" variant="primary" disabled={isSubmitting || !isDirty}>
-                        {isSubmitting ? <Spinner size="sm" animation="border" /> : "Guardar cambios"}
+                        {isSubmitting ? <Spinner size="sm" animation="border" /> : <><Check2 aria-hidden="true" />Guardar cambios</>}
                     </Button>
                 </div>
             </Form>

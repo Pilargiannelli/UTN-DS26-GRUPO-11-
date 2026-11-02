@@ -14,6 +14,11 @@ import { AvatarIniciales } from "./AvatarIniciales";
 import NuevoTurnoModal from "./Turnos/NuevoTurnoModal";
 import { ToastMensaje } from "./NotifyToast";
 import { formatearHora } from "../utils/fecha";
+import { Paginador } from "./Medico/Paginador";
+import "../assets/styles/ListadoPaciente.css";
+
+// Personas por página: la tabla tiene alto fijo para que no se desplace la pantalla
+const POR_PAGINA = 5;
 
 interface ListarUsuariosProps {
     rol: "paciente" | "medico";
@@ -85,6 +90,7 @@ export function ListarUsuarios({ rol }: ListarUsuariosProps) {
     const { data: registros, loading, error } = useFetch<RegistroUsuario[]>(endpoint);
 
     const [busqueda, setBusqueda] = useState("");
+    const [pagina, setPagina] = useState(1);
     const navigate = useNavigate();
     const { tieneRol } = useAuth();
     const { seleccionarUsuario } = useUsuarioSeleccionado();
@@ -133,6 +139,11 @@ export function ListarUsuarios({ rol }: ListarUsuariosProps) {
 
         return coincideNombre || coincideDni;
     });
+
+    // Los listados van de a páginas
+    const paginas = Math.max(1, Math.ceil(usuariosFiltrados.length / POR_PAGINA));
+    const paginaActual = Math.min(pagina, paginas);
+    const visibles = usuariosFiltrados.slice((paginaActual - 1) * POR_PAGINA, paginaActual * POR_PAGINA);
 
     const handleVerPerfil = (item: RegistroUsuario) => {
         const isMedico = rol === "medico";
@@ -209,7 +220,7 @@ export function ListarUsuarios({ rol }: ListarUsuariosProps) {
             ];
 
     return (
-        <section className="directorio">
+        <section className="directorio directorio-paginado">
             <ToastMensaje
                 mensaje={turnoAgendado ?? ""}
                 tipo="toast-good"
@@ -241,7 +252,7 @@ export function ListarUsuarios({ rol }: ListarUsuariosProps) {
                         type="search"
                         placeholder={esPaciente ? "Buscar por nombre o DNI" : "Buscar por nombre"}
                         value={busqueda}
-                        onChange={(e) => setBusqueda(e.target.value)}
+                        onChange={(e) => { setBusqueda(e.target.value); setPagina(1); }}
                     />
                     {busqueda && (
                         <span className="directorio-resultados" aria-live="polite">
@@ -262,9 +273,10 @@ export function ListarUsuarios({ rol }: ListarUsuariosProps) {
                 ) : usuariosFiltrados.length === 0 ? (
                     <div className="directorio-vacio">
                         <p>No encontramos {esPaciente ? "pacientes" : "médicos"} para "<strong>{busqueda}</strong>".</p>
-                        <Button variant="outline-secondary" onClick={() => setBusqueda("")}>Limpiar búsqueda</Button>
+                        <Button variant="outline-secondary" onClick={() => { setBusqueda(""); setPagina(1); }}>Limpiar búsqueda</Button>
                     </div>
                 ) : (
+                    <div className="directorio-tabla-fija">
                     <Table className="directorio-tabla align-middle mb-0">
                         <thead>
                             <tr>
@@ -288,7 +300,7 @@ export function ListarUsuarios({ rol }: ListarUsuariosProps) {
                             </tr>
                         </thead>
                         <tbody>
-                            {usuariosFiltrados.map((item) => {
+                            {visibles.map((item) => {
                                 const u = item.usuario;
                                 const paciente = esPaciente ? (item as PacienteRegistro) : null;
                                 const medico = !esPaciente ? (item as MedicoRegistro) : null;
@@ -376,6 +388,13 @@ export function ListarUsuarios({ rol }: ListarUsuariosProps) {
                             })}
                         </tbody>
                     </Table>
+                    </div>
+                )}
+
+                {usuariosFiltrados.length > 0 && (
+                    <div className="directorio-paginador">
+                        <Paginador pagina={paginaActual} tamanio={POR_PAGINA} total={usuariosFiltrados.length} onCambiar={setPagina} />
+                    </div>
                 )}
             </div>
 

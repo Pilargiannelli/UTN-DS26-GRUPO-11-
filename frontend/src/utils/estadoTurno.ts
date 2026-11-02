@@ -12,6 +12,14 @@ export function obtenerClaseEstado(estado: EstadoTurno) {
   }
 }
 
+// Color del badge de cada estado en las listas del médico
+export const COLOR_ESTADO: Record<string, string> = {
+  Pendiente: "warning",
+  Reprogramado: "warning",
+  Confirmado: "info",
+  Cancelado: "danger",
+};
+
 // Un turno que ya pasó no se cancela ni se confirma (el back responde 409)
 export function yaPaso(fechaHora: string) {
   return new Date(fechaHora) < new Date();

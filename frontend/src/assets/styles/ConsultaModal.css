@@ -1,0 +1,16 @@
+/* Ventana para ver una consulta */
+.modal-consulta .modal-content { border: 0; border-radius: 22px; overflow: hidden; }
+.modal-consulta .modal-header { padding: 18px 26px 12px; border-bottom: 0; }
+.modal-consulta .modal-title { color: #0f3f33; font-size: 22px; font-weight: 700; }
+.modal-consulta .modal-body { padding: 4px 26px 8px; }
+.modal-consulta .modal-footer { gap: 10px; padding: 14px 26px 22px; border-top: 1px solid #e1e8e4; }
+.modal-consulta .modal-footer .btn { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 22px; border-radius: 12px; font-weight: 700; }
+.modal-consulta .modal-footer .btn svg { width: 16px; height: 16px; }
+.consulta-modal-fecha { margin: 0 0 14px; color: #4d5f57; font-size: 14px; font-weight: 600; }
+.consulta-modal-fecha span { font-weight: 400; }
+.consulta-modal-datos { margin: 0; }
+.consulta-modal-datos dt { margin-top: 12px; color: #4d5f57; font-size: 12px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; }
+.consulta-modal-datos dd { margin: 4px 0 0; color: #12261d; font-size: 15px; line-height: 1.6; white-space: pre-line; overflow-wrap: anywhere; }
+.modal-consulta .form-label { margin-bottom: 6px; color: #12261d; font-size: 14px; font-weight: 700; }
+.modal-consulta .form-control { border: 1px solid #dbe3df; border-radius: 12px; font-size: 15px; }
+.modal-consulta .form-control:focus { border-color: #0f6b45; box-shadow: 0 0 0 .2rem rgba(15, 107, 69, .15); }

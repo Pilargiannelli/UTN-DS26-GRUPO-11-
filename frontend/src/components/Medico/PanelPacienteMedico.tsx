@@ -1,5 +1,6 @@
 import { useRef, useState } from "react";
 import { Alert, Button, Spinner } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
 import { CalendarPlus, JournalPlus } from "react-bootstrap-icons";
 import { AvatarIniciales } from "../AvatarIniciales";
 import { NuevaEntradaForm } from "../NuevaEntradaForm";
@@ -12,6 +13,7 @@ import { useHistoriaClinica } from "../../hooks/useHistoriaClinica";
 import { useEdad } from "../../hooks/useEdad";
 import type { PacientePerfil, Usuario } from "../../types/Usuario";
 import "../../assets/styles/PanelPacienteMedico.css";
+import "../../assets/styles/PanelPacienteCompacto.css";
 
 interface PanelPacienteMedicoProps {
   usuario: Usuario;
@@ -23,11 +25,16 @@ const fechaCorta = (iso: string) => iso.slice(0, 10).split("-").reverse().join("
 
 const FECHA_CONSULTA = new Intl.DateTimeFormat("es-AR", { day: "numeric", month: "long", year: "numeric" });
 
+// Cuántas consultas se ven en la ficha; el resto está en "Ver todas"
+const CONSULTAS_VISIBLES = 3;
+
 // Ficha del paciente para el médico: a la izquierda quién es (alergias a la
 // vista, contacto, obra social); a la derecha sus turnos y la historia clínica.
-// Las consultas no se editan ni se borran (Ley 26.529: la historia clínica es
-// inalterable); si hay un error se registra una consulta nueva.
+// Las consultas no se editan ni se borran (Ley 26.529: la historia clínica es inalterable);
+// si hay un error se registra una consulta nueva.
+
 export function PanelPacienteMedico({ usuario, paciente }: PanelPacienteMedicoProps) {
+  const navigate = useNavigate();
   const { historia, loading, error, agregarEntrada, actualizarListas } = useHistoriaClinica(paciente.id);
   const edad = useEdad(paciente.fechaNacimiento);
   const [nuevaConsulta, setNuevaConsulta] = useState(false);
@@ -135,10 +142,7 @@ export function PanelPacienteMedico({ usuario, paciente }: PanelPacienteMedicoPr
           {/* Registrar la consulta de hoy: lo primero que se ve de la historia */}
           {nuevaConsulta ? (
             <div className="panel-medico-nueva-consulta">
-              <NuevaEntradaForm onGuardar={consultaGuardada} />
-              <Button variant="link" size="sm" className="p-0 mt-2" onClick={() => setNuevaConsulta(false)}>
-                Cancelar
-              </Button>
+              <NuevaEntradaForm onGuardar={consultaGuardada} onCancelar={() => setNuevaConsulta(false)} />
             </div>
           ) : (
             <div className="panel-medico-cta">
@@ -154,17 +158,24 @@ export function PanelPacienteMedico({ usuario, paciente }: PanelPacienteMedicoPr
           )}
 
           {historia && historia.entradas.length > 0 && (
-            <h3 className="panel-medico-subtitulo">Consultas anteriores</h3>
+            <div className="panel-medico-subtitulo-fila">
+              <h3 className="panel-medico-subtitulo">Consultas anteriores</h3>
+              {historia.entradas.length > CONSULTAS_VISIBLES && (
+                <Button variant="primary" size="sm" className="panel-medico-ver-todas-boton" onClick={() => navigate(`/pacientes/${paciente.id}/historial`)}>
+                  Ver todas ({historia.entradas.length})
+                </Button>
+              )}
+            </div>
           )}
 
           {historia && historia.entradas.length === 0 && (
             <p className="panel-medico-vacio">Todavía no hay consultas registradas.</p>
           )}
 
-          {/* Línea de tiempo: de la consulta más nueva a la más vieja */}
+          {/* Línea de tiempo: las 3 consultas más nuevas, de la más nueva a la más vieja */}
           {historia && historia.entradas.length > 0 && (
             <ol className="panel-medico-historia">
-              {historia.entradas.map((e) => (
+              {historia.entradas.slice(0, CONSULTAS_VISIBLES).map((e) => (
                 <li key={e.id} className="panel-medico-entrada">
                   <span className="panel-medico-entrada-punto" aria-hidden="true" />
                   <p className="panel-medico-entrada-fecha">
@@ -180,12 +191,10 @@ export function PanelPacienteMedico({ usuario, paciente }: PanelPacienteMedicoPr
               ))}
             </ol>
           )}
-          <p className="panel-medico-nota">
-            Las consultas registradas no se modifican: si hay que corregir algo, se agrega una consulta nueva.
-          </p>
+
         </section>
 
-        <section className="panel-medico-tarjeta">
+        <section className="panel-medico-tarjeta panel-medico-tarjeta-turnos">
           <h2 className="panel-medico-titulo">Turnos</h2>
           <TurnosDelPaciente key={turnosVersion} pacienteId={paciente.id} />
         </section>

@@ -16,10 +16,11 @@ type EntradaForm = z.infer<typeof entradaSchema>;
 
 interface NuevaEntradaFormProps {
   onGuardar: (datos: EntradaForm) => Promise<void>;
+  onCancelar?: () => void;
 }
 
 // Formulario "Nueva consulta" del médico (HU-004)
-export function NuevaEntradaForm({ onGuardar }: NuevaEntradaFormProps) {
+export function NuevaEntradaForm({ onGuardar, onCancelar }: NuevaEntradaFormProps) {
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const { register, handleSubmit, reset, formState: { errors, isSubmitting } } = useForm<EntradaForm>({
     resolver: zodResolver(entradaSchema),
@@ -61,6 +62,11 @@ export function NuevaEntradaForm({ onGuardar }: NuevaEntradaFormProps) {
       <Button type="submit" variant="success" disabled={isSubmitting} className="w-100">
         {isSubmitting ? <Spinner size="sm" animation="border" /> : "Guardar consulta"}
       </Button>
+      {onCancelar && (
+        <Button type="button" variant="outline-success" onClick={onCancelar} disabled={isSubmitting} className="w-100 mt-2">
+          Cancelar
+        </Button>
+      )}
     </Form>
   );
 }

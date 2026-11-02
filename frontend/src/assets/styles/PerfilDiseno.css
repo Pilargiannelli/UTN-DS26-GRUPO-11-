@@ -1,0 +1,232 @@
+/* Mi cuenta y perfiles (VerUsuario): tarjeta de encabezado, pestañas con ícono y un panel por pestaña.
+   Es el mismo diseño para todos los roles. */
+.imos-reception-shell .perfil {
+  --perfil-verde: #0f6b45;
+  --perfil-tinta: #0f3f33;
+  --perfil-linea: #e1e8e4;
+  --perfil-menta: #dff0e7;
+  max-width: 1080px !important;
+  margin: 0 auto;
+  padding: 24px 20px 40px;
+}
+
+/* ── Encabezado ── */
+.imos-reception-shell .perfil .perfil-encabezado {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 28px;
+  margin: 0 0 22px;
+  padding: 26px 34px;
+  text-align: left;
+  background: var(--workspace-surface, #fff);
+  border: 1px solid var(--workspace-line, var(--perfil-linea));
+  border-radius: 22px;
+  box-shadow: 0 6px 22px #183f3210;
+}
+.imos-reception-shell .perfil .perfil-encabezado .avatar-iniciales {
+  width: 88px;
+  height: 88px;
+  background: var(--perfil-menta);
+  color: var(--perfil-verde);
+  font-size: 32px;
+  font-weight: 700;
+}
+.imos-reception-shell .perfil .perfil-identidad {
+  flex: 1;
+  min-width: 0;
+  padding-left: 28px;
+  border-left: 1px solid var(--perfil-linea);
+}
+.imos-reception-shell .perfil .perfil-nombre {
+  margin: 0 0 4px;
+  color: var(--perfil-tinta);
+  font-size: clamp(26px, 2.6vw, 36px);
+  font-weight: 700;
+  line-height: 1.15;
+}
+.imos-reception-shell .perfil .perfil-subtitulo { margin: 0 0 10px; color: #3c4d45; font-size: 15px; }
+.imos-reception-shell .perfil .perfil-rol {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  padding: 6px 16px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 600;
+}
+.imos-reception-shell .perfil .perfil-rol svg { width: 16px; height: 16px; }
+.imos-reception-shell .perfil .perfil-accion { margin: 0 0 0 auto; }
+
+/* ── Pestañas ── */
+.imos-reception-shell .perfil .perfil-tabs {
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 0 0 20px;
+  border: 0;
+}
+.imos-reception-shell .perfil .perfil-tabs .nav-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 48px;
+  padding: 0 24px;
+  border: 2px solid var(--perfil-verde);
+  border-radius: 14px;
+  background: var(--workspace-surface, #fff);
+  color: var(--perfil-verde);
+  font-size: 16px;
+  font-weight: 700;
+}
+.imos-reception-shell .perfil .perfil-tabs .nav-link svg { width: 20px; height: 20px; flex-shrink: 0; }
+.imos-reception-shell .perfil .perfil-tabs .nav-link:hover { background: #eef6f1; color: var(--perfil-verde); }
+.imos-reception-shell .perfil .perfil-tabs .nav-link.active { background: var(--perfil-verde); border-color: var(--perfil-verde); color: #fff; }
+
+/* ── Panel ── */
+.imos-reception-shell .perfil .perfil-panel {
+  padding: 28px 32px 30px;
+  background: var(--workspace-surface, #fff);
+  border: 1px solid var(--workspace-line, var(--perfil-linea));
+  border-radius: 22px;
+  box-shadow: 0 6px 22px #183f3210;
+}
+.imos-reception-shell .perfil .perfil-panel-encabezado {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  margin: 0 0 24px;
+  padding: 0 0 20px;
+  border-bottom: 1px solid var(--perfil-linea);
+}
+.imos-reception-shell .perfil .perfil-panel-icono {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 64px;
+  height: 64px;
+  border-radius: 16px;
+  background: var(--perfil-menta);
+  color: var(--perfil-verde);
+}
+.imos-reception-shell .perfil .perfil-panel-icono svg { width: 30px; height: 30px; }
+.imos-reception-shell .perfil .perfil-panel-textos { padding-left: 22px; border-left: 1px solid var(--perfil-linea); min-width: 0; }
+.imos-reception-shell .perfil .perfil-panel-titulo { margin: 0; color: var(--perfil-tinta); font-size: 26px; font-weight: 700; }
+.imos-reception-shell .perfil .perfil-panel-descripcion { margin: 4px 0 0; color: #4d5f57; font-size: 15px; }
+
+/* ── Formularios del panel ── */
+.imos-reception-shell .perfil .perfil-panel .form-label {
+  margin-bottom: 8px;
+  color: #12261d;
+  font-size: 15px;
+  font-weight: 700;
+}
+.imos-reception-shell .perfil .perfil-panel .form-control,
+.imos-reception-shell .perfil .perfil-panel .form-select {
+  min-height: 46px;
+  padding: 8px 18px;
+  border: 1px solid #dbe3df;
+  border-radius: 12px;
+  background-color: #fff;
+  color: #12261d;
+  font-size: 16px;
+  box-shadow: none;
+}
+.imos-reception-shell .perfil .perfil-panel .form-control:focus,
+.imos-reception-shell .perfil .perfil-panel .form-select:focus { border-color: var(--perfil-verde); box-shadow: 0 0 0 .2rem rgba(15, 107, 69, .15); }
+.imos-reception-shell .perfil .perfil-panel .form-control:disabled { background-color: #ececec; color: #66716b; }
+.imos-reception-shell .perfil .perfil-panel .form-control.is-invalid { border-color: #b42318; background-image: none; }
+.imos-reception-shell .perfil .perfil-ayuda { display: flex; align-items: center; gap: 8px; margin: 10px 0 0; color: #5b6b63; font-size: 14px; }
+.imos-reception-shell .perfil .perfil-ayuda svg { flex-shrink: 0; width: 16px; height: 16px; }
+
+/* ── Acciones ── */
+.imos-reception-shell .perfil .perfil-form-acciones {
+  gap: 12px;
+  margin-top: 26px;
+  padding-top: 22px;
+  border-top: 1px solid var(--perfil-linea);
+}
+.imos-reception-shell .perfil .perfil-form-acciones .btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 50px;
+  padding: 0 26px;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 700;
+}
+.imos-reception-shell .perfil .perfil-form-acciones .btn svg { width: 18px; height: 18px; }
+.imos-reception-shell .perfil .perfil-form-acciones .btn-primary { border-color: var(--perfil-verde); background: var(--perfil-verde); color: #fff; }
+.imos-reception-shell .perfil .perfil-form-acciones .btn-primary:hover:not(:disabled) { border-color: #0c5a3a; background: #0c5a3a; }
+.imos-reception-shell .perfil .perfil-form-acciones .btn-primary:disabled { opacity: .55; }
+
+@media (max-width: 700px) {
+  .imos-reception-shell .perfil { padding-inline: 12px; }
+  .imos-reception-shell .perfil .perfil-encabezado { flex-direction: column; align-items: flex-start; gap: 16px; padding: 22px; }
+  .imos-reception-shell .perfil .perfil-identidad { padding-left: 0; border-left: 0; }
+  .imos-reception-shell .perfil .perfil-accion { margin-left: 0; width: 100%; }
+  .imos-reception-shell .perfil .perfil-tabs .nav-link { padding: 0 16px; font-size: 15px; }
+  .imos-reception-shell .perfil .perfil-panel { padding: 22px 18px; }
+  .imos-reception-shell .perfil .perfil-panel-textos { padding-left: 16px; }
+  .imos-reception-shell .perfil .perfil-panel-titulo { font-size: 22px; }
+}
+
+/* ── Un poco más compacto ── */
+.imos-reception-shell .perfil { padding: 16px 20px 24px; }
+.imos-reception-shell .perfil .perfil-encabezado { gap: 22px; margin-bottom: 16px; padding: 18px 28px; }
+.imos-reception-shell .perfil .perfil-encabezado .avatar-iniciales { width: 72px; height: 72px; font-size: 26px; }
+.imos-reception-shell .perfil .perfil-identidad { padding-left: 22px; }
+.imos-reception-shell .perfil .perfil-nombre { font-size: clamp(22px, 2.2vw, 30px); margin-bottom: 2px; }
+.imos-reception-shell .perfil .perfil-subtitulo { margin-bottom: 8px; font-size: 14px; }
+.imos-reception-shell .perfil .perfil-rol { padding: 4px 14px; font-size: 13px; }
+.imos-reception-shell .perfil .perfil-tabs { gap: 10px; margin-bottom: 14px; }
+.imos-reception-shell .perfil .perfil-tabs .nav-link { min-height: 42px; padding: 0 20px; font-size: 15px; }
+.imos-reception-shell .perfil .perfil-tabs .nav-link svg { width: 18px; height: 18px; }
+.imos-reception-shell .perfil .perfil-panel { padding: 20px 26px 22px; }
+.imos-reception-shell .perfil .perfil-panel-encabezado { gap: 18px; margin-bottom: 18px; padding-bottom: 16px; }
+.imos-reception-shell .perfil .perfil-panel-icono { width: 52px; height: 52px; border-radius: 14px; }
+.imos-reception-shell .perfil .perfil-panel-icono svg { width: 24px; height: 24px; }
+.imos-reception-shell .perfil .perfil-panel-textos { padding-left: 18px; }
+.imos-reception-shell .perfil .perfil-panel-titulo { font-size: 22px; }
+.imos-reception-shell .perfil .perfil-panel-descripcion { margin-top: 2px; font-size: 14px; }
+.imos-reception-shell .perfil .perfil-panel .form-label { margin-bottom: 6px; font-size: 14px; }
+.imos-reception-shell .perfil .perfil-panel .form-control,
+.imos-reception-shell .perfil .perfil-panel .form-select { min-height: 42px; padding: 6px 16px; font-size: 15px; }
+.imos-reception-shell .perfil .perfil-form-acciones { margin-top: 18px; padding-top: 16px; }
+.imos-reception-shell .perfil .perfil-form-acciones .btn { min-height: 44px; padding: 0 22px; font-size: 15px; }
+.imos-reception-shell .perfil .perfil-ayuda { margin-top: 6px; font-size: 13px; }
+
+/* Los mensajes de error no empujan nada: cada campo deja su lugar reservado y el aviso se apoya ahí */
+.imos-reception-shell .perfil .perfil-panel form .row { --bs-gutter-y: 0; }
+.imos-reception-shell .perfil .perfil-panel div:has(> .invalid-feedback) { position: relative; margin-bottom: 26px !important; }
+.imos-reception-shell .perfil .perfil-panel .invalid-feedback {
+  position: absolute;
+  bottom: -21px;
+  left: 2px;
+  margin: 0;
+  font-size: 12.5px;
+  line-height: 1.2;
+}
+.imos-reception-shell .perfil .perfil-panel form .alert { margin: 0 0 14px; padding: 8px 14px; font-size: 14px; }
+
+/* Mi cuenta (escritorio): la página no se desplaza. Si algo no entra, se desplaza solo el contenido del panel. */
+@media (min-width: 992px) {
+  html:has(.perfil-propio), body:has(.perfil-propio) { overflow: hidden; }
+  .imos-reception-shell:has(.perfil-propio) { height: 100dvh; min-height: 0; overflow: hidden; }
+  .imos-reception-shell:has(.perfil-propio) > main { min-height: 0; overflow: hidden; }
+  .imos-reception-shell:has(.perfil-propio) > main > .container { display: flex; flex-direction: column; flex: 1; min-height: 0; max-width: none; padding: 0; }
+  .imos-reception-shell .perfil.perfil-propio { display: flex; flex-direction: column; flex: 1; width: 100%; min-height: 0; margin-bottom: 0; }
+  .imos-reception-shell .perfil.perfil-propio .perfil-encabezado,
+  .imos-reception-shell .perfil.perfil-propio .perfil-tabs { flex: 0 0 auto; }
+  .imos-reception-shell .perfil.perfil-propio .tab-content { flex: 1 1 0; min-height: 0; overflow-y: auto; padding: 0 4px 18px; margin: 0 -4px; }
+}
+
+/* Perfil de un profesional (visto por otro usuario): una sola sección, sin botón de pestaña */
+.imos-reception-shell .perfil .perfil-tabs.perfil-tabs-ocultas { display: none; }
+
+/* Fecha de nacimiento dentro del panel: lugar para el ícono de calendario de la izquierda */
+.imos-reception-shell .perfil .perfil-panel .date-input-campo .form-control { padding-left: 44px; }
+.imos-reception-shell .perfil .perfil-panel .date-input-icono { left: 16px; }
