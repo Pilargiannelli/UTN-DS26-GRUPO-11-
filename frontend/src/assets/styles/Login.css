@@ -245,3 +245,27 @@ body:has(.login-page) .navbar {
   .login-page :is(.login-button, .login-input) { transition: none; }
   .login-button:hover:not(:disabled) { transform: none; }
 }
+
+/* Contraseña con ojito para mostrarla u ocultarla */
+.login-password { position: relative; }
+.login-password .login-input { padding-right: 52px; }
+.login-ojito {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transform: translateY(-50%);
+  transition: background-color var(--motion-fast, 150ms) ease, color var(--motion-fast, 150ms) ease;
+}
+.login-ojito svg { width: 20px; height: 20px; }
+.login-ojito:hover { background: var(--color-pino-100); color: var(--color-pino-800); }
+.login-ojito:focus-visible { outline: 3px solid var(--imos-action); outline-offset: 2px; }
