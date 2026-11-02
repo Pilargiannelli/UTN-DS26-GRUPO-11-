@@ -15,6 +15,7 @@ import "../../assets/styles/NuevoTurnoModal.css";
 import { turnoSchema } from "../../schemas/TurnoSchema";
 import { apiFetch, ApiError } from "../../services/api";
 import { useFetch } from "../../hooks/useFetch";
+import { useAuth } from "../../hooks/useAuth";
 import { SelectorTurno } from "../SelectorTurno";
 import { BuscadorSelect } from "./BuscadorSelect";
 import type { Turno, MedicoTurno, PacienteTurno } from "../../types/Turno";
@@ -34,6 +35,9 @@ function NuevoTurnoModal({
   pacienteIdInicial,
 }: NuevoTurnoModalProps) {
 
+  // Un médico solo da turnos en su propia agenda: queda elegido y no se puede cambiar
+  const { usuario } = useAuth();
+  const medicoPropioId = usuario?.rol === "MEDICO" && usuario.medico ? String(usuario.medico.id) : "";
 
   // GET /api/medicos es público; GET /api/pacientes exige SECRETARIA o
   // MEDICO (matriz de permisos, secciones 6 y 7) — es justamente quien usa
@@ -43,7 +47,7 @@ function NuevoTurnoModal({
 
   const [form, setForm] = useState({
     pacienteId: pacienteIdInicial ? String(pacienteIdInicial) : "",
-    medicoId: "",
+    medicoId: medicoPropioId,
     fecha: "",
     hora: "",
     estado: "Pendiente" as "Pendiente" | "Confirmado",
@@ -106,7 +110,7 @@ function NuevoTurnoModal({
 
     setForm({
       pacienteId: "",
-      medicoId: "",
+      medicoId: medicoPropioId,
       fecha: "",
       hora: "",
       estado: "Pendiente",
@@ -262,6 +266,7 @@ function NuevoTurnoModal({
                 value={form.medicoId}
                 onChange={(v) => elegirOpcion("medicoId", v)}
                 invalido={!!errores.medicoId}
+                bloqueado={medicoPropioId !== ""}
                 opciones={medicos?.map((m) => ({
                   value: String(m.id),
                   etiqueta: `Dr./Dra. ${m.usuario.nombre} ${m.usuario.apellido}`,

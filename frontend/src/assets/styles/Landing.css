@@ -811,3 +811,22 @@ body:has(.landing-page) nav.navbar { display: none !important; }
 @media (prefers-reduced-motion: reduce) {
   .landing-carrusel-tarjeta { transition: none; }
 }
+
+/* Celular: el texto de la portada usa todo el ancho y la foto se oscurece pareja para que se lea */
+@media (max-width: 700px) {
+  .landing-hero-contenido { max-width: 100%; }
+  .landing-hero-overlay { background: linear-gradient(to bottom, rgba(11, 35, 26, 0.88), rgba(11, 35, 26, 0.72) 60%, rgba(11, 35, 26, 0.9)); }
+  .landing-hero-acciones .landing-btn { width: 100%; justify-content: center; text-align: center; }
+}
+
+/* Pantallas muy angostas (320 px): barra y títulos de sección más ajustados */
+@media (max-width: 380px) {
+  .landing-nav { padding-inline: 12px; gap: 8px; }
+  .landing-nav .landing-btn { padding: 6px 10px; font-size: 13px; }
+  .landing-profesionales h2.landing-prof-titulo,
+  .landing-especialidades h2.landing-esp-titulo { gap: 12px; letter-spacing: .16em; font-size: 1rem; }
+  .landing-profesionales h2.landing-prof-titulo::before,
+  .landing-profesionales h2.landing-prof-titulo::after,
+  .landing-especialidades h2.landing-esp-titulo::before,
+  .landing-especialidades h2.landing-esp-titulo::after { width: 20px; }
+}

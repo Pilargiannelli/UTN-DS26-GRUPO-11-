@@ -110,7 +110,7 @@
 .paginador-boton svg { width: 15px; height: 15px; }
 
 /* ── Pantalla fija en escritorio ── */
-@media (min-width: 992px) {
+@media (min-width: 992px) and (min-height: 780px) {
   html:has(.listado-paciente), body:has(.listado-paciente) { overflow: hidden; }
   .imos-reception-shell:has(.listado-paciente) { height: 100dvh; min-height: 0; overflow: hidden; }
   .imos-reception-shell:has(.listado-paciente) > main { min-height: 0; overflow: hidden; }
@@ -136,18 +136,18 @@
 .listado-filtros-fila .listado-limpiar { align-self: center; white-space: nowrap; }
 
 .consultas-lista { display: flex; flex-direction: column; gap: 10px; min-height: 0; margin: 0; padding: 0; overflow: auto; list-style: none; }
-.consulta-item-fecha { margin: 0 0 3px; color: #4d5f57; font-size: 13px; font-weight: 600; }
-.consulta-item-cuerpo { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 10px 14px; background: #e4eee7; border: 1px solid #d3e2d8; border-left: 3px solid var(--lp-verde); border-radius: 10px; }
-.consulta-item-texto { min-width: 0; }
-.consulta-item-texto p { margin: 0; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; color: #12261d; font-size: 14px; line-height: 1.45; }
-.consulta-item-texto .consulta-item-titulo { color: var(--lp-tinta); font-size: 16px; font-weight: 700; }
-.consulta-item-cuerpo .btn { display: inline-flex; flex: none; align-items: center; gap: 6px; font-size: 13px; }
-.imos-reception-shell .listado-paciente .consulta-item { margin: 0; padding: 0; border: 0; background: none; box-shadow: none; }
+.hist-consulta-fecha { margin: 0 0 3px; color: #4d5f57; font-size: 13px; font-weight: 600; }
+.hist-consulta-cuerpo { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 10px 14px; background: #e4eee7; border: 1px solid #d3e2d8; border-left: 3px solid var(--lp-verde); border-radius: 10px; }
+.hist-consulta-texto { min-width: 0; }
+.hist-consulta-texto p { margin: 0; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; color: #12261d; font-size: 14px; line-height: 1.45; }
+.hist-consulta-texto .hist-consulta-titulo { color: var(--lp-tinta); font-size: 16px; font-weight: 700; }
+.hist-consulta-cuerpo .btn { display: inline-flex; flex: none; align-items: center; gap: 6px; font-size: 13px; }
+.imos-reception-shell .listado-paciente .hist-consulta { margin: 0; padding: 0; border: 0; background: none; box-shadow: none; }
 .imos-reception-shell .listado-paciente .listado-filtros-fila .form-select { min-width: 230px; padding: 4px 40px 4px 14px; background-position: right 12px center; text-overflow: ellipsis; }
 /* La lista ocupa siempre el alto de 3 consultas, así el paginador no se mueve entre páginas */
 .consultas-lista { min-height: 422px; align-content: start; }
-.imos-reception-shell .listado-paciente .consulta-item { display: flex; flex-direction: column; height: 134px; flex: none; }
-.consulta-item .consulta-item-cuerpo { flex: 1; }
+.imos-reception-shell .listado-paciente .hist-consulta { display: flex; flex-direction: column; height: 134px; flex: none; }
+.hist-consulta .hist-consulta-cuerpo { flex: 1; }
 
 /* ── Turnos: filtros en una línea y tabla de alto fijo (8 filas) ── */
 .listado-filtros-turnos .listado-filtro-medico { flex: 1 1 240px; min-width: 220px; }
@@ -156,3 +156,27 @@
 .listado-tabla-fija .listado-tabla th { height: 46px; }
 .listado-tabla-fija .listado-tabla td { height: 54px; padding-block: 0; font-size: 15px; }
 .listado-filtros-turnos .listado-limpiar { margin-left: auto; }
+
+/* ── Celular y tablet chica: las consultas se acomodan según su contenido ── */
+@media (max-width: 768px) {
+  .consultas-lista { min-height: 0; overflow: visible; }
+  .imos-reception-shell .listado-paciente .hist-consulta { height: auto; }
+  .hist-consulta-cuerpo { flex-direction: column; align-items: stretch; gap: 10px; }
+  .hist-consulta-texto p { display: block; overflow-wrap: anywhere; }
+  .hist-consulta-cuerpo .btn { justify-content: center; }
+  .listado-filtros-fila .listado-busqueda { flex-basis: 100%; }
+  .imos-reception-shell .listado-paciente .listado-filtros-fila .form-select { min-width: 0; flex: 1 1 100%; }
+  .listado-tabla-fija { min-height: 0; }
+}
+
+/* Celular: cada turno pasa a ser una fila de dos líneas (fecha y estado / hora y especialidad) */
+@media (max-width: 768px) {
+  .listado-tabla-fija .listado-tabla thead { display: none; }
+  .listado-tabla-fija .listado-tabla tbody tr { display: grid; grid-template-columns: 1fr auto; gap: 2px 12px; height: auto; padding: 10px 14px; border-bottom: 1px solid #eef2f0; }
+  .listado-tabla-fija .listado-tabla tbody tr:last-child { border-bottom: 0; }
+  .listado-tabla-fija .listado-tabla td { display: block; height: auto; padding: 0; border: 0; white-space: nowrap; }
+  .listado-tabla-fija .listado-tabla td:nth-child(1) { grid-column: 1; grid-row: 1; font-weight: 700; color: var(--lp-tinta); }
+  .listado-tabla-fija .listado-tabla td:nth-child(4) { grid-column: 2; grid-row: 1; align-self: center; }
+  .listado-tabla-fija .listado-tabla td:nth-child(2) { grid-column: 1; grid-row: 2; font-size: 13px; color: #4d5f57; }
+  .listado-tabla-fija .listado-tabla td:nth-child(3) { grid-column: 2; grid-row: 2; font-size: 13px; color: #4d5f57; }
+}
