@@ -1,0 +1,77 @@
+/* Inicio del médico: tarjeta "Turnos de hoy" */
+.turnos-hoy {
+  --th-verde: #0f6b45;
+  --th-tinta: #0f3f33;
+  --th-linea: #dfe8e2;
+  margin-top: 18px;
+  padding: 20px 24px 24px;
+  background: #fff;
+  border: 1px solid var(--th-linea);
+  border-radius: 20px;
+  box-shadow: 0 6px 22px #183f3210;
+  text-align: left;
+}
+
+.turnos-hoy-encabezado { display: flex; flex-wrap: wrap; align-items: center; gap: 14px; margin-bottom: 18px; }
+.turnos-hoy-icono { display: grid; place-items: center; flex: none; width: 48px; height: 48px; border-radius: 14px; background: #dcebdc; color: var(--th-tinta); font-size: 22px; }
+.turnos-hoy-titulos { flex: 1 1 220px; min-width: 0; }
+.turnos-hoy-titulos h2 { margin: 0; color: var(--th-tinta); font-size: 24px; font-weight: 700; }
+.turnos-hoy-titulos p { margin: 2px 0 0; color: #4d5f57; font-size: 14px; }
+.turnos-hoy-fecha { display: inline-flex; align-items: center; gap: 10px; padding: 9px 16px; border-radius: 12px; background: #e8f0e8; color: var(--th-tinta); font-size: 15px; white-space: nowrap; }
+
+/* ── Tabla ── */
+.turnos-hoy-tabla { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 16px; }
+.turnos-hoy-tabla th {
+  padding: 12px 18px;
+  background: #e8f0e8;
+  color: var(--th-tinta);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: .04em;
+  text-align: left;
+  text-transform: uppercase;
+}
+.turnos-hoy-tabla th:first-child { border-radius: 12px 0 0 12px; }
+.turnos-hoy-tabla th:last-child { border-radius: 0 12px 12px 0; }
+.turnos-hoy-tabla th svg { margin-right: 10px; vertical-align: -2px; font-size: 16px; }
+.turnos-hoy-tabla td { padding: 14px 18px; border-bottom: 1px solid #eef2ef; color: #12261d; }
+.turnos-hoy-tabla tbody tr:last-child td { border-bottom: 0; }
+.turnos-hoy-hora { font-variant-numeric: tabular-nums; }
+.turnos-hoy-paciente { font-weight: 700; color: var(--th-tinta); }
+
+/* ── Sin turnos ── */
+.turnos-hoy-vacio { display: flex; flex-direction: column; align-items: center; padding: 34px 16px 40px; border: 1px solid var(--th-linea); border-radius: 16px; text-align: center; }
+.turnos-hoy-vacio-dibujo { width: 112px; height: 94px; color: var(--th-verde); }
+.turnos-hoy-vacio h3 { margin: 8px 0 4px; color: var(--th-tinta); font-size: 22px; font-weight: 700; }
+.turnos-hoy-vacio p { margin: 0 0 20px; color: #3d4f47; font-size: 16px; }
+.turnos-hoy-acciones { display: flex; flex-wrap: wrap; justify-content: center; gap: 14px; }
+.turnos-hoy-boton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 48px;
+  padding: 0 24px;
+  border: 1.5px solid var(--th-verde);
+  border-radius: 10px;
+  background: #fff;
+  color: var(--th-tinta);
+  font-size: 16px;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 150ms ease;
+}
+.turnos-hoy-boton:hover { background: #eef6f1; color: var(--th-tinta); }
+.turnos-hoy-boton-principal { background: var(--th-verde); color: #fff; }
+.turnos-hoy-boton-principal:hover { background: #0b5a3a; color: #fff; }
+.turnos-hoy-boton svg { font-size: 20px; }
+
+@media (max-width: 600px) {
+  .turnos-hoy { padding: 16px; }
+  .turnos-hoy-fecha { white-space: normal; }
+  .turnos-hoy-tabla { font-size: 14px; }
+  .turnos-hoy-tabla th, .turnos-hoy-tabla td { padding: 10px 8px; }
+  .turnos-hoy-tabla th svg { display: none; }
+  .turnos-hoy-boton { flex: 1 1 100%; }
+}
