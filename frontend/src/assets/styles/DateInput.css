@@ -1,0 +1,14 @@
+/* Fecha con selector del navegador: icono de calendario a la izquierda y el del navegador a la derecha */
+.date-input-campo { position: relative; }
+.date-input-icono {
+  position: absolute;
+  top: 50%;
+  left: 13px;
+  width: 16px;
+  height: 16px;
+  transform: translateY(-50%);
+  color: var(--color-text-muted);
+  pointer-events: none;
+}
+.date-input-campo .form-control { padding-left: 40px; }
+.date-input-campo input[type="date"]::-webkit-calendar-picker-indicator { cursor: pointer; opacity: .85; }

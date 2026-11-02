@@ -37,6 +37,11 @@ describe("pacienteSchema del formulario de registro", () => {
     expect(campos(r)).toEqual(["repetirPassword"]);
   });
 
+  it("marca las contraseñas aunque otros campos también tengan errores", () => {
+    const r = schema(true).safeParse({ ...valido, nombre: "", password: "abc", repetirPassword: "xyz" });
+    expect(campos(r)).toEqual(expect.arrayContaining(["nombre", "password", "repetirPassword"]));
+  });
+
   it("en autoregistro acepta una contraseña fuerte repetida bien", () => {
     expect(schema(true).safeParse({ ...valido, password: "Segura123", repetirPassword: "Segura123" }).success).toBe(true);
   });

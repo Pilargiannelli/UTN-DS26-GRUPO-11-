@@ -3,6 +3,17 @@ import { dateInputSchema } from "./dateSchema.ts"
 
 export const SIN_OBRA_SOCIAL = "Sin obra social";
 
+// Primera regla de contraseña que no se cumple (la misma fortaleza que exige el back), o null si cumple todas
+const reglaIncumplida = (password: string): string | null => {
+    const reglas: [boolean, string][] = [
+        [password.length >= 8, "La contraseña debe tener al menos 8 caracteres"],
+        [/[A-Z]/.test(password), "La contraseña debe tener al menos una mayúscula"],
+        [/[a-z]/.test(password), "La contraseña debe tener al menos una minúscula"],
+        [/[0-9]/.test(password), "La contraseña debe tener al menos un número"],
+    ];
+    return reglas.find(([cumple]) => !cumple)?.[1] ?? null;
+};
+
 // Mismas reglas que backend/src/validations/paciente.validation.ts, para que
 // el formulario marque los errores antes de enviar. Con conPassword (modo
 // autoregistro) suma la contraseña con la misma fortaleza que exige el back.
@@ -25,20 +36,17 @@ export const pacienteSchema = (sexo: string[], conPassword = false) => {
         fechaNacimiento: dateInputSchema,
         password: z.string().optional(),
         repetirPassword: z.string().optional(),
-    }).superRefine((datos, ctx) => {
-        if (!conPassword) return;
-        const password = datos.password ?? "";
-        const reglas: [boolean, string][] = [
-            [password.length >= 8, "La contraseña debe tener al menos 8 caracteres"],
-            [/[A-Z]/.test(password), "La contraseña debe tener al menos una mayúscula"],
-            [/[a-z]/.test(password), "La contraseña debe tener al menos una minúscula"],
-            [/[0-9]/.test(password), "La contraseña debe tener al menos un número"],
-        ];
-        const incumplida = reglas.find(([cumple]) => !cumple);
-        if (incumplida) ctx.addIssue({ code: "custom", path: ["password"], message: incumplida[1] });
-        if (datos.repetirPassword !== password) {
-            ctx.addIssue({ code: "custom", path: ["repetirPassword"], message: "Las contraseñas no coinciden" });
-        }
+    })
+    // when: () => true: las contraseñas se validan aunque otros campos tengan errores, así se marcan juntas
+    .refine((datos) => !conPassword || reglaIncumplida(datos.password ?? "") === null, {
+        path: ["password"],
+        when: () => true,
+        error: (issue) => reglaIncumplida((issue.input as { password?: string }).password ?? "") ?? "",
+    })
+    .refine((datos) => !conPassword || (datos.repetirPassword ?? "") === (datos.password ?? ""), {
+        path: ["repetirPassword"],
+        when: () => true,
+        message: "Las contraseñas no coinciden",
     });
 }
 

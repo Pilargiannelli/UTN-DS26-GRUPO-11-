@@ -1,159 +1,168 @@
 import { Link } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { Clock, GeoAlt, Person } from "react-bootstrap-icons";
 import { useAuth } from "../hooks/useAuth";
+import { IconoEspecialidad } from "../components/IconoEspecialidad";
+import { CarruselProfesionales, type Profesional } from "../components/CarruselProfesionales";
 import imosLogo from "../assets/img/IMOS_LOGO.png";
 import "../assets/styles/Landing.css";
 
 // Landing pública (ruta "/"): presenta el sistema de turnos de la clínica IMOS.
 // Cada enlace del menú apunta al id de su sección (scroll suave en Landing.css).
 const SECCIONES = [
-  { id: "servicios", etiqueta: "Servicios" },
-  { id: "como-funciona", etiqueta: "Cómo funciona" },
-  { id: "perfiles", etiqueta: "Para quién" },
-  { id: "preguntas", etiqueta: "Preguntas" },
+  { id: "inicio", etiqueta: "Inicio" },
+  { id: "especialidades", etiqueta: "Especialidades" },
+  { id: "profesionales", etiqueta: "Profesionales" },
   { id: "contacto", etiqueta: "Contacto" },
 ];
 
-const SERVICIOS = [
-  {
-    titulo: "Pedí tu turno online",
-    texto:
-      "Elegí especialidad, profesional, día y horario en tres pasos, sin llamar ni ir a la clínica.",
-  },
-  {
-    titulo: "Mis turnos",
-    texto:
-      "Consultá tus turnos próximos y pasados, con el detalle de cada uno y su estado.",
-  },
-  {
-    titulo: "Cancelá cuando lo necesites",
-    texto:
-      "Si no podés asistir, cancelás el turno desde el sistema y el horario queda libre para otro paciente.",
-  },
-  {
-    titulo: "Buscá a tu profesional",
-    texto:
-      "Encontrá al médico por nombre o especialidad y mirá su perfil antes de reservar.",
-  },
-  {
-    titulo: "Historia clínica",
-    texto:
-      "Cada consulta queda registrada en la ficha del paciente: datos, turnos y evolución en un solo lugar.",
-  },
-  {
-    titulo: "Agenda del día",
-    texto:
-      "El equipo médico y la secretaría ven la agenda ordenada y los turnos confirmados de cada jornada.",
-  },
+const ESPECIALIDADES = [
+  "Nutrición",
+  "Cardiología",
+  "Cirugía",
+  "Otorrinolaringología",
+  "Ecografías",
+  "Traumatología",
+  "Odontología",
+  "Ortodoncia y Ortopedia",
+  "Oftalmología",
+  "Psiquiatría",
+  "Ginecología",
+  "Reumatología",
+  "Pediatría",
+  "Fonoaudiología",
+  "Medicina General",
 ];
 
-const PASOS = [
-  {
-    titulo: "Creá tu cuenta",
-    texto: "Registrate con tus datos personales. Solo se hace una vez.",
-  },
-  {
-    titulo: "Elegí tu turno",
-    texto: "Seleccioná especialidad, profesional y un horario disponible.",
-  },
-  {
-    titulo: "Asistí a la consulta",
-    texto: "Llegá a la clínica en el día y hora elegidos. Tu turno queda en Mis turnos.",
-  },
-];
+// Las fotos están en una sola hoja (/equipo-medico.webp, 1536 x 1024 px): columnas [x, ancho] y filas [y, alto]
+const COLUMNAS = [[60, 269], [356, 264], [646, 263], [935, 260], [1222, 254]];
+const FILAS = [[14, 154], [274, 146], [534, 144], [785, 143]];
+const deHoja = (columna: number, fila: number) => ({
+  hoja: "equipo" as const,
+  x: COLUMNAS[columna][0],
+  w: COLUMNAS[columna][1],
+  y: FILAS[fila][0],
+  h: FILAS[fila][1],
+});
 
-const PERFILES = [
-  {
-    rol: "Pacientes",
-    items: [
-      "Pedir, ver y cancelar turnos",
-      "Buscar profesionales",
-      "Consultar tus datos y tu cuenta",
-    ],
-  },
-  {
-    rol: "Médicos",
-    items: [
-      "Agenda y orden del día",
-      "Búsqueda y ficha de pacientes",
-      "Historia clínica de cada consulta",
-    ],
-  },
-  {
-    rol: "Secretaría",
-    items: [
-      "Alta y edición de pacientes",
-      "Gestión de turnos de la clínica",
-      "Agenda de cada médico",
-    ],
-  },
-];
-
-const PREGUNTAS = [
-  {
-    p: "¿Necesito una cuenta para sacar un turno?",
-    r: "Sí. Podés crearla vos mismo desde “Crear cuenta”, o pedir en la secretaría que te registren.",
-  },
-  {
-    p: "¿Puedo cancelar un turno?",
-    r: "Sí, desde “Mis turnos” elegís el turno y lo cancelás. El horario vuelve a quedar disponible.",
-  },
-  {
-    p: "¿Qué hago si olvidé mi contraseña?",
-    r: "Comunicate con la secretaría de la clínica y te ayudan a recuperar el acceso.",
-  },
-  {
-    p: "¿Quién ve mi información médica?",
-    r: "Solo el personal autorizado de la clínica. Cada rol accede únicamente a lo que necesita para su trabajo.",
-  },
+// Profesionales del carrusel. Para sumar una foto: guardar la imagen en frontend/public/profesionales/
+// y agregar foto: "/profesionales/nombre.jpg". Sin foto se muestra un avatar genérico.
+// (Hoy las fotos salen de la hoja /equipo-medico.webp; Castellani, de /profesionales.webp.)
+const PROFESIONALES: Profesional[] = [
+  { nombre: "Mariana Agostino", cargo: "Nutricionista", foto: deHoja(0, 0) },
+  { nombre: "Raúl Almada", cargo: "Cardiología", foto: deHoja(1, 0) },
+  { nombre: "Alejandro Armendariz", cargo: "Médico Cirujano", foto: deHoja(2, 0) },
+  { nombre: "Facundo Bertoni", cargo: "Otorrinolaringología", foto: deHoja(3, 0) },
+  { nombre: "Sandra Casalino", cargo: "Ecografías", foto: deHoja(4, 0) },
+  { nombre: "Mauricio Castellani", cargo: "Traumatología", foto: { x: 56, y: 189, w: 310, h: 257 } },
+  { nombre: "Diego Cordero", cargo: "Cardiología", foto: deHoja(0, 1) },
+  { nombre: "Adriana Croce", cargo: "Odontología (Ortodoncia y Ortopedia)", foto: deHoja(1, 1) },
+  { nombre: "Betina Garat", cargo: "Ecografías", foto: deHoja(2, 1) },
+  { nombre: "Verónica Giustozzi", cargo: "Oftalmología", foto: deHoja(3, 1) },
+  { nombre: "Gabriel López", cargo: "Psiquiatría", foto: deHoja(4, 1) },
+  { nombre: "Alejandra Lorden", cargo: "Ginecología", foto: deHoja(0, 2) },
+  { nombre: "Luisina Mengarelli", cargo: "Odontología", foto: deHoja(1, 2) },
+  { nombre: "Marcelo Mengarelli", cargo: "Odontología", foto: deHoja(2, 2) },
+  { nombre: "Fara Nauan", cargo: "Reumatología", foto: deHoja(3, 2) },
+  { nombre: "Alejandro Piñeyro", cargo: "Ginecología", foto: deHoja(4, 2) },
+  { nombre: "Marianela Piñeyro", cargo: "Pediatría", foto: deHoja(0, 3) },
+  { nombre: "Martina Tiberi", cargo: "Fonoaudiología", foto: deHoja(1, 3) },
+  { nombre: "Guillermo Trofino", cargo: "Medicina General", foto: deHoja(2, 3) },
 ];
 
 export default function Landing() {
-  const { estaAutenticado } = useAuth();
+  const { estaAutenticado, rol } = useAuth();
+  const [activa, setActiva] = useState("inicio");
 
+  const irAlInicio = (e: React.MouseEvent) => {
+    e.preventDefault();
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    window.history.pushState(null, "", "#inicio");
+  };
+
+  // Sección en la que se está parado: queda marcada en la barra
   useEffect(() => {
-    const cards = Array.from(
-      document.querySelectorAll<HTMLElement>(".landing-stack-card")
-    );
-
-    const onScroll = () => {
-      cards.forEach((card, i) => {
-        const next = cards[i + 1];
-        if (!next) return;
-        const nextTop = next.getBoundingClientRect().top;
-        const progress = Math.max(0, Math.min(1, (window.innerHeight - nextTop) / window.innerHeight));
-        const scale = 1 - progress * 0.05;
-        card.style.transform = `scale(${scale})`;
-        card.style.opacity = String(1 - progress * 0.15);
-      });
+    const ids = SECCIONES.map((s) => s.id);
+    const actualizar = () => {
+      let actual = ids[0];
+      for (const id of ids) {
+        const el = document.getElementById(id);
+        if (el && el.getBoundingClientRect().top <= 120) actual = id;
+      }
+      // Al final de la página, la última sección aunque no llegue a la marca
+      if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4) {
+        actual = ids[ids.length - 1];
+      }
+      setActiva(actual);
     };
+    window.addEventListener("scroll", actualizar, { passive: true });
+    actualizar();
+    return () => window.removeEventListener("scroll", actualizar);
+  }, []);
 
-    window.addEventListener("scroll", onScroll, { passive: true });
-    onScroll();
-    return () => window.removeEventListener("scroll", onScroll);
+  // La página es plana: nada debe quedar escalado ni traslúcido en los bloques
+  useEffect(() => {
+    document.querySelectorAll<HTMLElement>(".landing-bloque").forEach((bloque) => {
+      bloque.style.removeProperty("transform");
+      bloque.style.removeProperty("opacity");
+    });
+  }, []);
+
+  // Las secciones aparecen con un desvanecimiento corto al llegar a la pantalla
+  useEffect(() => {
+    const pagina = document.querySelector<HTMLElement>(".landing-page");
+    // Los fondos de las secciones quedan fijos: lo que aparece es su contenido
+    const bloques = Array.from(document.querySelectorAll<HTMLElement>(".landing-bloque > section > *"));
+    const sinMovimiento = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (!pagina || sinMovimiento || !("IntersectionObserver" in window)) return;
+
+    pagina.classList.add("con-reveal");
+    bloques.forEach((bloque) => bloque.classList.add("landing-revelar"));
+    const observador = new IntersectionObserver(
+      (entradas) => {
+        entradas.forEach((entrada) => {
+          const yaPasado = !entrada.isIntersecting && entrada.boundingClientRect.top < 0;
+          if (!entrada.isIntersecting && !yaPasado) return;
+          // Si ya quedó arriba (salto de ancla, recarga a mitad de página) se muestra sin animar
+          if (yaPasado) entrada.target.classList.add("instantaneo");
+          entrada.target.classList.add("visible");
+          observador.unobserve(entrada.target);
+        });
+      },
+      { threshold: 0.12 }
+    );
+    bloques.forEach((bloque) => observador.observe(bloque));
+
+    return () => {
+      observador.disconnect();
+      pagina.classList.remove("con-reveal");
+      bloques.forEach((bloque) => bloque.classList.remove("landing-revelar", "visible", "instantaneo"));
+    };
   }, []);
 
   return (
     <div className="landing-page">
       <header className="landing-nav">
-        <a className="landing-nav-brand" href="#inicio" aria-label="IMOS, ir al inicio">
+        <a className="landing-nav-brand" href="#inicio" aria-label="IMOS, ir al inicio" onClick={irAlInicio}>
           <img src={imosLogo} alt="IMOS" />
         </a>
 
         <nav className="landing-nav-links" aria-label="Secciones">
           {SECCIONES.map((s) => (
-            <a key={s.id} href={`#${s.id}`}>
+            <a
+              key={s.id}
+              href={`#${s.id}`}
+              className={activa === s.id ? "activo" : undefined}
+              aria-current={activa === s.id ? "location" : undefined}
+              onClick={s.id === "inicio" ? irAlInicio : undefined}
+            >
               {s.etiqueta}
             </a>
           ))}
         </nav>
 
         <div className="landing-nav-actions">
-          {estaAutenticado ? (
-            <Link className="landing-btn landing-btn-primary" to="/home">
-              Ir a mi panel
-            </Link>
-          ) : (
+          {!estaAutenticado && (
             <>
               <Link className="landing-btn landing-btn-ghost" to="/crear-cuenta">
                 Crear cuenta
@@ -170,111 +179,81 @@ export default function Landing() {
         <section id="inicio" className="landing-hero">
           <div className="landing-hero-overlay" aria-hidden="true" />
           <div className="landing-hero-contenido">
-            <span className="landing-eyebrow">Clínica IMOS Saladillo · Traumatología</span>
-            <h1>Tus turnos médicos, simples y en un solo lugar</h1>
+            <span className="landing-eyebrow">Clínica IMOS Saladillo</span>
+            <h1>La confianza de sentirte cuidado</h1>
             <p>
-              Pedí, consultá y cancelá turnos online. La clínica gestiona pacientes,
-              agenda e historia clínica con un sistema pensado para reducir ausencias y
-              desorden.
+              En IMOS creemos en una atención médica cercana, humana y profesional. Un
+              espacio donde tu salud y bienestar son siempre lo más importante. Gestioná
+              tus turnos online de forma rápida y sencilla, desde donde estés.
             </p>
             <div className="landing-hero-acciones">
-              <Link
-                className="landing-btn landing-btn-light landing-btn-lg"
-                to={estaAutenticado ? "/pedir-turno" : "/crear-cuenta"}
-              >
-                {estaAutenticado ? "Pedir turno" : "Crear cuenta"}
-              </Link>
+              {!estaAutenticado && (
+                <Link className="landing-btn landing-btn-light landing-btn-lg" to="/crear-cuenta">
+                  Agendar turno
+                </Link>
+              )}
+              {estaAutenticado && rol === "PACIENTE" && (
+                <>
+                  <Link className="landing-btn landing-btn-light landing-btn-lg" to="/pedir-turno">
+                    Agendar turno
+                  </Link>
+                  <Link className="landing-btn landing-btn-contorno-claro landing-btn-lg" to="/home">
+                    Ingresar al portal
+                  </Link>
+                </>
+              )}
+              {estaAutenticado && rol !== "PACIENTE" && (
+                <Link className="landing-btn landing-btn-light landing-btn-lg" to="/home">
+                  Ir a mi panel
+                </Link>
+              )}
             </div>
           </div>
         </section>
 
-        <div className="landing-stack-card" style={{ zIndex: 1 }}>
-          <section id="servicios" className="landing-seccion landing-seccion-servicios">
-            <h2>Qué podés hacer</h2>
-            <p className="landing-seccion-sub">
-              Todo lo que necesitás para tu atención, sin trámites ni esperas.
-            </p>
-            <div className="landing-grid landing-grid-3">
-              {SERVICIOS.map((s) => (
-                <article key={s.titulo} className="landing-card">
-                  <h3>{s.titulo}</h3>
-                  <p>{s.texto}</p>
-                </article>
-              ))}
-            </div>
-          </section>
-        </div>
-
-        <div className="landing-stack-card" style={{ zIndex: 2 }}>
-          <section id="como-funciona" className="landing-seccion landing-seccion-suave">
-            <h2>Cómo funciona</h2>
-            <p className="landing-seccion-sub">Tres pasos para reservar tu consulta.</p>
-            <ol className="landing-pasos">
-              {PASOS.map((paso, i) => (
-                <li key={paso.titulo} className="landing-card landing-paso">
-                  <span className="landing-paso-num">{i + 1}</span>
-                  <h3>{paso.titulo}</h3>
-                  <p>{paso.texto}</p>
+        <div className="landing-bloque">
+          <section id="especialidades" className="landing-seccion landing-seccion-servicios landing-especialidades">
+            <h2 className="landing-esp-titulo"><span>Nuestras especialidades</span></h2>
+            <ul className="landing-esp-grid">
+              {ESPECIALIDADES.map((e) => (
+                <li key={e} className="landing-esp-card">
+                  <span className="landing-esp-icono"><IconoEspecialidad nombre={e} /></span>
+                  <span className="landing-esp-nombre">{e}</span>
                 </li>
               ))}
-            </ol>
-            <div className="landing-centro">
-              <Link className="landing-btn landing-btn-primary landing-btn-lg" to="/crear-cuenta">
-                Empezar ahora
-              </Link>
-            </div>
+            </ul>
           </section>
         </div>
 
-        <div className="landing-stack-card" style={{ zIndex: 3 }}>
-          <section id="perfiles" className="landing-seccion landing-seccion-perfiles">
-            <h2>Un sistema para todo el equipo</h2>
-            <p className="landing-seccion-sub">
-              Cada persona ve solo las herramientas que necesita.
-            </p>
-            <div className="landing-grid landing-grid-3">
-              {PERFILES.map((perfil) => (
-                <article key={perfil.rol} className="landing-card">
-                  <h3>{perfil.rol}</h3>
-                  <ul className="landing-lista">
-                    {perfil.items.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </article>
-              ))}
-            </div>
+        <div className="landing-bloque">
+          <section id="profesionales" className="landing-seccion landing-profesionales">
+            <h2 className="landing-prof-titulo"><span>Nuestros profesionales</span></h2>
+            <CarruselProfesionales profesionales={PROFESIONALES} />
           </section>
         </div>
 
-        <div className="landing-stack-card" style={{ zIndex: 4 }}>
-          <section id="preguntas" className="landing-seccion landing-seccion-faq">
-            <h2>Preguntas frecuentes</h2>
-            <div className="landing-faq">
-              {PREGUNTAS.map((q) => (
-                <details key={q.p} className="landing-card">
-                  <summary>{q.p}</summary>
-                  <p>{q.r}</p>
-                </details>
-              ))}
+        <div className="landing-bloque">
+          <section id="contacto" className="landing-info">
+            <div className="landing-info-item">
+              <span className="landing-info-icono" aria-hidden="true"><GeoAlt /></span>
+              <div>
+                <h3>Dirección</h3>
+                <p>Almafuerte 3157, Saladillo, Buenos Aires</p>
+              </div>
             </div>
-          </section>
-        </div>
-
-        <div className="landing-stack-card" style={{ zIndex: 5 }}>
-          <section id="contacto" className="landing-cta">
-            <h2>¿Listo para sacar tu turno?</h2>
-            <p>
-              Ingresá a tu cuenta o creá una nueva. Si necesitás ayuda, comunicate con la
-              secretaría de la clínica.
-            </p>
-            <div className="landing-hero-acciones landing-centro">
-              <Link className="landing-btn landing-btn-light landing-btn-lg" to="/login">
-                Ingresar
-              </Link>
-              <Link className="landing-btn landing-btn-contorno-claro landing-btn-lg" to="/crear-cuenta">
-                Crear cuenta
-              </Link>
+            <div className="landing-info-item">
+              <span className="landing-info-icono" aria-hidden="true"><Clock /></span>
+              <div>
+                <h3>Horario de atención</h3>
+                <p>Lunes a viernes de 8.00 a 12.00 y de 16.00 a 20.00 hs</p>
+              </div>
+            </div>
+            <div className="landing-info-item">
+              <span className="landing-info-icono" aria-hidden="true"><Person /></span>
+              <div>
+                <h3>Contacto</h3>
+                <p>02344 43-1919</p>
+              </div>
             </div>
           </section>
         </div>
@@ -282,13 +261,6 @@ export default function Landing() {
 
       <footer className="landing-footer">
         <span>© {new Date().getFullYear()} Clínica IMOS Saladillo</span>
-        <nav aria-label="Secciones del pie">
-          {SECCIONES.map((s) => (
-            <a key={s.id} href={`#${s.id}`}>
-              {s.etiqueta}
-            </a>
-          ))}
-        </nav>
       </footer>
     </div>
   );

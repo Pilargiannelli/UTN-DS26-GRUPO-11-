@@ -4,6 +4,59 @@ import { TurnoEstado, DiaSemana, Rol } from "../src/generated/prisma/enums";
 
 const SALT_ROUNDS = 10;
 
+// Obras sociales con las que trabaja la clínica. OSDE y Swiss Medical se crean más abajo; "Sin obra social" lo agrega el formulario.
+const OBRAS_SOCIALES_CLINICA = [
+  "25JUNIO",
+  "ACEROS PARANA",
+  "ACTIVA SALUD",
+  "AMEBPBA",
+  "AMEMOP",
+  "AMEP",
+  "AMFFA",
+  "APRES CLASSIC",
+  "ATSA",
+  "BRINDAR SALUD",
+  "CASA",
+  "COMEI",
+  "CONEXION SALUD-O.S. CAPITANES Y BAQ",
+  "DASU",
+  "ESCRIBANOS (COLEGIO)",
+  "FARMACIA (O.S. PERSONAL)",
+  "GALENO ARGENTINA SA",
+  "IOMA",
+  "IOSFA",
+  "JERARQUICOS SALUD",
+  "KRONO - ENSALUD",
+  "MEDICUS",
+  "MEDIFE",
+  "OBRA SOCIAL - PERSONAL IND.PETROLEO",
+  "OMMINT",
+  "OSEIV - OSPRERA",
+  "OSPE -NO PMO",
+  "OSPE 411-301",
+  "OSPE A406",
+  "OSPEPBA",
+  "OSPERYHRA",
+  "OSPIQYP",
+  "OSPIT",
+  "OSPRERA",
+  "OSPSIP",
+  "OSTCARA",
+  "OSUOMRA",
+  "PASTEUR LUIS",
+  "PODER JUDICIAL",
+  "PRIMEDIC",
+  "PROPAGANDA MEDICA",
+  "SANCOR SALUD",
+  "SEROS CHUBUT",
+  "SERVICIO PENITENCIARIO FEDERAL",
+  "SINDICATO MADERA",
+  "SIPAS",
+  "SMATA",
+  "TEVE (O.S. PERSONAL DE TV)",
+  "Otra",
+];
+
 async function main() {
   console.log("🌱 Limpiando base de datos antes de sembrar...");
 
@@ -49,6 +102,11 @@ async function main() {
     data: { nombre: "Swiss Medical" },
   });
 
+  await prisma.obraSocial.createMany({
+    data: OBRAS_SOCIALES_CLINICA.map((nombre) => ({ nombre })),
+    skipDuplicates: true,
+  });
+
   // ==========================================
   // USUARIOS + ROLES
   // ==========================================
@@ -65,6 +123,16 @@ async function main() {
       fotoPerfil: null,
       rol: Rol.MEDICO,
       password: "Medico1234",
+    },
+    {
+      username: "dr_castellani",
+      nombre: "Mauricio",
+      apellido: "Castellani",
+      dni: "20111333",
+      email: "mauricio.castellani@clinica.com",
+      fotoPerfil: null,
+      rol: Rol.MEDICO,
+      password: "Castellani1234",
     },
     {
       username: "sec_ana",
@@ -120,6 +188,37 @@ async function main() {
       matricula: "MP-45892",
     },
   });
+
+  // Traumatólogo de la clínica con foto en la sección "Profesionales" de la landing
+  const traumatologos = [{ username: "dr_castellani", matricula: "MP-51230" }];
+
+  for (const { username, matricula } of traumatologos) {
+    const traumatologo = await prisma.medico.upsert({
+      where: { usuarioId: usuariosPorUsername[username].id },
+      update: {},
+      create: {
+        usuarioId: usuariosPorUsername[username].id,
+        especialidad: "Traumatología",
+        matricula,
+      },
+    });
+
+    await prisma.agenda.upsert({
+      where: { medicoId: traumatologo.id },
+      update: {},
+      create: {
+        medicoId: traumatologo.id,
+        horariosAtencion: [
+          DiaSemana.Lunes,
+          DiaSemana.Martes,
+          DiaSemana.Miercoles,
+          DiaSemana.Jueves,
+          DiaSemana.Viernes,
+        ],
+        intervaloTurno: 30,
+      },
+    });
+  }
 
   const secretaria = await prisma.secretaria.upsert({
     where: { usuarioId: usuariosPorUsername["sec_ana"].id },

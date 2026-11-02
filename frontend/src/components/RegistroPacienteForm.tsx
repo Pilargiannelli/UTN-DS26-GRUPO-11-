@@ -143,7 +143,7 @@ export function RegistroPacienteForm({ modo }: RegistroPacienteFormProps) {
                         </Form.Group>
                     </Col>
                 </Row>
-                <Row className="g-3">
+                <Row className="g-3 fila-identidad">
                     {/* DNI */}
                     <Col md={4}>
                         <Form.Group className="mb-3" controlId="reg-dni">

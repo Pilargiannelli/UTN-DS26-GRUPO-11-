@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Eye, EyeSlash } from "react-bootstrap-icons";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { loginSchema, type LoginData } from "../schemas/loginSchema";
@@ -17,6 +18,8 @@ export default function Login() {
   const [authError, setAuthError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
   const [enviando, setEnviando] = useState(false);
+  // La contraseña arranca oculta; el ojito la muestra o la oculta
+  const [verPassword, setVerPassword] = useState(false);
 
   const { login, estaAutenticado } = useAuth();
   const navigate = useNavigate();
@@ -126,16 +129,27 @@ export default function Login() {
                 Contraseña
               </Form.Label>
 
-              <Form.Control
-                className="login-input"
-                type="password"
-                placeholder="contraseña"
-                autoComplete="current-password"
-                {...register("password")}
-                isInvalid={!!errors.password || !!authError}
-              />
+              <div className="login-password">
+                <Form.Control
+                  className="login-input"
+                  type={verPassword ? "text" : "password"}
+                  placeholder="contraseña"
+                  autoComplete="current-password"
+                  {...register("password")}
+                  isInvalid={!!errors.password || !!authError}
+                />
+                <button
+                  type="button"
+                  className="login-ojito"
+                  aria-label={verPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+                  aria-pressed={verPassword}
+                  onClick={() => setVerPassword((v) => !v)}
+                >
+                  {verPassword ? <EyeSlash aria-hidden="true" /> : <Eye aria-hidden="true" />}
+                </button>
+              </div>
 
-              <Form.Control.Feedback type="invalid">
+              <Form.Control.Feedback type="invalid" className={errors.password ? "d-block" : undefined}>
                 {errors.password?.message}
               </Form.Control.Feedback>
             </Form.Group>

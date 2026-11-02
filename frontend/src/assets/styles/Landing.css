@@ -212,21 +212,20 @@ body:has(.landing-page) nav.navbar { display: none !important; }
 .landing-stat strong { font-size: var(--text-2xl); font-weight: var(--weight-bold); line-height: 1; }
 .landing-stat span { font-size: var(--text-xs); color: rgba(255,255,255,.75); text-transform: uppercase; letter-spacing: .8px; }
 
-/* ---------- Stacked cards ---------- */
-.landing-stack-card {
-  position: sticky;
-  top: 64px; /* altura del nav */
-  border-radius: 20px 20px 0 0;
-  box-shadow: 0 -6px 32px rgba(0, 0, 0, 0.14);
-  overflow: hidden;
-  transform-origin: top center;
-  will-change: transform, opacity;
+/* ---------- Bloques planos con aparicion al hacer scroll ---------- */
+.landing-bloque .landing-seccion,
+.landing-bloque .landing-cta {
+  scroll-margin-top: 64px;
 }
-/* Las secciones dentro de las cards no necesitan border-radius propio */
-.landing-stack-card .landing-seccion,
-.landing-stack-card .landing-cta {
-  border-radius: 0;
-  scroll-margin-top: 80px;
+/* Solo se ocultan si el script de aparicion esta activo (si no, todo se ve) */
+.landing-page.con-reveal .landing-revelar {
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 450ms ease, transform 450ms ease;
+}
+.landing-page.con-reveal .landing-revelar.visible {
+  opacity: 1;
+  transform: none;
 }
 
 /* ---------- Secciones (alternancia blanco / verde rol) ---------- */
@@ -417,15 +416,14 @@ body:has(.landing-page) nav.navbar { display: none !important; }
 .landing-footer {
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-between;
+  justify-content: center;
+  text-align: center;
   gap: 8px 24px;
   padding: 16px clamp(20px, 4vw, 48px);
   background: var(--color-pino-900);
   color: var(--color-pino-200);
   font-size: var(--text-xs);
 }
-.landing-footer nav { display: flex; flex-wrap: wrap; gap: var(--space-4); }
-.landing-footer a { font-size: var(--text-xs); }
 
 @media (max-width: 860px) {
   .landing-nav-links { display: none; }
@@ -441,5 +439,375 @@ body:has(.landing-page) nav.navbar { display: none !important; }
   html:has(.landing-page) { scroll-behavior: auto; }
   .landing-btn { transition: none; }
   .landing-btn:hover { transform: none; }
-  .landing-stack-card { transform: none !important; opacity: 1 !important; }
+  .landing-page.con-reveal .landing-revelar { opacity: 1; transform: none; transition: none; }
+}
+
+/* Barra de navegacion: los enlaces quedan centrados en la pantalla y los botones mas chicos */
+/* La fila mide lo mismo que la barra: el logo (mas alto) se desborda sin empujar el resto */
+.landing-nav { display: grid; grid-template-columns: 1fr auto 1fr; grid-template-rows: 100%; align-items: center; }
+.landing-nav-brand { justify-self: start; }
+.landing-nav-links { margin-inline: 0; justify-self: center; }
+.landing-nav-actions { justify-self: end; gap: var(--space-2); }
+.landing-nav .landing-btn { min-height: 38px; padding: 6px 18px; font-size: var(--text-sm); }
+@media (max-width: 860px) {
+  .landing-nav { display: flex; }
+}
+
+/* Hero: el boton y la descripcion quedan centrados con el titulo (el texto ya va centrado) */
+.landing-hero-acciones { justify-content: center; }
+.landing-hero p { margin-inline: auto; }
+
+/* Portada a pantalla completa: la foto llena la primera vista y se difumina en verde (el de la barra) hacia la siguiente seccion */
+.landing-hero {
+  min-height: max(480px, calc(100dvh - 64px));
+  justify-content: center;
+}
+.landing-hero-contenido { padding-bottom: clamp(96px, 14vh, 150px); }
+.landing-hero::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 0 0;
+  height: clamp(120px, 22vh, 220px);
+  background: linear-gradient(to bottom, rgba(24, 63, 50, 0) 0%, rgba(24, 63, 50, .6) 55%, #183f32 100%);
+  pointer-events: none;
+}
+
+/* El verde sigue abajo de la portada y se aclara de a poco hasta el fondo claro de Servicios */
+.landing-seccion-servicios { padding-top: calc(clamp(40px, 6vw, 72px) + 28px); }
+.landing-seccion-servicios::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 84px;
+  background: linear-gradient(to bottom, #183f32 0%, rgba(24, 63, 50, .4) 45%, rgba(238, 244, 240, 0) 100%);
+  pointer-events: none;
+}
+.landing-seccion-servicios > * { position: relative; z-index: 1; }
+
+/* Lo que ya quedo arriba de la pantalla se muestra sin transicion */
+.landing-page.con-reveal .landing-revelar.instantaneo { transition: none; }
+
+/* ---------- Informacion del lugar (cierre de la pagina) ---------- */
+.landing-info {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(3, auto);
+  justify-content: center;
+  align-items: start;
+  gap: 24px clamp(40px, 8vw, 120px);
+  padding: clamp(40px, 6vw, 64px) clamp(20px, 4vw, 48px);
+  background: #e6efe9;
+  border-bottom: 1px solid #d4e0d8;
+  scroll-margin-top: 64px;
+}
+.landing-info-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+}
+.landing-info-icono {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: #fff;
+  color: var(--imos-forest);
+  box-shadow: 0 2px 8px rgba(24, 63, 50, .12);
+  transition: background-color 200ms ease, color 200ms ease, box-shadow 200ms ease;
+}
+.landing-info-icono svg { width: 20px; height: 20px; }
+.landing-info-item:hover .landing-info-icono {
+  background: var(--imos-forest);
+  color: #fff;
+  box-shadow: 0 6px 16px rgba(24, 63, 50, .28);
+}
+.landing-info-item h3 {
+  margin: 0 0 4px;
+  color: var(--imos-forest);
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  font-weight: 400;
+}
+.landing-info-item p {
+  max-width: 280px;
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+  line-height: 1.6;
+}
+@media (max-width: 860px) {
+  .landing-info { grid-template-columns: minmax(0, 1fr); justify-content: stretch; gap: 28px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .landing-info-icono { transition: none; }
+}
+
+/* Seccion actual marcada en la barra */
+.landing-nav-links a.activo {
+  color: #fff;
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 8px;
+}
+.landing-nav-links { gap: var(--space-5); }
+
+/* Informacion del lugar: mas chica y centrada (icono arriba, texto debajo) */
+.landing-info {
+  grid-template-columns: repeat(3, minmax(0, 240px));
+  gap: 20px clamp(24px, 5vw, 72px);
+  padding: clamp(28px, 4vw, 40px) clamp(20px, 4vw, 48px);
+  text-align: center;
+}
+.landing-info-item { flex-direction: column; align-items: center; gap: 10px; }
+.landing-info-icono { width: 38px; height: 38px; }
+.landing-info-icono svg { width: 17px; height: 17px; }
+.landing-info-item h3 { margin: 0 0 2px; font-size: 1.1rem; }
+.landing-info-item p { max-width: 240px; margin-inline: auto; font-size: var(--text-xs); line-height: 1.5; }
+@media (max-width: 860px) {
+  .landing-info { grid-template-columns: minmax(0, 1fr); justify-content: center; }
+}
+
+/* ---------- Profesionales ---------- */
+.landing-profesionales {
+  background-color: #f5faf7;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 600' preserveAspectRatio='none'%3E%3Cpath d='M0 0H330C240 40 190 150 0 130Z' fill='%23d9ebe1' fill-opacity='.55'/%3E%3Cpath d='M1200 70C1090 90 1030 190 1200 260Z' fill='%23d9ebe1' fill-opacity='.6'/%3E%3Cpath d='M0 520C140 480 260 560 420 600H0Z' fill='%23d9ebe1' fill-opacity='.55'/%3E%3Cpath d='M720 600C900 540 1050 560 1200 520V600Z' fill='%23d9ebe1' fill-opacity='.5'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+}
+.landing-profesionales h2.landing-prof-titulo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 32px;
+  margin: 0 auto clamp(32px, 5vw, 56px);
+  color: #0f6b45;
+  font-family: var(--font-ui);
+  font-size: var(--text-md);
+  font-weight: 800;
+  letter-spacing: .3em;
+  text-transform: uppercase;
+}
+.landing-profesionales h2.landing-prof-titulo::before,
+.landing-profesionales h2.landing-prof-titulo::after {
+  content: "";
+  width: clamp(40px, 8vw, 100px);
+  height: 1px;
+  background: #0f6b45;
+}
+.landing-prof-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(16px, 2.6vw, 32px);
+  max-width: 1040px;
+  margin: 0 auto;
+}
+.landing-prof-card {
+  overflow: hidden;
+  border-radius: 24px;
+  background: #fff;
+  box-shadow: 0 10px 30px rgba(24, 63, 50, .12);
+  text-align: left;
+}
+.landing-prof-foto {
+  width: 100%;
+  background-repeat: no-repeat;
+  background-color: #dfe9e4;
+}
+.landing-prof-info { padding: 18px 28px 22px; }
+.landing-prof-info h3 {
+  margin: 0 0 6px;
+  color: #102a20;
+  font-family: var(--font-display);
+  font-size: clamp(1.2rem, 1.8vw, 1.5rem);
+  font-weight: 400;
+}
+.landing-prof-info p {
+  margin: 0 0 12px;
+  color: #0f6b45;
+  font-size: var(--text-xs);
+  font-weight: 800;
+  letter-spacing: .26em;
+  text-transform: uppercase;
+}
+.landing-prof-linea { display: block; width: 64px; height: 4px; border-radius: 2px; background: #0f6b45; }
+@media (max-width: 860px) {
+  .landing-prof-grid { grid-template-columns: minmax(0, 1fr); max-width: 420px; }
+}
+
+/* Portada: titulo y descripcion alineados a la izquierda; el boton queda centrado respecto de ese bloque */
+.landing-hero-contenido { text-align: left; }
+.landing-hero p { margin-inline: 0; }
+.landing-hero-acciones { justify-content: center; }
+/* El boton se centra bajo el bloque de texto: mismo ancho que la descripcion, que es la linea mas ancha */
+.landing-hero p { max-width: 552px; }
+.landing-hero-acciones { width: 552px; max-width: 100%; }
+/* Portada: los botones van alineados a la izquierda, junto al texto */
+.landing-hero-acciones { justify-content: flex-start; width: auto; }
+
+/* ---------- Especialidades y Profesionales: cada una ocupa la pantalla ---------- */
+.landing-especialidades,
+.landing-profesionales {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: calc(100dvh - 64px);
+  scroll-margin-top: 64px;
+}
+
+/* ---------- Especialidades ---------- */
+.landing-especialidades {
+  background-color: #f6fbf8;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 700' preserveAspectRatio='none'%3E%3Cpath d='M0 0H460C330 70 250 200 0 190Z' fill='%23dcece3' fill-opacity='.6'/%3E%3Cpath d='M1200 120C1040 150 960 260 1200 330Z' fill='%23dcece3' fill-opacity='.55'/%3E%3Cpath d='M0 600C170 560 330 650 520 700H0Z' fill='%23dcece3' fill-opacity='.55'/%3E%3Cpath d='M760 700C940 640 1060 650 1200 610V700Z' fill='%23dcece3' fill-opacity='.5'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+}
+.landing-especialidades h2.landing-esp-titulo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(20px, 3vw, 36px);
+  margin: 0 auto clamp(32px, 6vh, 64px);
+  color: #0f6b45;
+  font-family: var(--font-ui);
+  font-size: clamp(1.1rem, 2vw, 1.6rem);
+  font-weight: 800;
+  letter-spacing: .32em;
+  text-transform: uppercase;
+}
+.landing-especialidades h2.landing-esp-titulo::before,
+.landing-especialidades h2.landing-esp-titulo::after {
+  content: "";
+  width: clamp(40px, 10vw, 150px);
+  height: 1.5px;
+  background: #0f6b45;
+}
+.landing-esp-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: clamp(12px, 1.6vw, 20px);
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0;
+  list-style: none;
+}
+.landing-esp-card {
+  display: flex;
+  align-items: center;
+  gap: clamp(10px, 1.2vw, 18px);
+  min-height: clamp(96px, 14vh, 130px);
+  padding: 14px clamp(14px, 1.8vw, 26px);
+  border: 1px solid #e3eee8;
+  border-radius: 20px;
+  background: linear-gradient(180deg, #ffffff 0%, #f3faf6 100%);
+  box-shadow: 0 6px 18px rgba(24, 63, 50, .09);
+  transition: transform var(--motion-fast, 150ms) ease, box-shadow var(--motion-base, 200ms) ease;
+}
+.landing-esp-icono {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: clamp(52px, 5vw, 72px);
+  aspect-ratio: 1;
+  border-radius: 20px;
+  background: #e4f1ea;
+  color: #0f6b45;
+  box-shadow: inset 0 0 0 1px rgba(15, 107, 69, .06);
+}
+.landing-esp-icono svg { width: 52%; height: 52%; }
+.landing-esp-nombre {
+  min-width: 0;
+  color: #12261d;
+  font-size: clamp(.95rem, 1.45vw, 1.3rem);
+  font-weight: var(--weight-semibold);
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+@media (hover: hover) and (pointer: fine) {
+  .landing-esp-card:hover { transform: translateY(-3px); box-shadow: 0 12px 26px rgba(24, 63, 50, .15); }
+}
+@media (max-width: 1100px) {
+  .landing-esp-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (max-width: 640px) {
+  .landing-esp-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .landing-esp-card { flex-direction: column; justify-content: center; text-align: center; padding: 14px 10px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .landing-esp-card { transition: none; }
+  .landing-esp-card:hover { transform: none; }
+}
+
+/* ---------- Al tocar Especialidades o Profesionales, el titulo queda arriba, justo bajo la barra ---------- */
+.landing-especialidades,
+.landing-profesionales { justify-content: flex-start; }
+.landing-especialidades { padding-top: clamp(48px, 8vh, 68px); }
+.landing-profesionales { padding-top: clamp(40px, 8vh, 64px); }
+
+/* Nombres de especialidades: sin cortar palabras (la tarjeta cede espacio al nombre) */
+.landing-esp-card { gap: clamp(8px, 1vw, 14px); padding: 12px clamp(10px, 1.2vw, 18px); }
+.landing-esp-icono { width: clamp(44px, 4vw, 60px); border-radius: 16px; }
+.landing-esp-nombre { font-size: clamp(.8rem, .98vw, 1.02rem); overflow-wrap: normal; word-break: normal; hyphens: auto; }
+
+/* ---------- Carrusel de profesionales (3D) ---------- */
+.landing-carrusel {
+  --ancho-tarjeta: clamp(230px, 24vw, 330px);
+  position: relative;
+  width: 100%;
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 0 56px;
+}
+.landing-carrusel-escena {
+  display: grid;
+  justify-items: center;
+  padding: 14px 0 44px;
+  perspective: 1500px;
+  perspective-origin: 50% 40%;
+  overflow: hidden;
+}
+.landing-carrusel-tarjeta {
+  grid-area: 1 / 1;
+  width: var(--ancho-tarjeta);
+  transform-origin: 50% 50%;
+  transition: transform 800ms cubic-bezier(.45, 0, .2, 1), opacity 800ms ease, filter 800ms ease;
+  cursor: default;
+  user-select: none;
+}
+.landing-carrusel-tarjeta:not(.central) { cursor: pointer; }
+.landing-carrusel .landing-prof-info { display: flex; flex: 1; flex-direction: column; }
+.landing-carrusel .landing-prof-linea { margin-top: auto; }
+.landing-carrusel .landing-prof-info p { line-height: 1.5; }
+.landing-carrusel .landing-prof-card { display: flex; flex-direction: column; }
+.landing-carrusel-flecha {
+  position: absolute;
+  top: 44%;
+  z-index: 20;
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: #fff;
+  color: #12261d;
+  box-shadow: 0 4px 14px rgba(24, 63, 50, .22);
+  cursor: pointer;
+  transform: translateY(-50%);
+  transition: background-color 150ms ease, box-shadow 150ms ease;
+}
+.landing-carrusel-flecha svg { width: 16px; height: 16px; }
+.landing-carrusel-flecha:hover { background: #e4f1ea; box-shadow: 0 6px 18px rgba(24, 63, 50, .28); }
+.landing-carrusel-flecha:focus-visible { outline: 3px solid var(--imos-action); outline-offset: 3px; }
+.landing-carrusel-flecha.anterior { left: 0; }
+.landing-carrusel-flecha.siguiente { right: 0; }
+@media (max-width: 640px) {
+  .landing-carrusel { --ancho-tarjeta: min(250px, 66vw); padding: 0 40px; }
+  .landing-carrusel-flecha { width: 38px; height: 38px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .landing-carrusel-tarjeta { transition: none; }
 }
