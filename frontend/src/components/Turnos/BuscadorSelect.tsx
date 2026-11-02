@@ -19,6 +19,8 @@ interface BuscadorSelectProps {
   invalido?: boolean;
   // false: siempre queda algo elegido (sin cruz para quitarlo)
   quitable?: boolean;
+  // true: la selección queda fija (no se puede cambiar ni quitar)
+  bloqueado?: boolean;
   // true: el detalle de lo elegido (ej. la especialidad) queda fijo a la derecha
   // y no se borra al editar el texto
   detalleFijo?: boolean;
@@ -29,7 +31,7 @@ const normalizar = (texto: string) =>
 
 // Selector con buscador: se escribe para filtrar, se elige de la lista y la
 // cruz de la derecha quita lo elegido.
-export function BuscadorSelect({ opciones, value, onChange, placeholder, ariaLabel, invalido = false, quitable = true, detalleFijo = false }: BuscadorSelectProps) {
+export function BuscadorSelect({ opciones, value, onChange, placeholder, ariaLabel, invalido = false, quitable = true, detalleFijo = false, bloqueado = false }: BuscadorSelectProps) {
   const idLista = useId();
   const entrada = useRef<HTMLInputElement>(null);
   const [abierto, setAbierto] = useState(false);
@@ -54,9 +56,11 @@ export function BuscadorSelect({ opciones, value, onChange, placeholder, ariaLab
   };
 
   const quitar = () => {
+    // Primero el foco (que escribe el nombre elegido y abre la lista) y después se vacía y se cierra
+    entrada.current?.focus();
     onChange("");
     setTexto("");
-    entrada.current?.focus();
+    setAbierto(false);
   };
 
   const alTeclear = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -89,7 +93,7 @@ export function BuscadorSelect({ opciones, value, onChange, placeholder, ariaLab
         className="form-control buscador-select-entrada"
         placeholder={cargando ? "Cargando..." : placeholder}
         value={abierto ? texto : seleccion?.etiqueta ?? ""}
-        disabled={cargando}
+        disabled={cargando || bloqueado}
         onFocus={(e) => {
           setAbierto(true);
           // El nombre elegido queda escrito para poder borrarlo o cambiarlo
@@ -111,7 +115,7 @@ export function BuscadorSelect({ opciones, value, onChange, placeholder, ariaLab
 
       {detalleFijo && seleccion?.detalle && <span className="buscador-select-detalle">{seleccion.detalle}</span>}
 
-      {seleccion && quitable && (
+      {seleccion && quitable && !bloqueado && (
         <button
           type="button"
           className="buscador-select-quitar"

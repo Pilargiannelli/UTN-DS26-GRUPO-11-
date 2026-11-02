@@ -1,6 +1,6 @@
 import { useState, type ReactNode } from "react";
 import { Button, Container, Tab, Tabs } from "react-bootstrap";
-import { CalendarPlus } from "react-bootstrap-icons";
+import { CalendarPlus, Calendar3, Clipboard2Pulse, JournalMedical, Lock, Person } from "react-bootstrap-icons";
 import Layout from "../components/Layout/Layout.tsx";
 import { BotonVolver } from "../components/BotonVolver.tsx";
 import { AvatarIniciales } from "../components/AvatarIniciales.tsx";
@@ -18,6 +18,7 @@ import { useEdad } from "../hooks/useEdad.ts";
 import type { Usuario } from "../types/Usuario.ts";
 import type { UsuarioSesion } from "../types/UsuarioSesion.ts";
 import "../assets/styles/Perfil.css";
+import "../assets/styles/PerfilDiseno.css";
 
 interface VerUsuarioProps {
     // /mi-cuenta: siempre el usuario logueado, nunca el último perfil que se
@@ -36,12 +37,15 @@ const NOMBRE_ROL = { SECRETARIA: "Secretaría", MEDICO: "Médico", PACIENTE: "Pa
 const fechaCorta = (iso?: string) => (iso ? iso.slice(0, 10).split("-").reverse().join("/") : "—");
 
 // Panel de una pestaña: título + descripción y el contenido en una tarjeta
-function Panel({ titulo, descripcion, children }: { titulo: string; descripcion?: string; children: ReactNode }) {
+function Panel({ titulo, descripcion, icono, children }: { titulo: string; descripcion?: string; icono: ReactNode; children: ReactNode }) {
     return (
         <section className="perfil-panel">
             <header className="perfil-panel-encabezado">
-                <h2 className="perfil-panel-titulo">{titulo}</h2>
-                {descripcion && <p className="perfil-panel-descripcion">{descripcion}</p>}
+                <span className="perfil-panel-icono" aria-hidden="true">{icono}</span>
+                <div className="perfil-panel-textos">
+                    <h2 className="perfil-panel-titulo">{titulo}</h2>
+                    {descripcion && <p className="perfil-panel-descripcion">{descripcion}</p>}
+                </div>
             </header>
             {children}
         </section>
@@ -83,6 +87,8 @@ function VerUsuario({ propio = false, perfilPaciente, migas, onPerfilActualizado
     const verTurnos = esPaciente && !esMiPerfil && (tieneRol("SECRETARIA") || tieneRol("MEDICO"));
     // Historia clínica: el médico la de sus pacientes, el paciente la suya
     const verHistoria = esPaciente && !!paciente && (tieneRol("MEDICO") || esMiPerfil);
+    // Un profesional visto por otro usuario tiene una sola sección: no hace falta la barra de pestañas
+    const sinBarraDePestanias = perfil.rol === "MEDICO" && !esMiPerfil;
     const cobertura = paciente?.coberturas?.[0];
 
     const fichaPaciente: [string, string][] = paciente ? [
@@ -110,20 +116,23 @@ function VerUsuario({ propio = false, perfilPaciente, migas, onPerfilActualizado
         <Layout>
             <ToastMensaje mensaje={aviso ?? ""} tipo="toast-good" mostrar={aviso !== null} onClose={() => setAviso(null)} />
 
-            <Container className="perfil">
+            <Container className={`perfil${propio ? " perfil-propio" : ""}`}>
                 {migas ?? (!propio && <BotonVolver />)}
 
                 {/* ── Quién es: avatar, nombre, contacto y rol ── */}
                 <header className="perfil-encabezado">
                     <AvatarIniciales nombre={perfil.nombre} apellido={perfil.apellido} id={perfil.id} tamanio="xl" />
-                    <h1 className="perfil-nombre">{perfil.nombre} {perfil.apellido}</h1>
-                    <p className="perfil-subtitulo">
-                        {perfil.email}
-                        {paciente?.telefono && <> · {paciente.telefono}</>}
-                    </p>
-                    <span className={`perfil-rol perfil-rol-${perfil.rol.toLowerCase()}`}>
-                        {esMiPerfil ? `Mi cuenta · ${NOMBRE_ROL[perfil.rol]}` : NOMBRE_ROL[perfil.rol]}
-                    </span>
+                    <div className="perfil-identidad">
+                        <h1 className="perfil-nombre">{perfil.nombre} {perfil.apellido}</h1>
+                        <p className="perfil-subtitulo">
+                            {perfil.email}
+                            {paciente?.telefono && <> · {paciente.telefono}</>}
+                        </p>
+                        <span className={`perfil-rol perfil-rol-${perfil.rol.toLowerCase()}`}>
+                            <Person aria-hidden="true" />
+                            {esMiPerfil ? `Mi cuenta · ${NOMBRE_ROL[perfil.rol]}` : NOMBRE_ROL[perfil.rol]}
+                        </span>
+                    </div>
                     {secretariaEditaPaciente && paciente && (
                         <Button variant="primary" className="perfil-accion" onClick={() => setDarTurno(true)}>
                             <CalendarPlus aria-hidden="true" className="me-2" />Dar turno
@@ -136,14 +145,14 @@ function VerUsuario({ propio = false, perfilPaciente, migas, onPerfilActualizado
                     defaultActiveKey="datos"
                     id="perfil-pestanias"
                     variant="pills"
-                    className="perfil-tabs"
+                    className={`perfil-tabs${sinBarraDePestanias ? " perfil-tabs-ocultas" : ""}`}
                     mountOnEnter
                     unmountOnExit
                     transition={false}
                 >
-                    <Tab eventKey="datos" title={secretariaEditaPaciente ? "Datos del paciente" : "Datos personales"}>
+                    <Tab eventKey="datos" title={<><Person aria-hidden="true" />{secretariaEditaPaciente ? "Datos del paciente" : "Datos personales"}</>}>
                         {secretariaEditaPaciente ? (
-                            <Panel titulo="Datos del paciente" descripcion="Datos personales, de contacto y obra social.">
+                            <Panel titulo="Datos del paciente" descripcion="Datos personales, de contacto y obra social." icono={<Person />}>
                                 <PacienteFormFields
                                     key={fichaVersion}
                                     usuario={perfil}
@@ -152,11 +161,11 @@ function VerUsuario({ propio = false, perfilPaciente, migas, onPerfilActualizado
                                 />
                             </Panel>
                         ) : esMiPerfil && usuario ? (
-                            <Panel titulo="Datos personales" descripcion="Tu nombre y el email con el que ingresás.">
+                            <Panel titulo="Datos personales" descripcion="Tu nombre y el email con el que ingresás." icono={<Person />}>
                                 <DatosCuentaForm usuario={usuario} onGuardado={cuentaGuardada} />
                             </Panel>
                         ) : (
-                            <Panel titulo="Datos personales">
+                            <Panel titulo="Datos personales" icono={<Person />}>
                                 <DatosPerfil datos={[
                                     ["Nombre", `${perfil.nombre} ${perfil.apellido}`],
                                     ["DNI", perfil.dni],
@@ -172,30 +181,30 @@ function VerUsuario({ propio = false, perfilPaciente, migas, onPerfilActualizado
 
                     {/* El paciente ve su ficha, pero la modifica la secretaría */}
                     {esMiPerfil && esPaciente && paciente && (
-                        <Tab eventKey="ficha" title="Mi ficha">
-                            <Panel titulo="Mi ficha" descripcion="Para cambiar estos datos, comunicate con la secretaría de la clínica.">
+                        <Tab eventKey="ficha" title={<><Clipboard2Pulse aria-hidden="true" />Mi ficha</>}>
+                            <Panel titulo="Mi ficha" descripcion="Para cambiar estos datos, comunicate con la secretaría de la clínica." icono={<Clipboard2Pulse />}>
                                 <DatosPerfil datos={fichaPaciente} />
                             </Panel>
                         </Tab>
                     )}
 
                     {verTurnos && paciente && (
-                        <Tab eventKey="turnos" title="Próximos turnos">
-                            <Panel titulo="Próximos turnos">
+                        <Tab eventKey="turnos" title={<><Calendar3 aria-hidden="true" />Próximos turnos</>}>
+                            <Panel titulo="Próximos turnos" icono={<Calendar3 />}>
                                 <ProximosTurnosPaciente key={turnosVersion} pacienteId={paciente.id} />
                             </Panel>
                         </Tab>
                     )}
 
                     {verHistoria && paciente && (
-                        <Tab eventKey="historia" title="Historia clínica">
+                        <Tab eventKey="historia" title={<><JournalMedical aria-hidden="true" />Historia clínica</>}>
                             <HistorialMedicoCard pacienteId={paciente.id} />
                         </Tab>
                     )}
 
                     {esMiPerfil && (
-                        <Tab eventKey="seguridad" title="Seguridad">
-                            <Panel titulo="Contraseña" descripcion="Elegí una contraseña que no uses en otros sitios.">
+                        <Tab eventKey="seguridad" title={<><Lock aria-hidden="true" />Seguridad</>}>
+                            <Panel titulo="Contraseña" descripcion="Elegí una contraseña que no uses en otros sitios." icono={<Lock />}>
                                 <NewPasswordForm onListo={() => setAviso("Contraseña actualizada")} />
                             </Panel>
                         </Tab>

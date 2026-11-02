@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { Alert, Container, Spinner } from "react-bootstrap";
 import Layout from "../components/Layout/Layout.tsx";
 import { Migas } from "../components/Migas.tsx";
+import { BotonVolver } from "../components/BotonVolver.tsx";
 import { PanelPacienteMedico } from "../components/Medico/PanelPacienteMedico.tsx";
 import { useFetch } from "../hooks/useFetch.ts";
 import { useAuth } from "../hooks/useAuth.ts";
@@ -75,6 +76,8 @@ function FichaPaciente() {
     return (
       <Layout>
         <Container className="perfil perfil-medico">
+          {/* Por si se abrió la historia del paciente equivocado: vuelve al listado */}
+          <BotonVolver destino="/buscar-paciente" />
           {migas}
           <PanelPacienteMedico usuario={usuario} paciente={usuario.paciente!} />
         </Container>

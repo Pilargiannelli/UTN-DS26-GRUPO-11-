@@ -16,6 +16,8 @@ import PedirTurno from "./pages/PedirTurno.tsx";
 import BuscarMedico from "./pages/BuscarMédico.tsx";
 import OrdenDelDia from "./pages/OrdenDelDia.tsx";
 import FichaPaciente from "./pages/FichaPaciente.tsx";
+import HistorialConsultas from "./pages/HistorialConsultas.tsx";
+import TurnosPaciente from "./pages/TurnosPaciente.tsx";
 import NoEncontrada from "./pages/NoEncontrada.tsx";
 import Layout from "./components/Layout/Layout.tsx";
 
@@ -62,6 +64,15 @@ function App() {
         <Route path="/pacientes/:id" element={<FichaPaciente />} />
         {/* GestionTurnos no trae Layout propio (Home lo usa adentro del suyo) */}
         <Route path="/gestion-turnos" element={<Layout><GestionTurnos /></Layout>} />
+      </Route>
+
+      {/* ========================================== */}
+      {/* RUTAS EXCLUSIVAS DEL MÉDICO */}
+      {/* La historia clínica y los turnos propios del paciente */}
+      {/* ========================================== */}
+      <Route element={<PrivateRoute roles={["MEDICO"]} />}>
+        <Route path="/pacientes/:id/historial" element={<HistorialConsultas />} />
+        <Route path="/pacientes/:id/turnos" element={<TurnosPaciente />} />
       </Route>
 
       {/* ========================================== */}

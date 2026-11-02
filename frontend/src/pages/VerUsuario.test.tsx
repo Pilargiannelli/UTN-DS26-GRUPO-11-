@@ -49,12 +49,33 @@ beforeEach(() => localStorage.clear());
 afterEach(cleanup);
 
 describe("Mi cuenta", () => {
+  it("médico y paciente ven su DNI (solo lectura) en Mi cuenta", () => {
+    const medico = { ...secretaria, id: 5, rol: "MEDICO" as const, dni: "28456789" };
+    renderizar(medico, true);
+    expect(screen.getByLabelText("DNI")).toBeDisabled();
+    expect(screen.getByLabelText("DNI")).toHaveValue("28456789");
+    expect(screen.getByRole("tab", { name: "Datos personales" })).toBeInTheDocument();
+    expect(screen.getByRole("tab", { name: "Seguridad" })).toBeInTheDocument();
+  });
+
+  it("el perfil de un profesional (visto por otro) no muestra la barra de pestañas", () => {
+    const medico = { id: 5, username: "dr", nombre: "Mauricio", apellido: "Castellani", dni: "20111333", email: "m@clinica.com", fotoPerfil: null, rol: "MEDICO" as const, medico: { id: 2, especialidad: "Traumatología", matricula: "MP-1" } };
+    const { container } = render(
+      <AuthContext.Provider value={{ usuario: secretaria, rol: "SECRETARIA", cargando: false, estaAutenticado: true, setUsuario: vi.fn(), tieneRol: (r) => r === "SECRETARIA", login: vi.fn(), logout: vi.fn() }}>
+        <MemoryRouter><VerUsuario perfilPaciente={medico as never} /></MemoryRouter>
+      </AuthContext.Provider>
+    );
+    expect(container.querySelector(".perfil-tabs-ocultas")).not.toBeNull();
+    expect(screen.getByText("Traumatología")).toBeInTheDocument();
+  });
+
   it("muestra quién es y los datos se editan directo: Guardar se habilita al cambiar algo", () => {
     renderizar(secretaria, true);
 
     expect(screen.getByRole("heading", { name: "Ana Martínez" })).toBeInTheDocument();
     expect(screen.getByText("Mi cuenta · Secretaría")).toBeInTheDocument();
-    expect(screen.getByLabelText("DNI")).toBeDisabled();
+    // La secretaría no ve el DNI en su propia cuenta
+    expect(screen.queryByLabelText("DNI")).not.toBeInTheDocument();
 
     const guardar = screen.getByRole("button", { name: "Guardar cambios" });
     expect(guardar).toBeDisabled();

@@ -4,6 +4,28 @@ import { TurnoEstado, DiaSemana, Rol } from "../src/generated/prisma/enums";
 
 const SALT_ROUNDS = 10;
 
+// Profesionales de la sección "Profesionales" de la landing, con la especialidad de cada uno (agenda de lunes a viernes)
+const PROFESIONALES_LANDING = [
+  { username: "dr_agostino", nombre: "Mariana", apellido: "Agostino", dni: "30100200", email: "mariana.agostino@clinica.com", password: "Agostino1234", especialidad: "Nutrición", matricula: "MP-52400" },
+  { username: "dr_almada", nombre: "Raúl", apellido: "Almada", dni: "30100311", email: "raul.almada@clinica.com", password: "Almada1234", especialidad: "Cardiología", matricula: "MP-52407" },
+  { username: "dr_armendariz", nombre: "Alejandro", apellido: "Armendariz", dni: "30100422", email: "alejandro.armendariz@clinica.com", password: "Armendariz1234", especialidad: "Cirugía", matricula: "MP-52414" },
+  { username: "dr_bertoni", nombre: "Facundo", apellido: "Bertoni", dni: "30100533", email: "facundo.bertoni@clinica.com", password: "Bertoni1234", especialidad: "Otorrinolaringología", matricula: "MP-52421" },
+  { username: "dr_casalino", nombre: "Sandra", apellido: "Casalino", dni: "30100644", email: "sandra.casalino@clinica.com", password: "Casalino1234", especialidad: "Ecografías", matricula: "MP-52428" },
+  { username: "dr_cordero", nombre: "Diego", apellido: "Cordero", dni: "30100755", email: "diego.cordero@clinica.com", password: "Cordero1234", especialidad: "Cardiología", matricula: "MP-52435" },
+  { username: "dr_croce", nombre: "Adriana", apellido: "Croce", dni: "30100866", email: "adriana.croce@clinica.com", password: "Croce1234", especialidad: "Ortodoncia y Ortopedia", matricula: "MP-52442" },
+  { username: "dr_garat", nombre: "Betina", apellido: "Garat", dni: "30100977", email: "betina.garat@clinica.com", password: "Garat1234", especialidad: "Ecografías", matricula: "MP-52449" },
+  { username: "dr_giustozzi", nombre: "Verónica", apellido: "Giustozzi", dni: "30101088", email: "veronica.giustozzi@clinica.com", password: "Giustozzi1234", especialidad: "Oftalmología", matricula: "MP-52456" },
+  { username: "dr_lopez", nombre: "Gabriel", apellido: "López", dni: "30101199", email: "gabriel.lopez@clinica.com", password: "Lopez1234", especialidad: "Psiquiatría", matricula: "MP-52463" },
+  { username: "dr_lorden", nombre: "Alejandra", apellido: "Lorden", dni: "30101310", email: "alejandra.lorden@clinica.com", password: "Lorden1234", especialidad: "Ginecología", matricula: "MP-52470" },
+  { username: "dr_lmengarelli", nombre: "Luisina", apellido: "Mengarelli", dni: "30101421", email: "luisina.mengarelli@clinica.com", password: "Mengarelli1234", especialidad: "Odontología", matricula: "MP-52477" },
+  { username: "dr_mmengarelli", nombre: "Marcelo", apellido: "Mengarelli", dni: "30101532", email: "marcelo.mengarelli@clinica.com", password: "Mengarelli1234", especialidad: "Odontología", matricula: "MP-52484" },
+  { username: "dr_nauan", nombre: "Fara", apellido: "Nauan", dni: "30101643", email: "fara.nauan@clinica.com", password: "Nauan1234", especialidad: "Reumatología", matricula: "MP-52491" },
+  { username: "dr_apineyro", nombre: "Alejandro", apellido: "Piñeyro", dni: "30101754", email: "alejandro.pineyro@clinica.com", password: "Pineyro1234", especialidad: "Ginecología", matricula: "MP-52498" },
+  { username: "dr_mpineyro", nombre: "Marianela", apellido: "Piñeyro", dni: "30101865", email: "marianela.pineyro@clinica.com", password: "Pineyro1234", especialidad: "Pediatría", matricula: "MP-52505" },
+  { username: "dr_tiberi", nombre: "Martina", apellido: "Tiberi", dni: "30101976", email: "martina.tiberi@clinica.com", password: "Tiberi1234", especialidad: "Fonoaudiología", matricula: "MP-52512" },
+  { username: "dr_trofino", nombre: "Guillermo", apellido: "Trofino", dni: "30102087", email: "guillermo.trofino@clinica.com", password: "Trofino1234", especialidad: "Medicina General", matricula: "MP-52519" },
+];
+
 // Obras sociales con las que trabaja la clínica. OSDE y Swiss Medical se crean más abajo; "Sin obra social" lo agrega el formulario.
 const OBRAS_SOCIALES_CLINICA = [
   "25JUNIO",
@@ -215,6 +237,28 @@ async function main() {
           DiaSemana.Jueves,
           DiaSemana.Viernes,
         ],
+        intervaloTurno: 30,
+      },
+    });
+  }
+
+  for (const { password, especialidad, matricula, ...datos } of PROFESIONALES_LANDING) {
+    const usuario = await prisma.usuario.upsert({
+      where: { email: datos.email },
+      update: {},
+      create: { ...datos, fotoPerfil: null, rol: Rol.MEDICO, passwordHash: await bcrypt.hash(password, SALT_ROUNDS) },
+    });
+    const profesional = await prisma.medico.upsert({
+      where: { usuarioId: usuario.id },
+      update: {},
+      create: { usuarioId: usuario.id, especialidad, matricula },
+    });
+    await prisma.agenda.upsert({
+      where: { medicoId: profesional.id },
+      update: {},
+      create: {
+        medicoId: profesional.id,
+        horariosAtencion: [DiaSemana.Lunes, DiaSemana.Martes, DiaSemana.Miercoles, DiaSemana.Jueves, DiaSemana.Viernes],
         intervaloTurno: 30,
       },
     });

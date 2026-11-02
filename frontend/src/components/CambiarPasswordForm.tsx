@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Form, Button, Spinner, Row, Col } from 'react-bootstrap'
+import { Check2 } from "react-bootstrap-icons";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { newPasswordSchema, type NewPasswordValidada } from "../schemas/newPasswordSchema";
 import { apiFetch } from "../services/api";
@@ -64,7 +65,7 @@ export function NewPasswordForm({ onListo }: NewPasswordFormProps) {
                     <Button variant="outline-secondary" onClick={() => reset()} disabled={isSubmitting}>Descartar</Button>
                 )}
                 <Button type="submit" variant="primary" disabled={isSubmitting || !isDirty}>
-                    {isSubmitting ? <Spinner size="sm" animation="border" /> : "Cambiar contraseña"}
+                    {isSubmitting ? <Spinner size="sm" animation="border" /> : <><Check2 aria-hidden="true" />Cambiar contraseña</>}
                 </Button>
             </div>
         </Form>

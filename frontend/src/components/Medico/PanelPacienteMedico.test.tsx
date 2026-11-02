@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { cleanup, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
+import { MemoryRouter } from "react-router-dom";
 import { PanelPacienteMedico } from "./PanelPacienteMedico";
 import { apiFetch } from "../../services/api";
 import type { Usuario } from "../../types/Usuario";
@@ -42,7 +43,7 @@ afterEach(() => {
   vi.mocked(apiFetch).mockReset();
 });
 
-const renderizar = () => render(<PanelPacienteMedico usuario={usuario} paciente={usuario.paciente!} />);
+const renderizar = () => render(<MemoryRouter><PanelPacienteMedico usuario={usuario} paciente={usuario.paciente!} /></MemoryRouter>);
 
 describe("Ficha del paciente para el médico", () => {
   it("muestra las alergias como alerta y las consultas de la más nueva a la más vieja", async () => {
@@ -55,8 +56,27 @@ describe("Ficha del paciente para el médico", () => {
 
   it("las consultas no tienen botón de editar ni borrar (Ley 26.529)", async () => {
     renderizar();
-    const historiaClinica = (await screen.findByText("Control post-operatorio")).closest("ol")!;
-    expect(within(historiaClinica).queryByRole("button")).not.toBeInTheDocument();
+    const lista = (await screen.findByText("Control post-operatorio")).closest("ol")!;
+    expect(within(lista).queryAllByRole("button")).toHaveLength(0);
+  });
+
+  it("muestra solo las 3 consultas más recientes y un botón Ver todas", async () => {
+    const mas = Array.from({ length: 5 }, (_, i) => ({
+      id: 10 + i, historiaClinicaId: 1, fecha: `2026-0${i + 1}-10T13:00:00.000Z`, diagnostico: `Consulta ${i + 1}`, evolucion: "Ok", observaciones: "",
+    })).reverse();
+    vi.mocked(apiFetch).mockResolvedValue({ ...historia, entradas: mas });
+    renderizar();
+
+    await screen.findByText("Consulta 5");
+    expect(screen.getByText("Consulta 3")).toBeInTheDocument();
+    expect(screen.queryByText("Consulta 2")).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Ver todas (5)" })).toBeInTheDocument();
+  });
+
+  it("sin más de 3 consultas no aparece Ver todas", async () => {
+    renderizar();
+    await screen.findByText("Control post-operatorio");
+    expect(screen.queryByRole("button", { name: /Ver todas/ })).not.toBeInTheDocument();
   });
 
   it("el médico agrega una alergia y la guarda", async () => {
