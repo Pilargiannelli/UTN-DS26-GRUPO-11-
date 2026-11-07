@@ -223,7 +223,6 @@ export function RegistroPacienteForm({ modo }: RegistroPacienteFormProps) {
                                 <Form.Group className="mb-3" controlId="reg-password">
                                     <Form.Label className="d-flex me-auto">Contraseña</Form.Label>
                                     <Form.Control type="password" autoComplete="new-password" {...register("password")} isInvalid={!!errors.password} />
-                                    <Form.Text>Al menos 8 caracteres, con mayúscula, minúscula y número.</Form.Text>
                                     <Form.Control.Feedback type="invalid"> {errors.password?.message} </Form.Control.Feedback>
                                 </Form.Group>
                             </Col>

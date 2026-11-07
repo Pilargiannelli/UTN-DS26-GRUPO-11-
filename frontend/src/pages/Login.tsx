@@ -109,7 +109,7 @@ export default function Login() {
 
               <Form.Control
                 className="login-input"
-                type="email"
+                type="text"
                 placeholder="email"
                 autoComplete="email"
                 {...register("email")}
