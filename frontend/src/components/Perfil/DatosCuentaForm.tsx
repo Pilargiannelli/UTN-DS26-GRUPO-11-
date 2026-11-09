@@ -68,7 +68,7 @@ export function DatosCuentaForm({ usuario, onGuardado }: DatosCuentaFormProps) {
         <Col md={usuario.rol === "SECRETARIA" ? 12 : 6}>
           <Form.Group controlId="cuenta-email">
             <Form.Label>Email</Form.Label>
-            <Form.Control type="email" {...register("email")} isInvalid={!!errors.email} />
+            <Form.Control type="text" {...register("email")} isInvalid={!!errors.email} />
             <Form.Control.Feedback type="invalid">{errors.email?.message}</Form.Control.Feedback>
           </Form.Group>
         </Col>
