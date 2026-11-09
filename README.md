@@ -110,8 +110,8 @@ La aplicación está desplegada en **Render** (backend y frontend) con la base d
 
 | Servicio | Plataforma | URL |
 |---|---|---|
-| Frontend | Render · Static Site | _(completar con la URL del front)_ |
-| Backend (API) | Render · Web Service (Docker) | _(completar con la URL del back)_ |
+| Frontend | Render · Static Site | https://imos-frontend.onrender.com |
+| Backend (API) | Render · Web Service (Docker) | https://imos-api-entd.onrender.com |
 | Base de datos | Neon · PostgreSQL (AWS us-east-1) | privada |
 
 > En el plan gratuito el backend se "duerme" sin tráfico: la primera petición puede tardar cerca de un minuto.
@@ -170,6 +170,8 @@ Cada push a `main` redeploya los servicios afectados (cambiar una variable de en
 - **Turnos contra la API real:** se reemplazaron los mocks en JSON por llamadas reales a la API para pedir, listar y cancelar turnos.
 - **Gestión de usuarios:** registro de pacientes (por la secretaria o con "Crear cuenta"), listado y búsqueda de pacientes y médicos, con formularios validados (Zod/schemas por tipo de usuario).
   - Un paciente que da de alta la secretaria entra con su **email** y su **DNI como contraseña inicial**. Quien se registra con "Crear cuenta" elige su contraseña.
+  - La secretaría también da de alta a los médicos (nombre, DNI, email, especialidad elegida de una lista y matrícula). El médico entra con su **email** y su **DNI como contraseña inicial**.
+- **Agenda:** vista diaria y semanal de turnos para médico y secretaría, con historia clínica y consultas por paciente.
 - **Modelo de datos:** definido en Prisma (Usuario, Paciente, Médico, Secretaria, Turno, Agenda, HistoriaClínica, ObraSocial, Especialidad, entre otros), con migraciones y seed de datos de prueba.
 - **Entorno reproducible:** `docker compose up` levanta base de datos y API con un solo comando; variables de entorno separadas por `.env.example` en backend y frontend.
 
@@ -179,7 +181,7 @@ Cada push a `main` redeploya los servicios afectados (cambiar una variable de en
 - Completar el circuito de historia clínica y agenda semanal del médico.
 - Integrar el asistente de WhatsApp (IA) para confirmación de turnos, validación de pagos y recordatorios — todavía no implementado, es la funcionalidad diferencial del proyecto.
 - Reforzar validaciones y matriz de permisos por rol en endpoints nuevos.
-- Sumar tests automatizados (actualmente la verificación es manual vía `api.http` y prueba en la UI).
+- Seguir ampliando los tests automatizados (ya hay suites en backend y frontend, ver la sección Testing) y sumar integración continua (CI) para correrlos en cada push.
 
 ---
 

@@ -59,6 +59,25 @@ describe("VistaAgendaSemanal", () => {
     expect(link).toHaveClass("estado-confirmado");
   });
 
+  it("con nombre corto, hora y nombre van en un renglón separados por un guion", () => {
+    renderAgenda([{ ...turno(1, 5, 9), paciente: { id: 1, usuario: { nombre: "Ana", apellido: "Gómez" } } } as Turno]);
+
+    const link = screen.getByRole("link", { name: /09:00/ });
+    expect(link).not.toHaveClass("agenda-evento-largo");
+    expect(link).toHaveTextContent("09:00–Ana Gómez");
+  });
+
+  it("con nombre largo, va la hora y abajo el nombre (sin guion)", () => {
+    renderAgenda([
+      { ...turno(1, 5, 9), paciente: { id: 1, usuario: { nombre: "Maria Fernanda", apellido: "Rodriguez Gomez" } } } as Turno,
+    ]);
+
+    const link = screen.getByRole("link", { name: /09:00/ });
+    expect(link).toHaveClass("agenda-evento-largo");
+    expect(link).toHaveTextContent("09:00Maria Fernanda Rodriguez Gomez");
+    expect(link.textContent).not.toContain("–");
+  });
+
   it("dibuja las horas de la grilla de 08:00 a 19:00", () => {
     renderAgenda([]);
 

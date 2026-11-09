@@ -10,7 +10,10 @@ interface Props {
   turnosDelDia: (fecha: Date) => Turno[];
 }
 
-const nombreDia = (d: Date) => d.toLocaleDateString("es-AR", { weekday: "short" }).replace(".", "");
+// Cantidad de letras de "Nombre Apellido" a partir de la cual el turno pasa a dos renglones
+const NOMBRE_LARGO = 18;
+
+const nombreDia =(d: Date) => d.toLocaleDateString("es-AR", { weekday: "short" }).replace(".", "");
 
 // Semana de lunes a viernes: una columna por día con sus turnos
 export default function VistaAgendaSemanal({ diasSemana, turnosDelDia }: Props) {
@@ -54,15 +57,18 @@ export default function VistaAgendaSemanal({ diasSemana, turnosDelDia }: Props) 
             ))}
             {ubicarTurnos(turnosDelDia(dia)).map(({ turno, estilo }) => {
               const paciente = `${turno.paciente.usuario.nombre} ${turno.paciente.usuario.apellido}`;
+              // Nombre corto: "09:00 – Nombre Apellido" en una línea. Nombre largo: la hora y abajo el nombre
+              const largo = paciente.length > NOMBRE_LARGO;
               return (
                 <Link
                   key={turno.id}
                   to={`/pacientes/${turno.pacienteId}`}
-                  className={`agenda-evento agenda-evento-compact estado-${turno.estado.toLowerCase()}`}
+                  className={`agenda-evento agenda-evento-compact${largo ? " agenda-evento-largo" : ""} estado-${turno.estado.toLowerCase()}`}
                   style={estilo}
                   title={`${formatearHora(turno.fechaHora)} · ${paciente} · ${turno.estado}`}
                 >
                   <span className="agenda-evento-hora">{formatearHora(turno.fechaHora)}</span>
+                  {!largo && <span className="agenda-evento-separador" aria-hidden="true">–</span>}
                   <span className="agenda-evento-paciente">{paciente}</span>
                 </Link>
               );
