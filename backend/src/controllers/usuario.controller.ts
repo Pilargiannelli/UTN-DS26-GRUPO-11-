@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import * as usuarioService from "../services/usuario.service";
 import * as pacienteService from "../services/paciente.service";
+import * as medicoService from "../services/medico.service";
 
 export async function getUsuarios(_req: Request, res: Response, next: NextFunction) {
   try {
@@ -15,6 +16,16 @@ export async function getMedicos(_req: Request, res: Response, next: NextFunctio
   try {
     const medicos = await usuarioService.listarMedicos();
     return res.json(medicos);
+  } catch (error) {
+    return next(error);
+  }
+}
+
+export async function createMedico(req: Request, res: Response, next: NextFunction) {
+  try {
+    // DNI, email o matrícula repetida -> ErrorNegocio 409 con el mensaje correspondiente
+    const medico = await medicoService.crearMedico(req.body);
+    return res.status(201).json(medico);
   } catch (error) {
     return next(error);
   }

@@ -11,12 +11,17 @@ vi.mock("../services/paciente.service", () => ({
   actualizarPaciente: vi.fn(),
   crearPaciente: vi.fn(),
 }));
+vi.mock("../services/medico.service", () => ({
+  crearMedico: vi.fn(),
+}));
 
 import * as usuarioService from "../services/usuario.service";
 import * as pacienteService from "../services/paciente.service";
+import * as medicoService from "../services/medico.service";
 import {
   getUsuarios,
   getMedicos,
+  createMedico,
   getPacientes,
   getPaciente,
   updatePaciente,
@@ -25,6 +30,7 @@ import {
 
 const usr = vi.mocked(usuarioService);
 const pac = vi.mocked(pacienteService);
+const med = vi.mocked(medicoService);
 
 function mocks(req: Partial<Request> = {}) {
   const res = { status: vi.fn().mockReturnThis(), json: vi.fn().mockReturnThis() };
@@ -55,6 +61,16 @@ describe("usuario.controller", () => {
     await getMedicos(req, res, next);
 
     expect(res.json).toHaveBeenCalledWith([{ id: 2 }]);
+  });
+
+  it("createMedico responde 201", async () => {
+    med.crearMedico.mockResolvedValue({ id: 8 } as never);
+    const { req, res, next } = mocks({ body: { dni: "30123456" } });
+
+    await createMedico(req, res, next);
+
+    expect(res.status).toHaveBeenCalledWith(201);
+    expect(res.json).toHaveBeenCalledWith({ id: 8 });
   });
 
   it("getPacientes le pasa al service el rol del usuario del token", async () => {
@@ -99,11 +115,11 @@ describe("usuario.controller", () => {
 
   it("todos los handlers pasan el error a next()", async () => {
     const error = new Error("x");
-    for (const fn of [...Object.values(usr), ...Object.values(pac)]) {
+    for (const fn of [...Object.values(usr), ...Object.values(pac), ...Object.values(med)]) {
       (fn as ReturnType<typeof vi.fn>).mockRejectedValue(error);
     }
 
-    for (const handler of [getUsuarios, getMedicos, getPacientes, getPaciente, updatePaciente, createPaciente]) {
+    for (const handler of [getUsuarios, getMedicos, createMedico, getPacientes, getPaciente, updatePaciente, createPaciente]) {
       const { req, res, next } = mocks({ body: {}, usuario: { sub: 1 } as never });
       await handler(req, res, next);
       expect(next).toHaveBeenCalledWith(error);
