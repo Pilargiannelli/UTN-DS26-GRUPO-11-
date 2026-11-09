@@ -155,3 +155,24 @@ docker compose run --rm api npm run test:db
 
 # 3. Ejecutar la suite completa de pruebas unitarias y de matriz
 docker compose run --rm api npm run test
+```
+
+### Tests unitarios del backend (sin base de datos)
+
+Los `*.test.ts` (sin `.db`) corren sin Docker ni base de datos: Prisma se reemplaza con `vi.mock`. Cubren los schemas Zod, los middlewares (`authenticate`, `authorize`, `validate`, `errorHandler`), los controllers (que solo delegan en el service y pasan los errores a `next`) y los services (reglas de negocio y titularidad: turnos, pacientes, historia clínica, auth).
+
+```bash
+cd backend
+npm install
+npm test
+```
+
+### Tests del frontend
+
+Corren en el host, sin Docker, con **Vitest + Testing Library** (entorno `jsdom`). Cubren utilidades (`fecha`, `horarios`, `periodos`), schemas Zod, hooks, el `AuthProvider`, componentes y páginas (por ejemplo, el menú y el inicio según el rol).
+
+```bash
+cd frontend
+npm install
+npm test
+```

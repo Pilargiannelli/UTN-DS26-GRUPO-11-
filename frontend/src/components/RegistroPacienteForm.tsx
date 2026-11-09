@@ -1,3 +1,5 @@
+import type { ChangeEvent } from "react";
+import type { UseFormRegisterReturn } from "react-hook-form";
 import { useForm, type Resolver, useWatch, type Path } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { pacienteSchema, SIN_OBRA_SOCIAL, type PacienteValidado } from '../schemas/pacienteSchema.ts';
@@ -39,6 +41,15 @@ export function RegistroPacienteForm({ modo }: RegistroPacienteFormProps) {
     const navigate = useNavigate();
     const { tieneRol } = useAuth();
     const handleMayus = useMayus();
+    // Pasa a mayúsculas y recién después le avisa al formulario: si solo se pusiera handleMayus como
+    // onChange, react-hook-form no se enteraría del cambio (ni el valor ni que el formulario cambió)
+    const conMayusculas = (campo: UseFormRegisterReturn) => ({
+        ...campo,
+        onChange: (e: ChangeEvent<HTMLInputElement>) => {
+            handleMayus(e);
+            return campo.onChange(e);
+        },
+    });
     const [submitting, setSubmitting] = useState(false);
     const [errorMsg, setErrorMsg] = useState<string | null>(null);
     const esAutoregistro = modo === "autoregistro";
@@ -200,7 +211,7 @@ export function RegistroPacienteForm({ modo }: RegistroPacienteFormProps) {
                     <Col md={4}>
                         <Form.Group className="mb-3" controlId="reg-afiliado">
                             <Form.Label className="d-flex me-auto">Número de afiliado</Form.Label>
-                            <Form.Control type="text" placeholder="Ej: A-123456" {...register("nroAfiliado")} onChange={handleMayus} isInvalid={!!errors.nroAfiliado?.message} disabled={sinObraSocial} />
+                            <Form.Control type="text" placeholder="Ej: A-123456" {...conMayusculas(register("nroAfiliado"))} isInvalid={!!errors.nroAfiliado?.message} disabled={sinObraSocial} />
                             <Form.Control.Feedback type="invalid"> {errors.nroAfiliado?.message} </Form.Control.Feedback>
                         </Form.Group>
                     </Col>
@@ -208,7 +219,7 @@ export function RegistroPacienteForm({ modo }: RegistroPacienteFormProps) {
                     <Col md={4}>
                         <Form.Group className="mb-3" controlId="reg-plan">
                             <Form.Label className="d-flex me-auto">Plan</Form.Label>
-                            <Form.Control type="text" placeholder="Ej: 210" {...register("plan")} onChange={handleMayus} isInvalid={!!errors.plan?.message} disabled={sinObraSocial} />
+                            <Form.Control type="text" placeholder="Ej: 210" {...conMayusculas(register("plan"))} isInvalid={!!errors.plan?.message} disabled={sinObraSocial} />
                             <Form.Control.Feedback type="invalid"> {errors.plan?.message} </Form.Control.Feedback>
                         </Form.Group>
                     </Col>
