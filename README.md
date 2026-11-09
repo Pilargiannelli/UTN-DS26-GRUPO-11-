@@ -104,6 +104,56 @@ docker compose down -v        # bajar todo y BORRAR la base
 
 ---
 
+## Deploy
+
+La aplicación está desplegada en **Render** (backend y frontend) con la base de datos en **Neon**.
+
+| Servicio | Plataforma | URL |
+|---|---|---|
+| Frontend | Render · Static Site | _(completar con la URL del front)_ |
+| Backend (API) | Render · Web Service (Docker) | _(completar con la URL del back)_ |
+| Base de datos | Neon · PostgreSQL (AWS us-east-1) | privada |
+
+> En el plan gratuito el backend se "duerme" sin tráfico: la primera petición puede tardar cerca de un minuto.
+
+### Servicios y configuración
+
+- **Neon:** proyecto PostgreSQL en la región AWS us-east-1. Se usa la conexión **directa** (no la "pooled").
+- **Backend (Web Service):** Docker, *Root Directory* `backend`, *Dockerfile Path* `Dockerfile.prod`, rama `main`.
+  Al arrancar, la imagen corre `prisma migrate deploy` y luego `node dist/index.js`.
+- **Frontend (Static Site):** *Root Directory* `frontend`, *Build Command* `npm run build`, *Publish Directory* `dist`.
+  Regla de *Rewrite* `/*` → `/index.html` (sin ella, refrescar una ruta interna da 404).
+
+### Variables de entorno (sin valores)
+
+Se cargan en el panel de cada servicio de Render; no hay `.env` de producción en el repositorio.
+
+| Servicio | Variable | Qué es |
+|---|---|---|
+| Backend | `DATABASE_URL` | Conexión directa a Neon (`...?sslmode=require`) |
+| Backend | `JWT_SECRET` | Clave para firmar tokens (generada por Render) |
+| Backend | `FRONTEND_URL` | URL exacta del frontend, sin `/` final (la usa CORS) |
+| Backend | `JWT_EXPIRES_IN`, `SALT_ROUNDS` | Opcionales: tienen valor por defecto |
+| Backend | `PORT` | La inyecta Render |
+| Frontend | `VITE_API_URL` | URL del backend terminada en `/api`. Se embebe en el build: si cambia, hay que redeployar |
+
+Las variables de desarrollo están documentadas en `backend/.env.example` y `frontend/.env.example`.
+
+### Migraciones y carga de datos
+
+- **Migraciones:** las aplica el backend solo, al arrancar (`prisma migrate deploy`), a partir de lo commiteado en `backend/prisma/migrations/`. Si una migración falla, el deploy falla y sigue corriendo la versión anterior.
+- **Datos iniciales (seed):** se cargan una vez desde una PC con Docker, apuntando a Neon:
+
+```bash
+docker compose run --rm -e DATABASE_URL="<URL directa de Neon>" api npx prisma db seed
+```
+
+### Deploy automático
+
+Cada push a `main` redeploya los servicios afectados (cambiar una variable de entorno también redeploya). Los usuarios de prueba se entregan por el canal del grupo, no en el repositorio.
+
+---
+
 ## Estado actual del proyecto
 
 ### Stack técnico
