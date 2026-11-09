@@ -18,8 +18,7 @@ export const medicoSchema = (conPassword = false) => {
         dni: z.string().trim().regex(/^\d{7,8}$/, "El DNI debe tener 7 u 8 números"),
         email: z.string().trim().min(1, "Por favor, ingrese el correo electrónico del médico")
             .email("El correo ingresado no corresponde a una dirección de correo válida"),
-        telefono: z.string().trim().regex(/^\+?\d{8,15}$/, "El teléfono debe tener entre 8 y 15 números, con código de área"),
-        especialidad: z.string().trim().min(1, "Por favor, ingrese la especialidad del médico"),
+        especialidad: z.string().trim().min(1, "Por favor, seleccione la especialidad del médico"),
         matricula: z.string().trim().min(1, "Por favor, ingrese la matrícula del médico"),
         password: z.string().optional(),
         repetirPassword: z.string().optional(),

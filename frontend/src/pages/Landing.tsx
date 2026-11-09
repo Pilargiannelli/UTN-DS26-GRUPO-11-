@@ -4,6 +4,7 @@ import { Clock, GeoAlt, Person } from "react-bootstrap-icons";
 import { useAuth } from "../hooks/useAuth";
 import { IconoEspecialidad } from "../components/IconoEspecialidad";
 import { CarruselProfesionales, type Profesional } from "../components/CarruselProfesionales";
+import { ESPECIALIDADES } from "../constants/especialidades";
 import imosLogo from "../assets/img/IMOS_LOGO.png";
 import "../assets/styles/Landing.css";
 
@@ -14,24 +15,6 @@ const SECCIONES = [
   { id: "especialidades", etiqueta: "Especialidades" },
   { id: "profesionales", etiqueta: "Profesionales" },
   { id: "contacto", etiqueta: "Contacto" },
-];
-
-const ESPECIALIDADES = [
-  "Nutrición",
-  "Cardiología",
-  "Cirugía",
-  "Otorrinolaringología",
-  "Ecografías",
-  "Traumatología",
-  "Odontología",
-  "Ortodoncia y Ortopedia",
-  "Oftalmología",
-  "Psiquiatría",
-  "Ginecología",
-  "Reumatología",
-  "Pediatría",
-  "Fonoaudiología",
-  "Medicina General",
 ];
 
 // Las fotos están en una sola hoja (/equipo-medico.webp, 1536 x 1024 px): columnas [x, ancho] y filas [y, alto]
