@@ -157,7 +157,7 @@ export function PacienteFormFields({ onSave, onCancel, usuario }: PacienteFormPr
                     <Col md={6}>
                         <Form.Group controlId="edit-email">
                             <Form.Label className="text-xs mb-1">Email</Form.Label>
-                            <Form.Control type="email" {...register("email")} isInvalid={!!errors.email} />
+                            <Form.Control type="text" {...register("email")} isInvalid={!!errors.email} />
                             <Form.Control.Feedback type="invalid"> {errors.email?.message} </Form.Control.Feedback>
                         </Form.Group>
                     </Col>

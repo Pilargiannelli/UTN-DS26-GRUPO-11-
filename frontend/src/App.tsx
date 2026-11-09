@@ -20,6 +20,7 @@ import HistorialConsultas from "./pages/HistorialConsultas.tsx";
 import TurnosPaciente from "./pages/TurnosPaciente.tsx";
 import NoEncontrada from "./pages/NoEncontrada.tsx";
 import Layout from "./components/Layout/Layout.tsx";
+import RegistroMedico from "./pages/RegistroMedico.tsx";
 
 function App() {
   return (
@@ -52,6 +53,7 @@ function App() {
       <Route element={<PrivateRoute roles={["SECRETARIA"]} />}>
         {/* HU-001: el alta de pacientes es del personal administrativo */}
         <Route path="/registrar-paciente" element={<RegistroPaciente />} />
+        <Route path="/registrar-medico" element={<RegistroMedico />} />
       </Route>
 
       {/* ========================================== */}
