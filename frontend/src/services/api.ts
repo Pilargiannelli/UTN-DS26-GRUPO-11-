@@ -1,8 +1,8 @@
 import { obtenerToken, borrarToken } from "./sesion";
 
-// Fallback por si la variable de entorno de Vite no se inyectó en el build
-const ENV_URL = import.meta.env.VITE_API_URL;
-const BASE = (ENV_URL && ENV_URL !== "undefined") ? ENV_URL : "http://localhost:3000/api";
+// URL de la API: sale de VITE_API_URL (frontend/.env en dev, panel de Render en producción).
+// Se embebe en el build; si falta, los pedidos fallan a propósito en vez de apuntar a localhost.
+const BASE: string = import.meta.env.VITE_API_URL;
 
 // Error de la API con el status y, si es un 400 de Zod, los errores por campo
 // (errorHandler del back: { error, detalles: [{ campo, mensaje }] })
