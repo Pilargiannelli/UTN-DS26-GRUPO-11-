@@ -234,11 +234,20 @@ export function ListarUsuarios({ rol }: ListarUsuariosProps) {
                 icono={esPaciente ? <PeopleFill /> : <HeartPulseFill />}
                 descripcion={descripcion}
                 datos={datos}
-                accion={esPaciente && esSecretaria && (
-                    <Button variant="primary" onClick={() => navigate("/registrar-paciente")}>
-                        + Registrar paciente
-                    </Button>
-                )}
+                accion={
+                    // Botón para pacientes (siempre que sea secretaría)
+                    (esPaciente && esSecretaria && (
+                        <Button variant="primary" onClick={() => navigate("/registrar-paciente")}>
+                            + Registrar paciente
+                        </Button>
+                    )) ||
+                    // Botón para médicos (si es secretaría)
+                    (!esPaciente && esSecretaria && (
+                        <Button variant="primary" onClick={() => navigate("/registrar-medico")}>
+                            + Registrar médico
+                        </Button>
+                    ))
+                }
             />
 
             <div className="directorio-card">
