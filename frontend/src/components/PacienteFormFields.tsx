@@ -1,3 +1,5 @@
+import type { ChangeEvent } from "react";
+import type { UseFormRegisterReturn } from "react-hook-form";
 import { Form, Row, Col, Button, Spinner } from "react-bootstrap";
 import { SelectEditable } from "./SelectEditable";
 import { DateInput } from "./DateInput";
@@ -37,6 +39,15 @@ const CAMPO_FORM: Record<string, Path<PacienteValidado>> = {
 
 export function PacienteFormFields({ onSave, onCancel, usuario }: PacienteFormProps) {
     const handleMayus = useMayus();
+    // Pasa a mayúsculas y recién después le avisa al formulario: si solo se pusiera handleMayus como
+    // onChange, react-hook-form no se enteraría del cambio (ni el valor ni que el formulario cambió)
+    const conMayusculas = (campo: UseFormRegisterReturn) => ({
+        ...campo,
+        onChange: (e: ChangeEvent<HTMLInputElement>) => {
+            handleMayus(e);
+            return campo.onChange(e);
+        },
+    });
     const sexoOptions = ["Masculino", "Femenino", "Otro"];
     const [errorMsg, setErrorMsg] = useState<string | null>(null);
     const paciente = usuario.paciente!;
@@ -182,14 +193,14 @@ export function PacienteFormFields({ onSave, onCancel, usuario }: PacienteFormPr
                     <Col md={4}>
                         <Form.Group controlId="edit-afiliado">
                             <Form.Label className="d-flex me-auto text-xs mb-1">Nro. afiliado</Form.Label>
-                            <Form.Control type="text" placeholder="Ej: A-123456" {...register("nroAfiliado")} onChange={handleMayus} isInvalid={!!errors.nroAfiliado?.message} disabled={sinObraSocial} />
+                            <Form.Control type="text" placeholder="Ej: A-123456" {...conMayusculas(register("nroAfiliado"))} isInvalid={!!errors.nroAfiliado?.message} disabled={sinObraSocial} />
                             <Form.Control.Feedback type="invalid"> {errors.nroAfiliado?.message} </Form.Control.Feedback>
                         </Form.Group>
                     </Col>
                     <Col md={4}>
                         <Form.Group controlId="edit-plan">
                             <Form.Label className="d-flex me-auto text-xs mb-1">Plan</Form.Label>
-                            <Form.Control type="text" placeholder="Ej: 210" {...register("plan")} onChange={handleMayus} isInvalid={!!errors.plan?.message} disabled={sinObraSocial} />
+                            <Form.Control type="text" placeholder="Ej: 210" {...conMayusculas(register("plan"))} isInvalid={!!errors.plan?.message} disabled={sinObraSocial} />
                             <Form.Control.Feedback type="invalid"> {errors.plan?.message} </Form.Control.Feedback>
                         </Form.Group>
                     </Col>
