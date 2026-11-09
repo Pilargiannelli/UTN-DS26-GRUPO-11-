@@ -8,6 +8,7 @@ import { useState } from "react";
 import { useMayus } from "../hooks/useMayus";
 import { apiFetch, ApiError } from "../services/api";
 import { useNavigate } from "react-router-dom";
+import { ESPECIALIDADES } from "../constants/especialidades";
 import "../assets/styles/Form.css";
 
 // Mapeo de errores del backend a los campos del formulario
@@ -16,7 +17,6 @@ const CAMPO_FORM: Record<string, Path<MedicoValidado>> = {
     apellido: "apellido",
     dni: "dni",
     email: "email",
-    telefono: "telefono",
     especialidad: "especialidad",
     matricula: "matricula",
     password: "password",
@@ -54,7 +54,6 @@ export function RegistroMedicoForm() {
             apellido: data.apellido,
             dni: data.dni,
             email: data.email,
-            telefono: data.telefono,
             especialidad: data.especialidad,
             matricula: data.matricula,
         };
@@ -114,14 +113,6 @@ export function RegistroMedicoForm() {
                             <Form.Control.Feedback type="invalid"> {errors.dni?.message} </Form.Control.Feedback>
                         </Form.Group>
                     </Col>
-                    {/* Teléfono */}
-                    <Col md={6}>
-                        <Form.Group className="mb-3" controlId="reg-medico-telefono">
-                            <Form.Label className="d-flex me-auto">Teléfono</Form.Label>
-                            <Form.Control type="tel" inputMode="numeric" placeholder="Ej: 549221456789" {...register("telefono")} isInvalid={!!errors.telefono} />
-                            <Form.Control.Feedback type="invalid"> {errors.telefono?.message} </Form.Control.Feedback>
-                        </Form.Group>
-                    </Col>
                 </Row>
 
                 {/* Contacto */}
@@ -144,7 +135,10 @@ export function RegistroMedicoForm() {
                     <Col md={6}>
                         <Form.Group className="mb-3" controlId="reg-medico-especialidad">
                             <Form.Label className="d-flex me-auto">Especialidad</Form.Label>
-                            <Form.Control type="text" placeholder="Ej: Cardiología" {...register("especialidad")} isInvalid={!!errors.especialidad} />
+                            <Form.Select {...register("especialidad")} isInvalid={!!errors.especialidad} defaultValue="">
+                                <option value="" disabled>Seleccione una especialidad</option>
+                                {ESPECIALIDADES.map((e) => <option key={e} value={e}>{e}</option>)}
+                            </Form.Select>
                             <Form.Control.Feedback type="invalid"> {errors.especialidad?.message} </Form.Control.Feedback>
                         </Form.Group>
                     </Col>

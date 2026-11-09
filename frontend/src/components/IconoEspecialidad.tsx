@@ -47,6 +47,22 @@ const ICONOS: Record<string, ReactNode> = {
       <path d="M14.500 21v6M33.500 21v6" />
     </>
   ),
+  "Ortodoncia": (
+    <>
+      <path d="M5 24h38" />
+      <rect x="9" y="16" width="11" height="16" rx="3" />
+      <rect x="28" y="16" width="11" height="16" rx="3" />
+      <path d="M14.500 21v6M33.500 21v6" />
+    </>
+  ),
+  "Ortopedia": (
+    <>
+      <path d="M14 34L34 14" />
+      <circle cx="12" cy="36" r="3.500" />
+      <circle cx="36" cy="12" r="3.500" />
+      <path d="M17 38l-3 3M10 31l-3 3M31 10l3-3M38 17l3-3" />
+    </>
+  ),
   "Oftalmología": (
     <>
       <path d="M4 24s7-12 20-12 20 12 20 12-7 12-20 12S4 24 4 24z" />

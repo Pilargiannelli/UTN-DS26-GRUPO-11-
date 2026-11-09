@@ -35,11 +35,11 @@ describe("Landing (pública)", () => {
     }
   });
 
-  it("lista las 15 especialidades", () => {
+  it("lista las 16 especialidades", () => {
     renderLanding(null);
 
     const lista = screen.getAllByRole("listitem");
-    expect(lista).toHaveLength(15);
+    expect(lista).toHaveLength(16);
     expect(screen.getByText("Cardiología")).toBeInTheDocument();
     expect(screen.getByText("Medicina General")).toBeInTheDocument();
   });

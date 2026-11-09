@@ -43,7 +43,6 @@ function completarDatosMedico() {
   escribir("Nombre", "Carlos");
   escribir("Apellido", "Gómez");
   escribir("DNI", "30123456");
-  escribir("Teléfono", "549221456789");
   escribir("Email", "medico@clinica.com");
   escribir("Especialidad", "Cardiología");
   escribir("Matrícula", "mp-12345");
@@ -61,12 +60,21 @@ describe("RegistroMedicoForm", () => {
     expect(screen.getByLabelText("Nombre")).toBeInTheDocument();
     expect(screen.getByLabelText("Apellido")).toBeInTheDocument();
     expect(screen.getByLabelText("DNI")).toBeInTheDocument();
-    expect(screen.getByLabelText("Teléfono")).toBeInTheDocument();
     expect(screen.getByLabelText("Email")).toBeInTheDocument();
     expect(screen.getByLabelText("Especialidad")).toBeInTheDocument();
     expect(screen.getByLabelText("Matrícula")).toBeInTheDocument();
     expect(screen.getByText(/DNI como contraseña inicial/)).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Registrar médico" })).toBeInTheDocument();
+  });
+
+  it("la especialidad es un select con la lista fija de especialidades y sin campo de teléfono", () => {
+    renderForm();
+
+    const select = screen.getByLabelText("Especialidad");
+    expect(select.tagName).toBe("SELECT");
+    expect(screen.getByRole("option", { name: "Cardiología" })).toBeInTheDocument();
+    expect(screen.getByRole("option", { name: "Medicina General" })).toBeInTheDocument();
+    expect(screen.queryByLabelText("Teléfono")).not.toBeInTheDocument();
   });
 
   it("enviar vacío marca los campos obligatorios y no llama a la API", async () => {
@@ -94,7 +102,6 @@ describe("RegistroMedicoForm", () => {
       nombre: "Carlos",
       apellido: "Gómez",
       dni: "30123456",
-      telefono: "549221456789",
       email: "medico@clinica.com",
       especialidad: "Cardiología",
       matricula: "MP-12345", // Comprueba que la función conMayusculas formateó correctamente

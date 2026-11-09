@@ -6,7 +6,6 @@ const medicoValido = {
   apellido: "Gómez",
   dni: "30123456",
   email: "carlos@imos.test",
-  telefono: "549221456789",
   especialidad: "Cardiología",
   matricula: "MP-12345",
 };

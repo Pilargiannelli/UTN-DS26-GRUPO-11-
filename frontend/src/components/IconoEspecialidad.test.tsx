@@ -4,7 +4,7 @@ import { IconoEspecialidad } from "./IconoEspecialidad";
 
 const ESPECIALIDADES = [
   "Nutrición", "Cardiología", "Cirugía", "Otorrinolaringología", "Ecografías", "Traumatología", "Odontología",
-  "Ortodoncia y Ortopedia", "Oftalmología", "Psiquiatría", "Ginecología", "Reumatología", "Pediatría",
+  "Ortodoncia", "Ortopedia", "Oftalmología", "Psiquiatría", "Ginecología", "Reumatología", "Pediatría",
   "Fonoaudiología", "Medicina General",
 ];
 
