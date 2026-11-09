@@ -13,9 +13,54 @@ vi.mock("../controllers/usuario.controller", () => ({
   createPaciente: (req: any, res: any) => res.status(201).json(req.body),
   updatePaciente: (req: any, res: any) => res.status(200).json(req.body),
   getPaciente: (_req: any, res: any) => res.status(200).json({ id: 1 }),
+  createMedico: (req: any, res: any) => res.status(201).json(req.body),
 }));
 
 const tokenDe = (rol: Rol) => jwt.sign({ sub: 1, rol }, JWT_SECRET, { expiresIn: "1h" });
+
+describe("POST /api/medicos - Matriz sin DB", () => {
+  const medicoValido = {
+    nombre: "Carlos",
+    apellido: "Gómez",
+    dni: "30123456",
+    email: "carlos@imos.test",
+    telefono: "549221456789",
+    especialidad: "Cardiología",
+    matricula: "MP-12345",
+  };
+
+  it("devuelve 401 sin token", async () => {
+    const res = await request(app).post("/api/medicos").send(medicoValido);
+    expect(res.status).toBe(401);
+  });
+
+  it.each([Rol.PACIENTE, Rol.MEDICO])("devuelve 403 para %s", async (rol) => {
+    const res = await request(app)
+      .post("/api/medicos")
+      .set("Authorization", `Bearer ${tokenDe(rol)}`)
+      .send(medicoValido);
+    expect(res.status).toBe(403);
+  });
+
+  it("devuelve 400 con detalles por campo si el body es inválido", async () => {
+    const res = await request(app)
+      .post("/api/medicos")
+      .set("Authorization", `Bearer ${tokenDe(Rol.SECRETARIA)}`)
+      .send({ ...medicoValido, dni: "abc", nombre: "" });
+
+    expect(res.status).toBe(400);
+    const campos = res.body.detalles.map((d: { campo: string }) => d.campo);
+    expect(campos).toEqual(expect.arrayContaining(["dni", "nombre"]));
+  });
+
+  it("deja pasar a la SECRETARIA con un body válido (201)", async () => {
+    const res = await request(app)
+      .post("/api/medicos")
+      .set("Authorization", `Bearer ${tokenDe(Rol.SECRETARIA)}`)
+      .send(medicoValido);
+    expect(res.status).toBe(201);
+  });
+});
 
 describe("POST /api/pacientes - Matriz sin DB", () => {
   const pacienteValido = {
@@ -122,6 +167,7 @@ describe("Usuario Routes - Matriz sin DB", () => {
     });
   });
 });
+
 describe("GET /api/pacientes/:id - Matriz sin DB", () => {
   it("401 sin token, 403 para PACIENTE y 200 para SECRETARIA y MEDICO", async () => {
     expect((await request(app).get("/api/pacientes/1")).status).toBe(401);

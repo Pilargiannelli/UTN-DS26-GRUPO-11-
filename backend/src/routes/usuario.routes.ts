@@ -4,12 +4,22 @@ import { authenticate, authorize } from "../middlewares/auth.middleware";
 import { Rol } from "../generated/prisma/enums";
 import { validate, validateParams } from "../middlewares/validate.middleware";
 import { pacienteCreateSchema } from "../validations/paciente.validation";
+import { medicoCreateSchema } from "../validations/medico.validation";
 import { idParamSchema } from "../validations/turno.validation";
 
 const router = Router();
 
 // GET /api/medicos -> PÚBLICO (según Matriz de Permisos sección 7)
 router.get("/medicos", usuarioController.getMedicos);
+
+// POST /api/medicos -> alta de médico por la secretaría
+router.post(
+  "/medicos",
+  authenticate,
+  authorize(Rol.SECRETARIA),
+  validate(medicoCreateSchema),
+  usuarioController.createMedico
+);
 
 // GET /api/pacientes -> Exige token y rol SECRETARIA o MEDICO (sección 6)
 router.get("/pacientes", authenticate, authorize(Rol.SECRETARIA, Rol.MEDICO), usuarioController.getPacientes);
