@@ -328,19 +328,60 @@
   background: var(--color-pino-50);
 }
 
-/* En la semana el turno va en dos renglones: hora y paciente */
+/* En la semana el turno va en un solo renglón: "hora – Nombre Apellido".
+   Si el nombre es largo (agenda-evento-largo) va la hora y abajo el nombre. */
 .agenda-medico .agenda-evento-compact {
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: center;
-  gap: 0;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  gap: var(--space-1);
   padding: 0 var(--space-2);
   font-size: var(--text-xs);
   line-height: 1.3;
 }
 
-.agenda-evento-compact .agenda-evento-paciente {
+.agenda-medico .agenda-evento-compact.agenda-evento-largo {
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 0;
+}
+
+.agenda-evento-compact .agenda-evento-hora,
+.agenda-evento-compact .agenda-evento-separador {
+  flex: none;
+}
+
+.agenda-evento-compact .agenda-evento-separador {
+  color: var(--color-text-muted);
+}
+
+.agenda-evento-compact.agenda-evento-largo .agenda-evento-paciente {
   width: 100%;
+  flex: none;
+}
+
+/* Con columnas angostas (pantallas chicas) tampoco entra en un renglón: hora arriba y nombre abajo */
+.agenda-medico .agenda-dia-col {
+  container-type: inline-size;
+}
+
+@container (max-width: 210px) {
+  .agenda-medico .agenda-evento-compact {
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 0;
+  }
+
+  .agenda-evento-compact .agenda-evento-separador {
+    display: none;
+  }
+
+  .agenda-evento-compact .agenda-evento-paciente {
+    width: 100%;
+    flex: none;
+  }
 }
 
 @media (max-width: 576px) {
