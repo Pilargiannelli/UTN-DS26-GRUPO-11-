@@ -63,12 +63,16 @@ repetirla dentro de `DATABASE_URL`, porque Docker Compose no expande variables d
 docker compose up -d --build
 ```
 
-Esto arranca dos servicios:
+Esto arranca tres servicios:
 
 | Servicio | Contenedor | Puerto | Descripción |
 |---|---|---|---|
 | `db` | `imos-db` | 5432 | PostgreSQL 16 con volumen persistente `pgdata` |
 | `api` | `imos-api` | 3000 / 5555 | API Express + Prisma Studio |
+| `frontend` | `imos-frontend` | 5173 | Frontend (Vite) en http://localhost:5173 |
+
+El contenedor del frontend copia el código al construirse (no lo monta como volumen): después
+de un `git pull` o de cambiar de rama hay que volver a correr `docker compose up -d --build`.
 
 La API espera automáticamente a que Postgres esté listo (`healthcheck` con `pg_isready` +
 `depends_on: condition: service_healthy`), así que no hace falta reintentar.
@@ -160,28 +164,28 @@ Cada push a `main` redeploya los servicios afectados (cambiar una variable de en
 
 - **Backend:** Node.js + Express + TypeScript, Prisma ORM sobre PostgreSQL.
 - **Frontend:** React + TypeScript (Vite).
-- **Infraestructura:** Docker Compose (contenedores `db` con Postgres 16 y `api` con la API Express), con healthcheck para que la API espere a que la base esté lista.
+- **Infraestructura:** Docker Compose para desarrollo (contenedores `db` con Postgres 16, `api` con la API Express y `frontend` con Vite), con healthcheck para que la API espere a que la base esté lista. En producción, Render + Neon (ver [Deploy](#deploy)).
 - **Documentación:** carpeta `Documentacion/` con Visión y Alcance, Análisis inicial, Modelado de Dominio, Backlog, UX/UI, Diseño de API y Seguridad.
 
 ### Qué está funcionando
 
-- **Autenticación:** login real contra la API con `AuthContext` y manejo de token en el frontend.
-- **API REST:** endpoints montados en `/api/auth`, `/api/turnos`, `/api/obras-sociales`, `/api/especialidades` y `/api/usuarios` (incluye `/medicos` y `/pacientes`), con control de permisos por rol (paciente, médico, secretaria/admin).
-- **Turnos contra la API real:** se reemplazaron los mocks en JSON por llamadas reales a la API para pedir, listar y cancelar turnos.
-- **Gestión de usuarios:** registro de pacientes (por la secretaria o con "Crear cuenta"), listado y búsqueda de pacientes y médicos, con formularios validados (Zod/schemas por tipo de usuario).
-  - Un paciente que da de alta la secretaria entra con su **email** y su **DNI como contraseña inicial**. Quien se registra con "Crear cuenta" elige su contraseña.
-  - La secretaría también da de alta a los médicos (nombre, DNI, email, especialidad elegida de una lista y matrícula). El médico entra con su **email** y su **DNI como contraseña inicial**.
-- **Agenda:** vista diaria y semanal de turnos para médico y secretaría, con historia clínica y consultas por paciente.
-- **Modelo de datos:** definido en Prisma (Usuario, Paciente, Médico, Secretaria, Turno, Agenda, HistoriaClínica, ObraSocial, Especialidad, entre otros), con migraciones y seed de datos de prueba.
-- **Entorno reproducible:** `docker compose up` levanta base de datos y API con un solo comando; variables de entorno separadas por `.env.example` en backend y frontend.
+- **Autenticación y cuenta:** login contra la API con JWT, sesión que se recupera al recargar (`GET /api/auth/yo`), "Crear cuenta" para pacientes, Mi cuenta (datos y cambio de contraseña) y cierre de sesión automático si el token vence.
+- **Autorización por rol:** cada endpoint valida el rol con `authorize` y la titularidad en el service (un recurso ajeno responde 404). En el front, `PrivateRoute` protege las rutas y cada rol ve su propio menú. Detalle en [Matriz de permisos](Documentacion/06%20-%20Seguridad/matriz-permisos.md).
+- **Turnos:** el paciente pide turno eligiendo especialidad, médico y horario libre, ve sus próximos turnos y su historial, y cancela los que todavía no fueron confirmados. La secretaria y el médico crean, confirman y cancelan turnos. La API impide turnos en el pasado, fuera de lunes a viernes, fuera de los horarios de 30 minutos y dos turnos del mismo médico a la misma hora.
+- **Agenda:** vista diaria y semanal; el médico ve la suya y la secretaria elige el médico.
+- **Pacientes y médicos:** la secretaria da de alta pacientes y médicos y edita sus datos y obra social. El paciente y el médico que da de alta la secretaria entran con su **email** y su **DNI como contraseña inicial**; quien se registra con "Crear cuenta" elige su contraseña.
+- **Historia clínica:** el médico registra consultas (diagnóstico, evolución e indicaciones) y edita alergias y antecedentes desde la ficha del paciente. Las consultas no se editan ni se borran (Ley 26.529). El paciente ve lo que le indicó el médico junto a cada turno; la secretaria no tiene acceso.
+- **API REST:** todos los endpoints, con sus permisos y errores, en [Diseño de API](Documentacion/05%20-%20Diseño%20de%20API/diseño-api.md). Ejemplos para probarlos en `backend/api.http`.
+- **Deploy:** front y back en Render, base en Neon, con deploy automático en cada push a `main` (ver [Deploy](#deploy)).
+- **Tests:** Vitest en backend y frontend (ver [Testing](#testing)).
 
-### En qué estamos trabajando / pendiente
+### Pendiente
 
-- Terminar de pulir pantallas conectadas a la API real (se vienen corrigiendo bugs de datos y estilos a medida que se integra cada vista: Home, HomePaciente, PedirTurno, etc.).
-- Completar el circuito de historia clínica y agenda semanal del médico.
-- Integrar el asistente de WhatsApp (IA) para confirmación de turnos, validación de pagos y recordatorios — todavía no implementado, es la funcionalidad diferencial del proyecto.
-- Reforzar validaciones y matriz de permisos por rol en endpoints nuevos.
-- Seguir ampliando los tests automatizados (ya hay suites en backend y frontend, ver la sección Testing) y sumar integración continua (CI) para correrlos en cada push.
+- Asistente de WhatsApp (IA) para confirmación de turnos, validación de pagos y recordatorios: no implementado. El modelo de datos ya lo contempla.
+- Configurar la disponibilidad de cada médico (días, horarios y bloqueos por vacaciones o licencias). Hoy todos atienden de lunes a viernes, con turnos cada 30 minutos.
+- Pantalla para reprogramar un turno: la API lo permite (`PUT /api/turnos/:id`), pero la interfaz todavía no.
+- Integración continua (CI) para correr tests y lint en cada push antes del deploy.
+- Guardar el token en una cookie `httpOnly` en lugar de `localStorage`.
 
 ---
 

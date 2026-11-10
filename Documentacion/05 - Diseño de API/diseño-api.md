@@ -2,6 +2,9 @@
 
 ### Operaciones por pantalla
 
+Relevamiento hecho al diseñar la API, con los nombres de pantalla de ese momento. Los endpoints
+vigentes están en la [tabla de endpoints](#tabla-de-endpoints).
+
 #### Autenticación y cuenta
 
 | Pantalla | Recurso | Entidad |
@@ -86,63 +89,116 @@
 
 ### Tabla de endpoints
 
-#### Usuario / Autenticación
+Endpoints implementados en el backend (`backend/src/routes/`), todos bajo el prefijo `/api`.
+Los que requieren sesión reciben el token en el header `Authorization: Bearer <token>`. Qué
+rol puede usar cada uno está en la [matriz de permisos](../06%20-%20Seguridad/matriz-permisos.md).
+Hay ejemplos de cada petición, con sus casos de error, en `backend/api.http`.
+
+Códigos de error comunes a todas las rutas:
+
+| Código | Cuándo |
+|--------|--------|
+| 400 | El body, el parámetro `:id` o la query no pasan la validación (Zod). La respuesta trae el detalle por campo |
+| 401 | Falta el token, está vencido o mal firmado |
+| 403 | El token es válido pero el rol no habilita la operación |
+| 404 | El recurso no existe, o pertenece a otro usuario (así no se revela qué ids existen) |
+| 409 | Choca con una regla de negocio o con un dato único (DNI, email, matrícula, horario ocupado) |
+
+#### Salud
 
 | Método | Ruta | Operaciones que cubre | Body | Éxito | Errores |
 |--------|------|------------------------|------|-------|---------|
-| POST | `/api/auth/login` | Autenticar usuario (usuario/email + contraseña) | `{ usuario, contraseña }` | 200 | 401, 400 |
-| POST | `/api/usuarios` | Crear usuario y contraseña (paso 2 de alta) | Usuario sin id | 201 | 400, 409 |
-| GET | `/api/usuarios/:id` | Ver perfil propio / de otro usuario | — | 200 | 404 |
-| PUT | `/api/usuarios/:id` | Editar datos del usuario | Usuario sin contraseña | 200 | 404, 400 |
-| PUT | `/api/usuarios/:id/password` | Cambiar mi contraseña | `{ passwordActual, passwordNueva }` | 200 | 404, 400, 401 |
+| GET | `/api/health` | Comprobar que la API responde (sirve para "despertar" el backend deployado antes de usarlo). No consulta la base | — | 200 | — |
 
-#### Paciente
+#### Autenticación y cuenta
 
 | Método | Ruta | Operaciones que cubre | Body | Éxito | Errores |
 |--------|------|------------------------|------|-------|---------|
-| GET | `/api/pacientes` | Listar pacientes / Buscar-filtrar por nombre (`?nombre=`) | — | 200 | 500 |
-| GET | `/api/pacientes/:id` | Ver perfil del paciente | — | 200 | 404 |
-| POST | `/api/pacientes` | Registrar nuevo paciente | Paciente sin id | 201 | 400, 409 |
-| PUT | `/api/pacientes/:id` | Editar datos del paciente (DNI no editable) | Paciente sin DNI | 200 | 404, 400 |
-| DELETE | `/api/pacientes/:id` | Dar de baja un paciente | — | 204 | 404 |
+| POST | `/api/auth/registro` | Crear cuenta de paciente ("Crear cuenta"). Crea el usuario y su ficha de paciente juntos | Datos del paciente + `password` (+ `username` opcional) | 201 | 400, 409 |
+| POST | `/api/auth/login` | Iniciar sesión. Devuelve `{ token, usuario }` | `{ email, password }` | 200 | 400, 401, 429 |
+| GET | `/api/auth/yo` | Datos del usuario logueado (se usa al recargar la página) | — | 200 | 401 |
+| PATCH | `/api/auth/yo` | Corregir mi nombre, apellido y email (Mi cuenta) | `{ nombre, apellido, email }` | 200 | 400, 401, 409 |
+| PATCH | `/api/auth/password` | Cambiar mi contraseña | `{ passwordActual, passwordNueva }` | 204 | 400, 401 |
 
-#### Medico
+- El login responde 429 después de 10 intentos fallidos en 15 minutos desde la misma IP.
+- La contraseña nueva (registro y cambio) necesita al menos 8 caracteres, una mayúscula, una
+  minúscula y un número.
+- En `PATCH /api/auth/yo` y `PATCH /api/auth/password` el usuario sale del token: nadie puede
+  modificar la cuenta de otro.
 
-| Método | Ruta | Operaciones que cubre | Body | Éxito | Errores |
-|--------|------|------------------------|------|-------|---------|
-| GET | `/api/medicos` | Listar médicos / Buscar-filtrar por nombre o especialidad | — | 200 | 500 |
-| GET | `/api/medicos/:id` | Ver perfil del médico | — | 200 | 404 |
-| POST | `/api/medicos` | Registrar nuevo médico | Medico sin id | 201 | 400, 409 |
-| PUT | `/api/medicos/:id` | Editar datos / Configurar días, horario y duración de turno | Medico (datos + disponibilidad) | 200 | 404, 400 |
-| DELETE | `/api/medicos/:id` | Dar de baja un médico | — | 204 | 404 |
-| PUT | `/api/medicos/:id/bloqueos` | Bloquear franjas horarias (vacaciones, licencias, congresos) | `{ desde, hasta, motivo }` | 200 | 404, 400 |
-
-#### Turno
+#### Catálogos
 
 | Método | Ruta | Operaciones que cubre | Body | Éxito | Errores |
 |--------|------|------------------------|------|-------|---------|
-| GET | `/api/turnos` | Listar turnos / Ver contadores (total, pendientes, confirmados, cancelados) / Mis turnos | — | 200 | 500 |
-| GET | `/api/turnos/:id` | Ver detalle de un turno | — | 200 | 404 |
-| POST | `/api/turnos` | Crear turno (solicitar consulta) | Turno sin id | 201 | 400 |
-| PUT | `/api/turnos/:id` | Editar / Reprogramar turno | Turno (fecha, hora, estado) | 200 | 404, 400 |
-| DELETE | `/api/turnos/:id` | Cancelar turno | — | 204 | 404 |
+| GET | `/api/especialidades` | Listar especialidades (PedirTurno, alta de médico) | — | 200 | — |
+| GET | `/api/obras-sociales` | Listar obras sociales (formularios de paciente) | — | 200 | — |
+| POST | `/api/obras-sociales` | Agregar una obra social | `{ nombre }` | 201 | 400, 401, 403, 409 |
 
-#### Agenda
+#### Usuarios, médicos y pacientes
 
 | Método | Ruta | Operaciones que cubre | Body | Éxito | Errores |
 |--------|------|------------------------|------|-------|---------|
-| GET | `/api/agenda?medicoId=:id&fecha=YYYY-MM-DD` | Ver agenda diaria del médico / navegar día anterior-siguiente-hoy | — | 200 | 404 |
-| GET | `/api/agenda?medicoId=:id&semana=YYYY-MM-DD` | Ver agenda semanal del médico | — | 200 | 404 |
-| GET | `/api/agenda/bloques-disponibles?medicoId=:id&fecha=YYYY-MM-DD` | Elegir fecha y horario disponible (PedirTurno) | — | 200 | 404 |
+| GET | `/api/usuarios` | Listar todos los usuarios | — | 200 | 401, 403 |
+| GET | `/api/medicos` | Cartilla de médicos (nombre, especialidad, matrícula) | — | 200 | — |
+| POST | `/api/medicos` | Dar de alta un médico | `{ nombre, apellido, dni, email, especialidad, matricula }` | 201 | 400, 401, 403, 409 |
+| GET | `/api/pacientes` | Listar pacientes con su cobertura (al médico también le llega la fecha de la última consulta) | — | 200 | 401, 403 |
+| GET | `/api/pacientes/:id` | Ver la ficha de un paciente | — | 200 | 400, 401, 403, 404 |
+| POST | `/api/pacientes` | Dar de alta un paciente | Datos del paciente | 201 | 400, 401, 403, 409 |
+| PUT | `/api/pacientes/:id` | Editar los datos del paciente y su obra social | Datos del paciente | 200 | 400, 401, 403, 404, 409 |
 
-*Nota: Agenda no tiene alta/baja propia — su disponibilidad se configura desde `PUT /api/medicos/:id` (tabla de Medico).*
+- **Datos del paciente:** `{ nombre, apellido, dni, email, telefono, sexo, fechaNacimiento, cobertura? }`,
+  con `cobertura = { obraSocialId, nroAfiliado, plan }`. En el `PUT`, mandar el body sin
+  `cobertura` significa "sin obra social".
+- El médico y el paciente que da de alta la secretaria entran con su **email** y su **DNI**
+  como contraseña inicial.
+- La búsqueda por nombre o DNI se hace en el front, sobre el listado.
 
-#### HistoriaClinica / EntradaClinica
+#### Turnos
 
 | Método | Ruta | Operaciones que cubre | Body | Éxito | Errores |
 |--------|------|------------------------|------|-------|---------|
-| GET | `/api/pacientes?tieneHistoriaClinica=true` | Listar pacientes con historia clínica | — | 200 | 500 |
-| GET | `/api/pacientes/:id/historia-clinica` | Ver historial médico (alergias, antecedentes, resumen) | — | 200 | 404 |
-| PUT | `/api/pacientes/:id/historia-clinica` | Editar alergias / Editar antecedentes | `{ alergias, antecedentes }` | 200 | 404, 400 |
-| GET | `/api/pacientes/:id/historia-clinica/entradas` | Ver entradas clínicas de un paciente (consultas) | — | 200 | 404 |
-| POST | `/api/pacientes/:id/historia-clinica/entradas` | Agregar nueva consulta (entrada clínica) | EntradaClinica sin id | 201 | 400, 404 |
+| GET | `/api/turnos` | Listar turnos: la secretaria recibe todos, el médico los de su agenda y el paciente los suyos. Con esta lista el front arma la agenda diaria y semanal | — | 200 | 401 |
+| GET | `/api/turnos/ocupados?medicoId=&desde=&hasta=` | Horarios ya tomados de un médico en un rango. Devuelve solo fechas, sin datos del paciente; el front calcula los horarios libres de PedirTurno | — | 200 | 400, 401 |
+| GET | `/api/turnos/:id` | Ver el detalle de un turno | — | 200 | 400, 401, 404 |
+| POST | `/api/turnos` | Crear un turno. El paciente manda solo `{ medicoId, fechaHora }` y el turno nace Pendiente; el personal manda además `pacienteId` y, si quiere, `estado` (Pendiente o Confirmado) | Ver operación | 201 | 400, 401, 403, 409 |
+| PATCH | `/api/turnos/:id/cancelar` | Cancelar un turno. Pasa a Cancelado y queda en el historial | — | 200 | 400, 401, 404, 409 |
+| PUT | `/api/turnos/:id` | Editar, confirmar o reprogramar. Es parcial: solo cambia lo que viene en el body | `{ fechaHora?, estado?, medicoId?, pacienteId? }` | 200 | 400, 401, 403, 404, 409 |
+| DELETE | `/api/turnos/:id` | Borrar un turno | — | 204 | 400, 401, 403, 404 |
+
+Reglas que valida la API:
+
+- La fecha del turno es futura, de lunes a viernes, en punto o y media (400).
+- Un médico no puede tener dos turnos activos (Pendiente, Confirmado o Reprogramado) en el mismo
+  horario (409).
+- Un turno que ya pasó no se cancela ni cambia de estado (409).
+- El paciente solo cancela turnos Pendientes o Reprogramados; si ya está confirmado, recibe 409 y
+  tiene que comunicarse con el consultorio.
+
+#### Historia clínica
+
+| Método | Ruta | Operaciones que cubre | Body | Éxito | Errores |
+|--------|------|------------------------|------|-------|---------|
+| GET | `/api/pacientes/:id/historia-clinica` | Ver la historia clínica: alergias, antecedentes y consultas, de la más nueva a la más vieja. Si el paciente todavía no tiene, devuelve listas vacías | — | 200 | 400, 401, 403, 404 |
+| PUT | `/api/pacientes/:id/historia-clinica` | Editar alergias y antecedentes | `{ alergias: string[], antecedentes: string[] }` | 200 | 400, 401, 403, 404 |
+| POST | `/api/pacientes/:id/historia-clinica/entradas` | Registrar una consulta | `{ diagnostico, evolucion, observaciones? }` | 201 | 400, 401, 403, 404 |
+
+Las consultas no se editan ni se borran (Ley 26.529: la historia clínica es inalterable). Si
+hubo un error, se registra una consulta nueva.
+
+### Cambios respecto del diseño original
+
+La primera versión de esta tabla se armó antes de programar. Estos endpoints del diseño
+cambiaron o no se implementaron:
+
+| Endpoint del diseño | Qué pasó |
+|---------------------|----------|
+| `POST /api/usuarios`, `GET` y `PUT /api/usuarios/:id` | El alta se hace en un solo paso: `/api/auth/registro`, `POST /api/pacientes` y `POST /api/medicos` crean el usuario y su ficha juntos. Los datos propios se leen con `GET /api/auth/yo` y se editan con `PATCH /api/auth/yo` |
+| `PUT /api/usuarios/:id/password` | Reemplazado por `PATCH /api/auth/password`: el usuario sale del token |
+| `GET /api/agenda?medicoId=&fecha=` y `&semana=` | La agenda diaria y semanal se arma en el front con `GET /api/turnos` |
+| `GET /api/agenda/bloques-disponibles` | Reemplazado por `GET /api/turnos/ocupados`: el front calcula los horarios libres |
+| `GET /api/pacientes/:id/historia-clinica/entradas` | Las consultas vienen dentro de `GET /api/pacientes/:id/historia-clinica` |
+| `GET /api/pacientes?tieneHistoriaClinica=true` | No hizo falta: el listado de pacientes ya trae la fecha de la última consulta |
+| `GET /api/medicos/:id`, `PUT /api/medicos/:id`, `DELETE /api/medicos/:id` | No implementados |
+| `PUT /api/medicos/:id/bloqueos` | No implementado: la disponibilidad no se configura (turnos de lunes a viernes, cada 30 minutos) |
+| `DELETE /api/pacientes/:id` | No implementado |
+| `DELETE /api/turnos/:id` para cancelar | Cancelar es `PATCH /api/turnos/:id/cancelar`; `DELETE` borra el turno |
